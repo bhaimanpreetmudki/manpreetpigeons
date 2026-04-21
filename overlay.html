@@ -2,63 +2,94 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pigeon Tournament Admin</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
-
-        /* Summary Box - Top */
-        .summary-wrapper { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
-        .sum-card { padding: 12px 30px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; min-width: 220px; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 8px 20px rgba(0,0,0,0.8); }
-        .total-bg { background: rgba(15, 15, 15, 0.98); }
-        .rem-bg { background: rgba(0, 60, 220, 0.98); }
-        .time-bg { background: rgba(10, 140, 50, 0.98); }
-        .sum-label { font-size: 18px; font-weight: 900; color: #f39c12; }
-        .sum-val { font-size: 36px; font-weight: 950; text-shadow: 2px 2px 4px black; }
-
-        /* Main Container */
-        .main-container { position: absolute; top: 120px; right: 30px; bottom: 120px; width: 850px; display: flex; flex-direction: column; gap: 15px; }
-        .box { display: none; flex: 1; border-radius: 25px; overflow: hidden; border: 4px solid rgba(255,255,255,0.4); backdrop-filter: blur(10px); position: relative; }
-        #box-fly { background: rgba(0, 70, 0, 0.92); }
-        #box-time { background: rgba(255, 200, 0, 1); color: black !important; }
-        #box-out { background: rgba(150, 0, 0, 0.92); }
-
-        .box-header { padding: 12px 25px; font-size: 30px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); border-bottom: 3px solid rgba(255,255,255,0.3); }
-        .count-tag { background: white; color: black; padding: 4px 25px; border-radius: 10px; font-size: 30px; font-weight: 950; }
-
-        /* Scroll Area */
-        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
-        .item { padding: 12px 35px; display: flex; align-items: center; gap: 25px; font-size: 32px; font-weight: 900; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
         
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
+        /* ਕਲਾਇੰਟ ਜਾਣਕਾਰੀ ਪੱਟੀ */
+        .info-bar { background: #1a1d21; border: 1px solid #333; padding: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; border-left: 5px solid #f39c12; }
+        .info-bar b { color: #f39c12; }
 
-        /* Footer Ticker */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 85px; background: #f39c12; display: flex; align-items: center; border-top: 6px solid black; }
-        .live-tag { background: #ff0000; color: white; padding: 0 50px; height: 100%; display: flex; align-items: center; font-size: 36px; font-weight: 950; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 32px; }
-        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .header { background: #f39c12; color: black; padding: 15px 25px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3); }
+        .main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; height: fit-content; }
+        
+        /* Switch Styles */
+        .control-row { display: flex; justify-content: space-between; align-items: center; background: #24292e; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #f39c12; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
+        input:checked + .slider { background-color: #28a745; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Input & Buttons */
+        input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
+        .btn-add { background: #f39c12; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; }
+        
+        /* Status Buttons (ਪੁਰਾਣੇ ਸਟਾਈਲ ਵਾਲੇ) */
+        .pigeon-item { background: #24292e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #f39c12; }
+        .status-grp { display: flex; gap: 5px; margin-top: 10px; }
+        .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; opacity: 0.2; color: white; text-transform: uppercase; }
+        .st-btn.active { opacity: 1; border: 2px solid white; transform: scale(1.05); }
+        .st-fly { background: #007bff; }
+        .st-time { background: #ffc107; color: black; }
+        .st-out { background: #dc3545; }
     </style>
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="sum-card total-bg"><span class="sum-label">ਕੁੱਲ ਕਬੂਤਰ</span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card rem-bg"><span class="sum-label">ਬਾਕੀ ਕਬੂਤਰ</span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card time-bg"><span class="sum-label">ਟਾਈਮ ਵਾਲੇ</span><span id="m-time" class="sum-val">0</span></div>
+<div id="info-section" style="display:none;">
+    <div class="info-bar">
+        <span>📅 ਵੈਲਡਿਟੀ: <b id="expiryDisplay">Loading...</b></span>
+        <span>📞 ਹੈਲਪਲਾਈਨ: <b>+91 8699640061</b></span>
+    </div>
 </div>
 
-<div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-header"><span>🕊️ ਉੱਡ ਰਹੇ</span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-    <div id="box-time" class="box"><div class="box-header"><div><span>⏰ ਟਾਈਮ ਵਾਲੇ</span><br><small id="box-time-val" style="font-size:18px;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-    <div id="box-out" class="box"><div class="box-header"><span>❌ ਕੱਟੇ ਗਏ</span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+<div id="login-box" style="max-width:400px; margin: 100px auto; text-align:center;" class="card">
+    <h2 style="color:#f39c12">Login Admin</h2>
+    <input type="password" id="adminPass" placeholder="Enter Password"><br><br>
+    <button class="btn-add" onclick="checkLogin()">LOGIN</button>
 </div>
 
-<div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+<div id="main-content" style="display:none;">
+    <div class="header">
+        <h2 style="margin:0">🏆 ਕਬੂਤਰਬਾਜ਼ੀ LIVE ਪੈਨਲ</h2>
+        <button onclick="location.reload()" style="background:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer;">LOGOUT</button>
+    </div>
+
+    <div class="main-grid">
+        <div class="card">
+            <h3 style="color:#f39c12; margin-top:0;">ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ</h3>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="pName" placeholder="ਨਾਮ ਭਰੋ...">
+                <button onclick="addP()" style="background:#f39c12; border:none; padding:0 20px; border-radius:6px; font-weight:bold; cursor:pointer;">ADD</button>
+            </div>
+            <div id="listArea" style="margin-top:20px;"></div>
+        </div>
+
+        <div class="card">
+            <h3 style="color:#f39c12; margin-top:0;">ਓਵਰਲੇਅ ਕੰਟਰੋਲ</h3>
+            
+            <div class="control-row"><span>Scoreboard (ਸਾਰੇ ਬਾਕਸ)</span><label class="switch"><input type="checkbox" id="swScore" onchange="save()"><span class="slider"></span></label></div>
+            <div class="control-row"><span>Ticker (ਟਿਕਰ ਪੱਟੀ)</span><label class="switch"><input type="checkbox" id="swTicker" onchange="save()"><span class="slider"></span></label></div>
+            <div class="control-row"><span>Fly Box (ਉੱਡ ਰਹੇ)</span><label class="switch"><input type="checkbox" id="swFly" onchange="save()"><span class="slider"></span></label></div>
+            <div class="control-row"><span>Time Box (ਟਾਈਮ ਵਾਲੇ)</span><label class="switch"><input type="checkbox" id="swTime" onchange="save()"><span class="slider"></span></label></div>
+
+            <div style="margin-top:15px;">
+                <label style="color:#888; font-size:12px;">⏰ ਟਾਈਮ ਬਾਕਸ ਲਈ ਸਮਾਂ</label>
+                <input type="text" id="inpBoxTime" oninput="save()" placeholder="e.g. 10:00 AM TO 12:00 PM">
+                
+                <label style="color:#888; font-size:12px; display:block; margin-top:10px;">📢 ਟਿਕਰ ਮੈਸੇਜ</label>
+                <input type="text" id="inpTicker" oninput="save()" placeholder="ਪੱਟੀ ਲਈ ਸੁਨੇਹਾ ਲਿਖੋ...">
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -68,48 +99,84 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    if(userID) {
-        db.ref('users/' + userID).on('value', (snap) => {
+    let localData = { pigeons: [], config: {} };
+
+    function checkLogin() {
+        if(!userID) return alert("Link Error!");
+        db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
-            if(!data) return;
-            const conf = data.config || {};
-            const pigeons = data.pigeons || [];
+            if(data && data.password === document.getElementById('adminPass').value) {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-content').style.display = "block";
+                document.getElementById('info-section').style.display = "block";
+                
+                // Expiry Format
+                const expDate = new Date(data.expiry);
+                document.getElementById('expiryDisplay').innerText = expDate.toLocaleString();
 
-            // Display Logic
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
-            document.getElementById('box-time-val').innerText = conf.boxTime || "";
+                db.ref('users/' + userID).on('value', s => {
+                    localData = s.val() || { pigeons: [], config: {} };
+                    renderUI();
+                });
+            } else { alert("Wrong Password!"); }
+        });
+    }
 
-            let counts = { fly: 0, out: 0, time: 0 };
-            let htmls = { fly: '', out: '', time: '' };
+    function addP() {
+        const name = document.getElementById('pName').value;
+        if(!name) return;
+        if(!localData.pigeons) localData.pigeons = [];
+        localData.pigeons.push({ id: Date.now(), name: name, status: 'fly' });
+        document.getElementById('pName').value = "";
+        save();
+    }
 
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item"><span>${idx + 1}. ${p.name}</span></div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-                else if (p.status === 'time') { counts.time++; htmls.time += row; }
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
-            });
+    function setStatus(id, s) {
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
+        save();
+    }
 
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-            document.getElementById('m-time').innerText = counts.time;
+    function delP(id) {
+        if(confirm("Delete?")) {
+            localData.pigeons = localData.pigeons.filter(p => p.id !== id);
+            save();
+        }
+    }
 
-            const boxes = [
-                {id: 'fly', show: conf.showFly},
-                {id: 'time', show: conf.showTime},
-                {id: 'out', show: true}
-            ];
+    function save() {
+        const config = {
+            showScoreboard: document.getElementById('swScore').checked,
+            showTicker: document.getElementById('swTicker').checked,
+            showFly: document.getElementById('swFly').checked,
+            showTime: document.getElementById('swTime').checked,
+            ticker: document.getElementById('inpTicker').value,
+            boxTime: document.getElementById('inpBoxTime').value
+        };
+        db.ref('users/' + userID).update({ pigeons: localData.pigeons, config: config });
+    }
 
-            boxes.forEach(b => {
-                const el = document.getElementById(`box-${b.id}`);
-                if(b.show && counts[b.id] > 0) {
-                    el.style.display = "block";
-                    document.getElementById(`count-${b.id}`).innerText = counts[b.id];
-                    document.getElementById(`list-${b.id}`).innerHTML = htmls[b.id] + htmls[b.id];
-                } else { el.style.display = "none"; }
-            });
+    function renderUI() {
+        const conf = localData.config || {};
+        document.getElementById('swScore').checked = conf.showScoreboard;
+        document.getElementById('swTicker').checked = conf.showTicker;
+        document.getElementById('swFly').checked = conf.showFly;
+        document.getElementById('swTime').checked = conf.showTime;
+        document.getElementById('inpTicker').value = conf.ticker || "";
+        document.getElementById('inpBoxTime').value = conf.boxTime || "";
+
+        const list = document.getElementById('listArea');
+        list.innerHTML = "";
+        (localData.pigeons || []).forEach(p => {
+            list.innerHTML += `
+                <div class="pigeon-item">
+                    <span style="font-size:18px; font-weight:bold;">${p.name}</span>
+                    <button onclick="delP(${p.id})" style="float:right; background:none; border:none; color:red; cursor:pointer;">🗑️</button>
+                    <div class="status-grp">
+                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+                    </div>
+                </div>`;
         });
     }
 </script>
