@@ -3,55 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pigeon Admin - Live Control</title>
+    <title>Admin Control</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; margin: 0; }
         .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .header-title { color: #f39c12; margin-bottom: 15px; text-align: center; text-transform: uppercase; }
         
-        /* Control Grid */
+        /* ਉੱਪਰਲੇ ਕੰਟਰੋਲ ਬਟਨ */
         .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .sw-btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #333; color: white; transition: 0.3s; }
+        .sw-btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; background: #333; color: white; cursor: pointer; }
         .sw-btn.active { background: #238636; border: 1px solid white; }
         
-        input { width: 100%; padding: 12px; margin: 8px 0; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        input:focus { border-color: #f39c12; outline: none; }
+        input { width: 100%; padding: 12px; margin: 8px 0; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; }
 
-        .pigeon-row { background: #24292e; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #f39c12; }
-        .status-grp { display: flex; gap: 5px; margin-top: 10px; }
-        .st-btn { flex: 1; padding: 10px; border: none; border-radius: 5px; font-size: 11px; font-weight: bold; color: white; opacity: 0.2; cursor: pointer; }
-        .st-btn.active { opacity: 1; transform: scale(1.05); border: 1px solid white; }
+        /* ਪੁਰਾਣੇ ਸਟਾਈਲ ਵਾਲੇ ਸਟੇਟਸ ਬਟਨ */
+        .pigeon-row { background: #24292e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #f39c12; position: relative; }
+        .status-grp { display: flex; gap: 8px; margin-top: 12px; }
         
-        .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px; }
-        .btn-del { background: none; border: none; color: #ff4444; font-size: 18px; float: right; cursor: pointer; }
+        .st-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 900; color: white; cursor: pointer; text-transform: uppercase; opacity: 0.2; font-size: 14px; }
+        .st-btn.active { opacity: 1; transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid white; }
+        
+        .st-fly { background: #007bff; }  /* Blue */
+        .st-time { background: #ffc107; color: black; } /* Yellow */
+        .st-out { background: #dc3545; } /* Red */
+        
+        .btn-add { background: #f39c12; color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
+        .btn-del { position: absolute; right: 10px; top: 10px; background: none; border: none; color: #ff4444; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="login-box" style="max-width: 400px; margin: 100px auto; text-align: center;">
     <h2 style="color:#f39c12">CLIENT LOGIN</h2>
-    <input type="password" id="passInput" placeholder="Enter Admin Password">
+    <input type="password" id="passInput" placeholder="Password ਭਰੋ">
     <button class="btn-add" onclick="login()">LOGIN</button>
 </div>
 
 <div id="main-admin" style="display:none;">
-    <h2 class="header-title">🏆 LIVE CONTROLS</h2>
-    
     <div class="card">
         <div class="control-grid">
             <button id="sw-scoreboard" class="sw-btn" onclick="toggleConfig('showScoreboard')">SCOREBOARD</button>
-            <button id="sw-ticker" class="sw-btn" onclick="toggleConfig('showTicker')">TICKER BAR</button>
+            <button id="sw-ticker" class="sw-btn" onclick="toggleConfig('showTicker')">TICKER</button>
             <button id="sw-fly" class="sw-btn" onclick="toggleConfig('showFly')">FLY BOX</button>
             <button id="sw-time" class="sw-btn" onclick="toggleConfig('showTime')">TIME BOX</button>
         </div>
-        <input type="text" id="tickInp" placeholder="📢 ਟਿਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="updateTexts()">
-        <input type="text" id="timeBoxInp" placeholder="⏰ ਟਾਈਮ (e.g. 11:00 AM TO 12:00 PM)" oninput="updateTexts()">
+        <input type="text" id="tickInp" placeholder="ਟਿਕਰ ਮੈਸੇਜ..." oninput="updateTexts()">
+        <input type="text" id="timeBoxInp" placeholder="ਸਮਾਂ (e.g. 11:30 AM)" oninput="updateTexts()">
     </div>
 
     <div class="card">
-        <input type="text" id="pName" placeholder="ਕਬੂਤਰ ਜਾਂ ਪਾਰਟੀ ਦਾ ਨਾਮ...">
+        <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ...">
         <button class="btn-add" onclick="addPigeon()">ADD PIGEON</button>
     </div>
 
@@ -64,39 +66,24 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-
     let currentData = { pigeons: [], config: {} };
 
     function login() {
-        if(!userID) return alert("Invalid URL");
         db.ref('users/' + userID).once('value', snap => {
-            const data = snap.val();
-            if(data && data.password === document.getElementById('passInput').value) {
+            if(snap.val() && snap.val().password === document.getElementById('passInput').value) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-admin').style.display = "block";
-                
-                // Realtime Sync
-                db.ref('users/' + userID).on('value', s => {
-                    currentData = s.val() || { pigeons: [], config: {} };
-                    renderAdmin();
-                });
+                db.ref('users/' + userID).on('value', s => { currentData = s.val() || { pigeons: [], config: {} }; renderAdmin(); });
             } else { alert("Wrong Password!"); }
         });
     }
 
-    function toggleConfig(key) {
-        if(!currentData.config) currentData.config = {};
-        currentData.config[key] = !currentData.config[key];
-        save();
-    }
-
-    function updateTexts() {
-        if(!currentData.config) currentData.config = {};
+    function toggleConfig(key) { currentData.config[key] = !currentData.config[key]; save(); }
+    function updateTexts() { 
         currentData.config.ticker = document.getElementById('tickInp').value;
         currentData.config.boxTime = document.getElementById('timeBoxInp').value;
-        save();
+        save(); 
     }
-
     function addPigeon() {
         const name = document.getElementById('pName').value;
         if(!name) return;
@@ -105,31 +92,19 @@
         document.getElementById('pName').value = "";
         save();
     }
-
     function setStatus(pID, status) {
         currentData.pigeons = currentData.pigeons.map(p => p.id === pID ? {...p, status: status} : p);
         save();
     }
-
-    function deletePigeon(pID) {
-        if(confirm("ਕੀ ਤੁਸੀਂ ਇਸਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
-            currentData.pigeons = currentData.pigeons.filter(p => p.id !== pID);
-            save();
-        }
-    }
-
-    function save() {
-        db.ref('users/' + userID).update(currentData);
-    }
+    function deletePigeon(pID) { if(confirm("Delete?")) { currentData.pigeons = currentData.pigeons.filter(p => p.id !== pID); save(); } }
+    function save() { db.ref('users/' + userID).update(currentData); }
 
     function renderAdmin() {
         const conf = currentData.config || {};
-        // Update Buttons
         document.getElementById('sw-scoreboard').className = "sw-btn " + (conf.showScoreboard ? "active" : "");
         document.getElementById('sw-ticker').className = "sw-btn " + (conf.showTicker ? "active" : "");
         document.getElementById('sw-fly').className = "sw-btn " + (conf.showFly ? "active" : "");
         document.getElementById('sw-time').className = "sw-btn " + (conf.showTime ? "active" : "");
-        
         document.getElementById('tickInp').value = conf.ticker || "";
         document.getElementById('timeBoxInp').value = conf.boxTime || "";
 
@@ -139,11 +114,11 @@
             listDiv.innerHTML += `
                 <div class="pigeon-row">
                     <button class="btn-del" onclick="deletePigeon(${p.id})">🗑️</button>
-                    <b>${p.name}</b>
+                    <b style="font-size:18px;">${p.name}</b>
                     <div class="status-grp">
-                        <button class="st-btn active" style="background:#007bff; opacity:${p.status=='fly'?'1':'0.2'}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                        <button class="st-btn active" style="background:#ffc107; color:black; opacity:${p.status=='time'?'1':'0.2'}" onclick="setStatus(${p.id},'time')">TIME</button>
-                        <button class="st-btn active" style="background:#dc3545; opacity:${p.status=='out'?'1':'0.2'}" onclick="setStatus(${p.id},'out')">OUT</button>
+                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
                     </div>
                 </div>`;
         });
