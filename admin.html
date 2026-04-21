@@ -2,154 +2,138 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <title>Pigeon Admin Control</title>
+    <title>ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0b0d0f; color: white; margin: 0; padding: 20px; }
-        .top-bar { background: #f39c12; color: black; padding: 15px 25px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .main-container { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
-        .card { background: #161a1e; padding: 20px; border-radius: 8px; border: 1px solid #2d3436; }
-        
-        /* Inputs */
-        input[type="text"] { background: #0b0d0f; border: 1px solid #444; color: white; padding: 10px; border-radius: 4px; width: 100%; margin-bottom: 10px; }
-        .add-btn { background: #f39c12; color: black; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-
-        /* Switches for Hide/Show */
-        .switch-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; margin-bottom: 10px; border-radius: 5px; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
-        input:checked + .slider { background-color: #f39c12; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        /* Status Buttons */
-        .st-btn { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; margin-right: 2px; opacity: 0.3; }
-        .st-btn.active { opacity: 1; transform: scale(1.1); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .bg-fly { background: #00a8ff; color: white; }
-        .bg-time { background: #fbc531; color: black; }
-        .bg-out { background: #e84118; color: white; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: #f39c12; padding-bottom: 10px; border-bottom: 1px solid #333; }
-        td { padding: 12px 0; border-bottom: 1px solid #222; }
-        .save-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1d21; color: white; margin: 0; padding: 20px; }
+        .header { background: #f39c12; color: #1a1a1a; padding: 15px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #444; }
+        .config-item { display: flex; flex-direction: column; gap: 5px; }
+        .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-card { flex: 1; background: #24292e; padding: 15px; border-radius: 5px; text-align: center; border-bottom: 4px solid #444; }
+        .stat-num { font-size: 24px; font-weight: bold; display: block; }
+        table { width: 100%; border-collapse: collapse; background: #24292e; border-radius: 5px; overflow: hidden; }
+        th { background: #1a1a1a; padding: 15px; text-align: left; color: #f39c12; }
+        td { padding: 12px 15px; border-bottom: 1px solid #333; }
+        input, select { padding: 10px; border-radius: 4px; border: none; background: #fff; color: #000; }
+        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-save { background: #28a745; margin-top: 10px; width: 100%; font-size: 16px; padding: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h2 style="margin:0">Tournament: JAPSAL</h2>
-        <button class="save-btn" onclick="saveAll()">SAVE EVERYTHING</button>
+    <div class="header">
+        <h2 style="margin:0">ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ</h2>
+        <button onclick="localStorage.clear(); location.reload();" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">All Reset</button>
     </div>
 
-    <div class="main-container">
-        <div class="card">
-            <h3>Pigeon List</h3>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="pName" placeholder="Name..." style="margin:0">
-                <button class="add-btn" onclick="addItem()">ADD</button>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="listBody"></tbody>
-            </table>
+    <div class="config-section">
+        <div class="config-item">
+            <label>ਸਕੋਰਬੋਰਡ ਦਿਖਾਓ?</label>
+            <select id="showScoreboard" onchange="saveConfig()">
+                <option value="true">Yes (ਦਿਖਾਓ)</option>
+                <option value="false">No (ਛੁਪਾਓ)</option>
+            </select>
         </div>
-
-        <div class="card">
-            <h3>Controls</h3>
-            
-            <div class="switch-row">
-                <span>Scoreboard Hide/Show</span>
-                <label class="switch"><input type="checkbox" id="showScore" checked><span class="slider"></span></label>
-            </div>
-            <div class="switch-row">
-                <span>Ticker Hide/Show</span>
-                <label class="switch"><input type="checkbox" id="showTicker" checked><span class="slider"></span></label>
-            </div>
-
-            <label style="color:#f39c12; font-size: 13px; margin-top:15px; display:block;">Ticker Message:</label>
-            <input type="text" id="tickMsg" placeholder="Welcome...">
-
-            <label style="color:#f39c12; font-size: 13px; margin-top:10px; display:block;">Time Setting (for Time Box):</label>
-            <input type="text" id="timeVal" placeholder="11:00 AM">
-            
-            <button onclick="localStorage.clear(); location.reload();" style="background:red; color:white; border:none; padding:5px; width:100%; margin-top:20px; cursor:pointer; border-radius:4px;">Reset All Data</button>
+        <div class="config-item">
+            <label>ਟਿੱਕਰ ਦਿਖਾਓ?</label>
+            <select id="showTicker" onchange="saveConfig()">
+                <option value="true">Yes (ਦਿਖਾਓ)</option>
+                <option value="false">No (ਛੁਪਾਓ)</option>
+            </select>
+        </div>
+        <div class="config-item">
+            <label>ਟਿੱਕਰ ਦੀ ਲਿਖਤ (Ticker Text):</label>
+            <input type="text" id="tickerText" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="saveConfig()">
+        </div>
+        <div class="config-item">
+            <label>ਟਾਈਮ ਸੈਟਿੰਗ (ਜਿਵੇਂ 11:30 AM):</label>
+            <input type="text" id="boxTime" placeholder="e.g. 11:30 AM TO 12:15 PM" oninput="saveConfig()">
         </div>
     </div>
+
+    <div class="stats-bar">
+        <div class="stat-card">ਉੱਡ ਰਹੇ: <span id="count-fly" class="stat-num">0</span></div>
+        <div class="stat-card">ਟਾਈਮ ਵਾਲੇ: <span id="count-time" class="stat-num">0</span></div>
+        <div class="stat-card">ਕੱਟੇ ਗਏ: <span id="count-out" class="stat-num">0</span></div>
+    </div>
+
+    <div style="background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px;">
+        <input type="text" id="partyName" style="flex:1" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ...">
+        <button onclick="addParty()" style="background:#f39c12; padding: 10px 20px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">ਸ਼ਾਮਲ ਕਰੋ</button>
+    </div>
+
+    <table id="partyTable">
+        <thead><tr><th>ਨੰਬਰ</th><th>ਪਾਰਟੀ ਨਾਮ</th><th style="text-align:center">ਸਟੇਟਸ</th></tr></thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 
 <script>
-    let pigeons = JSON.parse(localStorage.getItem('pigeonData')) || [];
-    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { showScoreboard: true, showTicker: true, ticker: "WELCOME", boxTime: "11:00 AM" };
+    let parties = JSON.parse(localStorage.getItem('pigeonData')) || [];
+    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { showScoreboard: true, showTicker: true, ticker: "WELCOME...", boxTime: "11:00 AM" };
+
+    function saveConfig() {
+        config = {
+            showScoreboard: document.getElementById('showScoreboard').value === "true",
+            showTicker: document.getElementById('showTicker').value === "true",
+            ticker: document.getElementById('tickerText').value,
+            boxTime: document.getElementById('boxTime').value,
+            showFly: true, showTime: true, showOut: true // Default boxes
+        };
+        localStorage.setItem('overlayConfig', JSON.stringify(config));
+    }
 
     function loadConfig() {
-        document.getElementById('showScore').checked = config.showScoreboard;
-        document.getElementById('showTicker').checked = config.showTicker;
-        document.getElementById('tickMsg').value = config.ticker;
-        document.getElementById('timeVal').value = config.boxTime;
+        document.getElementById('showScoreboard').value = config.showScoreboard.toString();
+        document.getElementById('showTicker').value = config.showTicker.toString();
+        document.getElementById('tickerText').value = config.ticker || "";
+        document.getElementById('boxTime').value = config.boxTime || "";
+    }
+
+    function addParty() {
+        const nameInput = document.getElementById('partyName');
+        if (!nameInput.value) return;
+        parties.push({ id: Date.now(), name: nameInput.value, status: 'fly' });
+        nameInput.value = "";
+        saveAndRefresh();
+    }
+
+    function setStatus(id, newStatus) {
+        parties = parties.map(p => p.id === id ? { ...p, status: newStatus } : p);
+        saveAndRefresh();
+    }
+
+    function saveAndRefresh() {
+        localStorage.setItem('pigeonData', JSON.stringify(parties));
         renderTable();
+        updateStats();
     }
 
-    function addItem() {
-        const val = document.getElementById('pName').value;
-        if(!val) return;
-        pigeons.push({ id: Date.now(), name: val, status: 'fly' });
-        document.getElementById('pName').value = "";
-        saveAll();
-    }
-
-    function setStatus(id, stat) {
-        pigeons = pigeons.map(p => p.id === id ? {...p, status: stat} : p);
-        saveAll();
-    }
-
-    function deleteItem(id) {
-        pigeons = pigeons.filter(p => p.id !== id);
-        saveAll();
-    }
-
-    function saveAll() {
-        config = {
-            showScoreboard: document.getElementById('showScore').checked,
-            showTicker: document.getElementById('showTicker').checked,
-            ticker: document.getElementById('tickMsg').value,
-            boxTime: document.getElementById('timeVal').value,
-            showFly: true, showTime: true, showOut: true
-        };
-        localStorage.setItem('pigeonData', JSON.stringify(pigeons));
-        localStorage.setItem('overlayConfig', JSON.stringify(config));
-        renderTable();
-        alert("Saved Successfully!");
+    function updateStats() {
+        document.getElementById('count-fly').innerText = parties.filter(p => p.status === 'fly').length;
+        document.getElementById('count-time').innerText = parties.filter(p => p.status === 'time').length;
+        document.getElementById('count-out').innerText = parties.filter(p => p.status === 'out').length;
     }
 
     function renderTable() {
-        const body = document.getElementById('listBody');
-        body.innerHTML = "";
-        pigeons.forEach(p => {
-            body.innerHTML += `
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = "";
+        parties.forEach((p, index) => {
+            tbody.innerHTML += `
                 <tr>
-                    <td><input type="text" value="${p.name}" onchange="updateName(${p.id}, this.value)" style="margin:0; width:120px; border:none; background:transparent; border-bottom:1px solid #333;"></td>
-                    <td>
-                        <button class="st-btn bg-fly ${p.status === 'fly' ? 'active' : ''}" onclick="setStatus(${p.id}, 'fly')">FLY</button>
-                        <button class="st-btn bg-time ${p.status === 'time' ? 'active' : ''}" onclick="setStatus(${p.id}, 'time')">TIME</button>
-                        <button class="st-btn bg-out ${p.status === 'out' ? 'active' : ''}" onclick="setStatus(${p.id}, 'out')">OUT</button>
+                    <td>${index + 1}</td>
+                    <td>${p.name}</td>
+                    <td style="text-align:center">
+                        <button onclick="setStatus(${p.id}, 'fly')" style="background:#007bff; opacity:${p.status==='fly'?1:0.4}" class="btn">ਉੱਡ ਰਹੇ</button>
+                        <button onclick="setStatus(${p.id}, 'time')" style="background:#28a745; opacity:${p.status==='time'?1:0.4}" class="btn">ਟਾਈਮ ਵਾਲੇ</button>
+                        <button onclick="setStatus(${p.id}, 'out')" style="background:#dc3545; opacity:${p.status==='out'?1:0.4}" class="btn">ਕੱਟੇ ਗਏ</button>
                     </td>
-                    <td><button onclick="deleteItem(${p.id})" style="background:none; border:none; color:red; cursor:pointer;">🗑️</button></td>
                 </tr>`;
         });
     }
 
-    function updateName(id, val) {
-        pigeons = pigeons.map(p => p.id === id ? {...p, name: val} : p);
-        localStorage.setItem('pigeonData', JSON.stringify(pigeons));
-    }
-
     loadConfig();
+    renderTable();
+    updateStats();
 </script>
 </body>
 </html>
