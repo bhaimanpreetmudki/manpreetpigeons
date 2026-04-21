@@ -2,63 +2,41 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Independent Controls</title>
+    <title>Admin Panel - Pigeon Live</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
+        .status-bar { background: #1a1d21; border: 1px solid #333; padding: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; border-left: 5px solid #f39c12; font-size: 14px; }
+        .status-bar b { color: #f39c12; }
         .header { background: #f39c12; color: black; padding: 10px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        
-        /* Buttons in Front of Name */
-        .pigeon-row { 
-            background: #21262d; 
-            padding: 10px; 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; /* This keeps buttons in front */
-            border: 1px solid #30363d; 
-        }
-        .pigeon-name { font-size: 16px; font-weight: bold; flex: 1; margin-right: 10px; }
-        
-        .status-grp { display: flex; gap: 5px; align-items: center; }
+        .pigeon-row { background: #21262d; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #30363d; }
         .st-btn { border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; opacity: 0.2; }
-        .st-btn.active { opacity: 1; border: 1px solid white; transform: scale(1.05); }
-        .st-fly { background: #007bff; }
-        .st-time { background: #ffc107; color: black; }
-        .st-out { background: #dc3545; }
-
-        .btn-del { background: none; border: none; color: #ff4444; font-size: 18px; cursor: pointer; margin-left: 10px; }
-        .input-box { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; }
-        .switch-box { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; }
+        .st-btn.active { opacity: 1; border: 1px solid white; }
+        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
+        input { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; }
+        .sw-row { display: flex; justify-content: space-between; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
-
 <div id="login-box" style="max-width:400px; margin:100px auto; text-align:center;" class="card">
-    <h2 style="color:#f39c12">Login Admin</h2>
-    <input type="password" id="adminPass" placeholder="Password" class="input-box"><br>
-    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold; cursor:pointer;">LOGIN</button>
+    <h2 style="color:#f39c12">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="Password"><br>
+    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold;">LOGIN</button>
 </div>
 
-<div id="main-content" style="display:none;">
-    <div class="header">
-        <h3 style="margin:0">🏆 LIVE ਪੈਨਲ</h3>
-        <button onclick="save()" style="background:#238636; color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer;">SAVE</button>
+<div id="admin-content" style="display:none;">
+    <div class="status-bar">
+        <span>📅 EXPIRY: <b id="expDisp">--</b></span>
+        <span>📞 HELPLINE: <b>+91 8699640061</b></span>
     </div>
-
+    <div class="header"><h3>🏆 LIVE CONTROL</h3><button onclick="save()" style="background:#238636; color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold;">SAVE ALL</button></div>
     <div class="card">
-        <div class="switch-box"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()"></div>
-        <div class="switch-box"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
+        <div class="sw-row"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()"></div>
+        <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
     </div>
-
-    <div class="card">
-        <input type="text" id="pName" placeholder="ਨਾਮ..." class="input-box">
-        <button onclick="addP()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold; cursor:pointer;">ADD PIGEON</button>
-    </div>
-
+    <div class="card"><input type="text" id="pName" placeholder="ਨਾਮ ਲਿਖੋ..."><button onclick="addP()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold;">ADD</button></div>
     <div id="listArea"></div>
 </div>
 
@@ -72,59 +50,36 @@
 
     function checkLogin() {
         db.ref('users/' + userID).once('value', snap => {
-            if(snap.val() && snap.val().password === document.getElementById('adminPass').value) {
+            const data = snap.val();
+            if(data && data.password === document.getElementById('adminPass').value) {
                 document.getElementById('login-box').style.display = "none";
-                document.getElementById('main-content').style.display = "block";
-                db.ref('users/' + userID).on('value', s => {
-                    localData = s.val() || { pigeons: [], config: {} };
-                    render();
-                });
+                document.getElementById('admin-content').style.display = "block";
+                document.getElementById('expDisp').innerText = new Date(data.expiry).toLocaleDateString();
+                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
             } else { alert("Wrong Password"); }
         });
     }
-
     function addP() {
-        const n = document.getElementById('pName').value;
-        if(!n) return;
+        const n = document.getElementById('pName').value; if(!n) return;
         if(!localData.pigeons) localData.pigeons = [];
         localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
-        document.getElementById('pName').value = "";
-        save();
+        document.getElementById('pName').value = ""; save();
     }
-
-    function setStatus(id, s) {
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
-        save();
-    }
-
-    function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
-
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
     function save() {
-        const config = {
-            showScoreboard: document.getElementById('swScore').checked,
-            showTicker: document.getElementById('swTicker').checked,
-            showFly: true, showTime: true
-        };
+        const config = { showScoreboard: document.getElementById('swScore').checked, showTicker: document.getElementById('swTicker').checked, showFly: true, showTime: true };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
-
     function render() {
-        const conf = localData.config || {};
-        document.getElementById('swScore').checked = conf.showScoreboard;
-        document.getElementById('swTicker').checked = conf.showTicker;
-        const list = document.getElementById('listArea');
-        list.innerHTML = "";
+        document.getElementById('swScore').checked = localData.config.showScoreboard;
+        document.getElementById('swTicker').checked = localData.config.showTicker;
+        const list = document.getElementById('listArea'); list.innerHTML = "";
         (localData.pigeons || []).forEach(p => {
-            list.innerHTML += `
-                <div class="pigeon-row">
-                    <div class="pigeon-name">${p.name}</div>
-                    <div class="status-grp">
-                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
-                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
-                        <button onclick="delP(${p.id})" class="btn-del">🗑️</button>
-                    </div>
-                </div>`;
+            list.innerHTML += `<div class="pigeon-row"><span><b>${p.name}</b></span><div class="status-grp">
+                <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+            </div></div>`;
         });
     }
 </script>
