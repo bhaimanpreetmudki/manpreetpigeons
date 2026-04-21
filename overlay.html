@@ -8,132 +8,179 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary Box - Top Centered */
+        /* 1. Summary Box - Left Side & Double Background Style */
         .summary-wrapper { 
             position: absolute; 
-            top: 25px; 
-            left: 55%; 
-            transform: translateX(-50%); 
+            top: 20px; 
+            left: 30px; /* Moved to Left */
             display: flex; 
-            gap: 15px; 
+            flex-direction: column; 
+            gap: 12px; 
             z-index: 1000; 
         }
         .sum-card { 
-            padding: 12px 25px; 
-            border-radius: 12px; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: row; 
             align-items: center; 
-            min-width: 140px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6); 
-            border: 3px solid rgba(255,255,255,0.3); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            border: 3px solid rgba(255,255,255,0.4); 
+            box-shadow: 0 8px 15px rgba(0,0,0,0.8);
+            width: 320px;
         }
-        .total-bg { background: #111; }
-        .rem-bg { background: #0055ff; }
-        .time-bg { background: #228833; }
-        .sum-label { font-size: 16px; font-weight: 900; color: #f39c12; margin-bottom: 5px; }
-        .sum-val { font-size: 36px; font-weight: 950; text-shadow: 2px 2px 4px black; }
+        .sum-label-area { 
+            background: #111; /* Dark background for text */
+            padding: 10px; 
+            width: 65%; 
+            font-size: 20px; 
+            font-weight: 950; 
+            color: #f39c12; 
+            text-align: center;
+        }
+        .sum-val-area { 
+            background: #fff; /* White/Bright background for numbers */
+            color: #000; 
+            padding: 10px; 
+            width: 35%; 
+            font-size: 38px; 
+            font-weight: 950; 
+            text-align: center;
+        }
+        /* Specific colors for labels if needed */
+        .rem-label { background: #0044cc; color: white; }
+        .time-label { background: #117722; color: white; }
 
-        /* Main Container - Enlarged and Touching Ticker */
+        /* 2. Main Container - Extra Wide & Low Transparency */
         .main-container { 
             position: absolute; 
-            top: 15px; 
-            right: 25px; 
-            bottom: 60px; /* Touching the 60px footer ticker */
-            width: 480px; 
+            top: 10px; 
+            right: 20px; 
+            bottom: 75px; 
+            width: 700px; /* Extra Wide */
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 0; 
         }
         
         .box { 
             display: none; 
             flex: 1; 
-            border-radius: 15px 15px 0 0; 
             overflow: hidden; 
             position: relative; 
-            border: 3px solid rgba(255,255,255,0.3); 
-            backdrop-filter: blur(8px); 
+            border: 4px solid rgba(255,255,255,0.3); 
+            background: rgba(0, 0, 0, 0.85); /* Low Transparency (85% Dark) */
+            backdrop-filter: blur(10px); 
         }
-        
-        /* 70% Transparent Backgrounds */
-        #box-fly { background: rgba(0, 60, 0, 0.3); }   /* Dark Green 70% */
-        #box-time { background: rgba(255, 190, 0, 0.4); color: black !important; } /* Yellow 60% */
-        #box-out { background: rgba(180, 0, 0, 0.3); }  /* Red 70% */
 
+        /* 3. Headers - Full Solid Colors */
         .box-header { 
-            padding: 12px 20px; 
-            font-size: 24px; 
+            padding: 15px 25px; 
+            font-size: 30px; 
             font-weight: 950; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            background: rgba(0,0,0,0.6); 
-            border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            border-bottom: 4px solid rgba(255,255,255,0.2);
         }
-        .count-tag { background: white; color: black; padding: 4px 15px; border-radius: 8px; font-size: 24px; font-weight: 950; }
+        #box-fly .box-header { background: #006400; } /* Solid Green */
+        #box-time .box-header { background: #ffcc00; color: black; } /* Solid Yellow */
+        #box-out .box-header { background: #cc0000; } /* Solid Red */
 
-        /* List Area */
-        .scroll-window { position: absolute; top: 65px; bottom: 0; width: 100%; overflow: hidden; }
+        .count-tag { background: white; color: black; padding: 4px 20px; border-radius: 8px; font-size: 30px; font-weight: 950; }
+
+        /* 4. List Items - Dark & Clear */
+        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
         .item { 
-            padding: 10px 25px; 
+            padding: 12px 35px; 
             display: flex; 
             align-items: center; 
             gap: 20px; 
-            font-size: 26px; 
-            font-weight: 900; 
+            font-size: 36px; 
+            font-weight: 950; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 5px rgba(0,0,0,1); 
         }
-        .item-num { font-weight: 950; color: #f39c12; min-width: 40px; }
-        #box-time .item-num { color: black; }
+        .item-num { color: #f39c12; min-width: 60px; }
+        #box-time .item { color: #f39c12; text-shadow: none; font-weight: 950; }
 
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-115%); } }
+        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
 
-        /* Footer Ticker (Black/Yellow Style) */
+        /* 5. Footer Ticker & Large Flash Clock */
         .footer { 
             position: absolute; 
             bottom: 0; 
             width: 100%; 
-            height: 60px; 
+            height: 75px; 
             background: #000; 
             display: flex; 
             align-items: center; 
-            border-top: 4px solid #f39c12; 
+            border-top: 5px solid #f39c12; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 28px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 900; font-size: 26px; }
-        .ticker-move { display: inline-block; animation: ticker 18s linear infinite; }
+        .live-tag { background: #ff0000; color: white; padding: 0 50px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 900; font-size: 30px; }
+        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Clock & Date in Footer */
-        .dt-box { background: #111; height: 100%; padding: 0 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 2px solid #333; min-width: 200px; }
-        #clock { font-size: 26px; font-weight: 950; color: #f39c12; }
-        #date { font-size: 14px; color: #fff; letter-spacing: 1px; }
+        /* Larger Flash Box for Time & Date */
+        .dt-box { 
+            background: #111; 
+            height: 100%; 
+            padding: 0 40px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-left: 4px solid #333; 
+            min-width: 320px; 
+        }
+        #dt-flash { font-size: 34px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
+        @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
+
+        /* Flashing Animation for Texts */
+        .flash-txt::after { content: attr(data-pa); animation: flashLang 5s infinite; }
+        @keyframes flashLang {
+            0%, 45% { content: attr(data-pa); }
+            50%, 95% { content: attr(data-en); }
+        }
     </style>
 </head>
 <body>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card total-bg"><span class="sum-label">ਕੁੱਲ ਕਬੂਤਰ</span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card rem-bg"><span class="sum-label">ਬਾਕੀ ਕਬੂਤਰ</span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card time-bg"><span class="sum-label">ਟਾਈਮ ਵਾਲੇ</span><span id="m-time" class="sum-val">0</span></div>
+    <div class="sum-card">
+        <div class="sum-label-area flash-txt" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div>
+        <div id="m-total" class="sum-val-area">0</div>
+    </div>
+    <div class="sum-card">
+        <div class="sum-label-area rem-label flash-txt" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
+        <div id="m-rem" class="sum-val-area">0</div>
+    </div>
+    <div class="sum-card">
+        <div class="sum-label-area time-label flash-txt" data-pa="ਟਾਈਮ ਵਾਲੇ" data-en="TIME PIGEONS"></div>
+        <div id="m-time" class="sum-val-area">0</div>
+    </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-header"><span>🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ</span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-    <div id="box-time" class="box"><div class="box-header"><div><span>⏰ ਟਾਈਮ ਵਾਲੇ</span><br><small id="box-time-val" style="font-size:12px; font-weight: bold;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-    <div id="box-out" class="box"><div class="box-header"><span>❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ</span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+    <div id="box-fly" class="box">
+        <div class="box-header"><span class="flash-txt" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    </div>
+    <div id="box-time" class="box">
+        <div class="box-header"><div><span class="flash-txt" data-pa="⏰ ਟਾਈਮ ਵਾਲੇ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span><br><small id="box-time-val" style="font-size:12px; font-weight:950; color: black;"></small></div><span id="count-time" class="count-tag">0</span></div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div>
+    <div id="box-out" class="box">
+        <div class="box-header"><span class="flash-txt" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div>
 </div>
 
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box">
-        <div id="clock">00:00:00</div>
-        <div id="date">22 APRIL 2026</div>
-    </div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
+    <div class="dt-box"><div id="dt-flash">00:00 AM</div></div>
 </div>
 
 <script>
@@ -143,18 +190,22 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Real-time Clock
-    function updateClock() {
+    // Large Clock & Date Flash Logic
+    let showTime = true;
+    setInterval(() => {
         const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
-        document.getElementById('date').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+        const el = document.getElementById('dt-flash');
+        if(showTime) {
+            el.innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
+        } else {
+            el.innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+        }
+        showTime = !showTime;
+    }, 4000);
 
     if(userID) {
-        db.ref('users/' + userID).on('value', (snapshot) => {
-            const data = snapshot.val();
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val();
             if(!data) return;
             const conf = data.config || {};
             const pigeons = data.pigeons || [];
