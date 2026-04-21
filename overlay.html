@@ -2,147 +2,34 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <style>
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
-
-        /* 1. Summary Box */
-        .summary-wrapper {
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 10px; z-index: 1000;
-        }
-        .sum-card {
-            padding: 8px 15px; border-radius: 8px; display: flex; flex-direction: column;
-            align-items: center; min-width: 140px; border: 1.5px solid rgba(255,255,255,0.2);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .total-bg { background: rgba(30, 30, 30, 0.95); }
-        .rem-bg { background: rgba(0, 80, 180, 0.95); }
-        .time-bg { background: rgba(20, 100, 50, 0.95); }
-
-        .sum-label { font-size: 13px; font-weight: bold; color: #f39c12; }
-        .sum-label::after { content: attr(data-pa); animation: flashMain 5s infinite; }
-        .sum-val { font-size: 28px; font-weight: 900; }
-
-        /* 2. Main Container (Scoreboard Boxes) */
-        .main-container {
-            position: absolute; top: 10px; right: 20px; bottom: 80px; width: 460px;
-            display: flex; flex-direction: column; gap: 12px;
-        }
-
-        .box {
-            display: none; flex: 1; border-radius: 18px; overflow: hidden;
-            position: relative; border: 2px solid rgba(255,255,255,0.25); backdrop-filter: blur(5px);
-        }
-        
-        #box-fly { background: rgba(0, 128, 0, 0.7); }
-        #box-time { background: rgba(255, 204, 0, 0.85); color: black !important; }
-        #box-out { background: rgba(200, 0, 0, 0.7); }
-
-        .box-header {
-            padding: 8px 15px; font-size: 20px; font-weight: 900;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.25); border-bottom: 2px solid rgba(255,255,255,0.1);
-        }
-
-        /* Time Header Setting */
-        .time-header-val { font-size: 14px; background: black; color: white; padding: 2px 8px; border-radius: 4px; display: block; width: fit-content; margin-top: 2px; }
-
-        .flash-head::after { content: attr(data-pa); animation: flashMain 5s infinite; }
-        @keyframes flashMain { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
-        .count-tag { background: white; color: black; padding: 1px 10px; border-radius: 4px; font-size: 18px; font-weight: 900; }
-
-        /* Scrolling */
-        .scroll-window { position: absolute; top: 55px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
-        .item { padding: 4px 22px; display: flex; align-items: center; gap: 15px; font-size: 20px; font-weight: 800; }
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
-
-        /* Footer Ticker */
-        .footer {
-            position: absolute; bottom: 0; width: 100%; height: 65px;
-            background: #f39c12; display: none; align-items: center; border-top: 5px solid black;
-        }
-        .live-tag { background: #ff0000; color: white; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 28px; font-weight: 950; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 22px; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .dt-box { background: black; color: #f39c12; height: 100%; padding: 0 25px; display: flex; flex-direction: column; justify-content: center; min-width: 220px; }
-    </style>
-</head>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    </head>
 <body>
+    <script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
 
-<div id="summary-section" class="summary-wrapper">
-    <div class="sum-card total-bg"><span class="sum-label" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card rem-bg"><span class="sum-label" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REM PIGEONS"></span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card time-bg"><span class="sum-label" data-pa="ਸਮੇਂ ਵਾਲੇ" data-en="TIME PIGEONS"></span><span id="m-time" class="sum-val">0</span></div>
-</div>
+    db.ref('users/' + userID).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(!data) return;
+        
+        // Validity Check
+        if(new Date().getTime() > new Date(data.expiry).getTime()) {
+            document.body.innerHTML = ""; return;
+        }
 
-<div id="score-section" class="main-container">
-    <div id="box-fly" class="box">
-        <div class="box-header"><span class="flash-head" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-    </div>
-    <div id="box-time" class="box">
-        <div class="box-header">
-            <div>
-                <span class="flash-head" data-pa="⏰ ਸਮੇਂ ਦੇ ਵਿੱਚ" data-en="⏰ IN TIME PIGEONS"></span>
-                <span id="header-time-val" class="time-header-val"></span>
-            </div>
-            <span id="count-time" class="count-tag">0</span>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-    </div>
-    <div id="box-out" class="box">
-        <div class="box-header"><span class="flash-head" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div>
-</div>
+        // ਇੱਥੇ ਤੁਹਾਡਾ ਪੁਰਾਣਾ updateOverlay() ਵਾਲਾ ਲੋਜਿਕ ਆਵੇਗਾ
+        // ਬੱਸ ਡਾਟਾ 'data.pigeons' ਅਤੇ 'data.config' ਤੋਂ ਚੁੱਕੋ
+        refreshUI(data.pigeons, data.config);
+    });
 
-<div id="ticker-section" class="footer">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box"><div id="clock" style="font-size: 22px; font-weight: 950;">00:00:00</div></div>
-</div>
-
-<script>
-    function update() {
-        const data = JSON.parse(localStorage.getItem('pigeonData')) || [];
-        const config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "", time: "", showScoreboard: true, showTicker: true };
-
-        // Visibility
-        document.getElementById('summary-section').style.display = config.showScoreboard ? 'flex' : 'none';
-        document.getElementById('score-section').style.display = config.showScoreboard ? 'flex' : 'none';
-        document.getElementById('ticker-section').style.display = config.showTicker ? 'flex' : 'none';
-
-        document.getElementById('ticker-text').innerText = config.ticker || "";
-        document.getElementById('header-time-val').innerText = config.time || "";
-
-        let c = { fly: 0, out: 0, time: 0 }, h = { fly: '', out: '', time: '' };
-        data.forEach((p, idx) => {
-            let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name.toUpperCase()}</span></div>`;
-            if (p.status === 'fly') { c.fly++; h.fly += row; }
-            else if (p.status === 'time') { c.time++; h.time += row; }
-            else if (p.status === 'out') { c.out++; h.out += row; }
-        });
-
-        document.getElementById('m-total').innerText = data.length;
-        document.getElementById('m-rem').innerText = data.length - c.out;
-        document.getElementById('m-time').innerText = c.time;
-
-        ['fly', 'time', 'out'].forEach(s => {
-            const b = document.getElementById(`box-${s}`);
-            if (c[s] > 0) {
-                b.style.display = "block";
-                document.getElementById(`count-${s}`).innerText = c[s];
-                document.getElementById(`list-${s}`).innerHTML = h[s] + h[s];
-            } else { b.style.display = "none"; }
-        });
-
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    function refreshUI(pigeons, config) {
+        // UI ਅਪਡੇਟ ਕਰਨ ਦਾ ਕੋਡ...
     }
-    setInterval(update, 1000);
-    update();
 </script>
 </body>
 </html>
