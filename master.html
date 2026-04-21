@@ -6,143 +6,70 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0b0d0f; color: white; padding: 20px; margin: 0; }
-        .container { max-width: 900px; margin: auto; background: #161b22; padding: 25px; border-radius: 15px; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #f39c12; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .input-card { background: #0d1117; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #f39c12; }
-        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        
-        input { padding: 12px; background: #161b22; border: 1px solid #30363d; color: white; border-radius: 8px; font-size: 14px; }
-        input:focus { border-color: #f39c12; outline: none; }
-        
-        button { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-add { background: #f39c12; color: black; width: 100%; margin-top: 15px; }
-        .btn-add:hover { background: #e68a00; }
-        .btn-del { background: #da3633; color: white; padding: 5px 10px; font-size: 12px; }
-        .btn-save { background: #238636; color: white; padding: 5px 10px; font-size: 12px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #0d1117; border-radius: 10px; overflow: hidden; }
-        th { background: #30363d; color: #f39c12; padding: 15px; text-align: left; font-size: 13px; }
-        td { padding: 15px; border-bottom: 1px solid #30363d; vertical-align: middle; }
-        .link-text { font-size: 11px; color: #8b949e; display: block; margin-top: 5px; }
-        a { color: #58a6ff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 20px; }
+        .card { background: #1a1d21; padding: 25px; border-radius: 15px; border: 1px solid #f39c12; max-width: 800px; margin: auto; }
+        h2 { color: #f39c12; text-align: center; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        input { padding: 12px; background: #0f1113; border: 1px solid #444; color: white; border-radius: 8px; flex: 1; }
+        button { padding: 12px 20px; background: #f39c12; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        a { color: #f39c12; text-decoration: none; font-size: 12px; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>🏆 ਮਾਸਟਰ ਐਡਮਿਨ ਪੈਨਲ</h2>
-    
-    <div class="input-card">
-        <div class="grid-inputs">
-            <div><label>ਕਲਾਇੰਟ ID</label><br><input type="text" id="cID" placeholder="e.g. rahul01" style="width:100%"></div>
-            <div><label>ਪਾਸਵਰਡ</label><br><input type="password" id="cPass" placeholder="Set Password" style="width:100%"></div>
-            <div><label>ਵੈਲਡਿਟੀ (Date & Time)</label><br><input type="datetime-local" id="cExpiry" style="width:100%"></div>
+    <div class="card">
+        <h2>🔑 ਮਾਸਟਰ ਕੰਟਰੋਲ ਪੈਨਲ</h2>
+        <div class="input-group">
+            <input type="text" id="cID" placeholder="ਕਲਾਇੰਟ ID (e.g. rahul01)">
+            <input type="password" id="cPass" placeholder="ਪਾਸਵਰਡ">
+            <input type="datetime-local" id="cExpiry">
+            <button onclick="createClient()">Create Client</button>
         </div>
-        <button class="btn-add" onclick="createClient()">ਨਵਾਂ ਕਲਾਇੰਟ ਐਡ ਕਰੋ</button>
+        <table id="clientTable">
+            <thead><tr><th>Client ID</th><th>Expiry</th><th>Links</th><th>Action</th></tr></thead>
+            <tbody id="tbody"></tbody>
+        </table>
     </div>
 
-    <h3>ਐਕਟਿਵ ਕਲਾਇੰਟਸ</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>ਕਲਾਇੰਟ ਜਾਣਕਾਰੀ</th>
-                <th>ਮਿਆਦ (Validity)</th>
-                <th>ਐਕਸ਼ਨ</th>
-            </tr>
-        </thead>
-        <tbody id="clientTable"></tbody>
-    </table>
-</div>
-
 <script>
-    // ਸਿਰਫ ਇਹ URL ਚੈੱਕ ਕਰੋ ਕਿ ਸਹੀ ਹੈ
-    const firebaseConfig = { 
-        databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" 
-    };
+    // ਅਪਣਾ Firebase Config ਇੱਥੇ ਪਾਓ
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 1. ਕਲਾਇੰਟ ਬਣਾਉਣ ਦਾ ਫੰਕਸ਼ਨ
     function createClient() {
         const id = document.getElementById('cID').value.trim().toLowerCase();
         const pass = document.getElementById('cPass').value;
         const expiry = document.getElementById('cExpiry').value;
-
-        if(!id || !pass || !expiry) {
-            alert("ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੀ ਜਾਣਕਾਰੀ (ID, ਪਾਸਵਰਡ ਅਤੇ ਸਮਾਂ) ਭਰੋ!");
-            return;
-        }
+        if(!id || !pass || !expiry) return alert("ਪੂਰੀ ਜਾਣਕਾਰੀ ਭਰੋ");
 
         db.ref('users/' + id).set({
-            password: pass,
-            expiry: expiry,
-            config: { 
-                ticker: "WELCOME TO THE TOURNAMENT", 
-                boxTime: "10:00 AM",
-                paymentLink: "https://wa.me/91XXXXXXXXXX", // ਆਪਣਾ ਨੰਬਰ ਪਾਓ
-                showScoreboard: true,
-                showTicker: true
-            },
+            password: pass, expiry: expiry,
+            config: { ticker: "WELCOME", showScoreboard: true, showTicker: true, showFly: true, showTime: true },
             pigeons: []
-        }).then(() => {
-            alert("ਕਲਾਇੰਟ " + id + " ਸਫਲਤਾਪੂਰਵਕ ਬਣ ਗਿਆ ਹੈ!");
-            document.getElementById('cID').value = "";
-            document.getElementById('cPass').value = "";
-        }).catch(err => alert("Error: " + err));
+        }).then(() => alert("Client Created!"));
     }
 
-    // 2. ਲਿਸਟ ਲੋਡ ਕਰਨ ਦਾ ਫੰਕਸ਼ਨ
-    function loadClients() {
-        db.ref('users').on('value', (snapshot) => {
-            const data = snapshot.val();
-            const tbody = document.getElementById('clientTable');
-            tbody.innerHTML = "";
-
-            if (data) {
-                for (let id in data) {
-                    const baseUrl = window.location.href.split('master.html')[0];
-                    const adminL = baseUrl + "admin.html?id=" + id;
-                    const overL = baseUrl + "overlay.html?id=" + id;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <b>${id.toUpperCase()}</b><br>
-                                <span class="link-text">Admin: <a href="${adminL}" target="_blank">Open</a></span>
-                                <span class="link-text">Overlay: <a href="${overL}" target="_blank">Open</a></span>
-                            </td>
-                            <td>
-                                <input type="datetime-local" value="${data[id].expiry}" id="exp-${id}">
-                            </td>
-                            <td>
-                                <button class="btn-save" onclick="updateExp('${id}')">Save</button>
-                                <button class="btn-del" onclick="deleteUser('${id}')">Del</button>
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-        });
-    }
-
-    // 3. ਮਿਆਦ ਅਪਡੇਟ ਕਰਨਾ
-    function updateExp(id) {
-        const newTime = document.getElementById('exp-' + id).value;
-        db.ref('users/' + id).update({ expiry: newTime })
-          .then(() => alert("Validity Updated!"));
-    }
-
-    // 4. ਡਲੀਟ ਕਰਨਾ
-    function deleteUser(id) {
-        if(confirm("ਕੀ ਤੁਸੀਂ ਯੂਜ਼ਰ " + id + " ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
-            db.ref('users/' + id).remove();
+    db.ref('users').on('value', snap => {
+        const data = snap.val();
+        const tbody = document.getElementById('tbody');
+        tbody.innerHTML = "";
+        for(let id in data) {
+            const baseUrl = window.location.href.split('master.html')[0];
+            tbody.innerHTML += `<tr>
+                <td><b>${id}</b></td>
+                <td>${data[id].expiry}</td>
+                <td>
+                    <a href="${baseUrl}admin.html?id=${id}" target="_blank">ADMIN</a> | 
+                    <a href="${baseUrl}overlay.html?id=${id}" target="_blank">OVERLAY</a>
+                </td>
+                <td><button onclick="deleteClient('${id}')" style="background:red; color:white; border:none; padding:5px; border-radius:4px;">DEL</button></td>
+            </tr>`;
         }
-    }
+    });
 
-    loadClients();
+    function deleteClient(id) { if(confirm("Delete?")) db.ref('users/' + id).remove(); }
 </script>
 </body>
 </html>
