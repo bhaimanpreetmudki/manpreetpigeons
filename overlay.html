@@ -5,16 +5,75 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        /* ਪੁਰਾਣਾ CSS ਇੱਥੇ ਪਾਓ */
+        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
+        body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
+
+        /* Summary Box */
+        .summary-wrapper { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 25px; z-index: 1000; }
+        .sum-card { padding: 15px 40px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; min-width: 250px; border: 4px solid rgba(255,255,255,0.4); box-shadow: 0 10px 25px rgba(0,0,0,0.7); }
+        .total-bg { background: rgba(15, 15, 15, 0.98); }
+        .rem-bg { background: rgba(0, 60, 220, 0.98); }
+        .time-bg { background: rgba(10, 140, 50, 0.98); }
+        .sum-label { font-size: 22px; font-weight: 900; color: #f39c12; }
+        .sum-val { font-size: 40px; font-weight: 950; text-shadow: 2px 2px 5px black; }
+
+        /* Main Containers */
+        .main-container { position: absolute; top: 10px; right: 20px; bottom: 100px; width: 950px; display: flex; flex-direction: column; gap: 20px; }
+        .box { display: none; flex: 1; border-radius: 30px; overflow: hidden; position: relative; border: 5px solid rgba(255,255,255,0.4); backdrop-filter: blur(12px); }
+        #box-fly { background: rgba(0, 90, 0, 0.95); }
+        #box-time { background: rgba(255, 200, 0, 1); color: black !important; }
+        #box-out { background: rgba(180, 0, 0, 0.95); }
+
+        .box-header { padding: 15px 30px; font-size: 34px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); border-bottom: 4px solid rgba(255,255,255,0.3); }
+        .count-tag { background: white; color: black; padding: 5px 30px; border-radius: 12px; font-size: 34px; font-weight: 950; }
+
+        /* List Area */
+        .scroll-window { position: absolute; top: 100px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: moveUp 20s linear infinite; }
+        .item { padding: 15px 40px; display: flex; align-items: center; gap: 35px; font-size: 36px; font-weight: 900; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        
+        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
+
+        /* Footer Ticker */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 95px; background: #f39c12; display: flex; align-items: center; border-top: 8px solid black; }
+        .live-tag { background: #ff0000; color: white; padding: 0 60px; height: 100%; display: flex; align-items: center; font-size: 40px; font-weight: 950; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 36px; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
+
+<div class="summary-wrapper" id="summary-div">
+    <div class="sum-card total-bg">
+        <span class="sum-label">ਕੁੱਲ ਕਬੂਤਰ</span>
+        <span id="m-total" class="sum-val">0</span>
+    </div>
+    <div class="sum-card rem-bg">
+        <span class="sum-label">ਬਾਕੀ ਕਬੂਤਰ</span>
+        <span id="m-rem" class="sum-val">0</span>
+    </div>
+    <div class="sum-card time-bg">
+        <span class="sum-label">ਟਾਈਮ ਵਾਲੇ</span>
+        <span id="m-time" class="sum-val">0</span>
+    </div>
+</div>
+
+<div class="main-container" id="scoreboard-div">
+    <div id="box-fly" class="box"><div class="box-header"><span>🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ</span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
+    <div id="box-time" class="box"><div class="box-header"><div><span>⏰ ਟਾਈਮ ਵਾਲੇ</span><br><small id="box-time-val" style="font-size:20px;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
+    <div id="box-out" class="box"><div class="box-header"><span>❌ ਕੱਟੇ ਗਏ</span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+</div>
+
+<div class="footer" id="ticker-div">
+    <div class="live-tag">LIVE</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+</div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
@@ -23,51 +82,55 @@
             const data = snapshot.val();
             if(!data) return;
 
-            // ਵੈਲਡਿਟੀ ਚੈੱਕ
-            const now = new Date().getTime();
-            const expiry = new Date(data.expiry).getTime();
-            if(now > expiry) {
-                document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:200px;'>Meyaad Muk gayi hai. Payment Karo.</h1>";
+            const conf = data.config || {};
+            const pigeons = data.pigeons || [];
+
+            // Expiry Check
+            if(new Date() > new Date(data.expiry)) {
+                document.body.innerHTML = "<h1 style='color:white; text-align:center; padding-top:100px;'>Meyaad Muk gayi! Contact Admin.</h1>";
                 return;
             }
 
-            updateOverlay(data.pigeons || [], data.config || {});
-        });
-    }
+            // Show/Hide Elements
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
+            document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
+            document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
-    function updateOverlay(pigeons, config) {
-        // Ticker and Time Box
-        document.getElementById('ticker-text').innerText = config.ticker || "";
-        document.getElementById('box-time-val').innerText = config.boxTime ? "TIME: " + config.boxTime : "";
+            // Lists Logic
+            let counts = { fly: 0, out: 0, time: 0 };
+            let htmls = { fly: '', out: '', time: '' };
 
-        let counts = { fly: 0, out: 0, time: 0 };
-        let htmls = { fly: '', out: '', time: '' };
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item"><span>${idx + 1}. ${p.name}</span></div>`;
+                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
+                else if (p.status === 'time') { counts.time++; htmls.time += row; }
+                else if (p.status === 'out') { counts.out++; htmls.out += row; }
+            });
 
-        pigeons.forEach((p, idx) => {
-            let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
-            if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-            else if (p.status === 'time') { counts.time++; htmls.time += row; }
-            else if (p.status === 'out') { counts.out++; htmls.out += row; }
-        });
+            // Update Summaries
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+            document.getElementById('m-time').innerText = counts.time;
 
-        // Update Counts and Lists (IDs must match your old HTML)
-        document.getElementById('m-total').innerText = pigeons.length;
-        document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-        document.getElementById('m-time').innerText = counts.time;
+            // Update Box Visibility and Lists
+            const boxes = [
+                {id: 'fly', show: conf.showFly},
+                {id: 'time', show: conf.showTime},
+                {id: 'out', show: true}
+            ];
 
-        // Render Boxes
-        ['fly', 'time', 'out'].forEach(s => {
-            const box = document.getElementById(`box-${s}`);
-            const countTag = document.getElementById(`count-${s}`);
-            const listArea = document.getElementById(`list-${s}`);
-            
-            if(counts[s] > 0) {
-                box.style.display = "block";
-                countTag.innerText = counts[s];
-                listArea.innerHTML = htmls[s] + htmls[s]; // For scrolling effect
-            } else {
-                box.style.display = "none";
-            }
+            boxes.forEach(b => {
+                const el = document.getElementById(`box-${b.id}`);
+                if(b.show && counts[b.id] > 0) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${b.id}`).innerText = counts[b.id];
+                    document.getElementById(`list-${b.id}`).innerHTML = htmls[b.id] + htmls[b.id];
+                } else {
+                    el.style.display = "none";
+                }
+            });
         });
     }
 </script>
