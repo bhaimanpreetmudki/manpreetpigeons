@@ -2,31 +2,52 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <title>Master Control - Pigeon Live</title>
+    <title>Master Control - Manage Clients</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 40px; }
-        .card { background: #1a1d21; padding: 30px; border-radius: 15px; border: 1px solid #f39c12; max-width: 500px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #f39c12; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #0f1113; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box;}
-        button { width: 100%; padding: 15px; background: #f39c12; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #e68a00; }
-        .result { margin-top: 20px; padding: 15px; background: #24292e; border-radius: 8px; font-size: 14px; word-break: break-all; display: none; }
-        a { color: #f39c12; text-decoration: none; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 20px; }
+        .card { background: #1a1d21; padding: 25px; border-radius: 15px; border: 1px solid #f39c12; max-width: 800px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #f39c12; text-align: center; margin-bottom: 20px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        input { padding: 12px; background: #0f1113; border: 1px solid #444; color: white; border-radius: 8px; flex: 1; min-width: 150px; }
+        button { padding: 12px 20px; background: #f39c12; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        button.del { background: #dc3545; }
+        button.edit { background: #28a745; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #f39c12; text-transform: uppercase; font-size: 13px; }
+        .links-box { font-size: 12px; color: #aaa; word-break: break-all; max-width: 250px; }
+        a { color: #f39c12; text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🔑 ਮਾਸਟਰ ਕੰਟਰੋਲ ਪੈਨਲ</h2>
-    <p style="text-align:center; color:#888;">ਨਵਾਂ ਕਲਾਇੰਟ ਐਡ ਕਰੋ</p>
-    <input type="text" id="cID" placeholder="ਕਲਾਇੰਟ ਦੀ ID (e.g. rahul01)">
-    <input type="password" id="cPass" placeholder="ਪਾਸਵਰਡ">
-    <input type="date" id="cExpiry">
-    <button onclick="createClient()">Create Independent Client</button>
+    <h2>🏆 ਮਾਸਟਰ ਕੰਟਰੋਲ (Client Manager)</h2>
+    
+    <div class="input-group">
+        <input type="text" id="cID" placeholder="Client ID">
+        <input type="password" id="cPass" placeholder="Password">
+        <input type="date" id="cExpiry">
+        <button onclick="createClient()">ADD CLIENT</button>
+    </div>
 
-    <div class="result" id="res"></div>
+    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+
+    <h3>ਸਾਰੇ ਕਲਾਇੰਟਸ ਦੀ ਲਿਸਟ</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Validity</th>
+                <th>Links</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="clientTable">
+            </tbody>
+    </table>
 </div>
 
 <script>
@@ -34,35 +55,75 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // 1. Load and Display Clients
+    function loadClients() {
+        db.ref('users').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const tbody = document.getElementById('clientTable');
+            tbody.innerHTML = "";
+
+            if (data) {
+                for (let id in data) {
+                    const baseUrl = window.location.href.split('master.html')[0];
+                    const adminL = baseUrl + "admin.html?id=" + id;
+                    const overL = baseUrl + "overlay.html?id=" + id;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b>${id}</b></td>
+                            <td><input type="date" value="${data[id].expiry}" id="exp-${id}" style="font-size:12px; padding:5px;"></td>
+                            <td class="links-box">
+                                <a href="${adminL}" target="_blank">Admin</a> | 
+                                <a href="${overL}" target="_blank">Overlay</a>
+                            </td>
+                            <td>
+                                <button class="edit" onclick="updateClient('${id}')">SAVE</button>
+                                <button class="del" onclick="deleteClient('${id}')">DEL</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        });
+    }
+
+    // 2. Create New Client
     function createClient() {
         const id = document.getElementById('cID').value.trim().toLowerCase();
         const pass = document.getElementById('cPass').value;
         const expiry = document.getElementById('cExpiry').value;
 
-        if(!id || !pass || !expiry) return alert("ਸਾਰੀ ਜਾਣਕਾਰੀ ਭਰੋ!");
+        if(!id || !pass || !expiry) return alert("All fields are required!");
 
         db.ref('users/' + id).set({
             password: pass,
             expiry: expiry,
-            config: { 
-                ticker: "WELCOME TO THE TOURNAMENT 2026", 
-                showScoreboard: true, showTicker: true, boxTime: "11:00 AM", 
-                showFly: true, showTime: true, showOut: true 
-            },
-            pigeons: [{id: 1, name: "SAMPLE ENTRY", status: "fly"}]
+            config: { ticker: "WELCOME", showScoreboard: true, showTicker: true, boxTime: "12:00 PM" },
+            pigeons: []
         }).then(() => {
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            const adminL = baseUrl + "admin.html?id=" + id;
-            const overL = baseUrl + "overlay.html?id=" + id;
-
-            document.getElementById('res').style.display = "block";
-            document.getElementById('res').innerHTML = `
-                <p style="color:#2ecc71">✅ ਕਲਾਇੰਟ ਤਿਆਰ ਹੈ!</p>
-                <strong>Admin Link:</strong><br><a href="${adminL}" target="_blank">${adminL}</a><br><br>
-                <strong>Overlay Link:</strong><br><a href="${overL}" target="_blank">${overL}</a>
-            `;
+            alert("Client Created!");
+            document.getElementById('cID').value = "";
+            document.getElementById('cPass').value = "";
         });
     }
+
+    // 3. Update Validity
+    function updateClient(id) {
+        const newExpiry = document.getElementById('exp-' + id).value;
+        db.ref('users/' + id).update({ expiry: newExpiry })
+          .then(() => alert("Validity Updated for " + id));
+    }
+
+    // 4. Delete Client
+    function deleteClient(id) {
+        if(confirm("ਕੀ ਤੁਸੀਂ " + id + " ਨੂੰ ਡਲੀਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਸਾਰਾ ਡਾਟਾ ਉੱਡ ਜਾਵੇਗਾ।")) {
+            db.ref('users/' + id).remove()
+              .then(() => alert("Client Deleted!"));
+        }
+    }
+
+    // Start loading on page open
+    loadClients();
 </script>
 </body>
 </html>
