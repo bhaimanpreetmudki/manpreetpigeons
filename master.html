@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <title>Master Control - Pigeon Live</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 40px; }
+        .card { background: #1a1d21; padding: 30px; border-radius: 15px; border: 1px solid #f39c12; max-width: 500px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #f39c12; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #0f1113; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box;}
+        button { width: 100%; padding: 15px; background: #f39c12; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #e68a00; }
+        .result { margin-top: 20px; padding: 15px; background: #24292e; border-radius: 8px; font-size: 14px; word-break: break-all; display: none; }
+        a { color: #f39c12; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🔑 ਮਾਸਟਰ ਕੰਟਰੋਲ ਪੈਨਲ</h2>
+    <p style="text-align:center; color:#888;">ਨਵਾਂ ਕਲਾਇੰਟ ਐਡ ਕਰੋ</p>
+    <input type="text" id="cID" placeholder="ਕਲਾਇੰਟ ਦੀ ID (e.g. rahul01)">
+    <input type="password" id="cPass" placeholder="ਪਾਸਵਰਡ">
+    <input type="date" id="cExpiry">
+    <button onclick="createClient()">Create Independent Client</button>
+
+    <div class="result" id="res"></div>
+</div>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function createClient() {
+        const id = document.getElementById('cID').value.trim().toLowerCase();
+        const pass = document.getElementById('cPass').value;
+        const expiry = document.getElementById('cExpiry').value;
+
+        if(!id || !pass || !expiry) return alert("ਸਾਰੀ ਜਾਣਕਾਰੀ ਭਰੋ!");
+
+        db.ref('users/' + id).set({
+            password: pass,
+            expiry: expiry,
+            config: { 
+                ticker: "WELCOME TO THE TOURNAMENT 2026", 
+                showScoreboard: true, showTicker: true, boxTime: "11:00 AM", 
+                showFly: true, showTime: true, showOut: true 
+            },
+            pigeons: [{id: 1, name: "SAMPLE ENTRY", status: "fly"}]
+        }).then(() => {
+            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const adminL = baseUrl + "admin.html?id=" + id;
+            const overL = baseUrl + "overlay.html?id=" + id;
+
+            document.getElementById('res').style.display = "block";
+            document.getElementById('res').innerHTML = `
+                <p style="color:#2ecc71">✅ ਕਲਾਇੰਟ ਤਿਆਰ ਹੈ!</p>
+                <strong>Admin Link:</strong><br><a href="${adminL}" target="_blank">${adminL}</a><br><br>
+                <strong>Overlay Link:</strong><br><a href="${overL}" target="_blank">${overL}</a>
+            `;
+        });
+    }
+</script>
+</body>
+</html>
