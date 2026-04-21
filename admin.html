@@ -1,22 +1,136 @@
-<div id="admin-ui" style="display:none;">
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pigeon Admin Panel</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; margin: 0; }
+        .header { background: #f39c12; color: black; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: sticky; top: 0; z-index: 100; }
+        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 70%; font-size: 16px; }
+        .btn-add { background: #f39c12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 25%; cursor: pointer; }
+        
+        .pigeon-row { display: flex; justify-content: space-between; align-items: center; background: #24292e; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #f39c12; }
+        .status-grp { display: flex; gap: 5px; }
+        .st-btn { border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; font-size: 11px; color: white; opacity: 0.3; }
+        .st-btn.active { opacity: 1; transform: scale(1.05); border: 1px solid white; }
+        .st-fly { background: #007bff; }
+        .st-time { background: #ffc107; color: black; }
+        .st-out { background: #dc3545; }
+        .btn-del { background: none; border: none; color: #ff4444; font-size: 20px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="login-box" style="max-width: 400px; margin: 100px auto; text-align: center;">
+    <h2 style="color:#f39c12">Client Login</h2>
+    <input type="password" id="passInput" placeholder="Password" style="width: 100%; margin-bottom: 15px;">
+    <button onclick="login()" style="width: 100%; padding: 12px; background: #f39c12; border: none; font-weight: bold;">LOGIN</button>
+</div>
+
+<div id="main-admin" style="display:none;">
+    <div class="header"><h3>🏆 ADMIN: <span id="uNameDisplay"></span></h3></div>
+    
     <div class="card">
-        <input type="text" id="pName" placeholder="ਕਬੂਤਰ/ਪਾਰਟੀ ਦਾ ਨਾਮ">
-        <button onclick="addP()">ADD</button>
+        <input type="text" id="pNameInput" placeholder="ਕਬੂਤਰ ਦਾ ਨਾਮ...">
+        <button class="btn-add" onclick="addPigeon()">ADD</button>
     </div>
-    <div id="list"></div> </div>
+
+    <div id="pigeonList"></div>
+
+    <div class="card">
+        <label style="color:#f39c12">📢 ਟਿਕਰ ਮੈਸੇਜ (Ticker)</label><br>
+        <input type="text" id="tickerInput" style="width: 95%; margin-top: 5px;" oninput="saveConfig()">
+        <br><br>
+        <label style="color:#f39c12">⏰ ਟਾਈਮ ਬਾਕਸ (Time Box Value)</label><br>
+        <input type="text" id="timeBoxInput" style="width: 95%; margin-top: 5px;" oninput="saveConfig()">
+    </div>
+</div>
 
 <script>
-    function render() {
-        let html = "";
-        pigeons.forEach((p, i) => {
-            html += `<div class="card">
-                <b>${p.name}</b><br>
-                <button class="${p.status=='fly'?'active':''}" onclick="update(${i},'fly')">FLY</button>
-                <button class="${p.status=='time'?'active':''}" onclick="update(${i},'time')">TIME</button>
-                <button class="${p.status=='out'?'active':''}" onclick="update(${i},'out')">OUT</button>
-                <button onclick="del(${i})">🗑️</button>
-            </div>`;
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+
+    let pigeons = [];
+    let config = {};
+
+    function login() {
+        db.ref('users/' + userID).once('value', snapshot => {
+            const data = snapshot.val();
+            if(data && data.password === document.getElementById('passInput').value) {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-admin').style.display = "block";
+                document.getElementById('uNameDisplay').innerText = userID.toUpperCase();
+                
+                // Realtime Sync
+                db.ref('users/' + userID).on('value', snap => {
+                    const freshData = snap.val();
+                    pigeons = freshData.pigeons || [];
+                    config = freshData.config || {};
+                    renderUI();
+                });
+            } else { alert("Wrong Password!"); }
         });
-        document.getElementById('list').innerHTML = html;
+    }
+
+    function addPigeon() {
+        const name = document.getElementById('pNameInput').value;
+        if(!name) return;
+        pigeons.push({ id: Date.now(), name: name, status: 'fly' });
+        document.getElementById('pNameInput').value = "";
+        updateFirebase();
+    }
+
+    function setStatus(id, stat) {
+        pigeons = pigeons.map(p => p.id === id ? {...p, status: stat} : p);
+        updateFirebase();
+    }
+
+    function deletePigeon(id) {
+        if(confirm("Delete this entry?")) {
+            pigeons = pigeons.filter(p => p.id !== id);
+            updateFirebase();
+        }
+    }
+
+    function saveConfig() {
+        config.ticker = document.getElementById('tickerInput').value;
+        config.boxTime = document.getElementById('timeBoxInput').value;
+        updateFirebase();
+    }
+
+    function updateFirebase() {
+        db.ref('users/' + userID).update({
+            pigeons: pigeons,
+            config: config
+        });
+    }
+
+    function renderUI() {
+        const listDiv = document.getElementById('pigeonList');
+        listDiv.innerHTML = "";
+        pigeons.forEach(p => {
+            listDiv.innerHTML += `
+                <div class="pigeon-row">
+                    <span>${p.name}</span>
+                    <div class="status-grp">
+                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+                        <button class="btn-del" onclick="deletePigeon(${p.id})">🗑️</button>
+                    </div>
+                </div>`;
+        });
+        document.getElementById('tickerInput').value = config.ticker || "";
+        document.getElementById('timeBoxInput').value = config.boxTime || "";
     }
 </script>
+</body>
+</html>
