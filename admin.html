@@ -3,93 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pigeon Tournament Admin</title>
+    <title>Admin - Edit Enabled</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
-        
-        /* ਕਲਾਇੰਟ ਜਾਣਕਾਰੀ ਪੱਟੀ */
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; margin: 0; }
         .info-bar { background: #1a1d21; border: 1px solid #333; padding: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; border-left: 5px solid #f39c12; }
-        .info-bar b { color: #f39c12; }
-
-        .header { background: #f39c12; color: black; padding: 15px 25px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3); }
-        .main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
-        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
-        .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; height: fit-content; }
-        
-        /* Switch Styles */
-        .control-row { display: flex; justify-content: space-between; align-items: center; background: #24292e; padding: 12px 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #f39c12; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
-        input:checked + .slider { background-color: #28a745; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        /* Input & Buttons */
+        .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-        .btn-add { background: #f39c12; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; }
         
-        /* Status Buttons (ਪੁਰਾਣੇ ਸਟਾਈਲ ਵਾਲੇ) */
         .pigeon-item { background: #24292e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #f39c12; }
+        .edit-name { background: transparent; border: 1px dashed #555; color: white; font-size: 18px; font-weight: bold; width: 80%; padding: 5px; }
+        .edit-name:focus { background: #111; border-style: solid; outline: none; border-color: #f39c12; }
+
         .status-grp { display: flex; gap: 5px; margin-top: 10px; }
-        .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; opacity: 0.2; color: white; text-transform: uppercase; }
-        .st-btn.active { opacity: 1; border: 2px solid white; transform: scale(1.05); }
+        .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; opacity: 0.2; color: white; text-transform: uppercase; }
+        .st-btn.active { opacity: 1; border: 2px solid white; }
         .st-fly { background: #007bff; }
         .st-time { background: #ffc107; color: black; }
         .st-out { background: #dc3545; }
+        .btn-add { background: #f39c12; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="info-section" style="display:none;">
     <div class="info-bar">
-        <span>📅 ਵੈਲਡਿਟੀ: <b id="expiryDisplay">Loading...</b></span>
-        <span>📞 ਹੈਲਪਲਾਈਨ: <b>+91 8699640061</b></span>
+        <span>📅 ਵੈਲਡਿਟੀ: <b id="expiryDisplay"></b></span>
+        <span>📞 Helpline: <b>+91 8699640061</b></span>
     </div>
 </div>
 
 <div id="login-box" style="max-width:400px; margin: 100px auto; text-align:center;" class="card">
-    <h2 style="color:#f39c12">Login Admin</h2>
-    <input type="password" id="adminPass" placeholder="Enter Password"><br><br>
+    <h2 style="color:#f39c12">Admin Login</h2>
+    <input type="password" id="adminPass" placeholder="Password"><br><br>
     <button class="btn-add" onclick="checkLogin()">LOGIN</button>
 </div>
 
 <div id="main-content" style="display:none;">
-    <div class="header">
-        <h2 style="margin:0">🏆 ਕਬੂਤਰਬਾਜ਼ੀ LIVE ਪੈਨਲ</h2>
-        <button onclick="location.reload()" style="background:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer;">LOGOUT</button>
+    <div class="card">
+        <input type="text" id="pName" placeholder="ਕਬੂਤਰ ਦਾ ਨਾਮ ਐਡ ਕਰੋ...">
+        <button class="btn-add" onclick="addP()">ADD PIGEON</button>
     </div>
-
-    <div class="main-grid">
-        <div class="card">
-            <h3 style="color:#f39c12; margin-top:0;">ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ</h3>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="pName" placeholder="ਨਾਮ ਭਰੋ...">
-                <button onclick="addP()" style="background:#f39c12; border:none; padding:0 20px; border-radius:6px; font-weight:bold; cursor:pointer;">ADD</button>
-            </div>
-            <div id="listArea" style="margin-top:20px;"></div>
-        </div>
-
-        <div class="card">
-            <h3 style="color:#f39c12; margin-top:0;">ਓਵਰਲੇਅ ਕੰਟਰੋਲ</h3>
-            
-            <div class="control-row"><span>Scoreboard (ਸਾਰੇ ਬਾਕਸ)</span><label class="switch"><input type="checkbox" id="swScore" onchange="save()"><span class="slider"></span></label></div>
-            <div class="control-row"><span>Ticker (ਟਿਕਰ ਪੱਟੀ)</span><label class="switch"><input type="checkbox" id="swTicker" onchange="save()"><span class="slider"></span></label></div>
-            <div class="control-row"><span>Fly Box (ਉੱਡ ਰਹੇ)</span><label class="switch"><input type="checkbox" id="swFly" onchange="save()"><span class="slider"></span></label></div>
-            <div class="control-row"><span>Time Box (ਟਾਈਮ ਵਾਲੇ)</span><label class="switch"><input type="checkbox" id="swTime" onchange="save()"><span class="slider"></span></label></div>
-
-            <div style="margin-top:15px;">
-                <label style="color:#888; font-size:12px;">⏰ ਟਾਈਮ ਬਾਕਸ ਲਈ ਸਮਾਂ</label>
-                <input type="text" id="inpBoxTime" oninput="save()" placeholder="e.g. 10:00 AM TO 12:00 PM">
-                
-                <label style="color:#888; font-size:12px; display:block; margin-top:10px;">📢 ਟਿਕਰ ਮੈਸੇਜ</label>
-                <input type="text" id="inpTicker" oninput="save()" placeholder="ਪੱਟੀ ਲਈ ਸੁਨੇਹਾ ਲਿਖੋ...">
-            </div>
-        </div>
-    </div>
+    <div id="listArea"></div>
 </div>
 
 <script>
@@ -98,22 +54,16 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-
     let localData = { pigeons: [], config: {} };
 
     function checkLogin() {
-        if(!userID) return alert("Link Error!");
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password === document.getElementById('adminPass').value) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
                 document.getElementById('info-section').style.display = "block";
-                
-                // Expiry Format
-                const expDate = new Date(data.expiry);
-                document.getElementById('expiryDisplay').innerText = expDate.toLocaleString();
-
+                document.getElementById('expiryDisplay').innerText = new Date(data.expiry).toLocaleString();
                 db.ref('users/' + userID).on('value', s => {
                     localData = s.val() || { pigeons: [], config: {} };
                     renderUI();
@@ -131,6 +81,12 @@
         save();
     }
 
+    // ਨਾਮ ਐਡਿਟ ਕਰਨ ਲਈ ਫੰਕਸ਼ਨ
+    function updateName(id, newName) {
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
+        save();
+    }
+
     function setStatus(id, s) {
         localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
         save();
@@ -143,33 +99,15 @@
         }
     }
 
-    function save() {
-        const config = {
-            showScoreboard: document.getElementById('swScore').checked,
-            showTicker: document.getElementById('swTicker').checked,
-            showFly: document.getElementById('swFly').checked,
-            showTime: document.getElementById('swTime').checked,
-            ticker: document.getElementById('inpTicker').value,
-            boxTime: document.getElementById('inpBoxTime').value
-        };
-        db.ref('users/' + userID).update({ pigeons: localData.pigeons, config: config });
-    }
+    function save() { db.ref('users/' + userID).update(localData); }
 
     function renderUI() {
-        const conf = localData.config || {};
-        document.getElementById('swScore').checked = conf.showScoreboard;
-        document.getElementById('swTicker').checked = conf.showTicker;
-        document.getElementById('swFly').checked = conf.showFly;
-        document.getElementById('swTime').checked = conf.showTime;
-        document.getElementById('inpTicker').value = conf.ticker || "";
-        document.getElementById('inpBoxTime').value = conf.boxTime || "";
-
         const list = document.getElementById('listArea');
         list.innerHTML = "";
         (localData.pigeons || []).forEach(p => {
             list.innerHTML += `
                 <div class="pigeon-item">
-                    <span style="font-size:18px; font-weight:bold;">${p.name}</span>
+                    <input type="text" class="edit-name" value="${p.name}" onchange="updateName(${p.id}, this.value)">
                     <button onclick="delP(${p.id})" style="float:right; background:none; border:none; color:red; cursor:pointer;">🗑️</button>
                     <div class="status-grp">
                         <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
