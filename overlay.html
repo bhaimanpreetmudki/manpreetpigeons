@@ -8,24 +8,12 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary (Top) */
         .summary-wrapper { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
-        .sum-card { padding: 8px 20px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; min-width: 150px; border: 2px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.8); }
-        .sum-label { font-size: 14px; font-weight: 900; color: #f39c12; }
-        .sum-val { font-size: 28px; font-weight: 950; }
+        .sum-card { padding: 8px 20px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; min-width: 140px; border: 2px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.8); }
+        .sum-label { font-size: 13px; font-weight: 900; color: #f39c12; }
+        .sum-val { font-size: 26px; font-weight: 950; }
 
-        /* Main Container (ਚੌੜਾਈ ਘਟਾਈ ਗਈ ਅਤੇ ਉੱਪਰ ਟੱਚ ਕੀਤਾ ਗਿਆ) */
-        .main-container { 
-            position: absolute; 
-            top: 5px; /* ਉੱਪਰ ਤੱਕ ਟੱਚ */
-            right: 15px; 
-            bottom: 95px; 
-            width: 700px; /* ਚੌੜਾਈ ਘਟਾਈ ਗਈ */
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-        }
-        
+        .main-container { position: absolute; top: 5px; right: 15px; bottom: 95px; width: 700px; display: flex; flex-direction: column; gap: 10px; }
         .box { display: none; flex: 1; border-radius: 15px; overflow: hidden; border: 3px solid rgba(255,255,255,0.4); position: relative; }
         #box-fly { background: rgba(0, 80, 0, 0.9); }
         #box-time { background: rgba(255, 200, 0, 1); color: black !important; }
@@ -38,9 +26,8 @@
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
         .item { padding: 10px 25px; font-size: 26px; font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 15px; }
 
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-110%); } }
+        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
 
-        /* Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #f39c12; display: flex; align-items: center; border-top: 5px solid black; }
         .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 950; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; font-size: 28px; font-weight: 900; color: black; }
@@ -81,6 +68,15 @@
             const conf = data.config || {};
             const pigeons = data.pigeons || [];
 
+            // Expiry Check
+            if(new Date() > new Date(data.expiry)) {
+                document.body.innerHTML = `<div style="background:rgba(0,0,0,0.9); height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;"><h1>Expired!</h1><p>Helpline: +91 8699640061</p></div>`;
+                return;
+            }
+
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
@@ -98,13 +94,19 @@
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
             document.getElementById('m-time').innerText = counts.time;
 
-            ['fly', 'time', 'out'].forEach(s => {
-                const box = document.getElementById(`box-${s}`);
-                if(counts[s] > 0) {
-                    box.style.display = "block";
-                    document.getElementById(`count-${s}`).innerText = counts[s];
-                    document.getElementById(`list-${s}`).innerHTML = htmls[s] + htmls[s];
-                } else { box.style.display = "none"; }
+            const boxes = [
+                {id: 'fly', show: conf.showFly},
+                {id: 'time', show: conf.showTime},
+                {id: 'out', show: true}
+            ];
+
+            boxes.forEach(b => {
+                const el = document.getElementById(`box-${b.id}`);
+                if(b.show && counts[b.id] > 0) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${b.id}`).innerText = counts[b.id];
+                    document.getElementById(`list-${b.id}`).innerHTML = htmls[b.id] + htmls[b.id];
+                } else { el.style.display = "none"; }
             });
         });
     }
