@@ -1,29 +1,75 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        /* ਪੁਰਾਣਾ CSS ਇੱਥੇ ਪਾਓ */
+    </style>
+</head>
+<body>
+
 <script>
-    db.ref('users/' + userID).on('value', (snapshot) => {
-        const data = snapshot.val();
-        if(!data) return;
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-        // --- ਵੈਲਡਿਟੀ ਚੈੱਕ ---
-        const now = new Date().getTime();
-        const expiry = new Date(data.expiry).getTime();
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
 
-        if (now > expiry) {
-            document.body.innerHTML = `
-                <div style="background:rgba(0,0,0,0.9); color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                    <h1>Velditi Expired!</h1>
-                    <p>ਕਿਰਪਾ ਕਰਕੇ ਪੇਮੈਂਟ ਕਰੋ ਅਤੇ ਸੇਵਾ ਚਾਲੂ ਕਰਵਾਓ।</p>
-                    <a href="${data.config.paymentLink}" style="background:green; color:white; padding:20px; border-radius:10px; font-size:30px;">Pay Now / Contact Admin</a>
-                </div>`;
-            return;
-        }
+    if(userID) {
+        db.ref('users/' + userID).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(!data) return;
 
-        // --- ਡਾਟਾ ਦਿਖਾਉਣਾ ---
-        updateOverlay(data.pigeons, data.config);
-    });
+            // ਵੈਲਡਿਟੀ ਚੈੱਕ
+            const now = new Date().getTime();
+            const expiry = new Date(data.expiry).getTime();
+            if(now > expiry) {
+                document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:200px;'>Meyaad Muk gayi hai. Payment Karo.</h1>";
+                return;
+            }
+
+            updateOverlay(data.pigeons || [], data.config || {});
+        });
+    }
 
     function updateOverlay(pigeons, config) {
-        // ਇਹ ਤੁਹਾਡਾ ਪੁਰਾਣਾ ਓਵਰਲੇਅ ਲੋਜਿਕ ਹੈ
-        document.getElementById('ticker-text').innerText = config.ticker;
-        // ... ਸਾਰੇ ਬਾਕਸ ਭਰੋ ...
+        // Ticker and Time Box
+        document.getElementById('ticker-text').innerText = config.ticker || "";
+        document.getElementById('box-time-val').innerText = config.boxTime ? "TIME: " + config.boxTime : "";
+
+        let counts = { fly: 0, out: 0, time: 0 };
+        let htmls = { fly: '', out: '', time: '' };
+
+        pigeons.forEach((p, idx) => {
+            let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
+            if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
+            else if (p.status === 'time') { counts.time++; htmls.time += row; }
+            else if (p.status === 'out') { counts.out++; htmls.out += row; }
+        });
+
+        // Update Counts and Lists (IDs must match your old HTML)
+        document.getElementById('m-total').innerText = pigeons.length;
+        document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+        document.getElementById('m-time').innerText = counts.time;
+
+        // Render Boxes
+        ['fly', 'time', 'out'].forEach(s => {
+            const box = document.getElementById(`box-${s}`);
+            const countTag = document.getElementById(`count-${s}`);
+            const listArea = document.getElementById(`list-${s}`);
+            
+            if(counts[s] > 0) {
+                box.style.display = "block";
+                countTag.innerText = counts[s];
+                listArea.innerHTML = htmls[s] + htmls[s]; // For scrolling effect
+            } else {
+                box.style.display = "none";
+            }
+        });
     }
 </script>
+</body>
+</html>
