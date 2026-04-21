@@ -2,112 +2,142 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
+    <title>ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ</title>
     <style>
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
-
-        /* Summary - TOP */
-        .summary-wrapper { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
-        .sum-card {
-            padding: 15px 40px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; min-width: 280px; 
-            background: rgba(0,0,0,0.92); border: 3px solid rgba(243, 156, 18, 0.4); box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
-        }
-        .sum-label { font-size: 22px; font-weight: 900; color: #f39c12; margin-bottom: 5px; }
-        .sum-label::after { content: attr(data-pa); animation: flash 5s infinite; }
-        .sum-val { font-size: 45px; font-weight: 950; }
-
-        /* Main List Box (Wide & Glowing) */
-        .main-container { position: absolute; top: 10px; right: 20px; bottom: 100px; width: 950px; display: flex; flex-direction: column; gap: 20px; }
-        .box { display: none; flex: 1; border-radius: 25px; overflow: hidden; position: relative; border: 3px solid rgba(255,255,255,0.15); backdrop-filter: blur(15px); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1d21; color: white; margin: 0; padding: 20px; }
+        .header { background: #f39c12; color: #1a1a1a; padding: 15px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
-        #box-fly { background: rgba(0, 80, 0, 0.95); border-left: 12px solid #28a745; box-shadow: -10px 0 30px rgba(40, 167, 69, 0.3); }
-        #box-time { background: rgba(255, 190, 0, 1); color: black !important; border-left: 12px solid #000; }
-        #box-out { background: rgba(160, 0, 0, 0.95); border-left: 12px solid #ff4444; box-shadow: -10px 0 30px rgba(220, 53, 69, 0.3); }
+        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; border: 1px solid #444; }
+        
+        table { width: 100%; border-collapse: collapse; background: #24292e; border-radius: 5px; overflow: hidden; }
+        th { background: #1a1a1a; padding: 15px; text-align: left; color: #f39c12; border-bottom: 2px solid #333; }
+        td { padding: 12px 15px; border-bottom: 1px solid #333; }
 
-        .box-header { padding: 15px 30px; font-size: 34px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); border-bottom: 3px solid rgba(255,255,255,0.2); }
-        .flash-txt::after { content: attr(data-pa); animation: flash 5s infinite; }
-        @keyframes flash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
-        .count-tag { background: white; color: black; padding: 5px 30px; border-radius: 12px; font-size: 34px; font-weight: 950; }
-
-        /* Scroll Area */
-        .scroll-window { position: absolute; top: 110px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: moveUp 25s linear infinite; }
-        .item { padding: 15px 40px; display: flex; align-items: center; gap: 35px; font-size: 38px; font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .item-num { font-weight: 950; min-width: 80px; color: #f39c12; }
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
-
-        /* Footer */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 100px; background: #f39c12; display: flex; align-items: center; border-top: 8px solid black; }
-        .live-tag { background: #ff0000; color: white; padding: 0 60px; height: 100%; display: flex; align-items: center; font-size: 42px; font-weight: 950; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 36px; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .dt-box { background: black; color: #f39c12; height: 100%; padding: 0 40px; display: flex; flex-direction: column; justify-content: center; min-width: 320px; text-align: center; }
+        input[type="text"] { padding: 10px; border-radius: 4px; border: 1px solid #444; background: #1a1d21; color: white; width: 100%; }
+        
+        .btn-group { display: flex; gap: 8px; }
+        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; opacity: 0.3; transition: 0.3s; }
+        .btn.active { opacity: 1; border: 2px solid white; transform: scale(1.05); }
+        .btn-fly { background: #007bff; }
+        .btn-time { background: #28a745; }
+        .btn-out { background: #dc3545; }
+        
+        .add-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
+        .add-btn { background: #f39c12; color: black; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .save-btn { background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; grid-column: span 3; }
+        .del-btn { background: none; border: 1px solid #dc3545; color: #dc3545; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="summary-wrapper" id="sum-div">
-    <div class="sum-card"><span class="sum-label" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card"><span class="sum-label" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card"><span class="sum-label" data-pa="ਟਾਈਮ ਵਾਲੇ" data-en="IN TIME"></span><span id="m-time" class="sum-val">0</span></div>
-</div>
-
-<div class="main-container" id="score-div">
-    <div id="box-fly" class="box">
-        <div class="box-header"><span class="flash-txt" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    <div class="header">
+        <h2 style="margin:0">ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ (Master)</h2>
+        <button onclick="if(confirm('ਸਾਰਾ ਡਾਟਾ ਸਾਫ ਕਰੀਏ?')){localStorage.clear(); location.reload();}" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">All Reset</button>
     </div>
-    <div id="box-time" class="box">
-        <div class="box-header">
-            <div><span class="flash-txt" data-pa="⏰ ਟਾਈਮ ਵਾਲੇ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span><div id="box-time-val" style="font-size: 26px; font-weight: 900; margin-top: 5px; background: rgba(255,255,255,0.3); padding: 2px 10px; border-radius: 5px;"></div></div>
-            <span id="count-time" class="count-tag">0</span>
+
+    <div class="config-section">
+        <div>
+            <label>ਟਿੱਕਰ ਸੁਨੇਹਾ (Ticker Text):</label>
+            <input type="text" id="tickText" placeholder="ਚੱਲਣ ਵਾਲੀ ਪੱਟੀ ਦਾ ਨਾਮ...">
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+        <div>
+            <label>ਟਾਈਮ ਰੇਂਜ (Header Time):</label>
+            <input type="text" id="timeValue" placeholder="e.g. 11:30 AM TO 6:00 PM">
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 20px; padding-bottom: 10px;">
+            <label><input type="checkbox" id="showScore" checked> Scoreboard</label>
+            <label><input type="checkbox" id="showTick" checked> Ticker</label>
+        </div>
+        <button class="save-btn" onclick="saveConfig()">ਸੈਟਿੰਗ ਸੇਵ ਕਰੋ (Update Overlay)</button>
     </div>
-    <div id="box-out" class="box">
-        <div class="box-header"><span class="flash-txt" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div>
-</div>
 
-<div class="footer" id="tick-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box"><div id="clock" style="font-size: 38px; font-weight: 950;">00:00:00</div></div>
-</div>
+    <div class="add-section">
+        <input type="text" id="partyName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ ਲਿਖੋ...">
+        <button class="add-btn" onclick="addParty()">ਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ਨੰਬਰ</th>
+                <th>ਨਾਮ (Edit)</th>
+                <th style="text-align:center">ਸਟੇਟਸ ਸੈੱਟ ਕਰੋ</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 
 <script>
-    function update() {
-        const data = JSON.parse(localStorage.getItem('pigeonData')) || [];
-        const config = JSON.parse(localStorage.getItem('overlayConfig')) || {};
+    let parties = JSON.parse(localStorage.getItem('pigeonData')) || [];
+    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "WELCOME...", time: "", showScoreboard: true, showTicker: true };
 
-        document.getElementById('score-div').style.display = (config.showScoreboard !== false) ? "flex" : "none";
-        document.getElementById('sum-div').style.display = (config.showScoreboard !== false) ? "flex" : "none";
-        document.getElementById('tick-div').style.display = (config.showTicker !== false) ? "flex" : "none";
-        document.getElementById('ticker-text').innerText = config.ticker || "";
-        document.getElementById('box-time-val').innerText = config.boxTime ? "TIME: " + config.boxTime : "";
+    // Initial Load
+    document.getElementById('tickText').value = config.ticker;
+    document.getElementById('timeValue').value = config.time;
+    document.getElementById('showScore').checked = config.showScoreboard;
+    document.getElementById('showTick').checked = config.showTicker;
 
-        let c = { fly: 0, out: 0, time: 0 }, h = { fly: '', out: '', time: '' };
-        data.forEach((p, idx) => {
-            let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
-            if (p.status === 'fly') { c.fly++; h.fly += row; }
-            else if (p.status === 'time') { c.time++; h.time += row; }
-            else if (p.status === 'out') { c.out++; h.out += row; }
-        });
-
-        ['fly', 'time', 'out'].forEach(s => {
-            const b = document.getElementById(`box-${s}`);
-            if (c[s] > 0) { b.style.display = "block"; document.getElementById(`count-${s}`).innerText = c[s]; document.getElementById(`list-${s}`).innerHTML = h[s] + h[s]; }
-            else b.style.display = "none";
-        });
-
-        document.getElementById('m-total').innerText = data.length;
-        document.getElementById('m-rem').innerText = data.length - c.out;
-        document.getElementById('m-time').innerText = c.time;
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
+    function saveConfig() {
+        config = {
+            ticker: document.getElementById('tickText').value,
+            time: document.getElementById('timeValue').value,
+            showScoreboard: document.getElementById('showScore').checked,
+            showTicker: document.getElementById('showTick').checked
+        };
+        localStorage.setItem('overlayConfig', JSON.stringify(config));
+        alert("ਸੈਟਿੰਗ ਅਪਡੇਟ ਹੋ ਗਈ!");
     }
-    setInterval(update, 1000); update();
+
+    function addParty() {
+        const input = document.getElementById('partyName');
+        if (!input.value) return;
+        parties.push({ id: Date.now(), name: input.value, status: 'fly' });
+        input.value = "";
+        saveData();
+    }
+
+    function setStatus(id, stat) {
+        parties = parties.map(p => p.id === id ? {...p, status: stat} : p);
+        saveData();
+    }
+
+    function updateName(id, val) {
+        parties = parties.map(p => p.id === id ? {...p, name: val} : p);
+        localStorage.setItem('pigeonData', JSON.stringify(parties));
+    }
+
+    function deleteParty(id) {
+        if(confirm('ਕੱਟ ਦੇਈਏ?')){
+            parties = parties.filter(p => p.id !== id);
+            saveData();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('pigeonData', JSON.stringify(parties));
+        render();
+    }
+
+    function render() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = "";
+        parties.forEach((p, idx) => {
+            tbody.innerHTML += `<tr>
+                <td>${idx + 1}</td>
+                <td><input type="text" value="${p.name}" onchange="updateName(${p.id}, this.value)" style="background:transparent; border:none; color:white; font-weight:bold;"></td>
+                <td style="text-align:center">
+                    <div class="btn-group">
+                        <button class="btn btn-fly ${p.status==='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">ਉੱਡ ਰਹੇ</button>
+                        <button class="btn btn-time ${p.status==='time'?'active':''}" onclick="setStatus(${p.id},'time')">ਟਾਈਮ</button>
+                        <button class="btn btn-out ${p.status==='out'?'active':''}" onclick="setStatus(${p.id},'out')">ਆਊਟ</button>
+                    </div>
+                </td>
+                <td><button class="del-btn" onclick="deleteParty(${p.id})">🗑️</button></td>
+            </tr>`;
+        });
+    }
+    render();
 </script>
 </body>
 </html>
