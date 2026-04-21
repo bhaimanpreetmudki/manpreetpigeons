@@ -6,87 +6,71 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #1a1d21; color: white; margin: 0; padding: 20px; }
         .header { background: #f39c12; color: #1a1a1a; padding: 15px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #444; }
-        .config-item { display: flex; flex-direction: column; gap: 5px; }
+        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; border: 1px solid #444; }
         .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; }
         .stat-card { flex: 1; background: #24292e; padding: 15px; border-radius: 5px; text-align: center; border-bottom: 4px solid #444; }
-        .stat-num { font-size: 24px; font-weight: bold; display: block; }
+        .add-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
+        input { padding: 10px; border-radius: 4px; border: 1px solid #444; background: #1a1d21; color: white; flex: 1; }
         table { width: 100%; border-collapse: collapse; background: #24292e; border-radius: 5px; overflow: hidden; }
         th { background: #1a1a1a; padding: 15px; text-align: left; color: #f39c12; }
         td { padding: 12px 15px; border-bottom: 1px solid #333; }
-        input, select { padding: 10px; border-radius: 4px; border: none; background: #fff; color: #000; }
-        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
-        .btn-save { background: #28a745; margin-top: 10px; width: 100%; font-size: 16px; padding: 12px; }
+        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; opacity: 0.4; transition: 0.3s; }
+        .btn.active { opacity: 1; border: 2px solid white; }
+        .save-btn { background: #28a745; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; grid-column: span 3; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2 style="margin:0">ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ</h2>
+        <h2 style="margin:0">ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ (Live)</h2>
         <button onclick="localStorage.clear(); location.reload();" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">All Reset</button>
     </div>
 
     <div class="config-section">
-        <div class="config-item">
-            <label>ਸਕੋਰਬੋਰਡ ਦਿਖਾਓ?</label>
-            <select id="showScoreboard" onchange="saveConfig()">
-                <option value="true">Yes (ਦਿਖਾਓ)</option>
-                <option value="false">No (ਛੁਪਾਓ)</option>
-            </select>
+        <div>
+            <label>ਟਿੱਕਰ ਨਾਮ (Ticker):</label><br>
+            <input type="text" id="tickText" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
         </div>
-        <div class="config-item">
-            <label>ਟਿੱਕਰ ਦਿਖਾਓ?</label>
-            <select id="showTicker" onchange="saveConfig()">
-                <option value="true">Yes (ਦਿਖਾਓ)</option>
-                <option value="false">No (ਛੁਪਾਓ)</option>
-            </select>
+        <div>
+            <label>ਟਾਈਮ ਸੈਟਿੰਗ (Time Range):</label><br>
+            <input type="text" id="timeRange" placeholder="e.g. 11:30 AM TO 12:30 PM">
         </div>
-        <div class="config-item">
-            <label>ਟਿੱਕਰ ਦੀ ਲਿਖਤ (Ticker Text):</label>
-            <input type="text" id="tickerText" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="saveConfig()">
+        <div style="display: flex; align-items: flex-end; gap: 10px;">
+            <label><input type="checkbox" id="showScore" checked> Scoreboard</label>
+            <label><input type="checkbox" id="showTick" checked> Ticker</label>
         </div>
-        <div class="config-item">
-            <label>ਟਾਈਮ ਸੈਟਿੰਗ (ਜਿਵੇਂ 11:30 AM):</label>
-            <input type="text" id="boxTime" placeholder="e.g. 11:30 AM TO 12:15 PM" oninput="saveConfig()">
-        </div>
+        <button class="save-btn" onclick="saveConfig()">ਸੈਟਿੰਗ ਸੇਵ ਕਰੋ (Save Config)</button>
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-card">ਉੱਡ ਰਹੇ: <span id="count-fly" class="stat-num">0</span></div>
-        <div class="stat-card">ਟਾਈਮ ਵਾਲੇ: <span id="count-time" class="stat-num">0</span></div>
-        <div class="stat-card">ਕੱਟੇ ਗਏ: <span id="count-out" class="stat-num">0</span></div>
-    </div>
-
-    <div style="background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px;">
-        <input type="text" id="partyName" style="flex:1" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ...">
-        <button onclick="addParty()" style="background:#f39c12; padding: 10px 20px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">ਸ਼ਾਮਲ ਕਰੋ</button>
+    <div class="add-section">
+        <input type="text" id="partyName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ...">
+        <button onclick="addParty()" style="background:#f39c12; color:black; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">ਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</button>
     </div>
 
     <table id="partyTable">
-        <thead><tr><th>ਨੰਬਰ</th><th>ਪਾਰਟੀ ਨਾਮ</th><th style="text-align:center">ਸਟੇਟਸ</th></tr></thead>
+        <thead>
+            <tr><th>ਨੰਬਰ</th><th>ਨਾਮ</th><th style="text-align:center">ਸਟੇਟਸ</th></tr>
+        </thead>
         <tbody id="tableBody"></tbody>
     </table>
 
 <script>
     let parties = JSON.parse(localStorage.getItem('pigeonData')) || [];
-    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { showScoreboard: true, showTicker: true, ticker: "WELCOME...", boxTime: "11:00 AM" };
+    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "WELCOME...", time: "12:00 PM", showScoreboard: true, showTicker: true };
+
+    // ਲੋਡ ਕਰਨ ਸਮੇਂ ਸੈਟਿੰਗ ਭਰੋ
+    document.getElementById('tickText').value = config.ticker;
+    document.getElementById('timeRange').value = config.time;
+    document.getElementById('showScore').checked = config.showScoreboard;
+    document.getElementById('showTick').checked = config.showTicker;
 
     function saveConfig() {
-        config = {
-            showScoreboard: document.getElementById('showScoreboard').value === "true",
-            showTicker: document.getElementById('showTicker').value === "true",
-            ticker: document.getElementById('tickerText').value,
-            boxTime: document.getElementById('boxTime').value,
-            showFly: true, showTime: true, showOut: true // Default boxes
-        };
+        config.ticker = document.getElementById('tickText').value;
+        config.time = document.getElementById('timeRange').value;
+        config.showScoreboard = document.getElementById('showScore').checked;
+        config.showTicker = document.getElementById('showTick').checked;
         localStorage.setItem('overlayConfig', JSON.stringify(config));
-    }
-
-    function loadConfig() {
-        document.getElementById('showScoreboard').value = config.showScoreboard.toString();
-        document.getElementById('showTicker').value = config.showTicker.toString();
-        document.getElementById('tickerText').value = config.ticker || "";
-        document.getElementById('boxTime').value = config.boxTime || "";
+        alert("ਸੈਟਿੰਗ ਸੇਵ ਹੋ ਗਈ!");
     }
 
     function addParty() {
@@ -98,42 +82,31 @@
     }
 
     function setStatus(id, newStatus) {
-        parties = parties.map(p => p.id === id ? { ...p, status: newStatus } : p);
+        parties = parties.map(p => p.id === id ? {...p, status: newStatus} : p);
         saveAndRefresh();
     }
 
     function saveAndRefresh() {
         localStorage.setItem('pigeonData', JSON.stringify(parties));
         renderTable();
-        updateStats();
-    }
-
-    function updateStats() {
-        document.getElementById('count-fly').innerText = parties.filter(p => p.status === 'fly').length;
-        document.getElementById('count-time').innerText = parties.filter(p => p.status === 'time').length;
-        document.getElementById('count-out').innerText = parties.filter(p => p.status === 'out').length;
     }
 
     function renderTable() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = "";
         parties.forEach((p, index) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${p.name}</td>
-                    <td style="text-align:center">
-                        <button onclick="setStatus(${p.id}, 'fly')" style="background:#007bff; opacity:${p.status==='fly'?1:0.4}" class="btn">ਉੱਡ ਰਹੇ</button>
-                        <button onclick="setStatus(${p.id}, 'time')" style="background:#28a745; opacity:${p.status==='time'?1:0.4}" class="btn">ਟਾਈਮ ਵਾਲੇ</button>
-                        <button onclick="setStatus(${p.id}, 'out')" style="background:#dc3545; opacity:${p.status==='out'?1:0.4}" class="btn">ਕੱਟੇ ਗਏ</button>
-                    </td>
-                </tr>`;
+            tbody.innerHTML += `<tr>
+                <td>${index + 1}</td>
+                <td style="font-weight:bold">${p.name}</td>
+                <td style="text-align:center">
+                    <button class="btn ${p.status==='fly'?'active':''}" style="background:#007bff" onclick="setStatus(${p.id},'fly')">ਉੱਡ ਰਹੇ</button>
+                    <button class="btn ${p.status==='time'?'active':''}" style="background:#28a745" onclick="setStatus(${p.id},'time')">ਟਾਈਮ</button>
+                    <button class="btn ${p.status==='out'?'active':''}" style="background:#dc3545" onclick="setStatus(${p.id},'out')">ਆਊਟ</button>
+                </td>
+            </tr>`;
         });
     }
-
-    loadConfig();
     renderTable();
-    updateStats();
 </script>
 </body>
 </html>
