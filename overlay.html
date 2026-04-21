@@ -8,51 +8,132 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary - Top Centered */
-        .summary-wrapper { position: absolute; top: 15px; left: 55%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .sum-card { width: 180px; height: 110px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid rgba(255,255,255,0.4); background: rgba(0,0,0,0.8); }
+        /* Summary Box - Top Centered */
+        .summary-wrapper { 
+            position: absolute; 
+            top: 25px; 
+            left: 55%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            gap: 15px; 
+            z-index: 1000; 
+        }
+        .sum-card { 
+            padding: 12px 25px; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-width: 140px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6); 
+            border: 3px solid rgba(255,255,255,0.3); 
+        }
+        .total-bg { background: #111; }
+        .rem-bg { background: #0055ff; }
+        .time-bg { background: #228833; }
+        .sum-label { font-size: 16px; font-weight: 900; color: #f39c12; margin-bottom: 5px; }
+        .sum-val { font-size: 36px; font-weight: 950; text-shadow: 2px 2px 4px black; }
+
+        /* Main Container - Enlarged and Touching Ticker */
+        .main-container { 
+            position: absolute; 
+            top: 15px; 
+            right: 25px; 
+            bottom: 60px; /* Touching the 60px footer ticker */
+            width: 480px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
         
-        .flash-txt::after { content: attr(data-pa); animation: flash 5s infinite; }
-        @keyframes flash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
+        .box { 
+            display: none; 
+            flex: 1; 
+            border-radius: 15px 15px 0 0; 
+            overflow: hidden; 
+            position: relative; 
+            border: 3px solid rgba(255,255,255,0.3); 
+            backdrop-filter: blur(8px); 
+        }
+        
+        /* 70% Transparent Backgrounds */
+        #box-fly { background: rgba(0, 60, 0, 0.3); }   /* Dark Green 70% */
+        #box-time { background: rgba(255, 190, 0, 0.4); color: black !important; } /* Yellow 60% */
+        #box-out { background: rgba(180, 0, 0, 0.3); }  /* Red 70% */
 
-        .sum-label { font-size: 18px; font-weight: 900; color: #f39c12; margin-bottom: 5px; }
-        .sum-val { font-size: 42px; font-weight: 950; text-shadow: 2px 2px 4px black; }
+        .box-header { 
+            padding: 12px 20px; 
+            font-size: 24px; 
+            font-weight: 950; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0,0,0,0.6); 
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        .count-tag { background: white; color: black; padding: 4px 15px; border-radius: 8px; font-size: 24px; font-weight: 950; }
 
-        /* Boxes - 50% Transparency, Dark Text */
-        .main-container { position: absolute; top: 10px; right: 20px; bottom: 60px; width: 650px; display: flex; flex-direction: column; gap: 0; }
-        .box { display: none; flex: 1; border: 4px solid rgba(255,255,255,0.3); backdrop-filter: blur(8px); }
-        #box-fly { background: rgba(0, 50, 0, 0.45); } #box-time { background: rgba(255, 190, 0, 0.6); color: black !important; } #box-out { background: rgba(150, 0, 0, 0.45); }
+        /* List Area */
+        .scroll-window { position: absolute; top: 65px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
+        .item { 
+            padding: 10px 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            font-size: 26px; 
+            font-weight: 900; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .item-num { font-weight: 950; color: #f39c12; min-width: 40px; }
+        #box-time .item-num { color: black; }
 
-        .box-header { padding: 15px; font-size: 26px; font-weight: 950; display: flex; justify-content: space-between; background: rgba(0,0,0,0.7); }
-        .item { padding: 12px 30px; font-size: 34px; font-weight: 950; display: flex; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 5px black; }
-        #box-time .item { color: black; text-shadow: none; }
+        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-115%); } }
 
-        /* Footer Ticker */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; align-items: center; border-top: 4px solid #f39c12; }
+        /* Footer Ticker (Black/Yellow Style) */
+        .footer { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            height: 60px; 
+            background: #000; 
+            display: flex; 
+            align-items: center; 
+            border-top: 4px solid #f39c12; 
+        }
+        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 28px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 900; font-size: 26px; }
         .ticker-move { display: inline-block; animation: ticker 18s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
-        .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
-        .scroll-window { position: absolute; top: 70px; bottom: 0; width: 100%; overflow: hidden; }
+
+        /* Clock & Date in Footer */
+        .dt-box { background: #111; height: 100%; padding: 0 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 2px solid #333; min-width: 200px; }
+        #clock { font-size: 26px; font-weight: 950; color: #f39c12; }
+        #date { font-size: 14px; color: #fff; letter-spacing: 1px; }
     </style>
 </head>
 <body>
+
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card"><span class="sum-label flash-txt" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card" style="background:rgba(0,85,255,0.8)"><span class="sum-label flash-txt" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card" style="background:rgba(34,136,51,0.8)"><span class="sum-label flash-txt" data-pa="ਟਾਈਮ ਵਾਲੇ" data-en="TIME PIGEONS"></span><span id="m-time" class="sum-val">0</span></div>
+    <div class="sum-card total-bg"><span class="sum-label">ਕੁੱਲ ਕਬੂਤਰ</span><span id="m-total" class="sum-val">0</span></div>
+    <div class="sum-card rem-bg"><span class="sum-label">ਬਾਕੀ ਕਬੂਤਰ</span><span id="m-rem" class="sum-val">0</span></div>
+    <div class="sum-card time-bg"><span class="sum-label">ਟਾਈਮ ਵਾਲੇ</span><span id="m-time" class="sum-val">0</span></div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-header"><span class="flash-txt" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="FLYING"></span><span id="count-fly">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-    <div id="box-time" class="box"><div class="box-header"><span class="flash-txt" data-pa="⏰ ਟਾਈਮ" data-en="TIME"></span><span id="count-time">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-    <div id="box-out" class="box"><div class="box-header"><span class="flash-txt" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="OUT"></span><span id="count-out">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+    <div id="box-fly" class="box"><div class="box-header"><span>🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ</span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
+    <div id="box-time" class="box"><div class="box-header"><div><span>⏰ ਟਾਈਮ ਵਾਲੇ</span><br><small id="box-time-val" style="font-size:12px; font-weight: bold;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
+    <div id="box-out" class="box"><div class="box-header"><span>❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ</span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
 </div>
 
 <div class="footer" id="ticker-div">
+    <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div style="padding:0 20px; font-weight:900; color:#f39c12; font-size:24px;" id="clock">00:00 AM</div>
+    <div class="dt-box">
+        <div id="clock">00:00:00</div>
+        <div id="date">22 APRIL 2026</div>
+    </div>
 </div>
 
 <script>
@@ -62,35 +143,50 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    setInterval(() => {
+    // Real-time Clock
+    function updateClock() {
         const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
-    }, 1000);
+        document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
+        document.getElementById('date').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const conf = data.config || {}; const pigeons = data.pigeons || [];
+        db.ref('users/' + userID).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(!data) return;
+            const conf = data.config || {};
+            const pigeons = data.pigeons || [];
+
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
+            document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            let counts = { fly: 0, out: 0, time: 0 };
+            let htmls = { fly: '', out: '', time: '' };
+
             pigeons.forEach((p, idx) => {
-                let row = `<div class="item"><span>${idx + 1}. ${p.name}</span></div>`;
+                let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
                 else if (p.status === 'time') { counts.time++; htmls.time += row; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
             });
+
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
             document.getElementById('m-time').innerText = counts.time;
 
-            ['fly','time','out'].forEach(id => {
-                const el = document.getElementById('box-'+id);
-                if(counts[id] > 0) { el.style.display = "block"; document.getElementById('count-'+id).innerText = counts[id]; document.getElementById('list-'+id).innerHTML = htmls[id] + htmls[id]; }
-                else { el.style.display = "none"; }
+            const boxes = [{id:'fly',sh:conf.showFly},{id:'time',sh:conf.showTime},{id:'out',sh:true}];
+            boxes.forEach(b => {
+                const el = document.getElementById(`box-${b.id}`);
+                if(b.sh && counts[b.id] > 0) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${b.id}`).innerText = counts[b.id];
+                    document.getElementById(`list-${b.id}`).innerHTML = htmls[b.id] + htmls[b.id];
+                } else { el.style.display = "none"; }
             });
         });
     }
