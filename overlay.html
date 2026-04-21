@@ -1,33 +1,165 @@
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
+        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-<script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        /* --- 1. Summary Box - TOP (Large Size) --- */
+        .summary-wrapper {
+            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; z-index: 1000;
+        }
+        .sum-card {
+            padding: 15px 40px; border-radius: 15px; display: flex; flex-direction: column;
+            align-items: center; min-width: 280px; 
+            background: rgba(0,0,0,0.9); border: 3px solid rgba(243, 156, 18, 0.4);
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.3); position: relative; overflow: hidden;
+        }
+        /* Shine Effect */
+        .sum-card::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: skewX(-25deg); animation: shine 5s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
+        .sum-label { font-size: 22px; font-weight: 900; color: #f39c12; margin-bottom: 5px; text-align: center; }
+        .sum-label::after { content: attr(data-pa); animation: flashTitle 5s infinite; }
+        .sum-val { font-size: 45px; font-weight: 950; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
-    // ਇਹ ਰੀਅਲ-ਟਾਈਮ ਡਾਟਾ ਸੁਣੇਗਾ
-    db.ref('users/' + userID).on('value', (snapshot) => {
-        const data = snapshot.val();
-        if(!data) return;
-
-        // Validity Check for Overlay
-        if(new Date() > new Date(data.expiry)) {
-            document.body.innerHTML = ""; return;
+        /* --- 2. Main Container (Wide & Side Glow) --- */
+        .main-container {
+            position: absolute; top: 10px; right: 20px; bottom: 100px; width: 950px; 
+            display: flex; flex-direction: column; gap: 20px;
         }
 
-        // ਤੁਹਾਡਾ ਪੁਰਾਣਾ updateOverlay() ਵਾਲਾ ਲੋਜਿਕ ਇੱਥੇ ਲਗਾਓ
-        // ਬੱਸ ਡਾਟਾ localStorage ਦੀ ਜਗ੍ਹਾ 'data' ਵੇਰੀਏਬਲ ਤੋਂ ਚੁੱਕੋ
-        updateUI(data.pigeons, data.config);
-    });
-
-    function updateUI(pigeons, config) {
-        document.getElementById('ticker-text').innerText = config.ticker;
-        document.getElementById('box-time-val').innerText = "TIME: " + config.boxTime;
+        .box {
+            display: none; flex: 1; border-radius: 25px; overflow: hidden;
+            position: relative; border: 3px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(15px); box-shadow: -15px 0 35px rgba(0,0,0,0.6);
+        }
         
-        // ... (ਬਾਕੀ ਲਿਸਟ ਰੈਂਡਰ ਕਰਨ ਦਾ ਕੋਡ) ...
+        #box-fly { background: rgba(0, 80, 0, 0.95); border-left: 12px solid #28a745; box-shadow: -10px 0 30px rgba(40, 167, 69, 0.3); }
+        #box-time { background: rgba(255, 190, 0, 1); color: black !important; border-left: 12px solid #000; }
+        #box-out { background: rgba(160, 0, 0, 0.95); border-left: 12px solid #ff4444; box-shadow: -10px 0 30px rgba(220, 53, 69, 0.3); }
+
+        .box-header {
+            padding: 15px 30px; font-size: 34px; font-weight: 950;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.4); border-bottom: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .flash-txt::after { content: attr(data-pa); animation: flashTitle 5s infinite; }
+        @keyframes flashTitle { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
+
+        .count-tag { background: white; color: black; padding: 5px 30px; border-radius: 12px; font-size: 34px; font-weight: 950; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+
+        /* --- 3. List Text (Match Summary Size) --- */
+        .scroll-window { position: absolute; top: 110px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: moveUp 25s linear infinite; }
+        .item { padding: 15px 40px; display: flex; align-items: center; gap: 35px; font-size: 38px; font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .item-num { font-weight: 950; min-width: 80px; color: #f39c12; }
+        #box-time .item-num { color: black; }
+
+        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
+
+        /* --- 4. Footer Ticker --- */
+        .footer {
+            position: absolute; bottom: 0; width: 100%; height: 100px;
+            background: #f39c12; display: flex; align-items: center; border-top: 8px solid black;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
+        }
+        .live-tag { background: #ff0000; color: white; padding: 0 60px; height: 100%; display: flex; align-items: center; font-size: 42px; font-weight: 950; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 36px; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .dt-box { background: black; color: #f39c12; height: 100%; padding: 0 40px; display: flex; flex-direction: column; justify-content: center; min-width: 320px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="summary-wrapper" id="summary-div">
+    <div class="sum-card"><span class="sum-label" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
+    <div class="sum-card"><span class="sum-label" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></span><span id="m-rem" class="sum-val">0</span></div>
+    <div class="sum-card"><span class="sum-label" data-pa="ਟਾਈਮ ਵਾਲੇ" data-en="IN TIME"></span><span id="m-time" class="sum-val">0</span></div>
+</div>
+
+<div class="main-container" id="scoreboard-div">
+    <div id="box-fly" class="box">
+        <div class="box-header"><span class="flash-txt" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    </div>
+
+    <div id="box-time" class="box">
+        <div class="box-header">
+            <div>
+                <span class="flash-txt" data-pa="⏰ ਟਾਈਮ ਵਾਲੇ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
+                <div id="box-time-val" style="font-size: 26px; font-weight: 900; margin-top: 5px; color: #000; background: rgba(255,255,255,0.3); padding: 2px 10px; border-radius: 5px;"></div>
+            </div>
+            <span id="count-time" class="count-tag">0</span>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div>
+
+    <div id="box-out" class="box">
+        <div class="box-header"><span class="flash-txt" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div>
+</div>
+
+<div class="footer" id="ticker-div">
+    <div class="live-tag">LIVE</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
+    <div class="dt-box"><div id="clock" style="font-size: 38px; font-weight: 950;">00:00:00</div></div>
+</div>
+
+<script>
+    function updateOverlay() {
+        const data = JSON.parse(localStorage.getItem('pigeonData')) || [];
+        const config = JSON.parse(localStorage.getItem('overlayConfig')) || {};
+
+        document.getElementById('scoreboard-div').style.display = (config.showScoreboard !== false) ? "flex" : "none";
+        document.getElementById('summary-div').style.display = (config.showScoreboard !== false) ? "flex" : "none";
+        document.getElementById('ticker-div').style.display = (config.showTicker !== false) ? "flex" : "none";
+
+        document.getElementById('ticker-text').innerText = config.ticker || "";
+        document.getElementById('box-time-val').innerText = config.boxTime ? "TIME: " + config.boxTime : "";
+
+        let counts = { fly: 0, out: 0, time: 0 };
+        let htmls = { fly: '', out: '', time: '' };
+
+        data.forEach((p, idx) => {
+            let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
+            if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
+            else if (p.status === 'time') { counts.time++; htmls.time += row; }
+            else if (p.status === 'out') { counts.out++; htmls.out += row; }
+        });
+
+        const showFlags = { 'fly': config.showFly, 'time': config.showTime, 'out': config.showOut };
+        ['fly', 'time', 'out'].forEach(s => {
+            const box = document.getElementById(`box-${s}`);
+            if (showFlags[s] !== false && counts[s] > 0) {
+                box.style.display = "block";
+                document.getElementById(`count-${s}`).innerText = counts[s];
+                document.getElementById(`list-${s}`).innerHTML = htmls[s] + htmls[s];
+            } else {
+                box.style.display = "none";
+            }
+        });
+
+        document.getElementById('m-total').innerText = data.length;
+        document.getElementById('m-rem').innerText = data.length - counts.out;
+        document.getElementById('m-time').innerText = counts.time;
+
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
     }
+
+    setInterval(updateOverlay, 1000);
+    updateOverlay();
 </script>
+</body>
+</html>
