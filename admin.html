@@ -2,28 +2,45 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Pigeon Live</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
+        
+        /* Expiry & Helpline Bar */
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; border-left: 5px solid #f39c12; font-size: 14px; }
         .status-bar b { color: #f39c12; }
+        
+        /* Top Header */
         .header { background: #f39c12; color: black; padding: 10px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-save { background: #238636; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
         .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        
+        /* Master Controls (Show/Hide Buttons) */
+        .master-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .sw-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+        
+        /* Pigeon Row Style */
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #30363d; }
+        .status-grp { display: flex; gap: 5px; }
         .st-btn { border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; opacity: 0.2; }
         .st-btn.active { opacity: 1; border: 1px solid white; }
-        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
-        input { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; }
-        .sw-row { display: flex; justify-content: space-between; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; }
+        .st-fly { background: #007bff; } 
+        .st-time { background: #ffc107; color: black; } 
+        .st-out { background: #dc3545; }
+        
+        input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; outline: none; }
     </style>
 </head>
 <body>
+
 <div id="login-box" style="max-width:400px; margin:100px auto; text-align:center;" class="card">
     <h2 style="color:#f39c12">ADMIN LOGIN</h2>
-    <input type="password" id="adminPass" placeholder="Password"><br>
-    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold;">LOGIN</button>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..."><br>
+    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold; cursor:pointer;">LOGIN</button>
 </div>
 
 <div id="admin-content" style="display:none;">
@@ -31,13 +48,31 @@
         <span>📅 EXPIRY: <b id="expDisp">--</b></span>
         <span>📞 HELPLINE: <b>+91 8699640061</b></span>
     </div>
-    <div class="header"><h3>🏆 LIVE CONTROL</h3><button onclick="save()" style="background:#238636; color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold;">SAVE ALL</button></div>
-    <div class="card">
+
+    <div class="header">
+        <h3 style="margin:0">🏆 LIVE CONTROL</h3>
+        <button onclick="save()" class="btn-save">SAVE ALL</button>
+    </div>
+
+    <div class="master-controls">
         <div class="sw-row"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()"></div>
         <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
+        <div class="sw-row"><span>TIME BOX</span><input type="checkbox" id="swTime" onchange="save()"></div>
     </div>
-    <div class="card"><input type="text" id="pName" placeholder="ਨਾਮ ਲਿਖੋ..."><button onclick="addP()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold;">ADD</button></div>
+
+    <div class="card">
+        <input type="text" id="pName" placeholder="ਨਾਮ ਲਿਖੋ...">
+        <button onclick="addP()" style="width:100%; padding:12px; background:#f39c12; border:none; font-weight:bold; cursor:pointer; border-radius:6px;">ADD PIGEON</button>
+    </div>
+
     <div id="listArea"></div>
+
+    <div class="card">
+        <label style="color:#888; font-size:12px;">⏰ TIME BOX TEXT (e.g. 10 AM to 12 PM)</label>
+        <input type="text" id="inpBoxTime" oninput="save()" placeholder="ਸਮਾਂ ਭਰੋ...">
+        <label style="color:#888; font-size:12px;">📢 TICKER MESSAGE</label>
+        <input type="text" id="inpTicker" oninput="save()" placeholder="ਸੁਨੇਹਾ ਲਿਖੋ...">
+    </div>
 </div>
 
 <script>
@@ -54,32 +89,65 @@
             if(data && data.password === document.getElementById('adminPass').value) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('admin-content').style.display = "block";
-                document.getElementById('expDisp').innerText = new Date(data.expiry).toLocaleDateString();
-                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
+                document.getElementById('expDisp').innerText = new Date(data.expiry).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+                db.ref('users/' + userID).on('value', s => { 
+                    localData = s.val() || {pigeons:[], config:{}}; 
+                    render(); 
+                });
             } else { alert("Wrong Password"); }
         });
     }
+
     function addP() {
         const n = document.getElementById('pName').value; if(!n) return;
         if(!localData.pigeons) localData.pigeons = [];
         localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
         document.getElementById('pName').value = ""; save();
     }
-    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
+
+    function setStatus(id, s) { 
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
+        save(); 
+    }
+
+    function delP(id) {
+        if(confirm("Delete?")) {
+            localData.pigeons = localData.pigeons.filter(p => p.id !== id);
+            save();
+        }
+    }
+
     function save() {
-        const config = { showScoreboard: document.getElementById('swScore').checked, showTicker: document.getElementById('swTicker').checked, showFly: true, showTime: true };
+        const config = { 
+            showScoreboard: document.getElementById('swScore').checked, 
+            showTicker: document.getElementById('swTicker').checked, 
+            showTime: document.getElementById('swTime').checked,
+            showFly: true,
+            ticker: document.getElementById('inpTicker').value,
+            boxTime: document.getElementById('inpBoxTime').value
+        };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
+
     function render() {
-        document.getElementById('swScore').checked = localData.config.showScoreboard;
-        document.getElementById('swTicker').checked = localData.config.showTicker;
+        const conf = localData.config || {};
+        document.getElementById('swScore').checked = conf.showScoreboard;
+        document.getElementById('swTicker').checked = conf.showTicker;
+        document.getElementById('swTime').checked = conf.showTime;
+        document.getElementById('inpTicker').value = conf.ticker || "";
+        document.getElementById('inpBoxTime').value = conf.boxTime || "";
+
         const list = document.getElementById('listArea'); list.innerHTML = "";
         (localData.pigeons || []).forEach(p => {
-            list.innerHTML += `<div class="pigeon-row"><span><b>${p.name}</b></span><div class="status-grp">
-                <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
-                <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
-            </div></div>`;
+            list.innerHTML += `<div class="pigeon-row">
+                <span><b>${p.name}</b></span>
+                <div class="status-grp">
+                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+                    <button onclick="delP(${p.id})" style="background:none; border:none; color:red; cursor:pointer; font-size:18px; margin-left:5px;">🗑️</button>
+                </div>
+            </div>`;
         });
     }
 </script>
