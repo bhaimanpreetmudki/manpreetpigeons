@@ -8,12 +8,13 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary Boxes (Top) */
+        /* 1. Summary Box - Positioned Above LIVE tag (Bottom Left) */
         .summary-wrapper { 
             position: absolute; 
-            bottom: 90px; 
+            bottom: 95px; 
             left: 15px; 
             display: flex; 
+            flex-direction: row; 
             gap: 15px; 
             z-index: 1000; 
         }
@@ -23,25 +24,30 @@
             overflow: hidden; 
             border: 3px solid rgba(255,255,255,0.6); 
             box-shadow: 0 10px 25px rgba(0,0,0,0.9);
-            min-width: 260px; 
-            height: 70px;
+            min-width: 280px; 
+            height: 80px;
         }
         .sum-label-area { 
-            background: #111; padding: 10px; width: 65%; font-size: 18px; font-weight: 950; color: #f39c12; 
+            background: #111; width: 65%; 
+            font-size: 24px; /* ਵੱਡੇ ਅੱਖਰ */
+            font-weight: 950; color: #f39c12; 
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
         .sum-val-area { 
-            background: #fff; color: #000; padding: 10px; width: 35%; font-size: 38px; font-weight: 950;
-            display: flex; align-items: center; justify-content: center;
+            background: #fff; color: #000; width: 35%; 
+            font-size: 45px; /* ਵੱਡੇ ਨੰਬਰ */
+            font-weight: 950; display: flex; align-items: center; justify-content: center;
         }
+        .rem-label { background: #0044cc; color: white; }
+        .time-label { background: #117722; color: white; }
 
-        /* Main Container - Extra Wide Boxes */
+        /* 2. Main Container - Extra Wide & Low Transparency */
         .main-container { 
             position: absolute; 
             top: 10px; 
             right: 20px; 
-            bottom: 85px; 
-            width: 700px; /* ਚੌੜਾ ਬਾਕਸ */
+            bottom: 90px; 
+            width: 720px; /* ਚੌੜਾ ਬਾਕਸ */
             display: flex; 
             flex-direction: column; 
             gap: 0; 
@@ -50,53 +56,51 @@
         .box { 
             display: none; flex: 1; overflow: hidden; position: relative; 
             border: 4px solid rgba(255,255,255,0.3); 
-            background: rgba(0, 0, 0, 0.85); 
+            background: rgba(0, 0, 0, 0.85); /* 85% Dark/Low Transparency */
             backdrop-filter: blur(10px); 
         }
 
-        /* Headers with Specific Text Request */
+        /* 3. Headers - Solid Colors with BLUE for Fly Box */
         .box-header { 
-            padding: 15px 25px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; color: white;
-            border-bottom: 3px solid rgba(255,255,255,0.2);
+            padding: 18px 25px; 
+            font-size: 32px; /* ਵੱਡੇ ਹੈਡਰ */
+            font-weight: 950; display: flex; justify-content: space-between; align-items: center; color: white;
+            border-bottom: 4px solid rgba(255,255,255,0.2);
         }
-        
-        /* 1. Flying Box Header */
-        #box-fly .box-header { background: #006400; font-size: 24px; }
-        
-        /* 2. Time Box Header */
-        #box-time .box-header { background: #ffcc00; color: black; font-size: 20px; }
-        
-        /* 3. Out Box Header */
-        #box-out .box-header { background: #cc0000; font-size: 24px; }
+        #box-fly .box-header { background: #0044cc; } /* ਹੁਣ ਨੀਲਾ (BLUE) */
+        #box-time .box-header { background: #ffcc00; color: black; }
+        #box-out .box-header { background: #cc0000; }
 
-        .count-tag { background: white; color: black; padding: 2px 15px; border-radius: 5px; font-size: 26px; font-weight: 950; }
+        .count-tag { background: white; color: black; padding: 2px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; }
 
-        /* List Items */
+        /* 4. List Items - Normal Bold Text */
         .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
         .item { 
-            padding: 10px 30px; display: flex; align-items: center; gap: 15px; font-size: 32px; font-weight: 950; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px black; 
+            padding: 10px 30px; display: flex; align-items: center; gap: 20px; 
+            font-size: 30px; /* ਨਾਮ ਪਹਿਲਾਂ ਵਰਗੇ */
+            font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 2px 2px 5px rgba(0,0,0,1); 
         }
-        .item-num { color: #f39c12; min-width: 50px; }
+        .item-num { color: #f39c12; min-width: 60px; }
 
         @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
 
-        /* Footer */
+        /* 5. Footer Ticker & Large Flash Clock */
         .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 75px; background: #000; 
-            display: flex; align-items: center; border-top: 5px solid #f39c12; 
+            position: absolute; bottom: 0; width: 100%; height: 80px; 
+            background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 900; font-size: 28px; }
+        .live-tag { background: #ff0000; color: white; padding: 0 45px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 32px; }
         .ticker-move { display: inline-block; animation: ticker 20s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         .dt-box { 
-            background: #111; height: 100%; padding: 0 30px; display: flex; justify-content: center; align-items: center; 
-            border-left: 4px solid #333; min-width: 300px; 
+            background: #111; height: 100%; padding: 0 35px; display: flex; justify-content: center; align-items: center; 
+            border-left: 4px solid #333; min-width: 320px; 
         }
-        #dt-flash { font-size: 30px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
+        #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
         @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
 
         /* Flashing Animation Header */
@@ -115,11 +119,11 @@
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area flash-header" style="background:#0044cc; color:white;" data-pa="ਬਾਕੀ" data-en="REMAINING"></div>
+        <div class="sum-label-area rem-label flash-header" data-pa="ਬਾਕੀ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area flash-header" style="background:#117722; color:white;" data-pa="ਟਾਈਮ" data-en="ON TIME"></div>
+        <div class="sum-label-area time-label flash-header" data-pa="ਟਾਈਮ" data-en="ON TIME"></div>
         <div id="m-time" class="sum-val-area">0</div>
     </div>
 </div>
@@ -135,9 +139,9 @@
     
     <div id="box-time" class="box">
         <div class="box-header">
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
                 <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
-                <span id="box-time-val" style="margin-left: 10px; border-left: 2px solid black; padding-left: 10px; font-size: 18px;"></span>
+                <span id="box-time-val" style="margin-left: 12px; border-left: 3px solid black; padding-left: 12px;"></span>
             </div>
             <span id="count-time" class="count-tag">0</span>
         </div>
@@ -155,7 +159,7 @@
 
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
     <div class="dt-box"><div id="dt-flash">00:00 AM</div></div>
 </div>
 
@@ -166,12 +170,16 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
+    // Date & Time Logic
     let showTime = true;
     setInterval(() => {
         const now = new Date();
         const el = document.getElementById('dt-flash');
-        if(showTime) el.innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
-        else el.innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+        if(showTime) {
+            el.innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
+        } else {
+            el.innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+        }
         showTime = !showTime;
     }, 4000);
 
