@@ -2,111 +2,129 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <title>ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ</title>
+    <title>ਕਬੂਤਰਬਾਜ਼ੀ ਮਾਸਟਰ ਪੈਨਲ</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #1a1d21; color: white; margin: 0; padding: 20px; }
         .header { background: #f39c12; color: #1a1a1a; padding: 15px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; border: 1px solid #444; }
+        .config-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #444; }
+        .input-group { margin-bottom: 10px; }
+        input[type="text"] { padding: 10px; border-radius: 4px; border: 1px solid #444; background: #1a1d21; color: white; width: 100%; }
         .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-card { flex: 1; background: #24292e; padding: 15px; border-radius: 5px; text-align: center; border-bottom: 4px solid #444; }
-        .add-section { background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
-        input { padding: 10px; border-radius: 4px; border: 1px solid #444; background: #1a1d21; color: white; flex: 1; }
         table { width: 100%; border-collapse: collapse; background: #24292e; border-radius: 5px; overflow: hidden; }
         th { background: #1a1a1a; padding: 15px; text-align: left; color: #f39c12; }
-        td { padding: 12px 15px; border-bottom: 1px solid #333; }
-        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; opacity: 0.4; transition: 0.3s; }
+        td { padding: 10px 15px; border-bottom: 1px solid #333; }
+        .btn { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; opacity: 0.4; }
         .btn.active { opacity: 1; border: 2px solid white; }
-        .save-btn { background: #28a745; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; grid-column: span 3; }
+        .save-btn { background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; grid-column: span 2; }
+        .del-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h2 style="margin:0">ਕਬੂਤਰਬਾਜ਼ੀ ਕੰਟਰੋਲ ਪੈਨਲ (Live)</h2>
-        <button onclick="localStorage.clear(); location.reload();" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">All Reset</button>
+        <button onclick="localStorage.clear(); location.reload();" style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Reset All Data</button>
     </div>
 
     <div class="config-section">
-        <div>
-            <label>ਟਿੱਕਰ ਨਾਮ (Ticker):</label><br>
-            <input type="text" id="tickText" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
+        <div class="input-group">
+            <label>ਟਿੱਕਰ ਸੁਨੇਹਾ (Ticker Message):</label>
+            <input type="text" id="tickText" placeholder="ਚੱਲਣ ਵਾਲੀ ਪੱਟੀ ਦਾ ਨਾਮ...">
         </div>
-        <div>
-            <label>ਟਾਈਮ ਸੈਟਿੰਗ (Time Range):</label><br>
-            <input type="text" id="timeRange" placeholder="e.g. 11:30 AM TO 12:30 PM">
+        <div class="input-group">
+            <label>ਟਾਈਮ ਰੇਂਜ (Time Range for Header):</label>
+            <input type="text" id="timeValue" placeholder="e.g. 11:30 AM TO 6:00 PM">
         </div>
-        <div style="display: flex; align-items: flex-end; gap: 10px;">
-            <label><input type="checkbox" id="showScore" checked> Scoreboard</label>
-            <label><input type="checkbox" id="showTick" checked> Ticker</label>
+        <div style="display: flex; gap: 20px;">
+            <label><input type="checkbox" id="showScore" checked> Show Scoreboard</label>
+            <label><input type="checkbox" id="showTick" checked> Show Ticker</label>
         </div>
-        <button class="save-btn" onclick="saveConfig()">ਸੈਟਿੰਗ ਸੇਵ ਕਰੋ (Save Config)</button>
+        <button class="save-btn" onclick="saveConfig()">ਸੈਟਿੰਗ ਸੇਵ ਕਰੋ (Update Overlay)</button>
     </div>
 
-    <div class="add-section">
-        <input type="text" id="partyName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ...">
+    <div style="background: #24292e; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px;">
+        <input type="text" id="partyName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ ਲਿਖੋ...">
         <button onclick="addParty()" style="background:#f39c12; color:black; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">ਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</button>
     </div>
 
-    <table id="partyTable">
+    <table>
         <thead>
-            <tr><th>ਨੰਬਰ</th><th>ਨਾਮ</th><th style="text-align:center">ਸਟੇਟਸ</th></tr>
+            <tr>
+                <th>#</th>
+                <th>ਨਾਮ (Name)</th>
+                <th style="text-align:center">ਸਟੇਟਸ (Status)</th>
+                <th>Action</th>
+            </tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
 
 <script>
     let parties = JSON.parse(localStorage.getItem('pigeonData')) || [];
-    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "WELCOME...", time: "12:00 PM", showScoreboard: true, showTicker: true };
+    let config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "WELCOME...", time: "", showScoreboard: true, showTicker: true };
 
-    // ਲੋਡ ਕਰਨ ਸਮੇਂ ਸੈਟਿੰਗ ਭਰੋ
     document.getElementById('tickText').value = config.ticker;
-    document.getElementById('timeRange').value = config.time;
+    document.getElementById('timeValue').value = config.time;
     document.getElementById('showScore').checked = config.showScoreboard;
     document.getElementById('showTick').checked = config.showTicker;
 
     function saveConfig() {
-        config.ticker = document.getElementById('tickText').value;
-        config.time = document.getElementById('timeRange').value;
-        config.showScoreboard = document.getElementById('showScore').checked;
-        config.showTicker = document.getElementById('showTick').checked;
+        config = {
+            ticker: document.getElementById('tickText').value,
+            time: document.getElementById('timeValue').value,
+            showScoreboard: document.getElementById('showScore').checked,
+            showTicker: document.getElementById('showTick').checked
+        };
         localStorage.setItem('overlayConfig', JSON.stringify(config));
-        alert("ਸੈਟਿੰਗ ਸੇਵ ਹੋ ਗਈ!");
+        alert("Overlay Updated!");
     }
 
     function addParty() {
-        const nameInput = document.getElementById('partyName');
-        if (!nameInput.value) return;
-        parties.push({ id: Date.now(), name: nameInput.value, status: 'fly' });
-        nameInput.value = "";
-        saveAndRefresh();
+        const input = document.getElementById('partyName');
+        if (!input.value) return;
+        parties.push({ id: Date.now(), name: input.value, status: 'fly' });
+        input.value = "";
+        save();
     }
 
-    function setStatus(id, newStatus) {
-        parties = parties.map(p => p.id === id ? {...p, status: newStatus} : p);
-        saveAndRefresh();
+    function setStatus(id, stat) {
+        parties = parties.map(p => p.id === id ? {...p, status: stat} : p);
+        save();
     }
 
-    function saveAndRefresh() {
+    function deleteParty(id) {
+        parties = parties.filter(p => p.id !== id);
+        save();
+    }
+
+    function save() {
         localStorage.setItem('pigeonData', JSON.stringify(parties));
-        renderTable();
+        render();
     }
 
-    function renderTable() {
+    function render() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = "";
-        parties.forEach((p, index) => {
+        parties.forEach((p, idx) => {
             tbody.innerHTML += `<tr>
-                <td>${index + 1}</td>
-                <td style="font-weight:bold">${p.name}</td>
+                <td>${idx + 1}</td>
+                <td><input type="text" value="${p.name}" onchange="updateName(${p.id}, this.value)" style="background:transparent; border:none; color:white; font-weight:bold;"></td>
                 <td style="text-align:center">
                     <button class="btn ${p.status==='fly'?'active':''}" style="background:#007bff" onclick="setStatus(${p.id},'fly')">ਉੱਡ ਰਹੇ</button>
                     <button class="btn ${p.status==='time'?'active':''}" style="background:#28a745" onclick="setStatus(${p.id},'time')">ਟਾਈਮ</button>
                     <button class="btn ${p.status==='out'?'active':''}" style="background:#dc3545" onclick="setStatus(${p.id},'out')">ਆਊਟ</button>
                 </td>
+                <td><button class="del-btn" onclick="deleteParty(${p.id})">🗑️</button></td>
             </tr>`;
         });
     }
-    renderTable();
+
+    function updateName(id, val) {
+        parties = parties.map(p => p.id === id ? {...p, name: val} : p);
+        localStorage.setItem('pigeonData', JSON.stringify(parties));
+    }
+
+    render();
 </script>
 </body>
 </html>
