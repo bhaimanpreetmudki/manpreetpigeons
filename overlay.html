@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Bottom Left */
+        /* 1. Summary Box - Fixed Size & Positioned Above Footer */
         .summary-wrapper { 
             position: absolute; 
             bottom: 95px; 
@@ -19,67 +19,84 @@
             z-index: 1000; 
         }
         .sum-card { 
-            display: flex; border-radius: 12px; overflow: hidden; 
+            display: flex; 
+            border-radius: 12px; 
+            overflow: hidden; 
             border: 3px solid rgba(255,255,255,0.6); 
             box-shadow: 0 10px 25px rgba(0,0,0,0.9);
-            min-width: 280px; height: 80px;
+            min-width: 280px; 
+            height: 80px;
         }
         .sum-label-area { 
-            background: #111; width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; 
+            background: rgba(17, 17, 17, 0.9); width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; 
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
         .sum-val-area { 
-            background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 950; 
+            background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 950;
             display: flex; align-items: center; justify-content: center;
         }
-        .rem-label { background: #0044cc; color: white; }
-        .time-label { background: #117722; color: white; }
 
-        /* 2. Main Container - 720px Wide */
+        /* 2. Main Container - 80% Transparency (0.2 Opacity) */
         .main-container { 
-            position: absolute; top: 10px; right: 20px; bottom: 90px; 
-            width: 720px; display: flex; flex-direction: column; gap: 0; 
+            position: absolute; 
+            top: 10px; 
+            right: 20px; 
+            bottom: 85px; 
+            width: 720px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0; 
         }
         
         .box { 
             display: none; flex: 1; overflow: hidden; position: relative; 
             border: 4px solid rgba(255,255,255,0.3); 
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); 
+            backdrop-filter: blur(10px); 
         }
 
-        /* 3. Slim Headers with Pigeons Text */
+        /* Background Colors with 0.2 Alpha (80% Transparent) */
+        #box-fly { background: rgba(0, 50, 0, 0.2); }   
+        #box-time { background: rgba(255, 190, 0, 0.3); color: black !important; } 
+        #box-out { background: rgba(150, 0, 0, 0.2); }
+
+        /* Headers - Large & Solid */
         .box-header { 
-            padding: 5px 20px; 
-            font-size: 20px; /* Slim Header font */
-            font-weight: 950; display: flex; justify-content: space-between; 
-            align-items: center; color: white;
-            border-bottom: 3px solid rgba(255,255,255,0.2);
-            height: 50px; 
+            padding: 18px 25px; font-size: 32px; font-weight: 950; display: flex; 
+            justify-content: space-between; align-items: center; color: white;
+            border-bottom: 4px solid rgba(255,255,255,0.2);
         }
-        #box-fly .box-header { background: #0044cc; } 
+        #box-fly .box-header { background: #006400; }
         #box-time .box-header { background: #ffcc00; color: black; }
         #box-out .box-header { background: #cc0000; }
 
-        .header-content { display: flex; align-items: center; gap: 8px; }
+        .count-tag { background: white; color: black; padding: 2px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; }
 
-        .count-tag { background: white; color: black; padding: 1px 12px; border-radius: 4px; font-size: 22px; font-weight: 950; }
-
-        /* 4. List Items */
-        .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
+        /* 3. Constant Speed Scrolling */
+        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { 
+            position: absolute; 
+            width: 100%; 
+            animation: constantScroll linear infinite; 
+        }
+        
         .item { 
-            padding: 10px 30px; display: flex; align-items: center; gap: 20px; 
-            font-size: 30px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); 
-            text-shadow: 2px 2px 5px rgba(0,0,0,1); 
+            padding: 12px 30px; display: flex; align-items: center; gap: 20px; 
+            font-size: 34px; font-weight: 950; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 3px 3px 6px rgba(0,0,0,1); /* Dark shadow for readability */
         }
         .item-num { color: #f39c12; min-width: 60px; }
+        #box-time .item { color: black; text-shadow: none; font-weight: 950; }
 
-        @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
+        @keyframes constantScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
 
-        /* 5. Footer Ticker */
+        /* 4. Footer & Clock */
         .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 80px; 
-            background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; 
+            position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; 
+            display: flex; align-items: center; border-top: 6px solid #f39c12; 
         }
         .live-tag { background: #ff0000; color: white; padding: 0 45px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 32px; }
@@ -93,7 +110,6 @@
         #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
         @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
 
-        /* Flashing Animation Header */
         .flash-header::after { content: attr(data-pa); animation: flashH 5s infinite; }
         @keyframes flashH {
             0%, 45% { content: attr(data-pa); }
@@ -109,31 +125,26 @@
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area rem-label flash-header" data-pa="ਬਾਕੀ" data-en="REMAINING"></div>
+        <div class="sum-label-area flash-header" style="background:#0044cc; color:white;" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area time-label flash-header" data-pa="ਟਾਈਮ" data-en="TIME"></div>
+        <div class="sum-label-area flash-header" style="background:#117722; color:white;" data-pa="ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="TIME PIGEONS"></div>
         <div id="m-time" class="sum-val-area">0</div>
     </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-header">
-            <div class="header-content">
-                <span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
-            </div>
-            <span id="count-fly" class="count-tag">0</span>
-        </div>
+        <div class="box-header"><span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
     
     <div id="box-time" class="box">
         <div class="box-header">
-            <div class="header-content">
-                <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME"></span>
-                <span id="box-time-val" style="margin-left: 5px; border-left: 2px solid black; padding-left: 5px;"></span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
+                <span id="box-time-val" style="border-left: 3px solid black; padding-left: 15px;"></span>
             </div>
             <span id="count-time" class="count-tag">0</span>
         </div>
@@ -141,12 +152,7 @@
     </div>
 
     <div id="box-out" class="box">
-        <div class="box-header">
-            <div class="header-content">
-                <span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
-            </div>
-            <span id="count-out" class="count-tag">0</span>
-        </div>
+        <div class="box-header"><span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 </div>
@@ -168,11 +174,8 @@
     setInterval(() => {
         const now = new Date();
         const el = document.getElementById('dt-flash');
-        if(showTime) {
-            el.innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
-        } else {
-            el.innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-        }
+        if(showTime) el.innerText = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase();
+        else el.innerText = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
         showTime = !showTime;
     }, 4000);
 
@@ -189,8 +192,8 @@
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
             document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
-            let counts = { fly: 0, out: 0, time: 0 };
-            let htmls = { fly: '', out: '', time: '' };
+            let counts = { fly:0, out:0, time:0 };
+            let htmls = { fly:'', out:'', time:'' };
 
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
@@ -203,13 +206,14 @@
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
             document.getElementById('m-time').innerText = counts.time;
 
-            const boxes = [{id:'fly',sh:conf.showFly},{id:'time',sh:conf.showTime},{id:'out',sh:true}];
-            boxes.forEach(b => {
-                const el = document.getElementById(`box-${b.id}`);
-                if(b.sh && counts[b.id] > 0) {
+            ['fly','time','out'].forEach(id => {
+                const el = document.getElementById(`box-${id}`);
+                const listArea = document.getElementById(`list-${id}`);
+                if((conf.showFly || id !== 'fly') && counts[id] > 0) {
                     el.style.display = "block";
-                    document.getElementById(`count-${b.id}`).innerText = counts[b.id];
-                    document.getElementById(`list-${b.id}`).innerHTML = htmls[b.id] + htmls[b.id];
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    listArea.innerHTML = htmls[id] + htmls[id];
+                    listArea.style.animationDuration = (counts[id] * 3) + "s";
                 } else { el.style.display = "none"; }
             });
         });
