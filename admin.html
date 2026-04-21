@@ -9,45 +9,31 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
         
-        /* 1. Plan Expiry & Helpline Bar */
-        .status-bar { 
-            background: #1a1d21; 
-            border: 1px solid #333; 
-            padding: 12px 20px; 
-            border-radius: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 15px; 
-            border-left: 6px solid #f39c12;
-            font-size: 14px;
-        }
+        .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-left: 6px solid #f39c12; font-size: 14px; }
         .status-bar b { color: #f39c12; }
         .helpline { color: #2ea043 !important; font-weight: bold; }
 
-        /* 2. Top Header */
         .header { background: #f39c12; color: black; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .btn-save { background: #238636; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        /* 3. Master Controls */
         .master-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .ctrl-card { background: #1a1d21; padding: 15px; border-radius: 10px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
 
-        /* Main Grid */
         .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
         @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
 
         .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; }
         
-        /* Input & List Styles */
         .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
         input[type="text"], input[type="password"] { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; flex: 1; outline: none; }
         .btn-add { background: #f39c12; color: black; border: none; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
+        /* Edit Input Style */
+        .edit-input { background: transparent !important; border: 1px dashed #555 !important; color: #f39c12 !important; font-weight: bold; font-size: 18px; width: 80% !important; padding: 5px !important; }
+
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #30363d; }
         .pigeon-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
-        /* Status Buttons (Old Style Match) */
         .status-grp { display: flex; gap: 5px; }
         .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; color: white; opacity: 0.2; text-transform: uppercase; }
         .st-btn.active { opacity: 1; border: 2px solid white; transform: scale(1.02); }
@@ -55,7 +41,6 @@
         .st-time { background: #ffc107; color: black; }
         .st-out { background: #dc3545; }
 
-        /* Switch UI */
         .switch { position: relative; display: inline-block; width: 45px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
@@ -73,9 +58,8 @@
 </div>
 
 <div id="admin-content" style="display:none;">
-    
     <div class="status-bar">
-        <span>📅 PLAN EXPIRED ON: <b id="expiryDisplay">--/--/----</b></span>
+        <span>📅 PLAN EXPIRES: <b id="expiryDisplay">--/--/----</b></span>
         <span>📞 HELPLINE: <b class="helpline">+91 8699640061</b></span>
     </div>
 
@@ -97,7 +81,7 @@
 
     <div class="main-grid">
         <div class="card">
-            <h3 style="color:#f39c12; margin-top:0;">ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ</h3>
+            <h3 style="color:#f39c12; margin-top:0;">ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ (Edit Name Directly)</h3>
             <div class="input-row">
                 <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ...">
                 <button class="btn-add" onclick="addP()">ADD</button>
@@ -107,10 +91,8 @@
 
         <div class="card">
             <h3 style="color:#f39c12; margin-top:0;">ਸੈਟਿੰਗਜ਼</h3>
-            
             <label style="color:#888; font-size:12px;">⏰ ਟਾਈਮ ਬਾਕਸ ਲਈ ਸਮਾਂ</label>
             <input type="text" id="inpBoxTime" oninput="save()" placeholder="e.g. 10:00 AM TO 12:00 PM" style="margin-bottom:15px; width:100%;">
-            
             <label style="color:#888; font-size:12px; display:block; margin-top:5px;">📢 ਟਿਕਰ ਮੈਸੇਜ</label>
             <input type="text" id="inpTicker" oninput="save()" placeholder="ਸੁਨੇਹਾ ਲਿਖੋ..." style="width:100%;">
         </div>
@@ -134,7 +116,6 @@
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('admin-content').style.display = "block";
                 
-                // Show Plan Expiry Date
                 if(data.expiry) {
                     const expDate = new Date(data.expiry);
                     document.getElementById('expiryDisplay').innerText = expDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
@@ -144,9 +125,7 @@
                     localData = s.val() || { pigeons: [], config: {} };
                     renderUI();
                 });
-            } else {
-                alert("Wrong Password!");
-            }
+            } else { alert("Wrong Password!"); }
         });
     }
 
@@ -159,13 +138,19 @@
         save();
     }
 
+    // --- NEW EDIT NAME FUNCTION ---
+    function editName(id, newName) {
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
+        db.ref('users/' + userID + '/pigeons').set(localData.pigeons);
+    }
+
     function setStatus(id, s) {
         localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
         save();
     }
 
     function delP(id) {
-        if(confirm("ਕੀ ਤੁਸੀਂ ਇਸਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
+        if(confirm("Delete this?")) {
             localData.pigeons = localData.pigeons.filter(p => p.id !== id);
             save();
         }
@@ -196,7 +181,7 @@
             list.innerHTML += `
                 <div class="pigeon-row">
                     <div class="pigeon-header">
-                        <b style="font-size:16px;">${p.name}</b>
+                        <input type="text" class="edit-input" value="${p.name}" onchange="editName(${p.id}, this.value)">
                         <button onclick="delP(${p.id})" style="background:none; border:none; color:#ff4444; cursor:pointer; font-size:18px;">🗑️</button>
                     </div>
                     <div class="status-grp">
