@@ -1,120 +1,22 @@
-<!DOCTYPE html>
-<html lang="pa">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin - Pigeon Tournament</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; }
-        .header { background: #f39c12; color: black; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 10px; border-radius: 6px; width: 70%; }
-        .st-btn { border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; opacity: 0.3; }
-        .active { opacity: 1; transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .st-fly { background: #007bff; color: white; }
-        .st-time { background: #ffc107; color: black; }
-        .st-out { background: #dc3545; color: white; }
-        table { width: 100%; border-collapse: collapse; }
-        td { padding: 10px; border-bottom: 1px solid #222; }
-    </style>
-</head>
-<body>
-
-<div id="login-box" class="card" style="max-width:400px; margin: 50px auto; text-align:center;">
-    <h2 style="color:#f39c12">Client Login</h2>
-    <input type="password" id="passInput" placeholder="Password" style="width:90%; padding:10px; margin-bottom:15px;"><br>
-    <button onclick="login()" style="width:95%; padding:10px; background:#f39c12; border:none; font-weight:bold;">LOGIN</button>
-</div>
-
-<div id="main-admin" style="display:none;">
-    <div class="header"><h3>🏆 ADMIN: <span id="uName"></span></h3></div>
+<div id="admin-ui" style="display:none;">
     <div class="card">
-        <input type="text" id="pName" placeholder="ਨਾਮ ਭਰੋ...">
-        <button onclick="addP()" style="padding:10px; background:#f39c12; border:none; border-radius:6px; font-weight:bold;">ADD</button>
+        <input type="text" id="pName" placeholder="ਕਬੂਤਰ/ਪਾਰਟੀ ਦਾ ਨਾਮ">
+        <button onclick="addP()">ADD</button>
     </div>
-    <div class="card">
-        <table><tbody id="pTable"></tbody></table>
-    </div>
-    <div class="card">
-        <label>📢 ਟਿਕਰ ਮੈਸੇਜ: </label><br>
-        <input type="text" id="tick" style="width:95%;" oninput="saveData()"><br><br>
-        <label>⏰ ਟਾਈਮ ਬਾਕਸ: </label><br>
-        <input type="text" id="bTime" style="width:95%;" oninput="saveData()">
-    </div>
-</div>
+    <div id="list"></div> </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
-
-    let pigeons = [];
-
-    function login() {
-        db.ref('users/' + userID).once('value', snap => {
-            const data = snap.val();
-            if(data && data.password === document.getElementById('passInput').value) {
-                const expiry = new Date(data.expiry).getTime();
-                if(new Date().getTime() > expiry) return alert("Expired!");
-                document.getElementById('login-box').style.display = "none";
-                document.getElementById('main-admin').style.display = "block";
-                document.getElementById('uName').innerText = userID;
-                pigeons = data.pigeons || [];
-                document.getElementById('tick').value = data.config.ticker;
-                document.getElementById('bTime').value = data.config.boxTime;
-                render();
-            } else { alert("Wrong Password!"); }
-        });
-    }
-
-    function addP() {
-        const n = document.getElementById('pName').value;
-        if(!n) return;
-        pigeons.push({id: Date.now(), name: n, status: 'fly'});
-        document.getElementById('pName').value = "";
-        saveData();
-    }
-
-    function setStatus(id, s) {
-        pigeons = pigeons.map(p => p.id === id ? {...p, status: s} : p);
-        saveData();
-    }
-
-    function deleteP(id) {
-        pigeons = pigeons.filter(p => p.id !== id);
-        saveData();
-    }
-
     function render() {
-        const tbody = document.getElementById('pTable');
-        tbody.innerHTML = "";
-        pigeons.forEach(p => {
-            tbody.innerHTML += `<tr>
-                <td>${p.name}</td>
-                <td>
-                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
-                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
-                    <button onclick="deleteP(${p.id})" style="background:none; border:none;">🗑️</button>
-                </td>
-            </tr>`;
+        let html = "";
+        pigeons.forEach((p, i) => {
+            html += `<div class="card">
+                <b>${p.name}</b><br>
+                <button class="${p.status=='fly'?'active':''}" onclick="update(${i},'fly')">FLY</button>
+                <button class="${p.status=='time'?'active':''}" onclick="update(${i},'time')">TIME</button>
+                <button class="${p.status=='out'?'active':''}" onclick="update(${i},'out')">OUT</button>
+                <button onclick="del(${i})">🗑️</button>
+            </div>`;
         });
-    }
-
-    function saveData() {
-        db.ref('users/' + userID).update({
-            pigeons: pigeons,
-            config: {
-                ticker: document.getElementById('tick').value,
-                boxTime: document.getElementById('bTime').value,
-                showScoreboard: true, showTicker: true, showFly: true, showTime: true, showOut: true
-            }
-        });
-        render();
+        document.getElementById('list').innerHTML = html;
     }
 </script>
-</body>
-</html>
