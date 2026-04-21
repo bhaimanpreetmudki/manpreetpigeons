@@ -1,0 +1,33 @@
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+
+    // ਇਹ ਰੀਅਲ-ਟਾਈਮ ਡਾਟਾ ਸੁਣੇਗਾ
+    db.ref('users/' + userID).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(!data) return;
+
+        // Validity Check for Overlay
+        if(new Date() > new Date(data.expiry)) {
+            document.body.innerHTML = ""; return;
+        }
+
+        // ਤੁਹਾਡਾ ਪੁਰਾਣਾ updateOverlay() ਵਾਲਾ ਲੋਜਿਕ ਇੱਥੇ ਲਗਾਓ
+        // ਬੱਸ ਡਾਟਾ localStorage ਦੀ ਜਗ੍ਹਾ 'data' ਵੇਰੀਏਬਲ ਤੋਂ ਚੁੱਕੋ
+        updateUI(data.pigeons, data.config);
+    });
+
+    function updateUI(pigeons, config) {
+        document.getElementById('ticker-text').innerText = config.ticker;
+        document.getElementById('box-time-val').innerText = "TIME: " + config.boxTime;
+        
+        // ... (ਬਾਕੀ ਲਿਸਟ ਰੈਂਡਰ ਕਰਨ ਦਾ ਕੋਡ) ...
+    }
+</script>
