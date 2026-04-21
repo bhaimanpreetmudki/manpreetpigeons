@@ -54,12 +54,10 @@
             backdrop-filter: blur(10px); 
         }
 
-        /* Background Colors (80% Dark) */
         #box-fly { background: rgba(0, 40, 0, 0.8); }   
         #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
         #box-out { background: rgba(120, 0, 0, 0.8); }
 
-        /* Slim Headers (Fixed Height 60px) */
         .box-header { 
             padding: 8px 25px; font-size: 32px; font-weight: 950; display: flex; 
             justify-content: space-between; align-items: center; color: white;
@@ -71,27 +69,29 @@
 
         .count-tag { background: white; color: black; padding: 0px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 45px; display: flex; align-items: center; }
 
-        /* 3. Constant Scrolling List */
+        /* 3. Constant Scrolling List - SPACING UPDATED */
         .scroll-window { position: absolute; top: 60px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         
         .item { 
-            padding: 12px 30px; display: flex; align-items: center; gap: 20px; 
-            font-size: 34px; font-weight: 950; 
+            padding: 6px 30px; /* Space ਘਟਾਈ ਗਈ (Padding 12px ਤੋਂ 6px) */
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            font-size: 34px; 
+            font-weight: 950; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-shadow: 3px 3px 6px rgba(0,0,0,1);
-            
-            /* FLYING & OUT ਲਈ ਚਿੱਟੇ ਅੱਖਰ (Default) */
             color: #ffffff; 
+            line-height: 1.1; /* Line height ਘਟਾਈ ਗਈ ਤਾਂ ਜੋ ਟੀਮਾਂ ਜੁੜਵੀਆਂ ਲੱਗਣ */
         }
 
         .item-num { 
-            color: #ffffff; /* ਚਿੱਟੇ ਨੰਬਰ */
+            color: #ffffff; 
             min-width: 60px; 
             font-weight: 950;
         }
 
-        /* ਟਾਈਮ ਬਾਕਸ ਲਈ ਸਪੈਸ਼ਲ ਕਾਲੇ ਅੱਖਰ ਅਤੇ ਨੰਬਰ */
         #box-time .item { color: black; text-shadow: none; font-weight: 950; }
         #box-time .item-num { color: black; }
 
