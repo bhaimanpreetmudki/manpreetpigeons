@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Fixed Position */
+        /* 1. Summary Box Section */
         .summary-wrapper { 
             position: absolute; 
             bottom: 95px; 
@@ -36,7 +36,7 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 2. Main Container - 80% Dark Backgrounds */
+        /* 2. Main List Boxes Section */
         .main-container { 
             position: absolute; 
             top: 10px; 
@@ -54,45 +54,47 @@
             backdrop-filter: blur(10px); 
         }
 
+        /* Background Colors (80% Dark) */
         #box-fly { background: rgba(0, 40, 0, 0.8); }   
         #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
         #box-out { background: rgba(120, 0, 0, 0.8); }
 
-        /* SLIM HEADERS - ਪਤਲੀਆਂ ਪੱਟੀਆਂ */
+        /* Slim Headers (Fixed Height) */
         .box-header { 
-            padding: 8px 25px; /* ਪੈਡਿੰਗ ਘਟਾ ਕੇ ਪੱਟੀ ਪਤਲੀ ਕੀਤੀ ਗਈ */
-            font-size: 32px; 
-            font-weight: 950; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            color: white;
-            border-bottom: 4px solid rgba(255,255,255,0.2);
-            height: 60px; /* ਫਿਕਸ ਉਚਾਈ ਤਾਂ ਜੋ ਪੱਟੀ ਹਿੱਲੇ ਨਾ */
+            padding: 8px 25px; font-size: 32px; font-weight: 950; display: flex; 
+            justify-content: space-between; align-items: center; color: white;
+            border-bottom: 4px solid rgba(255,255,255,0.2); height: 60px;
         }
-        
         #box-fly .box-header { background: #006400; }
         #box-time .box-header { background: #ffcc00; color: black; }
         #box-out .box-header { background: #cc0000; }
 
         .count-tag { background: white; color: black; padding: 0px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 45px; display: flex; align-items: center; }
 
-        /* 3. Constant Speed Scrolling */
-        .scroll-window { position: absolute; top: 60px; /* Header size adjusted */ bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { 
-            position: absolute; 
-            width: 100%; 
-            animation: constantScroll linear infinite; 
-        }
+        /* 3. Constant Scrolling List */
+        .scroll-window { position: absolute; top: 60px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         
         .item { 
             padding: 12px 30px; display: flex; align-items: center; gap: 20px; 
             font-size: 34px; font-weight: 950; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-shadow: 3px 3px 6px rgba(0,0,0,1);
+            
+            /* TEAM NAME COLOR ਅਪਡੇਟ ਕੀਤਾ */
+            color: #f39c12; 
         }
-        .item-num { color: #f39c12; min-width: 60px; }
+
+        /* TEAM NUMBERS COLOR */
+        .item-num { 
+            color: #f39c12; 
+            min-width: 60px; 
+            font-weight: 950;
+        }
+
+        /* Time Box ਦੇ ਅੰਦਰ ਲਿਖਤ ਕਾਲੀ ਰਹੇਗੀ ਤਾਂ ਜੋ ਪੀਲੇ 'ਤੇ ਸਾਫ਼ ਦਿਖੇ */
         #box-time .item { color: black; text-shadow: none; font-weight: 950; }
+        #box-time .item-num { color: black; }
 
         @keyframes constantScroll {
             0% { transform: translateY(0); }
@@ -116,7 +118,6 @@
         #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
         @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
 
-        /* Flashing titles for Fly and Out */
         .flash-header::after { content: attr(data-pa); animation: flashH 5s infinite; }
         @keyframes flashH {
             0%, 45% { content: attr(data-pa); }
