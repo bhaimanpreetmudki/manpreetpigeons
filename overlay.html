@@ -6,7 +6,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary Wrapper */
+        /* 1. Summary Box */
         .summary-wrapper {
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 10px; z-index: 1000;
@@ -20,11 +20,11 @@
         .rem-bg { background: rgba(0, 80, 180, 0.95); }
         .time-bg { background: rgba(20, 100, 50, 0.95); }
 
-        .sum-label { font-size: 13px; font-weight: bold; margin-bottom: 2px; color: #f39c12; }
+        .sum-label { font-size: 13px; font-weight: bold; color: #f39c12; }
         .sum-label::after { content: attr(data-pa); animation: flashMain 5s infinite; }
         .sum-val { font-size: 28px; font-weight: 900; }
 
-        /* Main Container */
+        /* 2. Main Container */
         .main-container {
             position: absolute; top: 10px; right: 20px; bottom: 80px; width: 460px;
             display: flex; flex-direction: column; gap: 12px;
@@ -32,116 +32,142 @@
 
         .box {
             display: none; flex: 1; border-radius: 18px; overflow: hidden;
-            position: relative; border: 2px solid rgba(255,255,255,0.25);
-            backdrop-filter: blur(5px);
+            position: relative; border: 2px solid rgba(255,255,255,0.25); backdrop-filter: blur(5px);
         }
         
         #box-fly { background: rgba(0, 128, 0, 0.7); }
-        #box-time { background: rgba(255, 204, 0, 0.9); color: black !important; }
+        #box-time { background: rgba(255, 204, 0, 0.85); color: black !important; }
         #box-out { background: rgba(200, 0, 0, 0.7); }
 
         .box-header {
             padding: 8px 15px; font-size: 20px; font-weight: 900;
-            display: flex; flex-direction: column; align-items: flex-start;
+            display: flex; justify-content: space-between; align-items: center;
             background: rgba(0,0,0,0.25); border-bottom: 2px solid rgba(255,255,255,0.1);
         }
         
-        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
-        .time-display { font-size: 14px; color: #000; font-weight: 800; background: rgba(255,255,255,0.4); padding: 2px 8px; border-radius: 4px; margin-top: 2px; }
+        /* Time Range in Header */
+        .time-display { font-size: 14px; background: black; color: white; padding: 2px 8px; border-radius: 4px; margin-top: 2px; }
 
         .flash-head::after { content: attr(data-pa); animation: flashMain 5s infinite; }
         @keyframes flashMain { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
 
-        /* Scrolling Area */
-        .scroll-window { position: absolute; top: 60px; bottom: 0; width: 100%; overflow: hidden; }
+        .count-tag { background: white; color: black; padding: 1px 10px; border-radius: 4px; font-size: 18px; font-weight: 900; }
+
+        /* Scrolling */
+        .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
         .item { padding: 4px 22px; display: flex; align-items: center; gap: 15px; font-size: 20px; font-weight: 800; }
-        .item-num { font-weight: 950; min-width: 35px; }
-
         @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-100%); } }
 
-        /* Footer Ticker */
+        /* Footer */
         .footer {
             position: absolute; bottom: 0; width: 100%; height: 65px;
-            background: #f39c12; display: flex; align-items: center; border-top: 5px solid black;
+            background: #f39c12; display: none; align-items: center; border-top: 5px solid black;
         }
         .live-tag { background: #ff0000; color: white; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 28px; font-weight: 950; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: black; font-weight: 900; font-size: 22px; }
-        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .dt-box { background: black; color: #f39c12; height: 100%; padding: 0 25px; display: flex; flex-direction: column; justify-content: center; min-width: 220px; }
     </style>
 </head>
 <body>
 
-<div id="summary-div" class="summary-wrapper">
-    <div class="sum-card total-bg"><span class="sum-label" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card rem-bg"><span class="sum-label" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REM PIGEONS"></span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card time-bg"><span class="sum-label" data-pa="ਸਮੇਂ ਵਾਲੇ" data-en="TIME PIGEONS"></span><span id="m-time" class="sum-val">0</span></div>
+<div id="summary-group" class="summary-wrapper">
+    <div class="sum-card total-bg">
+        <span class="sum-label" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span>
+        <span id="m-total" class="sum-val">0</span>
+    </div>
+    <div class="sum-card rem-bg">
+        <span class="sum-label" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REM PIGEONS"></span>
+        <span id="m-rem" class="sum-val">0</span>
+    </div>
+    <div class="sum-card time-bg">
+        <span class="sum-label" data-pa="ਸਮੇਂ ਵਾਲੇ" data-en="TIME PIGEONS"></span>
+        <span id="m-time" class="sum-val">0</span>
+    </div>
 </div>
 
-<div id="scoreboard-div" class="main-container">
+<div id="score-group" class="main-container">
     <div id="box-fly" class="box">
-        <div class="box-header"><div class="header-top"><span class="flash-head" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" style="background:white; color:black; padding:1px 8px; border-radius:4px;">0</span></div></div>
+        <div class="box-header">
+            <span class="flash-head" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
+            <span id="count-fly" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
+
     <div id="box-time" class="box">
         <div class="box-header">
-            <div class="header-top"><span class="flash-head" data-pa="⏰ ਸਮੇਂ ਦੇ ਵਿੱਚ" data-en="⏰ IN TIME PIGEONS"></span><span id="count-time" style="background:black; color:white; padding:1px 8px; border-radius:4px;">0</span></div>
-            <div id="display-box-time" class="time-display">11:00 AM</div>
+            <div>
+                <span class="flash-head" data-pa="⏰ ਸਮੇਂ ਦੇ ਵਿੱਚ" data-en="⏰ IN TIME PIGEONS"></span><br>
+                <span id="header-time-range" class="time-display"></span>
+            </div>
+            <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
+
     <div id="box-out" class="box">
-        <div class="box-header"><div class="header-top"><span class="flash-head" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" style="background:white; color:black; padding:1px 8px; border-radius:4px;">0</span></div></div>
+        <div class="box-header">
+            <span class="flash-head" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
+            <span id="count-out" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 </div>
 
-<div id="ticker-div" class="footer">
+<div id="ticker-group" class="footer">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
+    <div class="dt-box">
+        <div id="clock" style="font-size: 22px; font-weight: 950;">00:00:00</div>
+        <div id="date" style="font-size: 13px; color: white;">21 APR 2026</div>
+    </div>
 </div>
 
 <script>
-    function updateOverlay() {
+    function update() {
         const data = JSON.parse(localStorage.getItem('pigeonData')) || [];
-        const config = JSON.parse(localStorage.getItem('overlayConfig')) || { showScoreboard: true, showTicker: true, ticker: "WELCOME...", boxTime: "11:00 AM" };
+        const config = JSON.parse(localStorage.getItem('overlayConfig')) || { ticker: "", time: "", showScoreboard: true, showTicker: true };
 
         // Hide/Show Logic
-        document.getElementById('scoreboard-div').style.display = config.showScoreboard ? "flex" : "none";
-        document.getElementById('summary-div').style.display = config.showScoreboard ? "flex" : "none";
-        document.getElementById('ticker-div').style.display = config.showTicker ? "flex" : "none";
+        document.getElementById('summary-group').style.display = config.showScoreboard ? 'flex' : 'none';
+        document.getElementById('score-group').style.display = config.showScoreboard ? 'flex' : 'none';
+        document.getElementById('ticker-group').style.display = config.showTicker ? 'flex' : 'none';
         
-        // Data Settings
-        document.getElementById('ticker-text').innerText = config.ticker || "";
-        document.getElementById('display-box-time').innerText = config.boxTime || "";
+        document.getElementById('ticker-text').innerText = config.ticker;
+        document.getElementById('header-time-range').innerText = config.time;
 
-        let counts = { fly: 0, out: 0, time: 0 };
-        let htmls = { fly: '', out: '', time: '' };
+        let counts = { fly: 0, out: 0, time: 0 }, htmls = { fly: '', out: '', time: '' };
 
         data.forEach((p, index) => {
-            let row = `<div class="item"><span class="item-num">${index + 1}.</span><span>${p.name}</span></div>`;
-            if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-            else if (p.status === 'time') { counts.time++; htmls.time += row; }
-            else if (p.status === 'out') { counts.out++; htmls.out += row; }
+            let itemHtml = `<div class="item"><span class="item-num">${index + 1}.</span><span>${p.name.toUpperCase()}</span></div>`;
+            if (p.status === 'fly') { counts.fly++; htmls.fly += itemHtml; }
+            else if (p.status === 'time') { counts.time++; htmls.time += itemHtml; }
+            else if (p.status === 'out') { counts.out++; htmls.out += itemHtml; }
         });
 
         document.getElementById('m-total').innerText = data.length;
         document.getElementById('m-rem').innerText = data.length - counts.out;
         document.getElementById('m-time').innerText = counts.time;
 
-        ['fly', 'time', 'out'].forEach(s => {
+        ['fly', 'out', 'time'].forEach(s => {
             const box = document.getElementById(`box-${s}`);
+            const listArea = document.getElementById(`list-${s}`);
             if (counts[s] > 0) {
                 box.style.display = "block";
                 document.getElementById(`count-${s}`).innerText = counts[s];
-                document.getElementById(`list-${s}`).innerHTML = htmls[s] + htmls[s];
+                listArea.innerHTML = htmls[s] + htmls[s]; // Loop for smooth scroll
             } else { box.style.display = "none"; }
         });
-    }
 
-    setInterval(updateOverlay, 1000);
-    updateOverlay();
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour12: false });
+        document.getElementById('date').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+    }
+    setInterval(update, 1000);
+    update();
 </script>
 </body>
 </html>
