@@ -1,129 +1,26 @@
-<!DOCTYPE html>
-<html lang="pa">
-<head>
-    <meta charset="UTF-8">
-    <title>Master Control - Manage Clients</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 20px; }
-        .card { background: #1a1d21; padding: 25px; border-radius: 15px; border: 1px solid #f39c12; max-width: 800px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #f39c12; text-align: center; margin-bottom: 20px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        input { padding: 12px; background: #0f1113; border: 1px solid #444; color: white; border-radius: 8px; flex: 1; min-width: 150px; }
-        button { padding: 12px 20px; background: #f39c12; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        button.del { background: #dc3545; }
-        button.edit { background: #28a745; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
-        th { color: #f39c12; text-transform: uppercase; font-size: 13px; }
-        .links-box { font-size: 12px; color: #aaa; word-break: break-all; max-width: 250px; }
-        a { color: #f39c12; text-decoration: none; }
-    </style>
-</head>
-<body>
-
 <div class="card">
-    <h2>🏆 ਮਾਸਟਰ ਕੰਟਰੋਲ (Client Manager)</h2>
-    
+    <h2>🏆 ਮਾਸਟਰ ਕੰਟਰੋਲ (Version 2.0)</h2>
     <div class="input-group">
-        <input type="text" id="cID" placeholder="Client ID">
-        <input type="password" id="cPass" placeholder="Password">
-        <input type="date" id="cExpiry">
-        <button onclick="createClient()">ADD CLIENT</button>
+        <input type="text" id="cID" placeholder="ਕਲਾਇੰਟ ID">
+        <input type="password" id="cPass" placeholder="ਪਾਸਵਰਡ">
+        <input type="datetime-local" id="cExpiry"> <button onclick="createClient()">CREATE</button>
     </div>
-
-    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-
-    <h3>ਸਾਰੇ ਕਲਾਇੰਟਸ ਦੀ ਲਿਸਟ</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Validity</th>
-                <th>Links</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="clientTable">
-            </tbody>
-    </table>
+    <div id="clientTable"></div>
 </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // 1. Load and Display Clients
-    function loadClients() {
-        db.ref('users').on('value', (snapshot) => {
-            const data = snapshot.val();
-            const tbody = document.getElementById('clientTable');
-            tbody.innerHTML = "";
-
-            if (data) {
-                for (let id in data) {
-                    const baseUrl = window.location.href.split('master.html')[0];
-                    const adminL = baseUrl + "admin.html?id=" + id;
-                    const overL = baseUrl + "overlay.html?id=" + id;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><b>${id}</b></td>
-                            <td><input type="date" value="${data[id].expiry}" id="exp-${id}" style="font-size:12px; padding:5px;"></td>
-                            <td class="links-box">
-                                <a href="${adminL}" target="_blank">Admin</a> | 
-                                <a href="${overL}" target="_blank">Overlay</a>
-                            </td>
-                            <td>
-                                <button class="edit" onclick="updateClient('${id}')">SAVE</button>
-                                <button class="del" onclick="deleteClient('${id}')">DEL</button>
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-        });
-    }
-
-    // 2. Create New Client
+    // ... Firebase Config ...
     function createClient() {
         const id = document.getElementById('cID').value.trim().toLowerCase();
-        const pass = document.getElementById('cPass').value;
-        const expiry = document.getElementById('cExpiry').value;
-
-        if(!id || !pass || !expiry) return alert("All fields are required!");
+        const expiry = document.getElementById('cExpiry').value; // ISO format
+        if(!id || !expiry) return alert("ID ਅਤੇ ਸਮਾਂ ਭਰਨਾ ਜ਼ਰੂਰੀ ਹੈ!");
 
         db.ref('users/' + id).set({
-            password: pass,
+            password: document.getElementById('cPass').value,
             expiry: expiry,
-            config: { ticker: "WELCOME", showScoreboard: true, showTicker: true, boxTime: "12:00 PM" },
+            config: { ticker: "WELCOME", showScoreboard: true, boxTime: "10:00 AM", paymentLink: "https://wa.me/91XXXXXXXXXX" }, // ਤੁਹਾਡਾ WhatsApp ਲਿੰਕ
             pigeons: []
-        }).then(() => {
-            alert("Client Created!");
-            document.getElementById('cID').value = "";
-            document.getElementById('cPass').value = "";
-        });
+        }).then(() => alert("Client Created Successfully!"));
     }
-
-    // 3. Update Validity
-    function updateClient(id) {
-        const newExpiry = document.getElementById('exp-' + id).value;
-        db.ref('users/' + id).update({ expiry: newExpiry })
-          .then(() => alert("Validity Updated for " + id));
-    }
-
-    // 4. Delete Client
-    function deleteClient(id) {
-        if(confirm("ਕੀ ਤੁਸੀਂ " + id + " ਨੂੰ ਡਲੀਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਸਾਰਾ ਡਾਟਾ ਉੱਡ ਜਾਵੇਗਾ।")) {
-            db.ref('users/' + id).remove()
-              .then(() => alert("Client Deleted!"));
-        }
-    }
-
-    // Start loading on page open
-    loadClients();
+    // ... ਬਾਕੀ load/delete ਫੰਕਸ਼ਨ ...
 </script>
-</body>
-</html>
