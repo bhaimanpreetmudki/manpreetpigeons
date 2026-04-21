@@ -3,48 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Edit Enabled</title>
+    <title>Pigeon Admin</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; margin: 0; }
-        .info-bar { background: #1a1d21; border: 1px solid #333; padding: 10px 20px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; border-left: 5px solid #f39c12; }
-        .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-        
-        .pigeon-item { background: #24292e; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #f39c12; }
-        .edit-name { background: transparent; border: 1px dashed #555; color: white; font-size: 18px; font-weight: bold; width: 80%; padding: 5px; }
-        .edit-name:focus { background: #111; border-style: solid; outline: none; border-color: #f39c12; }
-
-        .status-grp { display: flex; gap: 5px; margin-top: 10px; }
-        .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; opacity: 0.2; color: white; text-transform: uppercase; }
-        .st-btn.active { opacity: 1; border: 2px solid white; }
-        .st-fly { background: #007bff; }
-        .st-time { background: #ffc107; color: black; }
-        .st-out { background: #dc3545; }
-        .btn-add { background: #f39c12; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        body { font-family: sans-serif; background: #0f1113; color: white; padding: 10px; margin: 0; }
+        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 10px; }
+        .info-bar { background: #24292e; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid #f39c12; display: flex; justify-content: space-between; }
+        input[type="text"], input[type="password"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+        .btn-add { background: #f39c12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
+        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .sw-btn { padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .sw-btn.active { background: #28a745; border-color: white; }
+        .pigeon-row { background: #24292e; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #f39c12; }
+        .st-grp { display: flex; gap: 5px; margin-top: 8px; }
+        .st-btn { flex: 1; padding: 10px; border-radius: 5px; border: none; font-weight: bold; opacity: 0.3; color: white; font-size: 11px; }
+        .st-btn.active { opacity: 1; border: 1px solid white; }
     </style>
 </head>
 <body>
 
-<div id="info-section" style="display:none;">
+<div id="login-box" class="card" style="margin-top: 50px;">
+    <h2 style="text-align:center; color:#f39c12;">Login</h2>
+    <input type="password" id="passInput" placeholder="Enter Password">
+    <button class="btn-add" onclick="login()">LOGIN</button>
+</div>
+
+<div id="main-admin" style="display:none;">
     <div class="info-bar">
-        <span>📅 ਵੈਲਡਿਟੀ: <b id="expiryDisplay"></b></span>
-        <span>📞 Helpline: <b>+91 8699640061</b></span>
+        <span>📅 Exp: <b id="expDisp"></b></span>
+        <span>📞 Help: <b>+91 8699640061</b></span>
     </div>
-</div>
 
-<div id="login-box" style="max-width:400px; margin: 100px auto; text-align:center;" class="card">
-    <h2 style="color:#f39c12">Admin Login</h2>
-    <input type="password" id="adminPass" placeholder="Password"><br><br>
-    <button class="btn-add" onclick="checkLogin()">LOGIN</button>
-</div>
-
-<div id="main-content" style="display:none;">
     <div class="card">
-        <input type="text" id="pName" placeholder="ਕਬੂਤਰ ਦਾ ਨਾਮ ਐਡ ਕਰੋ...">
+        <div class="sw-grid">
+            <button id="sw-score" class="sw-btn" onclick="toggleConfig('showScoreboard')">SCOREBOARD</button>
+            <button id="sw-ticker" class="sw-btn" onclick="toggleConfig('showTicker')">TICKER</button>
+            <button id="sw-fly" class="sw-btn" onclick="toggleConfig('showFly')">FLY BOX</button>
+            <button id="sw-time" class="sw-btn" onclick="toggleConfig('showTime')">TIME BOX</button>
+        </div>
+        <input type="text" id="tickInp" placeholder="ਟਿਕਰ ਸੁਨੇਹਾ..." style="margin-top:10px;" oninput="updateTexts()">
+        <input type="text" id="timeBoxInp" placeholder="ਟਾਈਮ (11:00 AM)" oninput="updateTexts()">
+    </div>
+
+    <div class="card">
+        <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ...">
         <button class="btn-add" onclick="addP()">ADD PIGEON</button>
     </div>
+
     <div id="listArea"></div>
 </div>
 
@@ -54,65 +60,68 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-    let localData = { pigeons: [], config: {} };
 
-    function checkLogin() {
+    let currentData = { pigeons: [], config: {} };
+
+    function login() {
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
-            if(data && data.password === document.getElementById('adminPass').value) {
+            if(data && data.password === document.getElementById('passInput').value) {
                 document.getElementById('login-box').style.display = "none";
-                document.getElementById('main-content').style.display = "block";
-                document.getElementById('info-section').style.display = "block";
-                document.getElementById('expiryDisplay').innerText = new Date(data.expiry).toLocaleString();
+                document.getElementById('main-admin').style.display = "block";
+                document.getElementById('expDisp').innerText = new Date(data.expiry).toLocaleString();
                 db.ref('users/' + userID).on('value', s => {
-                    localData = s.val() || { pigeons: [], config: {} };
-                    renderUI();
+                    currentData = s.val() || { pigeons: [], config: {} };
+                    renderAdmin();
                 });
             } else { alert("Wrong Password!"); }
         });
     }
 
+    function toggleConfig(key) { currentData.config[key] = !currentData.config[key]; save(); }
+    function updateTexts() { 
+        currentData.config.ticker = document.getElementById('tickInp').value;
+        currentData.config.boxTime = document.getElementById('timeBoxInp').value;
+        save(); 
+    }
     function addP() {
         const name = document.getElementById('pName').value;
         if(!name) return;
-        if(!localData.pigeons) localData.pigeons = [];
-        localData.pigeons.push({ id: Date.now(), name: name, status: 'fly' });
+        if(!currentData.pigeons) currentData.pigeons = [];
+        currentData.pigeons.push({ id: Date.now(), name: name, status: 'fly' });
         document.getElementById('pName').value = "";
         save();
     }
-
-    // ਨਾਮ ਐਡਿਟ ਕਰਨ ਲਈ ਫੰਕਸ਼ਨ
-    function updateName(id, newName) {
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
-        save();
-    }
-
     function setStatus(id, s) {
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
+        currentData.pigeons = currentData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
         save();
     }
-
-    function delP(id) {
-        if(confirm("Delete?")) {
-            localData.pigeons = localData.pigeons.filter(p => p.id !== id);
-            save();
-        }
+    function updateName(id, val) {
+        currentData.pigeons = currentData.pigeons.map(p => p.id === id ? {...p, name: val} : p);
+        save();
     }
+    function save() { db.ref('users/' + userID).update(currentData); }
 
-    function save() { db.ref('users/' + userID).update(localData); }
+    function renderAdmin() {
+        const conf = currentData.config || {};
+        document.getElementById('sw-score').className = "sw-btn " + (conf.showScoreboard ? "active" : "");
+        document.getElementById('sw-ticker').className = "sw-btn " + (conf.showTicker ? "active" : "");
+        document.getElementById('sw-fly').className = "sw-btn " + (conf.showFly ? "active" : "");
+        document.getElementById('sw-time').className = "sw-btn " + (conf.showTime ? "active" : "");
+        document.getElementById('tickInp').value = conf.ticker || "";
+        document.getElementById('timeBoxInp').value = conf.boxTime || "";
 
-    function renderUI() {
-        const list = document.getElementById('listArea');
-        list.innerHTML = "";
-        (localData.pigeons || []).forEach(p => {
-            list.innerHTML += `
-                <div class="pigeon-item">
-                    <input type="text" class="edit-name" value="${p.name}" onchange="updateName(${p.id}, this.value)">
-                    <button onclick="delP(${p.id})" style="float:right; background:none; border:none; color:red; cursor:pointer;">🗑️</button>
-                    <div class="status-grp">
-                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
-                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+        const listDiv = document.getElementById('listArea');
+        listDiv.innerHTML = "";
+        (currentData.pigeons || []).forEach(p => {
+            listDiv.innerHTML += `
+                <div class="pigeon-row">
+                    <input type="text" value="${p.name}" style="background:transparent; border:none; color:white; font-size:16px; font-weight:bold;" onchange="updateName(${p.id}, this.value)">
+                    <div class="st-grp">
+                        <button class="st-btn active" style="background:#007bff; opacity:${p.status=='fly'?'1':'0.3'}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn active" style="background:#ffc107; color:black; opacity:${p.status=='time'?'1':'0.3'}" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn active" style="background:#dc3545; opacity:${p.status=='out'?'1':'0.3'}" onclick="setStatus(${p.id},'out')">OUT</button>
+                        <button onclick="if(confirm('Delete?')) {currentData.pigeons = currentData.pigeons.filter(i=>i.id!=${p.id}); save();}" style="background:none; border:none; color:red; font-size:18px; margin-left:10px;">🗑️</button>
                     </div>
                 </div>`;
         });
