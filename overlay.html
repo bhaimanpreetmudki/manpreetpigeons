@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Positioned Above LIVE tag (Bottom Left) */
+        /* 1. Summary Box - Bottom Left Above Footer */
         .summary-wrapper { 
             position: absolute; 
             bottom: 95px; 
@@ -28,26 +28,23 @@
             height: 80px;
         }
         .sum-label-area { 
-            background: #111; width: 65%; 
-            font-size: 24px; /* ਵੱਡੇ ਅੱਖਰ */
-            font-weight: 950; color: #f39c12; 
+            background: #111; width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; 
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
         .sum-val-area { 
-            background: #fff; color: #000; width: 35%; 
-            font-size: 45px; /* ਵੱਡੇ ਨੰਬਰ */
-            font-weight: 950; display: flex; align-items: center; justify-content: center;
+            background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 950; 
+            display: flex; align-items: center; justify-content: center;
         }
         .rem-label { background: #0044cc; color: white; }
         .time-label { background: #117722; color: white; }
 
-        /* 2. Main Container - Extra Wide & Low Transparency */
+        /* 2. Main Container - 720px Wide */
         .main-container { 
             position: absolute; 
             top: 10px; 
             right: 20px; 
             bottom: 90px; 
-            width: 720px; /* ਚੌੜਾ ਬਾਕਸ */
+            width: 720px; 
             display: flex; 
             flex-direction: column; 
             gap: 0; 
@@ -56,29 +53,34 @@
         .box { 
             display: none; flex: 1; overflow: hidden; position: relative; 
             border: 4px solid rgba(255,255,255,0.3); 
-            background: rgba(0, 0, 0, 0.85); /* 85% Dark/Low Transparency */
+            background: rgba(0, 0, 0, 0.85); 
             backdrop-filter: blur(10px); 
         }
 
-        /* 3. Headers - Solid Colors with BLUE for Fly Box */
+        /* 3. Slim Headers (ਪਤਲੀਆਂ ਪੱਟੀਆਂ) */
         .box-header { 
-            padding: 18px 25px; 
-            font-size: 32px; /* ਵੱਡੇ ਹੈਡਰ */
-            font-weight: 950; display: flex; justify-content: space-between; align-items: center; color: white;
-            border-bottom: 4px solid rgba(255,255,255,0.2);
+            padding: 8px 25px; /* ਪੈਡਿੰਗ ਘਟਾ ਕੇ Slim ਕੀਤਾ ਗਿਆ */
+            font-size: 24px;   /* ਫੌਂਟ ਸਾਈਜ਼ ਸੈੱਟ ਕੀਤਾ ਗਿਆ */
+            font-weight: 950; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            color: white;
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+            height: 50px; /* ਉਚਾਈ ਫਿਕਸ ਕੀਤੀ ਗਈ */
         }
-        #box-fly .box-header { background: #0044cc; } /* ਹੁਣ ਨੀਲਾ (BLUE) */
+        #box-fly .box-header { background: #0044cc; } 
         #box-time .box-header { background: #ffcc00; color: black; }
         #box-out .box-header { background: #cc0000; }
 
-        .count-tag { background: white; color: black; padding: 2px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; }
+        .count-tag { background: white; color: black; padding: 1px 12px; border-radius: 4px; font-size: 22px; font-weight: 950; }
 
-        /* 4. List Items - Normal Bold Text */
-        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
+        /* 4. List Items Area - Space Increased due to Slim Header */
+        .scroll-window { position: absolute; top: 50px; /* Slim Header ਦੇ ਮੁਤਾਬਕ ਸੈੱਟ ਕੀਤਾ */ bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
         .item { 
             padding: 10px 30px; display: flex; align-items: center; gap: 20px; 
-            font-size: 30px; /* ਨਾਮ ਪਹਿਲਾਂ ਵਰਗੇ */
+            font-size: 30px; 
             font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-shadow: 2px 2px 5px rgba(0,0,0,1); 
         }
@@ -86,7 +88,7 @@
 
         @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
 
-        /* 5. Footer Ticker & Large Flash Clock */
+        /* 5. Footer Ticker */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; 
@@ -123,7 +125,7 @@
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area time-label flash-header" data-pa="ਟਾਈਮ" data-en="ON TIME"></div>
+        <div class="sum-label-area time-label flash-header" data-pa="ਟਾਈਮ" data-en="TIME"></div>
         <div id="m-time" class="sum-val-area">0</div>
     </div>
 </div>
@@ -131,7 +133,7 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="box-header">
-            <span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
+            <span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span>
             <span id="count-fly" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
@@ -139,9 +141,9 @@
     
     <div id="box-time" class="box">
         <div class="box-header">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
-                <span id="box-time-val" style="margin-left: 12px; border-left: 3px solid black; padding-left: 12px;"></span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ" data-en="⏰ TIME"></span>
+                <span id="box-time-val" style="margin-left: 10px; border-left: 3px solid black; padding-left: 10px;"></span>
             </div>
             <span id="count-time" class="count-tag">0</span>
         </div>
@@ -150,7 +152,7 @@
 
     <div id="box-out" class="box">
         <div class="box-header">
-            <span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
+            <span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="❌ OUT"></span>
             <span id="count-out" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
@@ -159,7 +161,7 @@
 
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
     <div class="dt-box"><div id="dt-flash">00:00 AM</div></div>
 </div>
 
@@ -170,7 +172,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Date & Time Logic
     let showTime = true;
     setInterval(() => {
         const now = new Date();
