@@ -2,101 +2,64 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Pigeon Tournament</title>
+    <title>Admin - Independent Controls</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
+        body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 15px; }
+        .header { background: #f39c12; color: black; padding: 10px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         
-        .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-left: 6px solid #f39c12; font-size: 14px; }
-        .status-bar b { color: #f39c12; }
-        .helpline { color: #2ea043 !important; font-weight: bold; }
-
-        .header { background: #f39c12; color: black; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn-save { background: #238636; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-
-        .master-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .ctrl-card { background: #1a1d21; padding: 15px; border-radius: 10px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-
-        .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
-        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
-        .card { background: #1a1d21; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        /* Buttons in Front of Name */
+        .pigeon-row { 
+            background: #21262d; 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* This keeps buttons in front */
+            border: 1px solid #30363d; 
+        }
+        .pigeon-name { font-size: 16px; font-weight: bold; flex: 1; margin-right: 10px; }
         
-        .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"], input[type="password"] { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; flex: 1; outline: none; }
-        .btn-add { background: #f39c12; color: black; border: none; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* Edit Input Style */
-        .edit-input { background: transparent !important; border: 1px dashed #555 !important; color: #f39c12 !important; font-weight: bold; font-size: 18px; width: 80% !important; padding: 5px !important; }
-
-        .pigeon-row { background: #21262d; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #30363d; }
-        .pigeon-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        
-        .status-grp { display: flex; gap: 5px; }
-        .st-btn { flex: 1; border: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; color: white; opacity: 0.2; text-transform: uppercase; }
-        .st-btn.active { opacity: 1; border: 2px solid white; transform: scale(1.02); }
+        .status-grp { display: flex; gap: 5px; align-items: center; }
+        .st-btn { border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; opacity: 0.2; }
+        .st-btn.active { opacity: 1; border: 1px solid white; transform: scale(1.05); }
         .st-fly { background: #007bff; }
         .st-time { background: #ffc107; color: black; }
         .st-out { background: #dc3545; }
 
-        .switch { position: relative; display: inline-block; width: 45px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
-        input:checked + .slider { background-color: #2ea043; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider:before { transform: translateX(23px); }
+        .btn-del { background: none; border: none; color: #ff4444; font-size: 18px; cursor: pointer; margin-left: 10px; }
+        .input-box { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; }
+        .switch-box { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-<div id="login-box" style="max-width: 400px; margin: 100px auto; text-align: center;" class="card">
-    <h2 style="color:#f39c12">ADMIN LOGIN</h2>
-    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..."><br><br>
-    <button class="btn-add" onclick="checkLogin()" style="width: 100%; height: 45px;">LOGIN</button>
+<div id="login-box" style="max-width:400px; margin:100px auto; text-align:center;" class="card">
+    <h2 style="color:#f39c12">Login Admin</h2>
+    <input type="password" id="adminPass" placeholder="Password" class="input-box"><br>
+    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold; cursor:pointer;">LOGIN</button>
 </div>
 
-<div id="admin-content" style="display:none;">
-    <div class="status-bar">
-        <span>📅 PLAN EXPIRES: <b id="expiryDisplay">--/--/----</b></span>
-        <span>📞 HELPLINE: <b class="helpline">+91 8699640061</b></span>
-    </div>
-
+<div id="main-content" style="display:none;">
     <div class="header">
-        <h3 style="margin:0">🏆 ਕਬੂਤਰਬਾਜ਼ੀ LIVE ਪੈਨਲ</h3>
-        <button class="btn-save" onclick="save()">SAVE ALL</button>
+        <h3 style="margin:0">🏆 LIVE ਪੈਨਲ</h3>
+        <button onclick="save()" style="background:#238636; color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer;">SAVE</button>
     </div>
 
-    <div class="master-controls">
-        <div class="ctrl-card">
-            <span>SCOREBOARD (ALL BOXES)</span>
-            <label class="switch"><input type="checkbox" id="swScore" onchange="save()"><span class="slider"></span></label>
-        </div>
-        <div class="ctrl-card">
-            <span>TICKER (BOTTOM BAR)</span>
-            <label class="switch"><input type="checkbox" id="swTicker" onchange="save()"><span class="slider"></span></label>
-        </div>
+    <div class="card">
+        <div class="switch-box"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()"></div>
+        <div class="switch-box"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
     </div>
 
-    <div class="main-grid">
-        <div class="card">
-            <h3 style="color:#f39c12; margin-top:0;">ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ (Edit Name Directly)</h3>
-            <div class="input-row">
-                <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ...">
-                <button class="btn-add" onclick="addP()">ADD</button>
-            </div>
-            <div id="listArea"></div>
-        </div>
-
-        <div class="card">
-            <h3 style="color:#f39c12; margin-top:0;">ਸੈਟਿੰਗਜ਼</h3>
-            <label style="color:#888; font-size:12px;">⏰ ਟਾਈਮ ਬਾਕਸ ਲਈ ਸਮਾਂ</label>
-            <input type="text" id="inpBoxTime" oninput="save()" placeholder="e.g. 10:00 AM TO 12:00 PM" style="margin-bottom:15px; width:100%;">
-            <label style="color:#888; font-size:12px; display:block; margin-top:5px;">📢 ਟਿਕਰ ਮੈਸੇਜ</label>
-            <input type="text" id="inpTicker" oninput="save()" placeholder="ਸੁਨੇਹਾ ਲਿਖੋ..." style="width:100%;">
-        </div>
+    <div class="card">
+        <input type="text" id="pName" placeholder="ਨਾਮ..." class="input-box">
+        <button onclick="addP()" style="width:100%; padding:10px; background:#f39c12; border:none; font-weight:bold; cursor:pointer;">ADD PIGEON</button>
     </div>
+
+    <div id="listArea"></div>
 </div>
 
 <script>
@@ -105,43 +68,28 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-
     let localData = { pigeons: [], config: {} };
 
     function checkLogin() {
-        if(!userID) return alert("Invalid URL!");
         db.ref('users/' + userID).once('value', snap => {
-            const data = snap.val();
-            if(data && data.password === document.getElementById('adminPass').value) {
+            if(snap.val() && snap.val().password === document.getElementById('adminPass').value) {
                 document.getElementById('login-box').style.display = "none";
-                document.getElementById('admin-content').style.display = "block";
-                
-                if(data.expiry) {
-                    const expDate = new Date(data.expiry);
-                    document.getElementById('expiryDisplay').innerText = expDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
-                }
-
+                document.getElementById('main-content').style.display = "block";
                 db.ref('users/' + userID).on('value', s => {
                     localData = s.val() || { pigeons: [], config: {} };
-                    renderUI();
+                    render();
                 });
-            } else { alert("Wrong Password!"); }
+            } else { alert("Wrong Password"); }
         });
     }
 
     function addP() {
-        const name = document.getElementById('pName').value;
-        if(!name) return;
+        const n = document.getElementById('pName').value;
+        if(!n) return;
         if(!localData.pigeons) localData.pigeons = [];
-        localData.pigeons.push({ id: Date.now(), name: name, status: 'fly' });
+        localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
         document.getElementById('pName').value = "";
         save();
-    }
-
-    // --- NEW EDIT NAME FUNCTION ---
-    function editName(id, newName) {
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
-        db.ref('users/' + userID + '/pigeons').set(localData.pigeons);
     }
 
     function setStatus(id, s) {
@@ -149,45 +97,32 @@
         save();
     }
 
-    function delP(id) {
-        if(confirm("Delete this?")) {
-            localData.pigeons = localData.pigeons.filter(p => p.id !== id);
-            save();
-        }
-    }
+    function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
     function save() {
         const config = {
             showScoreboard: document.getElementById('swScore').checked,
             showTicker: document.getElementById('swTicker').checked,
-            showFly: true,
-            showTime: true,
-            ticker: document.getElementById('inpTicker').value,
-            boxTime: document.getElementById('inpBoxTime').value
+            showFly: true, showTime: true
         };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
 
-    function renderUI() {
+    function render() {
         const conf = localData.config || {};
-        document.getElementById('swScore').checked = conf.showScoreboard !== false;
-        document.getElementById('swTicker').checked = conf.showTicker !== false;
-        document.getElementById('inpTicker').value = conf.ticker || "";
-        document.getElementById('inpBoxTime').value = conf.boxTime || "";
-
+        document.getElementById('swScore').checked = conf.showScoreboard;
+        document.getElementById('swTicker').checked = conf.showTicker;
         const list = document.getElementById('listArea');
         list.innerHTML = "";
         (localData.pigeons || []).forEach(p => {
             list.innerHTML += `
                 <div class="pigeon-row">
-                    <div class="pigeon-header">
-                        <input type="text" class="edit-input" value="${p.name}" onchange="editName(${p.id}, this.value)">
-                        <button onclick="delP(${p.id})" style="background:none; border:none; color:#ff4444; cursor:pointer; font-size:18px;">🗑️</button>
-                    </div>
+                    <div class="pigeon-name">${p.name}</div>
                     <div class="status-grp">
                         <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
                         <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
                         <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+                        <button onclick="delP(${p.id})" class="btn-del">🗑️</button>
                     </div>
                 </div>`;
         });
