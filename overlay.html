@@ -1,35 +1,29 @@
-<!DOCTYPE html>
-<html lang="pa">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    </head>
-<body>
-    <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
-
+<script>
     db.ref('users/' + userID).on('value', (snapshot) => {
         const data = snapshot.val();
         if(!data) return;
-        
-        // Validity Check
-        if(new Date().getTime() > new Date(data.expiry).getTime()) {
-            document.body.innerHTML = ""; return;
+
+        // --- ਵੈਲਡਿਟੀ ਚੈੱਕ ---
+        const now = new Date().getTime();
+        const expiry = new Date(data.expiry).getTime();
+
+        if (now > expiry) {
+            document.body.innerHTML = `
+                <div style="background:rgba(0,0,0,0.9); color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <h1>Velditi Expired!</h1>
+                    <p>ਕਿਰਪਾ ਕਰਕੇ ਪੇਮੈਂਟ ਕਰੋ ਅਤੇ ਸੇਵਾ ਚਾਲੂ ਕਰਵਾਓ।</p>
+                    <a href="${data.config.paymentLink}" style="background:green; color:white; padding:20px; border-radius:10px; font-size:30px;">Pay Now / Contact Admin</a>
+                </div>`;
+            return;
         }
 
-        // ਇੱਥੇ ਤੁਹਾਡਾ ਪੁਰਾਣਾ updateOverlay() ਵਾਲਾ ਲੋਜਿਕ ਆਵੇਗਾ
-        // ਬੱਸ ਡਾਟਾ 'data.pigeons' ਅਤੇ 'data.config' ਤੋਂ ਚੁੱਕੋ
-        refreshUI(data.pigeons, data.config);
+        // --- ਡਾਟਾ ਦਿਖਾਉਣਾ ---
+        updateOverlay(data.pigeons, data.config);
     });
 
-    function refreshUI(pigeons, config) {
-        // UI ਅਪਡੇਟ ਕਰਨ ਦਾ ਕੋਡ...
+    function updateOverlay(pigeons, config) {
+        // ਇਹ ਤੁਹਾਡਾ ਪੁਰਾਣਾ ਓਵਰਲੇਅ ਲੋਜਿਕ ਹੈ
+        document.getElementById('ticker-text').innerText = config.ticker;
+        // ... ਸਾਰੇ ਬਾਕਸ ਭਰੋ ...
     }
 </script>
-</body>
-</html>
