@@ -8,52 +8,113 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Summary - Top Centered */
-        .summary-wrapper { position: absolute; top: 15px; left: 55%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
-        .sum-card { padding: 12px 25px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; min-width: 160px; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 20px rgba(0,0,0,0.8); }
-        .total-bg { background: rgba(0, 0, 0, 0.85); }
-        .rem-bg { background: rgba(0, 85, 255, 0.85); }
-        .time-bg { background: rgba(34, 136, 51, 0.85); }
+        /* 1. Summary Box - FIXED SIZE */
+        .summary-wrapper { 
+            position: absolute; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            gap: 15px; 
+            z-index: 1000; 
+        }
+        .sum-card { 
+            padding: 12px; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            width: 180px; 
+            height: 110px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.2); 
+            border: 3px solid rgba(255,255,255,0.4); 
+        }
+        .total-bg { background: linear-gradient(145deg, #1a1a1a, #000); }
+        .rem-bg { background: linear-gradient(145deg, #0055ff, #002266); }
+        .time-bg { background: linear-gradient(145deg, #228833, #0b3d16); }
 
-        /* Flashing Animation for Titles */
-        .flash-title::after { content: attr(data-pa); animation: flashLang 5s infinite; }
+        /* Flashing Animation */
+        .flash-text::after { content: attr(data-pa); animation: flashLang 5s infinite; }
         @keyframes flashLang {
             0%, 45% { content: attr(data-pa); opacity: 1; }
             50%, 95% { content: attr(data-en); opacity: 1; }
         }
 
-        .sum-label { font-size: 20px; font-weight: 950; color: #f39c12; margin-bottom: 5px; text-shadow: 2px 2px 4px black; }
-        .sum-val { font-size: 40px; font-weight: 950; text-shadow: 3px 3px 6px black; }
+        .sum-label { font-size: 16px; font-weight: 950; color: #f39c12; margin-bottom: 5px; text-align: center; height: 40px; display: flex; align-items: center; }
+        .sum-val { font-size: 42px; font-weight: 950; text-shadow: 3px 3px 6px black; }
 
-        /* Main Container - 40-50% Transparency */
-        .main-container { position: absolute; top: 10px; right: 20px; bottom: 60px; width: 550px; display: flex; flex-direction: column; gap: 0; }
-        .box { display: none; flex: 1; overflow: hidden; position: relative; border: 4px solid rgba(255,255,255,0.3); backdrop-filter: blur(8px); }
+        /* 2. Main Container - EXTRA WIDE BOXES (650px) */
+        .main-container { 
+            position: absolute; 
+            top: 10px; 
+            right: 20px; 
+            bottom: 60px; 
+            width: 650px; /* Increased Width as requested */
+            display: flex; 
+            flex-direction: column; 
+            gap: 0; 
+        }
         
-        /* 40-50% Transparent Backgrounds */
+        .box { 
+            display: none; 
+            flex: 1; 
+            overflow: hidden; 
+            position: relative; 
+            border: 4px solid rgba(255,255,255,0.3); 
+            backdrop-filter: blur(8px); 
+        }
+        
         #box-fly { background: rgba(0, 50, 0, 0.45); }   
         #box-time { background: rgba(255, 190, 0, 0.6); color: black !important; } 
         #box-out { background: rgba(150, 0, 0, 0.45); }
 
-        .box-header { padding: 15px 25px; font-size: 28px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.7); border-bottom: 3px solid rgba(255,255,255,0.2); }
+        .box-header { 
+            padding: 15px 25px; 
+            font-size: 28px; 
+            font-weight: 950; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0,0,0,0.7); 
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+        }
         .count-tag { background: white; color: black; padding: 4px 15px; border-radius: 8px; font-size: 28px; font-weight: 950; }
 
-        /* Dark & Bold List Text */
+        /* 3. List Items - Bolder & Clear */
         .scroll-window { position: absolute; top: 75px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: moveUp 15s linear infinite; }
-        .item { padding: 12px 30px; display: flex; align-items: center; gap: 20px; font-size: 32px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 5px rgba(0,0,0,1); }
-        .item-num { color: #f39c12; min-width: 50px; }
-        #box-time .item { color: black; text-shadow: none; font-weight: 950; }
+        .item { 
+            padding: 12px 30px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            font-size: 34px; /* Slightly bigger font for wider box */
+            font-weight: 950; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 2px 2px 5px rgba(0,0,0,1); 
+        }
+        .item-num { color: #f39c12; min-width: 60px; }
+        #box-time .item { color: black; text-shadow: none; }
 
         @keyframes moveUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-120%); } }
 
-        /* Footer Ticker */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; align-items: center; border-top: 4px solid #f39c12; }
+        /* 4. Footer Ticker */
+        .footer { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            height: 60px; 
+            background: #000; 
+            display: flex; 
+            align-items: center; 
+            border-top: 4px solid #f39c12; 
+        }
         .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 28px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 900; font-size: 26px; }
         .ticker-move { display: inline-block; animation: ticker 18s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Flash Clock */
         .dt-box { background: #111; height: 100%; padding: 0 30px; display: flex; justify-content: center; align-items: center; border-left: 3px solid #333; min-width: 250px; }
         #dt-flash { font-size: 28px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
         @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
@@ -62,15 +123,24 @@
 <body>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card total-bg"><span class="sum-label flash-title" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span><span id="m-total" class="sum-val">0</span></div>
-    <div class="sum-card rem-bg"><span class="sum-label flash-title" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></span><span id="m-rem" class="sum-val">0</span></div>
-    <div class="sum-card time-bg"><span class="sum-label flash-title" data-pa="ਟਾਈਮ ਵਾਲੇ" data-en="TIME PIGEONS"></span><span id="m-time" class="sum-val">0</span></div>
+    <div class="sum-card total-bg">
+        <span class="sum-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></span>
+        <span id="m-total" class="sum-val">0</span>
+    </div>
+    <div class="sum-card rem-bg">
+        <span class="sum-label flash-text" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING PIGEONS"></span>
+        <span id="m-rem" class="sum-val">0</span>
+    </div>
+    <div class="sum-card time-bg">
+        <span class="sum-label flash-text" data-pa="ਟਾਈਮ ਵਾਲੇ ਕਬੂਤਰ" data-en="TIME PIGEONS"></span>
+        <span id="m-time" class="sum-val">0</span>
+    </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-header"><span class="flash-title" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-    <div id="box-time" class="box"><div class="box-header"><div><span class="flash-title" data-pa="⏰ ਟਾਈਮ" data-en="⏰ TIME"></span><br><small id="box-time-val" style="font-size:12px; font-weight:950;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-    <div id="box-out" class="box"><div class="box-header"><span class="flash-title" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="❌ OUT"></span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+    <div id="box-fly" class="box"><div class="box-header"><span class="flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
+    <div id="box-time" class="box"><div class="box-header"><div><span class="flash-text" data-pa="⏰ ਟਾਈਮ ਵਾਲੇ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span><br><small id="box-time-val" style="font-size:12px; font-weight:950;"></small></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
+    <div id="box-out" class="box"><div class="box-header"><span class="flash-text" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
 </div>
 
 <div class="footer" id="ticker-div">
@@ -86,7 +156,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Date/Time Flash
+    // Date/Time Flash Logic
     let showTime = true;
     setInterval(() => {
         const now = new Date();
