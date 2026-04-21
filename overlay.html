@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Positioned Above Footer */
+        /* 1. Summary Box - Fixed Position */
         .summary-wrapper { 
             position: absolute; 
             bottom: 95px; 
@@ -54,25 +54,31 @@
             backdrop-filter: blur(10px); 
         }
 
-        /* Background Colors with 0.8 Opacity (80% Dark, 20% Video visible) */
         #box-fly { background: rgba(0, 40, 0, 0.8); }   
         #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
         #box-out { background: rgba(120, 0, 0, 0.8); }
 
-        /* Headers - Large & Solid */
+        /* SLIM HEADERS - ਪਤਲੀਆਂ ਪੱਟੀਆਂ */
         .box-header { 
-            padding: 18px 25px; font-size: 32px; font-weight: 950; display: flex; 
-            justify-content: space-between; align-items: center; color: white;
+            padding: 8px 25px; /* ਪੈਡਿੰਗ ਘਟਾ ਕੇ ਪੱਟੀ ਪਤਲੀ ਕੀਤੀ ਗਈ */
+            font-size: 32px; 
+            font-weight: 950; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            color: white;
             border-bottom: 4px solid rgba(255,255,255,0.2);
+            height: 60px; /* ਫਿਕਸ ਉਚਾਈ ਤਾਂ ਜੋ ਪੱਟੀ ਹਿੱਲੇ ਨਾ */
         }
+        
         #box-fly .box-header { background: #006400; }
         #box-time .box-header { background: #ffcc00; color: black; }
         #box-out .box-header { background: #cc0000; }
 
-        .count-tag { background: white; color: black; padding: 2px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; }
+        .count-tag { background: white; color: black; padding: 0px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 45px; display: flex; align-items: center; }
 
         /* 3. Constant Speed Scrolling */
-        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
+        .scroll-window { position: absolute; top: 60px; /* Header size adjusted */ bottom: 0; width: 100%; overflow: hidden; }
         .list-area { 
             position: absolute; 
             width: 100%; 
@@ -110,6 +116,7 @@
         #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
         @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
 
+        /* Flashing titles for Fly and Out */
         .flash-header::after { content: attr(data-pa); animation: flashH 5s infinite; }
         @keyframes flashH {
             0%, 45% { content: attr(data-pa); }
@@ -136,14 +143,17 @@
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-header"><span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div>
+        <div class="box-header">
+            <span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
+            <span id="count-fly" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
     
     <div id="box-time" class="box">
         <div class="box-header">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <span class="flash-header" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
+                <span>⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ</span>
                 <span id="box-time-val" style="border-left: 3px solid black; padding-left: 15px;"></span>
             </div>
             <span id="count-time" class="count-tag">0</span>
@@ -152,7 +162,10 @@
     </div>
 
     <div id="box-out" class="box">
-        <div class="box-header"><span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div>
+        <div class="box-header">
+            <span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
+            <span id="count-out" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 </div>
