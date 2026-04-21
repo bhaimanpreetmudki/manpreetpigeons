@@ -3,133 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pigeon Admin Panel</title>
+    <title>Admin - Controls</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 15px; margin: 0; }
-        .header { background: #f39c12; color: black; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: sticky; top: 0; z-index: 100; }
-        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        input[type="text"] { background: #0f1113; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 70%; font-size: 16px; }
-        .btn-add { background: #f39c12; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 25%; cursor: pointer; }
-        
-        .pigeon-row { display: flex; justify-content: space-between; align-items: center; background: #24292e; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #f39c12; }
-        .status-grp { display: flex; gap: 5px; }
-        .st-btn { border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; font-size: 11px; color: white; opacity: 0.3; }
-        .st-btn.active { opacity: 1; transform: scale(1.05); border: 1px solid white; }
-        .st-fly { background: #007bff; }
-        .st-time { background: #ffc107; color: black; }
-        .st-out { background: #dc3545; }
-        .btn-del { background: none; border: none; color: #ff4444; font-size: 20px; margin-left: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; padding: 10px; }
+        .control-header { background: #1a1d21; padding: 15px; border-radius: 10px; border: 1px solid #f39c12; margin-bottom: 15px; }
+        .switch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .sw-btn { padding: 10px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; background: #444; color: white; }
+        .sw-btn.active { background: #28a745; }
+        input { width: 100%; padding: 10px; margin: 5px 0; background: #0f1113; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        .pigeon-card { background: #24292e; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #f39c12; }
+        .btn-grp { display: flex; gap: 5px; margin-top: 10px; }
+        .st-btn { flex: 1; padding: 8px; border: none; border-radius: 4px; font-size: 11px; opacity: 0.3; font-weight: bold; }
+        .st-btn.active { opacity: 1; border: 1px solid white; }
     </style>
 </head>
 <body>
 
-<div id="login-box" style="max-width: 400px; margin: 100px auto; text-align: center;">
-    <h2 style="color:#f39c12">Client Login</h2>
-    <input type="password" id="passInput" placeholder="Password" style="width: 100%; margin-bottom: 15px;">
-    <button onclick="login()" style="width: 100%; padding: 12px; background: #f39c12; border: none; font-weight: bold;">LOGIN</button>
+<div id="login-box" style="text-align:center; padding-top:50px;">
+    <input type="password" id="passInput" placeholder="Password" style="width:200px;"><br><br>
+    <button onclick="login()" style="padding:10px 40px; background:#f39c12; border:none; font-weight:bold;">LOGIN</button>
 </div>
 
 <div id="main-admin" style="display:none;">
-    <div class="header"><h3>🏆 ADMIN: <span id="uNameDisplay"></span></h3></div>
-    
-    <div class="card">
-        <input type="text" id="pNameInput" placeholder="ਕਬੂਤਰ ਦਾ ਨਾਮ...">
-        <button class="btn-add" onclick="addPigeon()">ADD</button>
+    <div class="control-header">
+        <h4 style="margin:0 0 10px 0; color:#f39c12;">Show/Hide & Text Settings</h4>
+        <div class="switch-grid">
+            <button id="sw-score" class="sw-btn" onclick="toggleConfig('showScoreboard')">SCOREBOARD</button>
+            <button id="sw-ticker" class="sw-btn" onclick="toggleConfig('showTicker')">TICKER</button>
+            <button id="sw-fly" class="sw-btn" onclick="toggleConfig('showFly')">FLY BOX</button>
+            <button id="sw-time" class="sw-btn" onclick="toggleConfig('showTime')">TIME BOX</button>
+        </div>
+        <input type="text" id="tickInp" placeholder="ਟਿਕਰ ਸੁਨੇਹਾ ਲਿਖੋ..." oninput="updateConfigText()">
+        <input type="text" id="timeBoxInp" placeholder="ਟਾਈਮ (e.g. 11:30 AM TO 12:00 PM)" oninput="updateConfigText()">
     </div>
 
-    <div id="pigeonList"></div>
-
-    <div class="card">
-        <label style="color:#f39c12">📢 ਟਿਕਰ ਮੈਸੇਜ (Ticker)</label><br>
-        <input type="text" id="tickerInput" style="width: 95%; margin-top: 5px;" oninput="saveConfig()">
-        <br><br>
-        <label style="color:#f39c12">⏰ ਟਾਈਮ ਬਾਕਸ (Time Box Value)</label><br>
-        <input type="text" id="timeBoxInput" style="width: 95%; margin-top: 5px;" oninput="saveConfig()">
+    <div class="control-header">
+        <input type="text" id="pName" placeholder="ਕਬੂਤਰ ਦਾ ਨਾਮ..." style="width:70%;">
+        <button onclick="addP()" style="width:25%; padding:10px; background:#f39c12; border:none; border-radius:5px;">ADD</button>
     </div>
+
+    <div id="list"></div>
 </div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    let pigeons = [];
-    let config = {};
+    let localData = { pigeons: [], config: {} };
 
     function login() {
-        db.ref('users/' + userID).once('value', snapshot => {
-            const data = snapshot.val();
-            if(data && data.password === document.getElementById('passInput').value) {
+        db.ref('users/' + userID).once('value', snap => {
+            if(snap.val() && snap.val().password === document.getElementById('passInput').value) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-admin').style.display = "block";
-                document.getElementById('uNameDisplay').innerText = userID.toUpperCase();
                 
-                // Realtime Sync
-                db.ref('users/' + userID).on('value', snap => {
-                    const freshData = snap.val();
-                    pigeons = freshData.pigeons || [];
-                    config = freshData.config || {};
+                db.ref('users/' + userID).on('value', s => {
+                    localData = s.val();
                     renderUI();
                 });
             } else { alert("Wrong Password!"); }
         });
     }
 
-    function addPigeon() {
-        const name = document.getElementById('pNameInput').value;
+    function toggleConfig(key) {
+        localData.config[key] = !localData.config[key];
+        save();
+    }
+
+    function updateConfigText() {
+        localData.config.ticker = document.getElementById('tickInp').value;
+        localData.config.boxTime = document.getElementById('timeBoxInp').value;
+        save();
+    }
+
+    function addP() {
+        const name = document.getElementById('pName').value;
         if(!name) return;
-        pigeons.push({ id: Date.now(), name: name, status: 'fly' });
-        document.getElementById('pNameInput').value = "";
-        updateFirebase();
+        if(!localData.pigeons) localData.pigeons = [];
+        localData.pigeons.push({ id: Date.now(), name: name, status: 'fly' });
+        document.getElementById('pName').value = "";
+        save();
     }
 
-    function setStatus(id, stat) {
-        pigeons = pigeons.map(p => p.id === id ? {...p, status: stat} : p);
-        updateFirebase();
+    function setStatus(id, s) {
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p);
+        save();
     }
 
-    function deletePigeon(id) {
-        if(confirm("Delete this entry?")) {
-            pigeons = pigeons.filter(p => p.id !== id);
-            updateFirebase();
-        }
-    }
-
-    function saveConfig() {
-        config.ticker = document.getElementById('tickerInput').value;
-        config.boxTime = document.getElementById('timeBoxInput').value;
-        updateFirebase();
-    }
-
-    function updateFirebase() {
-        db.ref('users/' + userID).update({
-            pigeons: pigeons,
-            config: config
-        });
-    }
+    function save() { db.ref('users/' + userID).update(localData); }
 
     function renderUI() {
-        const listDiv = document.getElementById('pigeonList');
+        const conf = localData.config;
+        document.getElementById('sw-score').className = "sw-btn " + (conf.showScoreboard ? "active" : "");
+        document.getElementById('sw-ticker').className = "sw-btn " + (conf.showTicker ? "active" : "");
+        document.getElementById('sw-fly').className = "sw-btn " + (conf.showFly ? "active" : "");
+        document.getElementById('sw-time').className = "sw-btn " + (conf.showTime ? "active" : "");
+        
+        document.getElementById('tickInp').value = conf.ticker || "";
+        document.getElementById('timeBoxInp').value = conf.boxTime || "";
+
+        const listDiv = document.getElementById('list');
         listDiv.innerHTML = "";
-        pigeons.forEach(p => {
+        (localData.pigeons || []).forEach(p => {
             listDiv.innerHTML += `
-                <div class="pigeon-row">
-                    <span>${p.name}</span>
-                    <div class="status-grp">
-                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
-                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
-                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
-                        <button class="btn-del" onclick="deletePigeon(${p.id})">🗑️</button>
+                <div class="pigeon-card">
+                    <b>${p.name}</b>
+                    <div class="btn-grp">
+                        <button class="st-btn active" style="background:#007bff; opacity:${p.status=='fly'?'1':'0.2'}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn active" style="background:#ffc107; color:black; opacity:${p.status=='time'?'1':'0.2'}" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn active" style="background:#dc3545; opacity:${p.status=='out'?'1':'0.2'}" onclick="setStatus(${p.id},'out')">OUT</button>
                     </div>
                 </div>`;
         });
-        document.getElementById('tickerInput').value = config.ticker || "";
-        document.getElementById('timeBoxInput').value = config.boxTime || "";
     }
 </script>
 </body>
