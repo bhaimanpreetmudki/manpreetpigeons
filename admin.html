@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <title>Client Admin - Pigeon Tournament</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        /* (ਤੁਹਾਡਾ ਪੁਰਾਣਾ CSS ਇੱਥੇ ਆਵੇਗਾ - ਮੈਂ ਇਸਨੂੰ ਛੋਟਾ ਰੱਖ ਰਿਹਾ ਹਾਂ) */
+        body { font-family: sans-serif; background: #0f1113; color: white; padding: 20px; }
+        .card { background: #1a1d21; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+        .st-btn { padding: 8px; margin: 2px; cursor: pointer; opacity: 0.4; }
+        .active { opacity: 1; border: 2px solid gold; }
+        input { padding: 10px; background: #222; color: white; border: 1px solid #444; }
+        .header { background: #f39c12; color: black; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+<div id="login-box" style="max-width:400px; margin: 100px auto; background:#1a1d21; padding:30px; border-radius:10px; text-align:center;">
+    <h2 style="color:#f39c12">Client Login</h2>
+    <input type="password" id="userPass" placeholder="Enter Password" style="width:100%"><br><br>
+    <button onclick="checkLogin()" style="width:100%; padding:10px; background:#f39c12; border:none; cursor:pointer;">LOGIN</button>
+</div>
+
+<div id="admin-content" style="display:none;">
+    <div class="header">
+        <h2 id="displayID">ADMIN</h2>
+        <button onclick="saveToFirebase()" style="background:green; color:white; padding:10px; cursor:pointer; border:none; border-radius:5px;">SAVE EVERYTHING</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 350px; gap:20px; margin-top:20px;">
+        <div class="card">
+            <h3>Pigeon List</h3>
+            <input type="text" id="newName" placeholder="Name..."> <button onclick="addPigeon()">ADD</button>
+            <table style="width:100%; margin-top:15px;" id="pTable"></table>
+        </div>
+        
+        <div class="card">
+            <h3>Controls</h3>
+            Ticker: <input type="text" id="tickMsg" style="width:100%" oninput="saveToFirebase()"><br><br>
+            Time: <input type="text" id="boxT" style="width:100%" oninput="saveToFirebase()">
+        </div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+    let pigeons = [];
+    let correctPass = "";
+
+    function checkLogin() {
+        if(!userID) return alert("ID missing in URL");
+        db.ref('users/' + userID).once('value', (snap) => {
+            const data = snap.val();
+            if(!data) return alert("Invalid User");
+            
+            // Validity Check
+            if(new Date() > new Date(data.expiry)) return alert("Validity Expired!");
+
+            if(document.getElementById('userPass').value === data.password) {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('admin-content').style.display = "block";
+                document.getElementById('displayID').innerText = "Tournament: " + userID.toUpperCase();
+                pigeons = data.pigeons || [];
+                document.getElementById('tickMsg').value = data.config.ticker;
+                document.getElementById('boxT').value = data.config.boxTime;
+                renderTable();
+            } else { alert("Wrong Password"); }
+        });
+    }
+
+    function addPigeon() {
+        const n = document.getElementById('newName').value;
+        if(!n) return;
+        pigeons.push({id: Date.now(), name: n, status: 'fly'});
+        document.getElementById('newName').value = "";
+        renderTable();
+        saveToFirebase();
+    }
+
+    function setStatus(idx, s) {
+        pigeons[idx].status = s;
+        renderTable();
+        saveToFirebase();
+    }
+
+    function deleteP(idx) {
+        pigeons.splice(idx, 1);
+        renderTable();
+        saveToFirebase();
+    }
+
+    function renderTable() {
+        let html = `<tr><th>Name</th><th>Status</th><th>Action</th></tr>`;
+        pigeons.forEach((p, i) => {
+            html += `<tr>
+                <td>${p.name}</td>
+                <td>
+                    <button class="st-btn ${p.status=='fly'?'active':''}" style="background:blue; color:white" onclick="setStatus(${i},'fly')">FLY</button>
+                    <button class="st-btn ${p.status=='time'?'active':''}" style="background:orange;" onclick="setStatus(${i},'time')">TIME</button>
+                    <button class="st-btn ${p.status=='out'?'active':''}" style="background:red; color:white" onclick="setStatus(${i},'out')">OUT</button>
+                </td>
+                <td><button onclick="deleteP(${i})">🗑️</button></td>
+            </tr>`;
+        });
+        document.getElementById('pTable').innerHTML = html;
+    }
+
+    function saveToFirebase() {
+        db.ref('users/' + userID).update({
+            pigeons: pigeons,
+            config: {
+                ticker: document.getElementById('tickMsg').value,
+                boxTime: document.getElementById('boxT').value,
+                showScoreboard: true, showTicker: true, showFly: true, showTime: true, showOut: true
+            }
+        });
+    }
+</script>
+</body>
+</html>
