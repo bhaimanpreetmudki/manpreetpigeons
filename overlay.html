@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Fixed Size & Positioned Above Footer */
+        /* 1. Summary Box - Positioned Above Footer */
         .summary-wrapper { 
             position: absolute; 
             bottom: 95px; 
@@ -28,7 +28,7 @@
             height: 80px;
         }
         .sum-label-area { 
-            background: rgba(17, 17, 17, 0.9); width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; 
+            background: rgba(17, 17, 17, 0.95); width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; 
             display: flex; align-items: center; justify-content: center; text-align: center;
         }
         .sum-val-area { 
@@ -36,7 +36,7 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 2. Main Container - 80% Transparency (0.2 Opacity) */
+        /* 2. Main Container - 80% Dark Backgrounds */
         .main-container { 
             position: absolute; 
             top: 10px; 
@@ -54,10 +54,10 @@
             backdrop-filter: blur(10px); 
         }
 
-        /* Background Colors with 0.2 Alpha (80% Transparent) */
-        #box-fly { background: rgba(0, 50, 0, 0.2); }   
-        #box-time { background: rgba(255, 190, 0, 0.3); color: black !important; } 
-        #box-out { background: rgba(150, 0, 0, 0.2); }
+        /* Background Colors with 0.8 Opacity (80% Dark, 20% Video visible) */
+        #box-fly { background: rgba(0, 40, 0, 0.8); }   
+        #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
+        #box-out { background: rgba(120, 0, 0, 0.8); }
 
         /* Headers - Large & Solid */
         .box-header { 
@@ -83,7 +83,7 @@
             padding: 12px 30px; display: flex; align-items: center; gap: 20px; 
             font-size: 34px; font-weight: 950; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
-            text-shadow: 3px 3px 6px rgba(0,0,0,1); /* Dark shadow for readability */
+            text-shadow: 3px 3px 6px rgba(0,0,0,1);
         }
         .item-num { color: #f39c12; min-width: 60px; }
         #box-time .item { color: black; text-shadow: none; font-weight: 950; }
