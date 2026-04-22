@@ -54,27 +54,28 @@
             backdrop-filter: blur(10px); 
         }
 
-        #box-fly { background: rgba(0, 40, 0, 0.8); }   
-        #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
-        #box-out { background: rgba(120, 0, 0, 0.8); }
+        /* NEW COLORS BASED ON YOUR REQUEST */
+        #box-fly { background: rgba(0, 30, 100, 0.85); }   /* DARK BLUE */
+        #box-time { background: rgba(255, 190, 0, 0.9); color: black !important; } /* YELLOW */
+        #box-out { background: rgba(150, 0, 0, 0.85); }    /* DEEP RED */
 
         .box-header { 
             padding: 8px 25px; font-size: 32px; font-weight: 950; display: flex; 
             justify-content: space-between; align-items: center; color: white;
             border-bottom: 4px solid rgba(255,255,255,0.2); height: 60px;
         }
-        #box-fly .box-header { background: #006400; }
-        #box-time .box-header { background: #ffcc00; color: black; }
-        #box-out .box-header { background: #cc0000; }
+        #box-fly .box-header { background: #0044cc; } /* BLUE HEADER */
+        #box-time .box-header { background: #ffcc00; color: black; } /* YELLOW HEADER */
+        #box-out .box-header { background: #cc0000; } /* RED HEADER */
 
         .count-tag { background: white; color: black; padding: 0px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 45px; display: flex; align-items: center; }
 
-        /* 3. Constant Scrolling List - SPACING UPDATED */
+        /* 3. Constant Scrolling List */
         .scroll-window { position: absolute; top: 60px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         
         .item { 
-            padding: 6px 30px; /* Space ਘਟਾਈ ਗਈ (Padding 12px ਤੋਂ 6px) */
+            padding: 6px 30px; 
             display: flex; 
             align-items: center; 
             gap: 20px; 
@@ -83,7 +84,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-shadow: 3px 3px 6px rgba(0,0,0,1);
             color: #ffffff; 
-            line-height: 1.1; /* Line height ਘਟਾਈ ਗਈ ਤਾਂ ਜੋ ਟੀਮਾਂ ਜੁੜਵੀਆਂ ਲੱਗਣ */
+            line-height: 1.1;
         }
 
         .item-num { 
