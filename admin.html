@@ -32,18 +32,18 @@
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
         .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 25px; border-radius: 8px; color: black; font-size: 16px; }
 
+        /* Action Buttons Area - Update & Reset */
+        .action-btns { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-update { flex: 1; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; }
+        .btn-reset { width: 100px; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; }
+
         /* Stats Summary */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
-        /* Action Buttons Area */
-        .action-btns { display: grid; grid-template-columns: 3fr 1.2fr; gap: 10px; margin-bottom: 15px; }
-        .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; }
-        .btn-reset { width: 100%; padding: 15px; background: #dc3545; color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; }
-
-        /* Team List Row */
+        /* Team List Row (50/50 Split) */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 50%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -74,11 +74,23 @@
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
 
     <div id="controls-section" class="controls-container">
-        <div class="row"><input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ..."><button class="btn-add" onclick="addP()">ADD</button></div>
-        <div class="row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="Time Text"><input type="text" id="inpTicker" oninput="save()" placeholder="Ticker Text"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div style="background:#111; padding:12px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px; border:1px solid #333; align-items:center; font-weight:bold;">OVERLAY <input type="checkbox" id="swScore" onchange="save()"></div>
-            <div style="background:#111; padding:12px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px; border:1px solid #333; align-items:center; font-weight:bold;">TICKER <input type="checkbox" id="swTicker" onchange="save()"></div>
+        <div class="row">
+            <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ...">
+            <button class="btn-add" onclick="addP()">ADD</button>
+        </div>
+        
+        <div class="row">
+            <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ (e.g. 10:00 to 11:30)">
+        </div>
+
+        <div class="row" style="align-items: center; gap: 8px;">
+            <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
+            <button class="btn-update" style="width: 120px; flex: none;" onclick="save()">UPDATE</button>
+        </div>
+
+        <div class="sw-grid">
+            <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()"></div>
+            <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
         </div>
     </div>
 
@@ -90,8 +102,7 @@
     </div>
 
     <div class="action-btns" id="action-section">
-        <button class="btn-save" onclick="save()">💾 SAVE & UPDATE</button>
-        <button class="btn-reset" onclick="resetData()">🔄 RESET</button>
+        <button class="btn-reset" style="width:100%;" onclick="resetData()">🔄 RESET TOURNAMENT</button>
     </div>
 
     <div id="listArea"></div>
@@ -126,15 +137,15 @@
         const container = document.getElementById('plans-container');
         container.innerHTML = "";
         plans.forEach(p => {
-            const upi = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
             container.innerHTML += `
                 <div class="plan-card">
                     <h2>${p.name}</h2>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="${upi}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
-                        <a href="${upi}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
-                        <a href="${upi}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
+                        <a href="upi://pay?${commonURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
+                        <a href="upi://pay?${commonURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
+                        <a href="upi://pay?${commonURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
                     </div>
                 </div>`;
         });
@@ -166,12 +177,10 @@
         });
     }
 
-    // RESET FUNCTION
     function resetData() {
-        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਸਾਰੀਆਂ ਪਾਰਟੀਆਂ ਡਿਲੀਟ ਹੋ ਜਾਣਗੀਆਂ।")) {
+        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
             localData.pigeons = [];
             save();
-            alert("ਡਾਟਾ ਰੀਸੈੱਟ ਹੋ ਗਿਆ ਹੈ।");
         }
     }
 
@@ -192,7 +201,13 @@
     function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
     function save() {
-        const config = { showScoreboard: document.getElementById('swScore').checked, showTicker: document.getElementById('swTicker').checked, showTime: true, showFly: true, ticker: document.getElementById('inpTicker').value, boxTime: document.getElementById('inpBoxTime').value };
+        const config = { 
+            showScoreboard: document.getElementById('swScore').checked, 
+            showTicker: document.getElementById('swTicker').checked, 
+            showTime: true, showFly: true, 
+            ticker: document.getElementById('inpTicker').value, 
+            boxTime: document.getElementById('inpBoxTime').value 
+        };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
 
