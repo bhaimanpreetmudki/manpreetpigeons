@@ -19,15 +19,16 @@
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         
-        /* Plan Cards */
+        /* Plan Cards Design */
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin: 0 0 5px 0; }
+        .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
+        .pay-btn i { font-size: 20px; }
 
-        /* Controls Section (At Top - Not Fixed) */
+        /* Controls Section (At Top) */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
@@ -44,7 +45,7 @@
         /* Save Button */
         .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; margin-bottom: 15px; font-size: 16px; }
 
-        /* List Rows */
+        /* List Rows (50/50 Split) */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 50%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -58,15 +59,21 @@
 </head>
 <body>
 
-<div id="main-content">
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333;">
+    <h2 style="color:#f39c12; font-weight:900;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..." style="width:100%; padding:12px; margin-bottom:10px; background:#000; border:1px solid #333; color:white;">
+    <button onclick="checkLogin()" class="btn-recharge-main">ENTER CONTROL</button>
+</div>
+
+<div id="main-content" style="display:none;">
     <div class="status-bar">
         <div><span style="font-size:10px;color:#888;">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
-        <div style="text-align: right;"><span style="font-size:10px;color:#888;">ACCOUNT EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
+        <div style="text-align: right;"><span style="font-size:10px;color:#888;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
 
-    <div class="controls-container">
+    <div id="controls-section" class="controls-container">
         <div class="row">
             <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ...">
             <button class="btn-add" onclick="addP()">ADD</button>
@@ -81,14 +88,14 @@
         </div>
     </div>
 
-    <div class="admin-sum-grid">
+    <div id="summary-section" class="admin-sum-grid">
         <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
         <div class="sum-item"><div>FLY</div><b id="sum-fly" style="color:#007bff;">0</b></div>
         <div class="sum-item"><div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
         <div class="sum-item"><div>OUT</div><b id="sum-out" style="color:#dc3545;">0</b></div>
     </div>
 
-    <button class="btn-save" onclick="save()">💾 SAVE & UPDATE LIVE</button>
+    <button id="save-btn" class="btn-save" onclick="save()">💾 SAVE & UPDATE LIVE</button>
 
     <div id="listArea"></div>
 
@@ -136,14 +143,34 @@
         });
     }
 
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            localData = data;
-            const d = new Date(data.expiry);
-            document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            setupPlans();
-            render();
+    function checkLogin() {
+        db.ref('users/' + userID).once('value', snap => {
+            const data = snap.val();
+            if(data && data.password === document.getElementById('adminPass').value) {
+                const now = new Date().getTime();
+                const exp = new Date(data.expiry).getTime();
+
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-content').style.display = "block";
+                
+                const d = new Date(data.expiry);
+                document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+                if (now > exp) {
+                    alert("ਪਲਾਨ ਖਤਮ ਹੋ ਗਿਆ ਹੈ! ਕਿਰਪਾ ਕਰਕੇ ਰੀਚਾਰਜ ਕਰੋ।");
+                    document.getElementById('controls-section').style.display = "none";
+                    document.getElementById('summary-section').style.display = "none";
+                    document.getElementById('save-btn').style.display = "none";
+                    document.getElementById('listArea').style.display = "none";
+                    toggleRecharge(true);
+                } else {
+                    db.ref('users/' + userID).on('value', s => { 
+                        localData = s.val() || {pigeons:[], config:{}}; 
+                        render(); 
+                    });
+                }
+                setupPlans();
+            } else { alert("Incorrect Password!"); }
         });
     }
 
