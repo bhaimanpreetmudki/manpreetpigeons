@@ -8,85 +8,104 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* 1. Summary Box - Dual Language */
+        /* Expiry Overlay */
+        #expiry-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        #expiry-overlay h1 { color: #ff0000; font-size: 60px; margin-bottom: 20px; }
+        #expiry-overlay p { font-size: 30px; color: #fff; }
+
+        /* Summary Box Section */
         .summary-wrapper { 
             position: absolute; bottom: 95px; left: 15px; 
-            display: flex; gap: 15px; z-index: 1000; 
+            display: flex; flex-direction: row; gap: 15px; z-index: 1000; 
         }
         .sum-card { 
-            display: flex; border-radius: 8px; overflow: hidden; 
-            border: 2px solid rgba(255,255,255,0.4); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-            min-width: 250px; height: 75px;
+            display: flex; border-radius: 12px; overflow: hidden; 
+            border: 3px solid rgba(255,255,255,0.6); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+            min-width: 280px; height: 80px;
         }
         .sum-label-area { 
-            background: rgba(0, 0, 0, 0.95); width: 65%; font-size: 18px; font-weight: 900; 
+            background: rgba(17, 17, 17, 0.95); width: 65%; font-size: 18px; font-weight: 950; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
         .sum-label-area .pa { color: #f39c12; }
         .sum-label-area .en { color: #fff; font-size: 12px; opacity: 0.8; }
         .sum-val-area { 
-            background: #fff; color: #000; width: 35%; font-size: 40px; font-weight: 950;
+            background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 950;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 2. List Containers - Slim Dark Headers */
+        /* Main List Boxes Section */
         .main-container { 
             position: absolute; top: 10px; right: 20px; bottom: 85px; 
             width: 720px; display: flex; flex-direction: column; gap: 10px; 
         }
         .box { 
             display: none; flex: 1; overflow: hidden; position: relative; 
-            border: 3px solid rgba(255,255,255,0.2); 
-            background: rgba(0, 0, 0, 0.7); /* Box Body Background */
+            border: 4px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); 
         }
 
-        /* SLIM DARK HEADERS */
+        #box-fly { background: rgba(0, 40, 0, 0.8); }   
+        #box-time { background: rgba(255, 190, 0, 0.85); color: black !important; } 
+        #box-out { background: rgba(120, 0, 0, 0.8); }
+
         .box-header { 
-            height: 50px; padding: 0 20px; display: flex; 
-            justify-content: space-between; align-items: center; 
-            border-bottom: 3px solid rgba(255,255,255,0.1);
+            padding: 8px 25px; display: flex; 
+            justify-content: space-between; align-items: center; color: white;
+            border-bottom: 4px solid rgba(255,255,255,0.2); height: 55px;
         }
-        #box-fly .box-header { background: #004400; } /* Dark Green */
-        #box-time .box-header { background: #cc9900; color: black; } /* Dark Yellow */
-        #box-out .box-header { background: #880000; } /* Dark Red */
+        #box-fly .box-header { background: #004400; }
+        #box-time .box-header { background: #cc9900; color: black; }
+        #box-out .box-header { background: #880000; }
 
         .header-title { display: flex; flex-direction: column; }
-        .header-title .pa { font-size: 20px; font-weight: 950; }
-        .header-title .en { font-size: 12px; font-weight: 700; opacity: 0.9; }
+        .header-title .pa { font-size: 22px; font-weight: 950; }
+        .header-title .en { font-size: 11px; font-weight: 700; opacity: 0.9; }
 
-        .count-tag { 
-            background: white; color: black; padding: 0 15px; border-radius: 4px; 
-            font-size: 26px; font-weight: 950; height: 35px; display: flex; align-items: center; 
-        }
+        .count-tag { background: white; color: black; padding: 0px 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 40px; display: flex; align-items: center; }
 
-        /* 3. Scrolling List */
-        .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
+        /* Constant Scrolling List */
+        .scroll-window { position: absolute; top: 55px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         .item { 
-            padding: 8px 30px; display: flex; align-items: center; gap: 20px; 
-            font-size: 32px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.05); 
-            text-shadow: 2px 2px 4px rgba(0,0,0,1);
+            padding: 6px 30px; display: flex; align-items: center; gap: 20px; 
+            font-size: 34px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 3px 3px 6px rgba(0,0,0,1); color: #ffffff; line-height: 1.1;
         }
-        .item-num { color: #f39c12; min-width: 50px; }
-        #box-time .item { color: #ffcc00; } /* Highlight text in Time Box */
+        .item-num { color: #f39c12; min-width: 60px; font-weight: 950; }
+        #box-time .item { color: black; text-shadow: none; }
+        #box-time .item-num { color: black; }
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* 4. Footer Ticker */
+        /* Footer & Clock */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; 
             display: flex; align-items: center; border-top: 6px solid #f39c12; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 34px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 30px; }
+        .live-tag { background: #ff0000; color: white; padding: 0 45px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 32px; }
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .dt-box { background: #111; height: 100%; padding: 0 30px; display: flex; align-items: center; border-left: 3px solid #333; min-width: 300px; color: #f39c12; font-size: 32px; font-weight: 950; }
+        .dt-box { 
+            background: #111; height: 100%; padding: 0 35px; display: flex; justify-content: center; align-items: center; 
+            border-left: 4px solid #333; min-width: 320px; 
+        }
+        #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; }
     </style>
 </head>
 <body>
+
+<div id="expiry-overlay">
+    <h1>RECHARGE REQUIRED</h1>
+    <p>ਤੁਹਾਡਾ ਪਲਾਨ ਖਤਮ ਹੋ ਗਿਆ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਰੀਚਾਰਜ ਕਰੋ।</p>
+    <p style="margin-top:20px; font-weight:bold; color:#f39c12;">CONTACT: 86996-40061</p>
+</div>
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
@@ -115,7 +134,7 @@
     <div id="box-time" class="box">
         <div class="box-header">
             <div class="header-title"><span class="pa">⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ</span><span class="en">TIME PIGEONS</span></div>
-            <span id="box-time-val" style="font-size: 20px; font-weight: 900; margin-left: 10px;"></span>
+            <span id="box-time-val" style="font-size: 20px; font-weight: 900; margin-left: 10px; color:black;"></span>
             <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -132,37 +151,53 @@
 
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
-    <div class="dt-box" id="dt-flash">00:00 AM</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+    <div class="dt-box"><div id="dt-flash">00:00 AM</div></div>
 </div>
 
 <script>
-    // Firebase Config
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Time Flash
+    // Time Clock
     setInterval(() => {
         const now = new Date();
-        document.getElementById('dt-flash').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
+        document.getElementById('dt-flash').innerText = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase();
     }, 1000);
 
-    // Data Sync
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const conf = data.config || {}; const pigeons = data.pigeons || [];
+            const data = snap.val();
+            if(!data) return;
+
+            // EXPIRY CHECK
+            const now = new Date().getTime();
+            const expiry = data.expiry || 0;
+            if (now > expiry) {
+                document.getElementById('expiry-overlay').style.display = "flex";
+                document.getElementById('scoreboard-div').style.display = "none";
+                document.getElementById('summary-div').style.display = "none";
+                document.getElementById('ticker-div').style.display = "none";
+                return;
+            } else {
+                document.getElementById('expiry-overlay').style.display = "none";
+            }
+
+            const conf = data.config || {};
+            const pigeons = data.pigeons || [];
 
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
+            document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
             document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            let counts = { fly:0, out:0, time:0 };
+            let htmls = { fly:'', out:'', time:'' };
+
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
