@@ -10,30 +10,28 @@
     <style>
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         
+        /* Expiry & Help Header */
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .status-val { font-size: 14px; font-weight: 900; }
 
         /* Recharge Button & Modal */
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 10px; cursor: pointer; text-transform: uppercase; }
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
-        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
+        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; position: relative; }
         
-        /* QR Area */
         .qr-area { background: white; padding: 10px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
         .qr-area img { width: 100%; max-width: 200px; border-radius: 5px; }
 
-        /* Payment Plan Card */
         .plan-card { background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
         .plan-card b { font-size: 24px; color: #2ecc71; display: block; margin-bottom: 12px; }
         
         /* App Buttons with Icons */
-        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; font-weight: 900; font-size: 11px; cursor: pointer; color: white; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .pay-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .pay-btn { padding: 12px; border-radius: 8px; border: none; font-weight: 900; font-size: 14px; cursor: pointer; color: white; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
         .gp { background: #4285F4; } /* GPay */
         .pp { background: #5f259f; } /* PhonePe */
         .pt { background: #00baf2; } /* Paytm */
-        .az { background: #232f3e; border: 1px solid #ff9900; } /* Amazon */
 
         /* Team Row (50/50 Split) */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
@@ -55,30 +53,28 @@
 </head>
 <body>
 
-<div id="main-content">
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333;">
+    <h2 style="color:#f39c12; font-weight:900;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..." style="margin-bottom:15px; border:1px solid #444;">
+    <button onclick="checkLogin()" class="btn-recharge-main">ENTER CONTROL</button>
+</div>
+
+<div id="main-content" style="display:none;">
     <div class="status-bar">
-        <div><span style="font-size:10px;color:#888;">HELPLINE:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
+        <div><span style="font-size:10px;color:#888;">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
         <div style="text-align: right;"><span style="font-size:10px;color:#888;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
 
-    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
-        <div style="background:#1a1d21; padding:8px; border-radius:8px; text-align:center; border:1px solid #333;">
-            <div style="font-size:10px; color:#888;">TOT</div><b id="sum-total" style="color:#f39c12;">0</b>
-        </div>
-        <div style="background:#1a1d21; padding:8px; border-radius:8px; text-align:center; border:1px solid #333;">
-            <div style="font-size:10px; color:#888;">FLY</div><b id="sum-fly" style="color:#007bff;">0</b>
-        </div>
-        <div style="background:#1a1d21; padding:8px; border-radius:8px; text-align:center; border:1px solid #333;">
-            <div style="font-size:10px; color:#888;">TIME</div><b id="sum-time" style="color:#ffc107;">0</b>
-        </div>
-        <div style="background:#1a1d21; padding:8px; border-radius:8px; text-align:center; border:1px solid #333;">
-            <div style="font-size:10px; color:#888;">OUT</div><b id="sum-out" style="color:#dc3545;">0</b>
-        </div>
+    <div class="admin-sum-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
+        <div class="sum-item" style="background:#1a1d21; padding:10px; border-radius:8px; text-align:center; border:1px solid #333;"><div>TOT</div><b id="sum-total" style="color:#f39c12;">0</b></div>
+        <div class="sum-item" style="background:#1a1d21; padding:10px; border-radius:8px; text-align:center; border:1px solid #333;"><div>FLY</div><b id="sum-fly" style="color:#007bff;">0</b></div>
+        <div class="sum-item" style="background:#1a1d21; padding:10px; border-radius:8px; text-align:center; border:1px solid #333;"><div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
+        <div class="sum-item" style="background:#1a1d21; padding:10px; border-radius:8px; text-align:center; border:1px solid #333;"><div>OUT</div><b id="sum-out" style="color:#dc3545;">0</b></div>
     </div>
 
-    <button onclick="save()" style="width:100%; padding:14px; background:#238636; color:white; border:none; border-radius:8px; font-weight:900; margin-bottom:15px; font-size:16px;">💾 SAVE ALL UPDATES</button>
+    <button onclick="save()" style="width:100%; padding:15px; background:#238636; color:white; border:none; border-radius:10px; font-weight:900; margin-bottom:20px; font-size:16px;">💾 SAVE & UPDATE LIVE</button>
 
     <div id="listArea"></div>
 
@@ -91,6 +87,8 @@
                 <p style="color:#000; font-size:10px; font-weight:bold; margin:5px 0 0 0;">Scan to Pay</p>
             </div>
 
+            <p style="text-align:center; font-size:11px; color:#888; margin-bottom:15px;">ADMIN ID: <span id="adminIdDisp" style="color:#fff; font-weight:bold;"></span></p>
+            
             <div id="plans-container"></div>
             
             <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:15px; background:#444; color:white; border:none; border-radius:10px; font-weight:bold;">CLOSE</button>
@@ -122,75 +120,56 @@
         { name: "1 MONTH PLAN", price: 2000, id: "1Month" }
     ];
 
-    function toggleRecharge(show) { document.getElementById('recharge-modal').style.display = show ? 'block' : 'none'; }
+    function checkLogin() {
+        db.ref('users/' + userID).once('value', snap => {
+            const data = snap.val();
+            if(data && data.password === document.getElementById('adminPass').value) {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-content').style.display = "block";
+                document.getElementById('adminIdDisp').innerText = userID;
+                const d = new Date(data.expiry);
+                document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                setupPlans();
+                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
+            } else { alert("Incorrect Password!"); }
+        });
+    }
 
     function setupPlans() {
         const container = document.getElementById('plans-container');
         container.innerHTML = "";
         plans.forEach(p => {
-            const pa = "4kjunctionofficial@okhdfcbank";
-            const pn = "Manpreet Singh";
-            const am = p.price;
-            const tn = `Plan_${p.id}_ID_${userID}`;
-
-            // Fixed Deeplinks
-            const gpay = `intent://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
-            const phonepe = `phonepe://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
-            const paytm = `paytmmp://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
-            const amazon = `intent://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}#Intent;scheme=upi;package=in.amazon.mShop.android.shopping;end`;
-
+            const upiBase = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            
             container.innerHTML += `
                 <div class="plan-card">
                     <span style="font-size:12px; color:#888;">${p.name}</span>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="${gpay}" class="pay-btn gp"><i class="fab fa-google-pay"></i> GPAY</a>
-                        <a href="${phonepe}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i> PHONEPE</a>
-                        <a href="${paytm}" class="pay-btn pt"><i class="fas fa-wallet"></i> PAYTM</a>
-                        <a href="${amazon}" class="pay-btn az"><i class="fab fa-amazon-pay"></i> AMAZON</a>
+                        <a href="upi://pay?${upiBase}" class="pay-btn gp"><i class="fab fa-google-pay"></i> GOOGLE PAY</a>
+                        <a href="phonepe://pay?${upiBase}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i> PHONEPE</a>
+                        <a href="paytmmp://pay?${upiBase}" class="pay-btn pt"><i class="fas fa-wallet"></i> PAYTM</a>
                     </div>
                 </div>`;
         });
     }
 
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            localData = data;
-            const d = new Date(data.expiry);
-            document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            setupPlans();
-            render();
-        });
-    }
-
+    function toggleRecharge(show) { document.getElementById('recharge-modal').style.display = show ? 'block' : 'none'; }
     function addP() {
         const n = document.getElementById('pName').value; if(!n) return;
         if(!localData.pigeons) localData.pigeons = [];
         localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
         document.getElementById('pName').value = ""; save();
     }
-
     function editName(id, newName) {
         localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
         save();
     }
-
-    function setStatus(id, s) { 
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
-        save(); 
-    }
-    
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
     function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
     function save() {
-        const config = { 
-            showScoreboard: document.getElementById('swScore').checked, 
-            showTicker: document.getElementById('swTicker').checked, 
-            showTime: true, showFly: true,
-            ticker: document.getElementById('inpTicker').value,
-            boxTime: document.getElementById('inpBoxTime').value
-        };
+        const config = { showScoreboard: document.getElementById('swScore').checked, showTicker: document.getElementById('swTicker').checked, showTime: true, showFly: true, ticker: document.getElementById('inpTicker').value, boxTime: document.getElementById('inpBoxTime').value };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
 
