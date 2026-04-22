@@ -7,68 +7,73 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; padding-bottom: 280px; -webkit-text-size-adjust: 100%; }
+        body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         
-        /* Expiry & Helpline Header */
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
-        .status-label { font-size: 11px; color: #888; font-weight: bold; }
-        .status-val { font-size: 16px; font-weight: 900; }
+        .status-val { font-size: 14px; font-weight: 900; }
 
-        /* Full Width Buttons (Kinare ton Kinare) */
-        .btn-full { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; cursor: pointer; display: block; margin-bottom: 10px; box-sizing: border-box; }
-        .btn-recharge-main { background: #f39c12; color: black; }
-        .btn-save-main { background: #238636; color: white; margin-bottom: 15px; }
+        /* Recharge & Payment Section */
+        .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
+        #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; overflow-y: auto; }
+        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 20px auto; }
+        
+        .plan-card { background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
+        .plan-card b { font-size: 22px; color: #2ecc71; display: block; margin-bottom: 10px; }
+        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .pay-btn { padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: white; text-decoration: none; text-align: center; }
+        .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; } .az { background: #ff9900; color: black; }
 
-        /* Summary Section */
+        /* Summary Grid */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
         .sum-item { background: #1a1d21; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
-        /* Pigeon List - Slimmer Design */
-        .pigeon-row { background: #21262d; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; border: 1px solid #30363d; }
-        .serial-num { color: #f39c12; font-weight: 900; font-size: 15px; min-width: 20px; }
-        .pigeon-name-input { background: transparent; border: none; color: white; font-size: 17px; font-weight: bold; flex: 1; padding: 4px; outline: none; }
+        /* Top Controls - New Position */
+        .controls-top { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        input { padding: 12px; background: #0d1117; border: 1px solid #333; color: white; border-radius: 6px; font-size: 16px; width: 100%; outline: none; }
+        .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 20px; border-radius: 6px; color: black; }
+        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .sw-row { background: #111; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 12px; border: 1px solid #333; align-items: center; }
+
+        /* Team List - 50/50 Split */
+        .pigeon-row { background: #21262d; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
+        .name-part { width: 50%; display: flex; align-items: center; gap: 8px; overflow: hidden; }
+        .serial-num { color: #f39c12; font-weight: 900; font-size: 16px; min-width: 20px; }
+        .pigeon-name-input { background: transparent; border: none; color: white; font-size: 17px; font-weight: bold; width: 100%; outline: none; }
         
-        /* Slimmed Buttons (Ghat Dhote) */
-        .status-grp { display: flex; gap: 4px; align-items: center; }
-        .st-btn { border: none; padding: 6px 0; border-radius: 4px; font-weight: bold; font-size: 11px; opacity: 0.2; color: white; width: 38px; text-align: center; }
-        .st-btn.active { opacity: 1; border: 1.5px solid white; box-shadow: 0 0 5px rgba(255,255,255,0.3); }
-        .st-fly { background: #007bff; } 
-        .st-time { background: #ffc107; color: black; } 
-        .st-out { background: #dc3545; }
-        .del-btn { background: none; border: none; color: #ff4444; font-size: 22px; padding: 0 4px; margin-left: 2px; }
-
-        /* Recharge Modal */
-        #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; margin-top: 30px; }
-        .plan-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
-        .plan-btn { background: #111; border: 1px solid #30363d; color: white; padding: 15px; border-radius: 10px; text-decoration: none; display: flex; justify-content: space-between; align-items: center; }
-        .plan-btn b { font-size: 20px; color: #2ecc71; }
-
-        /* Sticky Footer */
-        .sticky-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1d21; padding: 12px; border-top: 4px solid #f39c12; z-index: 1000; }
-        .footer-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        .sticky-footer input { padding: 12px; background: #0d1117; border: 1px solid #333; color: white; border-radius: 6px; font-size: 15px; width: 100%; box-sizing: border-box; }
-        .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 20px; border-radius: 6px; color: black; font-size: 14px; }
+        .btn-part { width: 50%; display: flex; justify-content: flex-end; gap: 4px; align-items: center; }
+        .st-btn { border: none; padding: 10px 0; border-radius: 4px; font-weight: bold; font-size: 12px; opacity: 0.2; color: white; width: 35px; text-align: center; }
+        .st-btn.active { opacity: 1; border: 1px solid white; }
+        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
+        .del-btn { background: none; border: none; color: #ff4444; font-size: 22px; padding-left: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:12px; border:1px solid #333;">
-    <h2 style="color:#f39c12; margin-top:0;">MANPREET MUDKI</h2>
-    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..." style="width:100%; padding:14px; margin-bottom:15px; background:#000; border:1px solid #333; color:white; border-radius:8px; box-sizing: border-box;">
-    <button onclick="checkLogin()" class="btn-full" style="background:#238636; color:white; margin-bottom:0;">ENTER ADMIN</button>
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:20px; border-radius:12px;">
+    <h2 style="color:#f39c12;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
+    <button onclick="checkLogin()" class="btn-recharge-main">ENTER</button>
 </div>
 
 <div id="main-content" style="display:none;">
-    
     <div class="status-bar">
-        <div><span class="status-label">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
-        <div style="text-align: right;"><span class="status-label">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
+        <div><span style="font-size:10px;color:#888;">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
+        <div style="text-align: right;"><span style="font-size:10px;color:#888;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
-    <button class="btn-full btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / RENEW PLAN</button>
+    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / RENEW PLAN</button>
+
+    <div class="controls-top">
+        <div class="input-row"><input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ..."><button class="btn-add" onclick="addP()">ADD</button></div>
+        <div class="input-row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="ਟਾਈਮ (e.g. 10:00 to 11:30)"><input type="text" id="inpTicker" oninput="save()" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..."></div>
+        <div class="sw-grid">
+            <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()"></div>
+            <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
+        </div>
+    </div>
 
     <div class="admin-sum-grid">
         <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
@@ -77,36 +82,18 @@
         <div class="sum-item"><div>OUT</div><b id="sum-out">0</b></div>
     </div>
 
-    <button onclick="save()" class="btn-full btn-save-main">💾 SAVE ALL UPDATES</button>
+    <button onclick="save()" style="width:100%; padding:14px; background:#238636; color:white; border:none; border-radius:8px; font-weight:900; margin-bottom:15px;">💾 SAVE ALL CHANGES</button>
 
     <div id="listArea"></div>
 
     <div id="recharge-modal">
         <div class="modal-content">
-            <h3 style="text-align:center; color:#f39c12; margin-top:0;">SELECT PLAN</h3>
-            <p style="font-size:12px; text-align:center; color:#888; margin-bottom:20px;">ADMIN ID: <b id="adminIdDisp" style="color:#fff;">--</b></p>
-            <div class="plan-grid" id="planList">
-                </div>
-            <button onclick="toggleRecharge(false)" class="btn-full" style="background:#444; color:white; margin-top:20px;">CLOSE</button>
-        </div>
-    </div>
-
-    <div class="sticky-footer">
-        <div class="footer-row">
-            <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ...">
-            <button class="btn-add" onclick="addP()">ADD</button>
-        </div>
-        <div class="footer-row">
-            <input type="text" id="inpBoxTime" oninput="save()" placeholder="Time (e.g. 10:00 to 11:30)">
-            <input type="text" id="inpTicker" oninput="save()" placeholder="Ticker Text Message">
-        </div>
-        <div style="display:flex; gap:10px;">
-            <div style="flex:1; background:#111; padding:12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:bold;">
-                OVERLAY <input type="checkbox" id="swScore" onchange="save()" style="width:18px; height:18px;">
-            </div>
-            <div style="flex:1; background:#111; padding:12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:bold;">
-                TICKER <input type="checkbox" id="swTicker" onchange="save()" style="width:18px; height:18px;">
-            </div>
+            <h3 style="text-align:center; color:#f39c12; margin-bottom:5px;">CHOOSE PLAN</h3>
+            <p style="text-align:center; font-size:10px; color:#888; margin-bottom:15px;">ID: <span id="adminIdDisp"></span></p>
+            
+            <div id="plans-container"></div>
+            
+            <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:12px; background:#444; color:white; border:none; border-radius:8px;">CLOSE</button>
         </div>
     </div>
 </div>
@@ -119,8 +106,14 @@
     const userID = urlParams.get('id');
     let localData = { pigeons: [], config: {} };
 
+    const plans = [
+        { name: "1 DAY PLAN", price: 200, id: "1Day" },
+        { name: "2 DAY PLAN", price: 300, id: "2Day" },
+        { name: "10 DAY PLAN", price: 1000, id: "10Day" },
+        { name: "1 MONTH PLAN", price: 2000, id: "1Month" }
+    ];
+
     function checkLogin() {
-        if(!userID) { alert("Invalid URL! ID missing."); return; }
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password === document.getElementById('adminPass').value) {
@@ -131,62 +124,50 @@
                 const d = new Date(data.expiry);
                 document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                 
-                setupUPILinks();
+                setupPlans();
                 db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
             } else { alert("Incorrect Password!"); }
         });
     }
 
-    // Universal UPI Link Setup
-    function setupUPILinks() {
-        const plans = [
-            { id: "1D", name: "1 DAY PLAN", price: "200" },
-            { id: "2D", name: "2 DAY PLAN", price: "300" },
-            { id: "10D", name: "10 DAY PLAN", price: "1000" },
-            { id: "1M", name: "1 MONTH PLAN", price: "2000" }
-        ];
-        const container = document.getElementById('planList');
+    function setupPlans() {
+        const container = document.getElementById('plans-container');
         container.innerHTML = "";
-        
         plans.forEach(p => {
-            // Using standard UPI intent for better app compatibility
-            const upiUrl = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=ManpreetMudki&am=${p.price}&cu=INR&tn=ID_${userID}_Plan_${p.id}`;
+            const upi = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
             container.innerHTML += `
-                <a href="${upiUrl}" class="plan-btn">
+                <div class="plan-card">
                     <span>${p.name}</span>
                     <b>₹${p.price}</b>
-                </a>`;
+                    <div class="pay-grid">
+                        <a href="${upi}" class="pay-btn gp">GPAY</a>
+                        <a href="phonepe://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR" class="pay-btn pp">PHONEPE</a>
+                        <a href="paytmmp://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR" class="pay-btn pt">PAYTM</a>
+                        <a href="${upi}" class="pay-btn az">AMAZON</a>
+                    </div>
+                </div>`;
         });
     }
 
     function toggleRecharge(show) { document.getElementById('recharge-modal').style.display = show ? 'block' : 'none'; }
-
     function addP() {
         const n = document.getElementById('pName').value; if(!n) return;
         if(!localData.pigeons) localData.pigeons = [];
         localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
         document.getElementById('pName').value = ""; save();
     }
-
     function editName(id, newName) {
         localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p);
         save();
     }
-
-    function setStatus(id, s) { 
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
-        save(); 
-    }
-    
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
     function save() {
         const config = { 
             showScoreboard: document.getElementById('swScore').checked, 
             showTicker: document.getElementById('swTicker').checked, 
-            showTime: true, showFly: true, 
-            ticker: document.getElementById('inpTicker').value, 
-            boxTime: document.getElementById('inpBoxTime').value
+            showTime: true, showFly: true, ticker: document.getElementById('inpTicker').value, boxTime: document.getElementById('inpBoxTime').value
         };
         db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
@@ -204,9 +185,11 @@
         (localData.pigeons || []).forEach((p, idx) => {
             if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
             list.innerHTML += `<div class="pigeon-row">
-                <span class="serial-num">${idx + 1}</span>
-                <input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id}, this.value)">
-                <div class="status-grp">
+                <div class="name-part">
+                    <span class="serial-num">${idx + 1}</span>
+                    <input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id}, this.value)">
+                </div>
+                <div class="btn-part">
                     <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
                     <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
                     <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
