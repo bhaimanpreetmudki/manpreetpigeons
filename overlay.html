@@ -1,90 +1,3 @@
-<!DOCTYPE html>
-<html lang="pa">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
-
-        /* Expiry Screen Design */
-        #expiry-msg { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.9); z-index: 9999; text-align: center; 
-        }
-        .expiry-scroller { 
-            position: absolute; width: 100%; animation: scrollUp 15s linear infinite; 
-        }
-        .expiry-line { font-size: 80px; font-weight: 950; margin-bottom: 50px; line-height: 1.2; text-shadow: 4px 4px 10px rgba(255,0,0,0.8); }
-        .help-line { font-size: 100px; color: #f39c12; text-shadow: 5px 5px 15px #000; }
-
-        @keyframes scrollUp {
-            0% { transform: translateY(100vh); }
-            100% { transform: translateY(-120%); }
-        }
-
-        /* --- Normal Overlay Styles (ਪਹਿਲਾਂ ਵਾਲੇ) --- */
-        .summary-wrapper { position: absolute; bottom: 95px; left: 15px; display: flex; gap: 15px; z-index: 1000; }
-        .sum-card { display: flex; border-radius: 12px; border: 3px solid rgba(255,255,255,0.6); min-width: 280px; height: 80px; overflow: hidden; }
-        .sum-label-area { background: rgba(17, 17, 17, 0.95); width: 65%; font-size: 24px; font-weight: 950; color: #f39c12; display: flex; align-items: center; justify-content: center; }
-        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 950; display: flex; align-items: center; justify-content: center; }
-        .main-container { position: absolute; top: 10px; right: 20px; bottom: 85px; width: 720px; display: flex; flex-direction: column; }
-        .box { display: none; flex: 1; overflow: hidden; position: relative; border: 4px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); }
-        #box-fly { background: rgba(0, 30, 100, 0.85); }
-        #box-time { background: rgba(255, 190, 0, 0.9); color: black !important; }
-        #box-out { background: rgba(150, 0, 0, 0.85); }
-        .box-header { padding: 8px 25px; font-size: 32px; font-weight: 950; display: flex; justify-content: space-between; align-items: center; height: 60px; border-bottom: 4px solid rgba(255,255,255,0.2); }
-        .count-tag { background: white; color: black; padding: 0 18px; border-radius: 6px; font-size: 30px; font-weight: 950; height: 45px; display: flex; align-items: center; }
-        .scroll-window { position: absolute; top: 60px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
-        .item { padding: 6px 30px; display: flex; align-items: center; gap: 20px; font-size: 34px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 6px rgba(0,0,0,1); color: #ffffff; line-height: 1.1; }
-        .item-num { color: #ffffff; min-width: 60px; font-weight: 950; }
-        #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
-        @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-        .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; }
-        .live-tag { background: #ff0000; color: white; padding: 0 45px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 32px; }
-        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .dt-box { background: #111; height: 100%; padding: 0 35px; display: flex; justify-content: center; align-items: center; border-left: 4px solid #333; min-width: 320px; }
-        #dt-flash { font-size: 36px; font-weight: 950; color: #f39c12; animation: fadeInOut 4s infinite; }
-        @keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
-        .flash-header::after { content: attr(data-pa); animation: flashH 5s infinite; }
-        @keyframes flashH { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
-    </style>
-</head>
-<body>
-
-<div id="expiry-msg">
-    <div class="expiry-scroller">
-        <div class="expiry-line">ਤੁਹਾਡਾ ਪਲਾਨ ਐਕਸਪਾਇਰ ਹੋ ਗਿਆ ਹੈ <br> YOUR PLAN HAS EXPIRED</div>
-        <div class="expiry-line">ਰੀਚਾਰਜ ਕਰਨ ਲਈ ਸੰਪਰਕ ਕਰੋ <br> PLEASE CONTACT FOR RECHARGE</div>
-        <div class="expiry-line help-line">📞 86996-40061</div>
-        <div class="expiry-line">ਮਨਪ੍ਰੀਤ ਸਿੰਘ ਮੁਦਕੀ <br> MANPREET SINGH MUDKI</div>
-    </div>
-</div>
-
-<div id="main-overlay">
-    <div class="summary-wrapper" id="summary-div">
-        <div class="sum-card"><div class="sum-label-area flash-header" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div><div id="m-total" class="sum-val-area">0</div></div>
-        <div class="sum-card"><div class="sum-label-area flash-header" style="background:#0044cc; color:white;" data-pa="ਬਾਕੀ" data-en="REMAINING"></div><div id="m-rem" class="sum-val-area">0</div></div>
-        <div class="sum-card"><div class="sum-label-area flash-header" style="background:#117722; color:white;" data-pa="ਸਮੇਂ ਚ" data-en="ON TIME"></div><div id="m-time" class="sum-val-area">0</div></div>
-    </div>
-
-    <div class="main-container" id="scoreboard-div">
-        <div id="box-fly" class="box"><div class="box-header"><span class="flash-header" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-        <div id="box-time" class="box"><div class="box-header"><div style="display: flex; align-items: center; gap: 15px;"><span>⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ</span><span id="box-time-val" style="border-left: 3px solid black; padding-left: 15px;"></span></div><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-        <div id="box-out" class="box"><div class="box-header"><span class="flash-header" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="❌ OUT"></span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
-    </div>
-
-    <div class="footer" id="ticker-div">
-        <div class="live-tag">LIVE</div>
-        <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-        <div class="dt-box"><div id="dt-flash">00:00 AM</div></div>
-    </div>
-</div>
-
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
@@ -93,10 +6,12 @@
     const userID = urlParams.get('id');
 
     if(userID) {
+        // ਇਹ ਫੰਕਸ਼ਨ ਡਾਟਾ ਬਦਲਦੇ ਹੀ ਆਪਣੇ ਆਪ ਚੱਲੇਗਾ (No Refresh Needed)
         db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
+            const data = snap.val(); 
+            if(!data) return;
             
-            // Expiry Logic
+            // 1. Expiry Check (Auto-Hide if expired)
             const now = new Date().getTime();
             const exp = new Date(data.expiry).getTime();
             if (now > exp) {
@@ -108,40 +23,48 @@
                 document.getElementById('main-overlay').style.display = "block";
             }
 
-            const conf = data.config || {}; const pigeons = data.pigeons || [];
+            const conf = data.config || {}; 
+            const pigeons = data.pigeons || [];
+
+            // 2. Auto Update Overlay Elements
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
             document.getElementById('box-time-val').innerText = conf.boxTime || "";
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+
+            let counts = { fly:0, out:0, time:0 }; 
+            let htmls = { fly:'', out:'', time:'' };
+
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
                 else if (p.status === 'time') { counts.time++; htmls.time += row; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
             });
+
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
             document.getElementById('m-time').innerText = counts.time;
+
+            // 3. Dynamic Lists Refresh (Without Reloading Page)
             ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`); const listArea = document.getElementById(`list-${id}`);
+                const el = document.getElementById(`box-${id}`); 
+                const listArea = document.getElementById(`list-${id}`);
                 if((conf.showFly || id !== 'fly') && counts[id] > 0) {
-                    el.style.display = "block"; document.getElementById(`count-${id}`).innerText = counts[id];
-                    listArea.innerHTML = htmls[id] + htmls[id]; listArea.style.animationDuration = (counts[id] * 3) + "s";
-                } else { el.style.display = "none"; }
+                    el.style.display = "block"; 
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    
+                    // ਸਿਰਫ ਲਿਸਟ ਦਾ ਅੰਦਰੂਨੀ ਹਿੱਸਾ ਬਦਲੋ
+                    listArea.innerHTML = htmls[id] + htmls[id]; 
+                    listArea.style.animationDuration = (counts[id] * 3) + "s";
+                } else { 
+                    el.style.display = "none"; 
+                }
             });
+        }, error => {
+            console.log("Firebase Error: ", error);
+            // ਜੇਕਰ ਕੁਨੈਕਸ਼ਨ ਟੁੱਟ ਜਾਵੇ ਤਾਂ ਆਪਣੇ ਆਪ ਰੀ-ਕੁਨੈਕਟ ਕਰੇਗਾ
         });
     }
-
-    // Time Clock
-    let showTime = true;
-    setInterval(() => {
-        const now = new Date(); const el = document.getElementById('dt-flash');
-        if(showTime) el.innerText = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase();
-        else el.innerText = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
-        showTime = !showTime;
-    }, 4000);
 </script>
-</body>
-</html>
