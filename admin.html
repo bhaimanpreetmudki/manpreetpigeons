@@ -54,9 +54,8 @@
     </div>
 
     <div class="card">
-        <div class="sw-row"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()" style="width:25px; height:25px;"></div>
-        <div class="sw-row"><span>TICKER BAR</span><input type="checkbox" id="swTicker" onchange="save()" style="width:25px; height:25px;"></div>
-        <div class="sw-row"><span>TIME BOX</span><input type="checkbox" id="swTime" onchange="save()" style="width:25px; height:25px;"></div>
+        <div class="sw-row"><span>SCOREBOARD ON/OFF</span><input type="checkbox" id="swScore" onchange="save()" style="width:25px; height:25px;"></div>
+        <div class="sw-row"><span>TICKER BAR ON/OFF</span><input type="checkbox" id="swTicker" onchange="save()" style="width:25px; height:25px;"></div>
     </div>
 
     <div class="card">
@@ -67,7 +66,7 @@
     <div id="listArea"></div>
 
     <div class="card">
-        <label style="color:#888; font-size:12px;">⏰ TIME BOX TEXT (e.g. 10:00 to 11:00)</label>
+        <label style="color:#888; font-size:12px;">⏰ TIME BOX TEXT (e.g. 10:00 TO 11:00)</label>
         <input type="text" id="inpBoxTime" oninput="save()" placeholder="ਸਮਾਂ ਭਰੋ...">
         <label style="color:#888; font-size:12px;">📢 TICKER MESSAGE</label>
         <input type="text" id="inpTicker" oninput="save()" placeholder="ਸੁਨੇਹਾ ਲਿਖੋ...">
@@ -109,7 +108,7 @@
         const config = { 
             showScoreboard: document.getElementById('swScore').checked, 
             showTicker: document.getElementById('swTicker').checked, 
-            showTime: document.getElementById('swTime').checked,
+            showTime: true, // ਇਹ ਹਮੇਸ਼ਾ ON ਰਹੇਗਾ ਜੇ ਲਿਸਟ ਵਿੱਚ ਟਾਈਮ ਵਾਲਾ ਕਬੂਤਰ ਹੈ
             showFly: true,
             ticker: document.getElementById('inpTicker').value,
             boxTime: document.getElementById('inpBoxTime').value
@@ -121,7 +120,6 @@
         const conf = localData.config || {};
         document.getElementById('swScore').checked = conf.showScoreboard;
         document.getElementById('swTicker').checked = conf.showTicker;
-        document.getElementById('swTime').checked = conf.showTime;
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
 
