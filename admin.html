@@ -7,112 +7,137 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        /* Mobile Friendly CSS */
-        body { 
-            font-family: sans-serif; 
-            background: #0f1113; 
-            color: white; 
-            margin: 0; 
-            padding: 10px; 
-            -webkit-text-size-adjust: 100%; /* ਫੋਨ ਤੇ ਅੱਖਰਾਂ ਦਾ ਸਾਈਜ਼ ਨਾ ਬਦਲੇ */
-        }
+        body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         
-        .status-bar { 
-            background: #1a1d21; 
-            border: 1px solid #333; 
-            padding: 10px; 
-            border-radius: 10px; 
-            display: flex; 
-            flex-direction: column; /* ਮੋਬਾਈਲ ਤੇ ਉੱਪਰ-ਹੇਠਾਂ ਦਿਖੇਗਾ */
-            gap: 5px;
-            margin-bottom: 15px; 
-            border-left: 5px solid #f39c12; 
-            font-size: 13px; 
-        }
-
-        @media (min-width: 600px) {
-            .status-bar { flex-direction: row; justify-content: space-between; }
-        }
-
-        .header { 
-            background: #f39c12; 
-            color: black; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 15px; 
-        }
-
-        .card { 
-            background: #1a1d21; 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: 1px solid #333; 
-            margin-bottom: 15px; 
-        }
-
-        .pigeon-row { 
-            background: #21262d; 
-            padding: 10px; 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            display: flex; 
-            flex-wrap: wrap; /* ਮੋਬਾਈਲ ਤੇ ਬਟਨ ਅਡਜਸਟ ਹੋ ਜਾਣਗੇ */
-            align-items: center; 
-            justify-content: space-between; 
-            border: 1px solid #30363d; 
-        }
-
-        .pigeon-name { 
-            font-size: 16px; 
-            font-weight: bold; 
-            flex: 1; 
-            min-width: 120px; 
-            margin-bottom: 5px;
-        }
+        .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 15px; border-left: 5px solid #f39c12; font-size: 14px; }
+        .status-bar b { color: #f39c12; }
         
-        .status-grp { display: flex; gap: 4px; }
-        
-        .st-btn { 
-            border: none; 
-            padding: 10px 8px; 
-            border-radius: 4px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            color: white; 
-            opacity: 0.2; 
-            font-size: 11px;
-        }
+        .header { background: #f39c12; color: black; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header h3 { margin: 0; font-size: 20px; font-weight: 900; }
 
-        .st-btn.active { opacity: 1; border: 1px solid white; }
+        .card { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        
+        .pigeon-row { background: #21262d; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #30363d; }
+        .pigeon-name { font-size: 16px; font-weight: bold; flex: 1; }
+        
+        .status-grp { display: flex; gap: 5px; }
+        .st-btn { border: none; padding: 10px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; opacity: 0.2; font-size: 12px; }
+        .st-btn.active { opacity: 1; border: 1.5px solid white; transform: scale(1.05); }
         .st-fly { background: #007bff; } 
         .st-time { background: #ffc107; color: black; } 
         .st-out { background: #dc3545; }
 
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            background: #0d1117; 
-            border: 1px solid #30363d; 
-            color: white; 
-            border-radius: 6px; 
-            margin-bottom: 10px; 
-            font-size: 16px; /* 16px ਤੋਂ ਘੱਟ ਹੋਣ ਤੇ iPhone ਆਪਣੇ ਆਪ ਜ਼ੂਮ ਕਰਦਾ ਹੈ, ਇਸ ਲਈ 16px ਰੱਖਿਆ ਹੈ */
-        }
+        input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; margin-bottom: 10px; font-size: 16px; outline: none; }
+        .btn-add { width: 100%; padding: 12px; background: #f39c12; border: none; font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 16px; }
 
-        .sw-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            background: #111; 
-            padding: 12px; 
-            border-radius: 8px; 
-            margin-bottom: 5px; 
-        }
+        .sw-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; }
+        .del-btn { background: none; border: none; color: #ff4444; font-size: 20px; cursor: pointer; margin-left: 10px; }
     </style>
 </head>
 <body>
-    </body>
+
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center;" class="card">
+    <h2 style="color:#f39c12; margin-bottom:20px;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
+    <button class="btn-add" onclick="checkLogin()">LOGIN</button>
+</div>
+
+<div id="main-content" style="display:none;">
+    <div class="status-bar">
+        <span>📅 EXPIRY: <b id="expDisp">--</b></span>
+        <span>📞 HELPLINE: <b>+91 8699640061</b></span>
+    </div>
+
+    <div class="header">
+        <h3>🏆 LIVE CONTROL</h3>
+        <button onclick="save()" style="background:#238636; color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold;">SAVE ALL</button>
+    </div>
+
+    <div class="card">
+        <div class="sw-row"><span>SCOREBOARD</span><input type="checkbox" id="swScore" onchange="save()" style="width:25px; height:25px;"></div>
+        <div class="sw-row"><span>TICKER BAR</span><input type="checkbox" id="swTicker" onchange="save()" style="width:25px; height:25px;"></div>
+        <div class="sw-row"><span>TIME BOX</span><input type="checkbox" id="swTime" onchange="save()" style="width:25px; height:25px;"></div>
+    </div>
+
+    <div class="card">
+        <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਜਾਂ ਕਬੂਤਰ ਦਾ ਨਾਮ...">
+        <button class="btn-add" onclick="addP()">ADD PIGEON</button>
+    </div>
+
+    <div id="listArea"></div>
+
+    <div class="card">
+        <label style="color:#888; font-size:12px;">⏰ TIME BOX TEXT (e.g. 10:00 to 11:00)</label>
+        <input type="text" id="inpBoxTime" oninput="save()" placeholder="ਸਮਾਂ ਭਰੋ...">
+        <label style="color:#888; font-size:12px;">📢 TICKER MESSAGE</label>
+        <input type="text" id="inpTicker" oninput="save()" placeholder="ਸੁਨੇਹਾ ਲਿਖੋ...">
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+    let localData = { pigeons: [], config: {} };
+
+    function checkLogin() {
+        db.ref('users/' + userID).once('value', snap => {
+            const data = snap.val();
+            if(data && data.password === document.getElementById('adminPass').value) {
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-content').style.display = "block";
+                document.getElementById('expDisp').innerText = new Date(data.expiry).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
+            } else { alert("Wrong Password"); }
+        });
+    }
+
+    function addP() {
+        const n = document.getElementById('pName').value; if(!n) return;
+        if(!localData.pigeons) localData.pigeons = [];
+        localData.pigeons.push({ id: Date.now(), name: n, status: 'fly' });
+        document.getElementById('pName').value = ""; save();
+    }
+
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
+    
+    function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
+
+    function save() {
+        const config = { 
+            showScoreboard: document.getElementById('swScore').checked, 
+            showTicker: document.getElementById('swTicker').checked, 
+            showTime: document.getElementById('swTime').checked,
+            showFly: true,
+            ticker: document.getElementById('inpTicker').value,
+            boxTime: document.getElementById('inpBoxTime').value
+        };
+        db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
+    }
+
+    function render() {
+        const conf = localData.config || {};
+        document.getElementById('swScore').checked = conf.showScoreboard;
+        document.getElementById('swTicker').checked = conf.showTicker;
+        document.getElementById('swTime').checked = conf.showTime;
+        document.getElementById('inpTicker').value = conf.ticker || "";
+        document.getElementById('inpBoxTime').value = conf.boxTime || "";
+
+        const list = document.getElementById('listArea'); list.innerHTML = "";
+        (localData.pigeons || []).forEach(p => {
+            list.innerHTML += `<div class="pigeon-row">
+                <span class="pigeon-name">${p.name}</span>
+                <div class="status-grp">
+                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">FLY</button>
+                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">TIME</button>
+                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">OUT</button>
+                    <button onclick="delP(${p.id})" class="del-btn">🗑️</button>
+                </div>
+            </div>`;
+        });
+    }
+</script>
+</body>
 </html>
