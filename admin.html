@@ -12,66 +12,71 @@
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .status-val { font-size: 14px; font-weight: 900; }
 
-        /* Recharge & Payment Section */
+        /* Recharge Modal & App Buttons */
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; overflow-y: auto; }
-        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 20px auto; }
+        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         
         .plan-card { background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center; }
-        .plan-card b { font-size: 22px; color: #2ecc71; display: block; margin-bottom: 10px; }
-        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .pay-btn { padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: white; text-decoration: none; text-align: center; }
-        .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; } .az { background: #ff9900; color: black; }
+        .plan-card b { font-size: 22px; color: #2ecc71; display: block; margin-bottom: 12px; }
+        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .pay-btn { padding: 12px; border-radius: 6px; border: none; font-weight: 900; font-size: 13px; cursor: pointer; color: white; text-decoration: none; text-align: center; display: block; }
+        
+        /* App Colors */
+        .gp { background: #4285F4; } /* GPay */
+        .pp { background: #5f259f; } /* PhonePe */
+        .pt { background: #00baf2; } /* Paytm */
+        .az { background: #ff9900; color: black; } /* Amazon */
 
-        /* Summary Grid */
-        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
-        .sum-item { background: #1a1d21; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #333; }
-        .sum-item div { font-size: 10px; color: #888; }
+        /* Top Controls (Above List) */
+        .controls-top { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
+        .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 20px; border-radius: 8px; color: black; }
+        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sw-row { background: #111; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px; border: 1px solid #333; align-items: center; font-weight: bold; }
+
+        /* Summary */
+        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
+        .sum-item div { font-size: 10px; color: #888; margin-bottom: 4px; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
-        /* Top Controls - New Position */
-        .controls-top { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        input { padding: 12px; background: #0d1117; border: 1px solid #333; color: white; border-radius: 6px; font-size: 16px; width: 100%; outline: none; }
-        .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 20px; border-radius: 6px; color: black; }
-        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-        .sw-row { background: #111; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 12px; border: 1px solid #333; align-items: center; }
-
-        /* Team List - 50/50 Split */
-        .pigeon-row { background: #21262d; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
-        .name-part { width: 50%; display: flex; align-items: center; gap: 8px; overflow: hidden; }
-        .serial-num { color: #f39c12; font-weight: 900; font-size: 16px; min-width: 20px; }
-        .pigeon-name-input { background: transparent; border: none; color: white; font-size: 17px; font-weight: bold; width: 100%; outline: none; }
+        /* Team List (50/50 Split) */
+        .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
+        .name-part { width: 52%; display: flex; align-items: center; gap: 10px; }
+        .serial-num { color: #f39c12; font-weight: 900; font-size: 18px; min-width: 25px; }
+        .pigeon-name-input { background: transparent; border: none; color: white; font-size: 18px; font-weight: 900; width: 100%; outline: none; }
         
-        .btn-part { width: 50%; display: flex; justify-content: flex-end; gap: 4px; align-items: center; }
-        .st-btn { border: none; padding: 10px 0; border-radius: 4px; font-weight: bold; font-size: 12px; opacity: 0.2; color: white; width: 35px; text-align: center; }
-        .st-btn.active { opacity: 1; border: 1px solid white; }
+        .btn-part { width: 48%; display: flex; justify-content: flex-end; gap: 5px; align-items: center; }
+        .st-btn { border: none; padding: 10px 0; border-radius: 5px; font-weight: 900; font-size: 14px; opacity: 0.2; color: white; width: 38px; text-align: center; }
+        .st-btn.active { opacity: 1; border: 1.5px solid white; }
         .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
-        .del-btn { background: none; border: none; color: #ff4444; font-size: 22px; padding-left: 5px; cursor: pointer; }
+        .del-btn { background: none; border: none; color: #ff4444; font-size: 24px; padding-left: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:20px; border-radius:12px;">
-    <h2 style="color:#f39c12;">ADMIN LOGIN</h2>
-    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
-    <button onclick="checkLogin()" class="btn-recharge-main">ENTER</button>
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333;">
+    <h2 style="color:#f39c12; font-weight:900;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..." style="margin-bottom:15px; border:1px solid #444;">
+    <button onclick="checkLogin()" class="btn-recharge-main">ENTER CONTROL</button>
 </div>
 
 <div id="main-content" style="display:none;">
     <div class="status-bar">
-        <div><span style="font-size:10px;color:#888;">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
-        <div style="text-align: right;"><span style="font-size:10px;color:#888;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
+        <div><span style="font-size:10px;color:#888;font-weight:bold;">HELPLINE:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
+        <div style="text-align: right;"><span style="font-size:10px;color:#888;font-weight:bold;">ACCOUNT EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / RENEW PLAN</button>
 
     <div class="controls-top">
         <div class="input-row"><input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ..."><button class="btn-add" onclick="addP()">ADD</button></div>
-        <div class="input-row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="ਟਾਈਮ (e.g. 10:00 to 11:30)"><input type="text" id="inpTicker" oninput="save()" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..."></div>
+        <div class="input-row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="ਸਮਾਂ (e.g. 10:00 to 11:30)"><input type="text" id="inpTicker" oninput="save()" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..."></div>
         <div class="sw-grid">
-            <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()"></div>
-            <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
+            <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()" style="width:20px;height:20px;"></div>
+            <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()" style="width:20px;height:20px;"></div>
         </div>
     </div>
 
@@ -82,18 +87,18 @@
         <div class="sum-item"><div>OUT</div><b id="sum-out">0</b></div>
     </div>
 
-    <button onclick="save()" style="width:100%; padding:14px; background:#238636; color:white; border:none; border-radius:8px; font-weight:900; margin-bottom:15px;">💾 SAVE ALL CHANGES</button>
+    <button onclick="save()" style="width:100%; padding:15px; background:#238636; color:white; border:none; border-radius:10px; font-weight:900; margin-bottom:20px; font-size:16px;">💾 SAVE & UPDATE LIVE</button>
 
     <div id="listArea"></div>
 
     <div id="recharge-modal">
         <div class="modal-content">
-            <h3 style="text-align:center; color:#f39c12; margin-bottom:5px;">CHOOSE PLAN</h3>
-            <p style="text-align:center; font-size:10px; color:#888; margin-bottom:15px;">ID: <span id="adminIdDisp"></span></p>
+            <h3 style="text-align:center; color:#f39c12; margin-bottom:5px;">CHOOSE RECHARGE PLAN</h3>
+            <p style="text-align:center; font-size:11px; color:#888; margin-bottom:15px;">ADMIN ID: <span id="adminIdDisp" style="color:#fff; font-weight:bold;"></span></p>
             
             <div id="plans-container"></div>
             
-            <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:12px; background:#444; color:white; border:none; border-radius:8px;">CLOSE</button>
+            <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:15px; background:#444; color:white; border:none; border-radius:10px; font-weight:bold;">CLOSE</button>
         </div>
     </div>
 </div>
@@ -134,16 +139,26 @@
         const container = document.getElementById('plans-container');
         container.innerHTML = "";
         plans.forEach(p => {
-            const upi = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            // Specific deep links for different apps
+            const pa = "4kjunctionofficial@okhdfcbank";
+            const pn = "Manpreet";
+            const am = p.price;
+            const tn = `Plan_${p.id}_ID_${userID}`;
+
+            const gpayLink = `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
+            const phonepeLink = `phonepe://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
+            const paytmLink = `paytmmp://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
+            const amazonLink = `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
+
             container.innerHTML += `
                 <div class="plan-card">
-                    <span>${p.name}</span>
+                    <span style="font-weight:bold; color:#888;">${p.name}</span>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="${upi}" class="pay-btn gp">GPAY</a>
-                        <a href="phonepe://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR" class="pay-btn pp">PHONEPE</a>
-                        <a href="paytmmp://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR" class="pay-btn pt">PAYTM</a>
-                        <a href="${upi}" class="pay-btn az">AMAZON</a>
+                        <a href="${gpayLink}" class="pay-btn gp">GPAY</a>
+                        <a href="${phonepeLink}" class="pay-btn pp">PHONEPE</a>
+                        <a href="${paytmLink}" class="pay-btn pt">PAYTM</a>
+                        <a href="${amazonLink}" class="pay-btn az">AMAZON</a>
                     </div>
                 </div>`;
         });
@@ -161,7 +176,7 @@
         save();
     }
     function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
-    function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
+    function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
     function save() {
         const config = { 
