@@ -19,14 +19,14 @@
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         
-        /* Plan Cards Design */
+        /* Bold Plan Cards */
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
         .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
-        .pay-btn i { font-size: 20px; }
+        .pay-btn i { font-size: 22px; }
 
         /* Controls Section (At Top) */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
@@ -42,7 +42,6 @@
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
-        /* Save Button */
         .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; margin-bottom: 15px; font-size: 16px; }
 
         /* List Rows (50/50 Split) */
@@ -129,15 +128,20 @@
         const container = document.getElementById('plans-container');
         container.innerHTML = "";
         plans.forEach(p => {
-            const upi = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            // Deep links with Universal Protocol
+            const gpayURL = `upi://pay?${commonURL}`;
+            const phonepeURL = `phonepe://pay?${commonURL}`;
+            const paytmURL = `paytmmp://pay?${commonURL}`;
+
             container.innerHTML += `
                 <div class="plan-card">
                     <h2>${p.name}</h2>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="${upi}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
-                        <a href="${upi}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
-                        <a href="${upi}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
+                        <a href="${gpayURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
+                        <a href="${phonepeURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
+                        <a href="${paytmURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
                     </div>
                 </div>`;
         });
