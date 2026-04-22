@@ -10,25 +10,25 @@
     <style>
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         
-        /* Header Stats */
+        /* 1. Header with White Highlighted Helpline */
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
-        .status-val { font-size: 14px; font-weight: 900; }
+        .help-box { background: white; color: black; padding: 4px 10px; border-radius: 6px; font-weight: 950; font-size: 16px; display: inline-block; margin-top: 4px; cursor: pointer; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
 
-        /* Recharge Button & Modal */
+        /* 2. Recharge Section */
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         
-        /* Bold Plan Cards */
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; }
+        .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 5px; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
         .pay-btn i { font-size: 22px; }
 
-        /* Controls Section (At Top) */
+        /* 3. Controls (At Top) */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
@@ -36,7 +36,7 @@
         .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .sw-row { background: #111; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px; border: 1px solid #333; align-items: center; font-weight: bold; }
 
-        /* Summary Stats */
+        /* 4. Stats Summary */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
@@ -44,7 +44,7 @@
 
         .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; margin-bottom: 15px; font-size: 16px; }
 
-        /* List Rows (50/50 Split) */
+        /* 5. Team List (50/50 Split) */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 50%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -66,21 +66,17 @@
 
 <div id="main-content" style="display:none;">
     <div class="status-bar">
-        <div><span style="font-size:10px;color:#888;">HELP:</span><br><span class="status-val" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</span></div>
-        <div style="text-align: right;"><span style="font-size:10px;color:#888;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
+        <div><span style="font-size:10px; color:#888; font-weight:bold;">HELP / RECHARGE:</span><br>
+            <div class="help-box" onclick="window.location.href='tel:+918699640061'">📞 86996-40061</div>
+        </div>
+        <div style="text-align: right;"><span style="font-size:10px; color:#888; font-weight:bold;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
 
     <div id="controls-section" class="controls-container">
-        <div class="row">
-            <input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ...">
-            <button class="btn-add" onclick="addP()">ADD</button>
-        </div>
-        <div class="row">
-            <input type="text" id="inpBoxTime" oninput="save()" placeholder="Time Text">
-            <input type="text" id="inpTicker" oninput="save()" placeholder="Ticker Text">
-        </div>
+        <div class="row"><input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ..."><button class="btn-add" onclick="addP()">ADD</button></div>
+        <div class="row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="Time Text"><input type="text" id="inpTicker" oninput="save()" placeholder="Ticker Text"></div>
         <div class="sw-grid">
             <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()"></div>
             <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
@@ -129,7 +125,6 @@
         container.innerHTML = "";
         plans.forEach(p => {
             const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
-            // Deep links with Universal Protocol
             const gpayURL = `upi://pay?${commonURL}`;
             const phonepeURL = `phonepe://pay?${commonURL}`;
             const paytmURL = `paytmmp://pay?${commonURL}`;
@@ -153,10 +148,8 @@
             if(data && data.password === document.getElementById('adminPass').value) {
                 const now = new Date().getTime();
                 const exp = new Date(data.expiry).getTime();
-
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
-                
                 const d = new Date(data.expiry);
                 document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
@@ -168,10 +161,7 @@
                     document.getElementById('listArea').style.display = "none";
                     toggleRecharge(true);
                 } else {
-                    db.ref('users/' + userID).on('value', s => { 
-                        localData = s.val() || {pigeons:[], config:{}}; 
-                        render(); 
-                    });
+                    db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
                 }
                 setupPlans();
             } else { alert("Incorrect Password!"); }
@@ -190,10 +180,7 @@
         save();
     }
 
-    function setStatus(id, s) { 
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
-        save(); 
-    }
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
     
     function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
 
