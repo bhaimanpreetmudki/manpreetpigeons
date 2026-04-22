@@ -10,41 +10,40 @@
     <style>
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         
-        /* 1. Header with White Highlighted Helpline */
+        /* Header Stats */
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
-        .help-box { background: white; color: black; padding: 4px 10px; border-radius: 6px; font-weight: 950; font-size: 16px; display: inline-block; margin-top: 4px; cursor: pointer; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .help-box { background: white; color: black; padding: 4px 10px; border-radius: 6px; font-weight: 950; font-size: 16px; display: inline-block; margin-top: 4px; cursor: pointer; }
         .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
 
-        /* 2. Recharge Section */
+        /* Recharge Button */
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .plan-card h2 { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 5px; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
-        .pay-btn i { font-size: 22px; }
 
-        /* 3. Controls (At Top) */
+        /* Controls Section */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
         .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 0 25px; border-radius: 8px; color: black; font-size: 16px; }
-        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .sw-row { background: #111; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px; border: 1px solid #333; align-items: center; font-weight: bold; }
 
-        /* 4. Stats Summary */
+        /* Stats Summary */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
-        .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; margin-bottom: 15px; font-size: 16px; }
+        /* Action Buttons Area */
+        .action-btns { display: grid; grid-template-columns: 3fr 1.2fr; gap: 10px; margin-bottom: 15px; }
+        .btn-save { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; }
+        .btn-reset { width: 100%; padding: 15px; background: #dc3545; color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; }
 
-        /* 5. Team List (50/50 Split) */
+        /* Team List Row */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 50%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -77,9 +76,9 @@
     <div id="controls-section" class="controls-container">
         <div class="row"><input type="text" id="pName" placeholder="ਪਾਰਟੀ ਦਾ ਨਾਮ ਲਿਖੋ..."><button class="btn-add" onclick="addP()">ADD</button></div>
         <div class="row"><input type="text" id="inpBoxTime" oninput="save()" placeholder="Time Text"><input type="text" id="inpTicker" oninput="save()" placeholder="Ticker Text"></div>
-        <div class="sw-grid">
-            <div class="sw-row"><span>OVERLAY</span><input type="checkbox" id="swScore" onchange="save()"></div>
-            <div class="sw-row"><span>TICKER</span><input type="checkbox" id="swTicker" onchange="save()"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div style="background:#111; padding:12px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px; border:1px solid #333; align-items:center; font-weight:bold;">OVERLAY <input type="checkbox" id="swScore" onchange="save()"></div>
+            <div style="background:#111; padding:12px; border-radius:8px; display:flex; justify-content:space-between; font-size:13px; border:1px solid #333; align-items:center; font-weight:bold;">TICKER <input type="checkbox" id="swTicker" onchange="save()"></div>
         </div>
     </div>
 
@@ -90,7 +89,10 @@
         <div class="sum-item"><div>OUT</div><b id="sum-out" style="color:#dc3545;">0</b></div>
     </div>
 
-    <button id="save-btn" class="btn-save" onclick="save()">💾 SAVE & UPDATE LIVE</button>
+    <div class="action-btns" id="action-section">
+        <button class="btn-save" onclick="save()">💾 SAVE & UPDATE</button>
+        <button class="btn-reset" onclick="resetData()">🔄 RESET</button>
+    </div>
 
     <div id="listArea"></div>
 
@@ -124,19 +126,15 @@
         const container = document.getElementById('plans-container');
         container.innerHTML = "";
         plans.forEach(p => {
-            const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
-            const gpayURL = `upi://pay?${commonURL}`;
-            const phonepeURL = `phonepe://pay?${commonURL}`;
-            const paytmURL = `paytmmp://pay?${commonURL}`;
-
+            const upi = `upi://pay?pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
             container.innerHTML += `
                 <div class="plan-card">
                     <h2>${p.name}</h2>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="${gpayURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
-                        <a href="${phonepeURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
-                        <a href="${paytmURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
+                        <a href="${upi}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
+                        <a href="${upi}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
+                        <a href="${upi}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
                     </div>
                 </div>`;
         });
@@ -157,7 +155,7 @@
                     alert("ਪਲਾਨ ਖਤਮ ਹੋ ਗਿਆ ਹੈ! ਕਿਰਪਾ ਕਰਕੇ ਰੀਚਾਰਜ ਕਰੋ।");
                     document.getElementById('controls-section').style.display = "none";
                     document.getElementById('summary-section').style.display = "none";
-                    document.getElementById('save-btn').style.display = "none";
+                    document.getElementById('action-section').style.display = "none";
                     document.getElementById('listArea').style.display = "none";
                     toggleRecharge(true);
                 } else {
@@ -166,6 +164,15 @@
                 setupPlans();
             } else { alert("Incorrect Password!"); }
         });
+    }
+
+    // RESET FUNCTION
+    function resetData() {
+        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਸਾਰੀਆਂ ਪਾਰਟੀਆਂ ਡਿਲੀਟ ਹੋ ਜਾਣਗੀਆਂ।")) {
+            localData.pigeons = [];
+            save();
+            alert("ਡਾਟਾ ਰੀਸੈੱਟ ਹੋ ਗਿਆ ਹੈ।");
+        }
     }
 
     function addP() {
