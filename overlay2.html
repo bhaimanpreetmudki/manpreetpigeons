@@ -25,13 +25,13 @@
             100% { opacity: 0; transform: translateY(-20px); }
         }
 
-        /* --- SUMMARY BOXES (BOLD & BIG) --- */
+        /* --- SUMMARY BOXES --- */
         .summary-wrapper { 
             position: absolute; bottom: 440px; left: 10px; display: flex; gap: 12px; z-index: 1000; 
         }
         .sum-card { 
             display: flex; border: 3px solid white; border-radius: 8px; 
-            overflow: hidden; min-width: 250px; height: 75px; /* ਹੋਰ ਵੱਡਾ ਕੀਤਾ */
+            overflow: hidden; min-width: 250px; height: 75px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
         }
         .sum-label-area { 
@@ -44,11 +44,11 @@
             display: flex; align-items: center; justify-content: center; 
         }
 
-        /* --- MAIN BOXES (TALLER & TOUCHING TICKER) --- */
+        /* --- MAIN BOXES --- */
         .main-container { 
             position: absolute; left: 10px; right: 10px; 
             bottom: 70px; 
-            height: 360px; /* ਬਕਸੇ ਹੋਰ ਵੱਡੇ ਕਰ ਦਿੱਤੇ */
+            height: 360px; 
             display: flex; flex-direction: row; gap: 10px; 
         }
         .box { 
@@ -56,16 +56,16 @@
             border: 3px solid white; border-radius: 12px 12px 0 0; overflow: hidden;
         }
 
-        /* Dark Rich Backgrounds */
         #box-fly { background: #000000; }
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- HEADER (BOLD & WIDE) --- */
+        /* --- HEADER (Updated Section) --- */
         .box-header { 
-            height: 75px; width: 100%; display: flex; 
+            height: 85px; /* ਹੈਡਰ ਦੀ ਉਚਾਈ ਵਧਾਈ */
+            width: 100%; display: flex; 
             align-items: center; padding: 0 15px; position: relative;
-            border-bottom: 3px solid rgba(255,255,255,0.4);
+            border-bottom: 4px solid rgba(255,255,255,0.4);
         }
         
         #box-fly .box-header { background: #1a1a1a; }
@@ -73,24 +73,32 @@
         #box-out .box-header { background: #b30000; }
 
         .header-title { 
-            font-size: 24px; font-weight: 950; flex: 1; text-align: left;
-            letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-size: 35px; /* ਅੱਖਰ ਵੱਡੇ ਕੀਤੇ */
+            font-weight: 1000; flex: 1; text-align: left;
+            letter-spacing: 1px; text-shadow: 3px 3px 5px rgba(0,0,0,0.8);
+            display: flex; align-items: center;
         }
 
-        /* --- YELLOW COUNT TAG (AT THE CORNER) --- */
+        /* ਆਈਕਾਨ (Emoji) ਨੂੰ ਵੱਡਾ ਕਰਨ ਲਈ */
+        .header-title::before {
+            font-size: 45px;
+            margin-right: 10px;
+        }
+
+        /* --- YELLOW COUNT TAG --- */
         .count-tag { 
             background: #ffcc00; color: black; 
-            padding: 5px 25px; border-radius: 5px; 
-            font-size: 32px; font-weight: 1000;
-            border: 2px solid white; 
-            min-width: 100px; text-align: center;
+            padding: 5px 25px; border-radius: 8px; 
+            font-size: 42px; /* ਗਿਣਤੀ ਵਾਲੇ ਅੱਖਰ ਵੱਡੇ ਕੀਤੇ */
+            font-weight: 1000;
+            border: 3px solid white; 
+            min-width: 110px; text-align: center;
             box-shadow: -2px 2px 10px rgba(0,0,0,0.5);
-            /* ਕਿਨਾਰੇ ਤੇ ਸੈੱਟ */
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
         }
 
-        /* List Area */
-        .scroll-window { position: absolute; top: 65px; bottom: 0; width: 100%; overflow: hidden; }
+        /* List Area (Top Adjust according to Header) */
+        .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         .item { 
             padding: 12px 20px; font-size: 35px; font-weight: 950; 
@@ -212,11 +220,9 @@
         el.style.display = "block";
         document.getElementById(`count-${id}`).innerText = counts[id];
 
-        // ਝਟਕਾ ਰੋਕਣ ਲਈ ਦੋਵੇਂ ਪਾਸੇ 100px ਦਾ ਗੈਪ ਪਾਇਆ ਗਿਆ ਹੈ
         let gap = '<div style="height:100px;"></div>';
         listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
 
-        // ਸਪੀਡ ਸੈੱਟ ਕਰਨ ਲਈ (ਜੇ ਝਟਕਾ ਲੱਗ ਰਿਹਾ ਹੈ ਤਾਂ ਇਸ ਨੂੰ 4 ਜਾਂ 5 ਰੱਖੋ)
         listArea.style.animationDuration = (counts[id] * 2.8) + "s";
     } else { 
         el.style.display = "none"; 
