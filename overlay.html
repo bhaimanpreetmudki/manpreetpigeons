@@ -45,7 +45,7 @@
 
         .scroll-window { position: absolute; top: 45px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
-        .item { padding: 6px 25px; display: flex; align-items: center; gap: 15px; font-size: 32px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
+        .item { padding: 3px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
         .item-num { color: #f39c12; min-width: 50px; }
         #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
 
@@ -172,7 +172,7 @@
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
                     listArea.innerHTML = htmls[id] + htmls[id];
-                    listArea.style.animationDuration = (counts[id] * 4) + "s";
+                    listArea.style.animationDuration = (counts[id] * 2) + "s";
                 } else { el.style.display = "none"; }
             });
         });
