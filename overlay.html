@@ -49,8 +49,18 @@
         .item-num { color: #f39c12; min-width: 50px; }
         #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
 
-        @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes constantScroll { 
+    0% { transform: translateY(0); } 
+    100% { transform: translateY(-50%); } 
+}
 
+.list-area { 
+    position: absolute; 
+    width: 100%; 
+    animation: constantScroll linear infinite; 
+    /* ਇਹ ਲਾਈਨ ਜ਼ਰੂਰ ਪਾਓ, ਇਹ ਝਟਕਾ ਰੋਕਦੀ ਹੈ */
+    will-change: transform;
+}
         /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; }
         .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 34px; font-weight: 950; font-style: italic; }
