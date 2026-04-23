@@ -166,15 +166,24 @@
             document.getElementById('m-time').innerText = counts.time;
 
             ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`);
-                const listArea = document.getElementById(`list-${id}`);
-                if(counts[id] > 0) {
-                    el.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
-                    listArea.style.animationDuration = (counts[id] * 1) + "s";
-                } else { el.style.display = "none"; }
-            });
+    const el = document.getElementById(`box-${id}`);
+    const listArea = document.getElementById(`list-${id}`);
+    
+    if(counts[id] > 0) {
+        el.style.display = "block";
+        document.getElementById(`count-${id}`).innerText = counts[id];
+        
+        // ਸਮੂਥ ਲੂਪ ਲਈ: Content + Gap + Content + Gap
+        // ਇਹ ਫਾਰਮੂਲਾ ਝਟਕਾ ਖਤਮ ਕਰ ਦੇਵੇਗਾ
+        let gap = '<div style="height:120px;"></div>';
+        listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
+        
+        // ਸਪੀਡ (1.2 ਰੱਖੋ, ਇਹ ਤੇਜ਼ ਵੀ ਹੈ ਅਤੇ ਸਮੂਥ ਵੀ)
+        listArea.style.animationDuration = (counts[id] * 1.2) + "s";
+    } else { 
+        el.style.display = "none"; 
+    }
+});
         });
     }
 </script>
