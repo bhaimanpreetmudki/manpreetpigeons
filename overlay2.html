@@ -101,11 +101,23 @@
         .scroll-window { position: absolute; top: 85px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         .item { 
-            padding: 12px 20px; font-size: 35px; font-weight: 950; 
-            color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); 
-            text-shadow: 3px 3px 5px rgba(0,0,0,1); 
-        }
+           .item { 
+    padding: 18px 25px; 
+    font-size: 42px; 
+    font-weight: 1000; 
+    color: #ffcc00; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    text-shadow: 3px 3px 5px rgba(0,0,0,1);
+    display: flex;
+    align-items: center;
+    /* ਨੰਬਰ ਅਤੇ ਨਾਮ ਦੇ ਵਿਚਕਾਰਲੀ ਦੂਰੀ */
+    gap: 20px; 
+}
 
+/* ਨੰਬਰਾਂ ਨੂੰ ਇੱਕੋ ਜਿਹੀ ਜਗ੍ਹਾ ਦੇਣ ਲਈ (ਤਾਂ ਕਿ 1 ਅਤੇ 10 ਲਾਈਨ ਵਿੱਚ ਰਹਿਣ) */
+.item span:first-child {
+    min-width: 60px;
+}
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* Footer Ticker */
@@ -203,7 +215,7 @@
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
             pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}-${p.name}</div>`;
+              let row = `<div class="item"><span>${idx + 1}.</span> <span>${p.name}</span></div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
                 else if (p.status === 'time') { counts.time++; htmls.time += row; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
