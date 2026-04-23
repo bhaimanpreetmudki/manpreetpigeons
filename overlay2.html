@@ -204,16 +204,24 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
-            ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`);
-                const listArea = document.getElementById(`list-${id}`);
-                if(counts[id] > 0) {
-                    el.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    listArea.innerHTML = htmls[id] + '<div style="height:120px;"></div>' + htmls[id];
-                    listArea.style.animationDuration = (counts[id] * 2.8) + "s";
-                } else { el.style.display = "none"; }
-            });
+           ['fly','time','out'].forEach(id => {
+    const el = document.getElementById(`box-${id}`);
+    const listArea = document.getElementById(`list-${id}`);
+    
+    if(counts[id] > 0) {
+        el.style.display = "block";
+        document.getElementById(`count-${id}`).innerText = counts[id];
+
+        // ਝਟਕਾ ਰੋਕਣ ਲਈ ਦੋਵੇਂ ਪਾਸੇ 100px ਦਾ ਗੈਪ ਪਾਇਆ ਗਿਆ ਹੈ
+        let gap = '<div style="height:100px;"></div>';
+        listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
+
+        // ਸਪੀਡ ਸੈੱਟ ਕਰਨ ਲਈ (ਜੇ ਝਟਕਾ ਲੱਗ ਰਿਹਾ ਹੈ ਤਾਂ ਇਸ ਨੂੰ 4 ਜਾਂ 5 ਰੱਖੋ)
+        listArea.style.animationDuration = (counts[id] * 2.8) + "s";
+    } else { 
+        el.style.display = "none"; 
+    }
+});
         });
     }
 </script>
