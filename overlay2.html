@@ -8,16 +8,21 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- FLASH ANIMATION --- */
-        @keyframes flash-red {
-            0% { background-color: #ff0000; color: white; }
-            50% { background-color: #ffffff; color: #ff0000; }
-            100% { background-color: #ff0000; color: white; }
+        /* --- FLASH ANIMATION FOR DUAL LANGUAGE & DATE/TIME --- */
+        @keyframes langFlash {
+            0%, 45% { content: attr(data-pa); } /* Punjabi for 4.5s */
+            50%, 95% { content: attr(data-en); } /* English for 4.5s */
         }
-        @keyframes flash-white {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
+
+        @keyframes dateTimeFlash {
+            0%, 45% { opacity: 1; display: block; } 
+            50%, 100% { opacity: 0; display: none; }
+        }
+        @keyframes dateTimeFlashReverse {
+            0%, 45% { opacity: 0; display: none; }
+            50%, 95% { opacity: 1; display: block; }
+            100% { opacity: 0; display: none; }
         }
 
         /* Summary Section */
@@ -27,12 +32,14 @@
         .sum-card { 
             display: flex; border: 2px solid white; border-radius: 5px; 
             overflow: hidden; min-width: 200px; height: 55px;
-            animation: flash-white 1.5s infinite; /* Flash effect on summary */
         }
-        .sum-label-area { background: #000; width: 65%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+        .sum-label-area { 
+            background: #000; width: 65%; font-size: 16px; font-weight: 900; 
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
         .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 32px; font-weight: 950; display: flex; align-items: center; justify-content: center; }
 
-        /* Main Boxes */
+        /* Main Boxes Side by Side */
         .main-container { 
             position: absolute; left: 20px; right: 20px; bottom: 85px; 
             height: 230px; display: flex; flex-direction: row; gap: 10px; 
@@ -49,7 +56,6 @@
         .box-header { 
             height: 45px; width: 100%; display: flex; 
             justify-content: flex-end; padding: 5px;
-            animation: flash-white 2s infinite; /* Header Flash */
         }
 
         .count-tag { 
@@ -65,31 +71,29 @@
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- FOOTER & FLASHING DATE/TIME --- */
+        /* --- FOOTER & DUAL LANGUAGE TICKER --- */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 70px; 
-            background: #ffffff; /* ਚਿੱਟਾ ਬੈਕਗਰਾਊਂਡ */
+            background: #ffffff; /* White Ticker Background */
             display: flex; align-items: center; border-top: 5px solid #ff0000; 
         }
         .live-tag { 
             background: #ff0000; color: white; padding: 0 25px; height: 100%; 
             display: flex; align-items: center; font-size: 30px; font-weight: 950; 
-            font-style: italic; animation: flash-red 1s infinite; /* LIVE Flash */
+            font-style: italic; 
         }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
-        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; font-size: 30px; font-weight: 950; color: #000; padding-left: 100%; }
+        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; font-size: 28px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Red Flashing Date/Time Box */
+        /* Date/Time Box that Switches */
         .dt-box { 
-            height: 100%; padding: 0 15px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            min-width: 200px;
-            animation: flash-red 1s infinite; /* Date/Time Flash */
-            border-left: 3px solid #000;
+            background: #ff0000; color: white; height: 100%; padding: 0 15px; 
+            display: flex; justify-content: center; align-items: center; 
+            min-width: 200px; border-left: 3px solid #000; position: relative;
         }
-        #time-val { font-size: 28px; font-weight: 950; line-height: 1; }
-        #date-val { font-size: 16px; font-weight: 900; margin-top: 2px; }
+        #time-val { font-size: 28px; font-weight: 950; animation: dateTimeFlash 10s infinite; }
+        #date-val { font-size: 26px; font-weight: 950; animation: dateTimeFlashReverse 10s infinite; position: absolute; }
 
         #expiry-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
     </style>
@@ -105,26 +109,35 @@
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
-        <div class="sum-label-area">TOTAL PIGEONS</div>
+        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div>
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area" style="color:#ffcc00">REMAINING</div>
+        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-header"><span id="count-fly" class="count-tag">0</span></div>
+        <div class="box-header">
+            <span class="flash-text" style="font-size:20px; font-weight:900;" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
+            <span id="count-fly" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
     <div id="box-time" class="box">
-        <div class="box-header"><span id="count-time" class="count-tag">0</span></div>
+        <div class="box-header">
+            <span class="flash-text" style="font-size:20px; font-weight:900;" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
+            <span id="count-time" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
     <div id="box-out" class="box">
-        <div class="box-header"><span id="count-out" class="count-tag">0</span></div>
+        <div class="box-header">
+            <span class="flash-text" style="font-size:20px; font-weight:900;" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
+            <span id="count-out" class="count-tag">0</span>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 </div>
@@ -133,7 +146,7 @@
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO LIVE STREAM</div></div>
     <div class="dt-box">
-        <div id="time-val">00:00:00</div>
+        <div id="time-val">00:00:00 AM</div>
         <div id="date-val">24 APR 2026</div>
     </div>
 </div>
