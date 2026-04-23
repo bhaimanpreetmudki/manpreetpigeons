@@ -172,7 +172,7 @@
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
                     listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
-                    listArea.style.animationDuration = (counts[id] * 0.50) + "s";
+                    listArea.style.animationDuration = (counts[id] * 1) + "s";
                 } else { el.style.display = "none"; }
             });
         });
