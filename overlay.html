@@ -44,68 +44,48 @@
         .count-tag { background: white; color: black; padding: 0 12px; border-radius: 4px; font-size: 24px; font-weight: 950; height: 32px; display: flex; align-items: center; }
 
         .scroll-window { position: absolute; top: 45px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
         .item { padding: 3px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
         .item-num { color: #f39c12; min-width: 50px; }
         #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
 
         @keyframes constantScroll { 
-    0% { transform: translateY(0); } 
-    100% { transform: translateY(-50%); } 
-}
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-50%); } 
+        }
 
-.list-area { 
-    position: absolute; 
-    width: 100%; 
-    animation: constantScroll linear infinite; 
-    /* ਇਹ ਲਾਈਨ ਜ਼ਰੂਰ ਪਾਓ, ਇਹ ਝਟਕਾ ਰੋਕਦੀ ਹੈ */
-    will-change: transform;
-}
         /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; }
         .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 34px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { 
-    flex: 1; 
-    overflow: hidden; 
-    white-space: nowrap; 
-    color: #fff; 
-    font-weight: 950; 
-    font-size: 35px;
-    display: flex; /* ਇਹ ਜੋੜਨ ਨਾਲ ਅਲਾਈਨਮੈਂਟ ਸਹੀ ਰਹੇਗੀ */
-    align-items: center;
-}
-        .ticker-move { 
-    display: inline-block; 
-    white-space: nowrap;
-    padding-left: 100%; /* ਇਹ ਅੱਖਰਾਂ ਨੂੰ ਸ਼ੁਰੂ ਵਿੱਚ ਹੀ ਸਕ੍ਰੀਨ ਤੋਂ ਬਾਹਰ (ਸੱਜੇ ਪਾਸੇ) ਰੱਖੇਗਾ */
-    animation: ticker 25s linear infinite; 
-}
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; }
+        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
 
-@keyframes ticker { 
-    0% { transform: translateX(0); } 
-    100% { transform: translateX(-100%); } 
-}
+        @keyframes ticker { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-100%); } 
+        }
 
-    .dt-box { 
-    background: #ff0000; /* LIVE ਵਾਲਾ ਲਾਲ ਰੰਗ */
-    height: 100%; 
-    padding: 0 40px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    border-left: 4px solid rgba(255,255,255,0.3); /* ਬਰੀਕ ਚਿੱਟੀ ਲਾਈਨ */
-    min-width: 320px; 
-}
+        /* Time & Date Box (LIVE Style) */
+        .dt-box { 
+            background: #ff0000; 
+            height: 100%; 
+            padding: 0 40px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-left: 4px solid rgba(255,255,255,0.3); 
+            min-width: 320px; 
+        }
 
-#dt-flash { 
-    font-size: 34px; 
-    font-weight: 950; 
-    color: white; /* ਚਿੱਟੇ ਅੱਖਰ */
-    font-style: italic; /* LIVE ਵਾਂਗ ਟੇਢੇ ਅੱਖਰ */
-    text-align: center;
-    width: 100%;
-    letter-spacing: 1px;
-}
+        #dt-flash { 
+            font-size: 34px; 
+            font-weight: 950; 
+            color: white; 
+            font-style: italic; 
+            text-align: center;
+            width: 100%;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -162,74 +142,70 @@
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
     <div class="dt-box">
-    <div id="dt-flash">00:00:00 AM</div>
+        <div id="dt-flash">00:00:00 AM</div>
+    </div>
 </div>
 
 <script>
+    // --- FIREBASE SETUP ---
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-let showTime = true;
+    // --- CLOCK FLASH LOGIC ---
+    let showTime = true;
+    function updateClock() {
+        const now = new Date();
+        const el = document.getElementById('dt-flash');
+        if(!el) return;
 
-function updateClock() {
-    const now = new Date();
-    const el = document.getElementById('dt-flash');
-    if(!el) return;
-
-    if(showTime) {
-        el.innerText = now.toLocaleTimeString('en-US', {
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit', 
-            hour12: true
-        }).toUpperCase();
-    } else {
-        el.innerText = now.toLocaleDateString('en-GB', {
-            day: '2-digit', 
-            month: 'short', 
-            year: 'numeric'
-        }).toUpperCase();
+        if(showTime) {
+            el.innerText = now.toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+            }).toUpperCase();
+        } else {
+            el.innerText = now.toLocaleDateString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            }).toUpperCase();
+        }
     }
-}
 
-// ਹਰ 1 ਸੈਕਿੰਡ ਬਾਅਦ ਟਾਈਮ ਅਪਡੇਟ
-setInterval(() => {
-    if(showTime) updateClock(); 
-}, 1000);
+    setInterval(() => { if(showTime) updateClock(); }, 1000);
+    setInterval(() => { showTime = !showTime; updateClock(); }, 4000);
+    updateClock();
 
-// ਹਰ 4 ਸੈਕਿੰਡ ਬਾਅਦ ਬਦਲਾਅ
-setInterval(() => {
-    showTime = !showTime;
-    updateClock(); 
-}, 4000);
-
-updateClock();
-</script>
+    // --- DATA FETCHING ---
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
+            const data = snap.val(); 
+            if(!data) return;
 
-            // EXPIRY CHECK LOGIC
+            // EXPIRY CHECK
             const expiryTime = new Date(data.expiry).getTime();
             const currentTime = new Date().getTime();
             if (currentTime > expiryTime) {
                 document.getElementById('expiry-lock').style.display = 'flex';
-                return; // Stop rendering other data
+                return;
             } else {
                 document.getElementById('expiry-lock').style.display = 'none';
             }
 
-            const conf = data.config || {}; const pigeons = data.pigeons || [];
+            const conf = data.config || {}; 
+            const pigeons = data.pigeons || [];
+
+            // VISIBILITY
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             document.getElementById('box-time-val').innerText = conf.boxTime || "";
 
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            // LOGIC FOR LISTS
+            let counts = { fly:0, out:0, time:0 }; 
+            let htmls = { fly:'', out:'', time:'' };
+
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
@@ -242,24 +218,18 @@ updateClock();
             document.getElementById('m-time').innerText = counts.time;
 
             ['fly','time','out'].forEach(id => {
-    const el = document.getElementById(`box-${id}`);
-    const listArea = document.getElementById(`list-${id}`);
-    
-    if(counts[id] > 0) {
-        el.style.display = "block";
-        document.getElementById(`count-${id}`).innerText = counts[id];
-        
-        // ਸਮੂਥ ਲੂਪ ਲਈ: Content + Gap + Content + Gap
-        // ਇਹ ਫਾਰਮੂਲਾ ਝਟਕਾ ਖਤਮ ਕਰ ਦੇਵੇਗਾ
-        let gap = '<div style="height:120px;"></div>';
-        listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
-        
-        // ਸਪੀਡ (1.2 ਰੱਖੋ, ਇਹ ਤੇਜ਼ ਵੀ ਹੈ ਅਤੇ ਸਮੂਥ ਵੀ)
-        listArea.style.animationDuration = (counts[id] * 1.2) + "s";
-    } else { 
-        el.style.display = "none"; 
-    }
-});
+                const el = document.getElementById(`box-${id}`);
+                const listArea = document.getElementById(`list-${id}`);
+                if(counts[id] > 0) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    let gap = '<div style="height:120px;"></div>';
+                    listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
+                    listArea.style.animationDuration = (counts[id] * 1.2) + "s";
+                } else { 
+                    el.style.display = "none"; 
+                }
+            });
         });
     }
 </script>
