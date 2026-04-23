@@ -30,7 +30,19 @@
 
         /* Main Containers */
         .main-container { position: absolute; top: 10px; right: 20px; bottom: 85px; width: 600px; display: flex; flex-direction: column; gap: 10px; }
-        .box { display: none; flex: 1; overflow: hidden; position: relative; border: 3px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
+        .box { 
+    display: none; 
+    flex: 1; 
+    overflow: hidden; 
+    position: relative; 
+    
+    /* ਚਮਕਦਾ ਪਤਲਾ ਬਾਰਡਰ */
+    border: 1px solid rgba(255, 255, 255, 0.8); /* 1px ਪਤਲੀ ਚਿੱਟੀ ਲਾਈਨ */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* ਬਾਹਰ ਵੱਲ ਹਲਕੀ ਚਮਕ (Glow) */
+    
+    backdrop-filter: blur(5px); 
+    border-radius: 5px; /* ਕੋਨੇ ਥੋੜੇ ਜਿਹੇ ਗੋਲ ਕਰਨ ਲਈ (ਜੇ ਚਾਹੋ) */
+}
 
         .box-header { height: 45px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(255,255,255,0.2); }
         #box-fly .box-header { background: #0000FF; } 
