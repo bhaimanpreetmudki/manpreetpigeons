@@ -172,12 +172,42 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('time-val').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
-        document.getElementById('date-val').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-    }, 1000);
+let showTime = true;
 
+function updateClock() {
+    const now = new Date();
+    const el = document.getElementById('dt-flash');
+    if(!el) return;
+
+    if(showTime) {
+        el.innerText = now.toLocaleTimeString('en-US', {
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: true
+        }).toUpperCase();
+    } else {
+        el.innerText = now.toLocaleDateString('en-GB', {
+            day: '2-digit', 
+            month: 'short', 
+            year: 'numeric'
+        }).toUpperCase();
+    }
+}
+
+// ਹਰ 1 ਸੈਕਿੰਡ ਬਾਅਦ ਟਾਈਮ ਅਪਡੇਟ
+setInterval(() => {
+    if(showTime) updateClock(); 
+}, 1000);
+
+// ਹਰ 4 ਸੈਕਿੰਡ ਬਾਅਦ ਬਦਲਾਅ
+setInterval(() => {
+    showTime = !showTime;
+    updateClock(); 
+}, 4000);
+
+updateClock();
+</script>
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
