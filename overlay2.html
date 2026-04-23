@@ -8,24 +8,14 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- Animations --- */
+        /* --- FLASH ANIMATION FOR DUAL LANGUAGE --- */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        @keyframes dateTimeFlash {
-            0%, 45% { opacity: 1; transform: translateY(0); }
-            50%, 100% { opacity: 0; transform: translateY(-20px); }
-        }
-        @keyframes dateTimeFlashReverse {
-            0%, 45% { opacity: 0; transform: translateY(20px); }
-            50%, 95% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-
-        /* --- SUMMARY BOXES --- */
+        /* Summary Section */
         .summary-wrapper { 
             position: absolute; bottom: 440px; left: 10px; display: flex; gap: 12px; z-index: 1000; 
         }
@@ -35,7 +25,7 @@
             box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
         }
         .sum-label-area { 
-            background: #000; width: 65%; font-size: 22px; font-weight: 900; 
+            background: #000; width: 65%; font-size: 20px; font-weight: 900; 
             display: flex; align-items: center; justify-content: center; text-align: center;
             border-right: 2px solid white;
         }
@@ -44,21 +34,15 @@
             display: flex; align-items: center; justify-content: center; 
         }
 
-        /* --- MAIN CONTAINER (AUTO-ALIGN LEFT) --- */
+        /* Main Container */
         .main-container { 
-            position: absolute; left: 10px; right: 10px; 
-            bottom: 70px; 
-            height: 360px; 
-            display: flex; 
-            flex-direction: row; 
-            gap: 10px; 
-            justify-content: flex-start; /* ਬਕਸੇ ਖੱਬੇ ਪਾਸੇ ਜੁੜੇ ਰਹਿਣਗੇ */
+            position: absolute; left: 10px; right: 10px; bottom: 70px; 
+            height: 360px; display: flex; flex-direction: row; gap: 10px; 
+            justify-content: flex-start;
         }
 
         .box { 
-            display: none; 
-            flex: 0 0 calc(33.33% - 10px); /* ਸਾਈਜ਼ ਪੱਕਾ ਰਹੇਗਾ ਪਰ ਜਗ੍ਹਾ ਖਾਲੀ ਨਹੀਂ ਛੱਡੇਗਾ */
-            height: 100%; position: relative; 
+            display: none; flex: 0 0 calc(33.33% - 10px); height: 100%; position: relative; 
             border: 3px solid white; border-radius: 12px 12px 0 0; overflow: hidden;
         }
 
@@ -78,8 +62,16 @@
         #box-out .box-header { background: #b30000; }
 
         .header-title { 
-            font-size: 35px; font-weight: 950; flex: 1; text-align: left;
+            font-size: 26px; font-weight: 950; flex: 1; text-align: left;
             letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Time Display within Header */
+        .header-time-val {
+            font-size: 18px; background: rgba(255,255,255,0.2); 
+            padding: 2px 8px; border-radius: 4px; margin-left: 5px;
+            border: 1px solid white; color: #ffcc00;
         }
 
         .count-tag { 
@@ -116,13 +108,16 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
+        @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+
         .dt-box { 
             background: #ff0000; color: white; height: 100%; padding: 0 20px; 
             display: flex; justify-content: center; align-items: center; 
             min-width: 230px; border-left: 4px solid #000; position: relative; overflow: hidden;
         }
-        #time-val { font-size: 32px; font-weight: 950; animation: dateTimeFlash 10s infinite; }
-        #date-val { font-size: 30px; font-weight: 950; animation: dateTimeFlashReverse 10s infinite; position: absolute; }
+        #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
+        #date-val { font-size: 30px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
     </style>
 </head>
 <body>
@@ -141,21 +136,24 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span>
+            <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
             <span id="count-fly" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
     <div id="box-time" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="⏰ ਸਮੇਂ ਚ" data-en="⏰ TIME"></span>
+            <span class="header-title">
+                <span class="flash-text" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
+                <span id="header-time-info" class="header-time-val">10:00 - 11:30</span>
+            </span>
             <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
     <div id="box-out" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="❌ OUT"></span>
+            <span class="header-title flash-text" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
             <span id="count-out" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
@@ -193,6 +191,7 @@
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
+            document.getElementById('header-time-info').innerText = conf.timeRange || "";
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
             pigeons.forEach((p, idx) => {
@@ -208,16 +207,13 @@
             ['fly','time','out'].forEach(id => {
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
-                
                 if(counts[id] > 0) {
-                    el.style.display = "block"; // ਬਾਕਸ ਦਿਖਾਓ
+                    el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
                     let gap = '<div style="height:100px;"></div>';
                     listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
                     listArea.style.animationDuration = (counts[id] * 2.8) + "s";
-                } else { 
-                    el.style.display = "none"; // ਬਾਕਸ ਗਾਇਬ ਕਰੋ, ਜਿਸ ਨਾਲ ਅਗਲਾ ਬਾਕਸ ਖੱਬੇ ਖਿਸਕ ਜਾਵੇਗਾ
-                }
+                } else { el.style.display = "none"; }
             });
         });
     }
