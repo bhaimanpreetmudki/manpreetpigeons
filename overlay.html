@@ -67,25 +67,31 @@
 
         /* Time & Date Box (LIVE Style) */
         .dt-box { 
-            background: #ff0000; 
-            height: 100%; 
-            padding: 0 40px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            border-left: 4px solid rgba(255,255,255,0.3); 
-            min-width: 320px; 
-        }
+    background: #ff0000; 
+    height: 100%; 
+    padding: 0 40px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-left: 4px solid rgba(255,255,255,0.3); 
+    
+    /* 1. ਬਾਕਸ ਦੀ ਚੌੜਾਈ ਫਿਕਸ ਕਰ ਦਿਓ (ਇਹ ਹਿੱਲਣ ਤੋਂ ਰੋਕੇਗਾ) */
+    width: 450px; 
+    min-width: 450px; 
+}
 
-        #dt-flash { 
-            font-size: 40px; 
-            font-weight: 950; 
-            color: white; 
-            font-style: italic; 
-            text-align: center;
-            width: 100%;
-            letter-spacing: 1px;
-        }
+#dt-flash { 
+    font-size: 45px; 
+    font-weight: 950; 
+    color: white; 
+    font-style: italic; 
+    text-align: center;
+    width: 100%;
+    
+    /* 2. ਅੱਖਰਾਂ ਦੇ ਵਿਚਕਾਰ ਜਗ੍ਹਾ ਫਿਕਸ ਕਰ ਦਿਓ (Monospace Font ਵਰਗਾ ਪ੍ਰਭਾਵ) */
+    font-variant-numeric: tabular-nums; 
+    display: inline-block;
+}
     </style>
 </head>
 <body>
