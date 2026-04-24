@@ -8,55 +8,79 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* --- ਹੈਡਰ ਲਈ ਭਾਸ਼ਾ ਬਦਲਣ ਵਾਲੀ ਐਨੀਮੇਸ਼ਨ --- */
+        @keyframes langFlash {
+            0%, 45% { content: attr(data-pa); }
+            50%, 95% { content: attr(data-en); }
+        }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
+
         /* Summary Section (Top Boxes) */
-        .summary-wrapper { position: absolute; bottom: 365px; left: 10px; display: flex; gap: 12px; z-index: 1000; }
+        .summary-wrapper { 
+            position: absolute; 
+            bottom: 365px; 
+            left: 10px; 
+            display: flex; 
+            gap: 12px; 
+            z-index: 1000; 
+        }
         .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 250px; height: 75px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
         .sum-label-area { background: #000; width: 65%; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-align: center; border-right: 2px solid white; }
         .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
         /* Main Container */
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; justify-content: flex-start; }
-        .box { display: none; flex: 0 0 calc(33.33% - 10px); height: 100%; position: relative; border: 3px solid white; border-radius: 8px; overflow: hidden; }
+        .main-container { 
+            position: absolute; 
+            left: 10px; 
+            right: 10px; 
+            bottom: 70px; 
+            height: 280px; 
+            display: flex; 
+            flex-direction: row; 
+            gap: 15px; 
+            justify-content: flex-start; 
+        }
+        .box { display: none; flex: 0 0 calc(33.33% - 10px); height: 100%; position: relative; border: 3px solid white; border-radius: 12px 12px 0 0; overflow: hidden; }
 
         #box-fly { background: #000000; }
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- Yellow Header (As per Photo) --- */
+        /* --- ਨਵਾਂ ਯੈਲੋ ਹੈਡਰ (ਸਕਰੀਨਸ਼ਾਟ ਮੁਤਾਬਕ) --- */
         .box-header { 
-            height: 55px; 
-            min-width: 90px; 
+            height: 45px; 
+            min-width: 80px; 
             background: #ffcc00; 
             color: black; 
             display: flex; 
             align-items: center; 
-            justify-content: center;
+            justify-content: center; 
             position: absolute; 
             right: 0; 
             top: 0; 
-            border-left: 3px solid white;
-            border-bottom: 3px solid white;
-            z-index: 10;
-            padding: 0 10px;
+            border-left: 3px solid white; 
+            border-bottom: 3px solid white; 
+            z-index: 10; 
+            padding: 0 5px;
         }
 
-        .header-info-text {
-            position: absolute;
-            right: 100px; /* Yellow box ਦੇ ਖੱਬੇ ਪਾਸੇ */
-            top: 10px;
-            font-size: 20px;
-            font-weight: 900;
-            color: #ffcc00;
-            text-shadow: 2px 2px 4px black;
+        .header-title { 
+            position: absolute; 
+            left: 15px; 
+            top: 8px; 
+            font-size: 20px; 
+            font-weight: 900; 
+            color: #ffcc00; 
+            text-shadow: 2px 2px 4px black; 
+            z-index: 5;
         }
 
-        .count-tag { font-size: 38px; font-weight: 1000; }
+        .count-tag { font-size: 30px; font-weight: 1000; }
 
-        /* List Area */
+        /* ਨਾਮਾਂ ਦੀ ਲਿਸਟ */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; }
-        .item { padding: 4px 20px; font-size: 38px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 55px; } /* Header ਤੋਂ ਹੇਠਾਂ ਲਈ ਪੈਡਿੰਗ */
+        .item { padding: 2px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 5px rgba(0,0,0,1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* Footer Ticker */
@@ -66,36 +90,39 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 230px; border-left: 4px solid #000; position: relative; }
-        #time-val { font-size: 32px; font-weight: 950; }
+        @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 230px; border-left: 4px solid #000; position: relative; overflow: hidden; }
+        #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
+        #date-val { font-size: 30px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
     </style>
 </head>
 <body>
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
-        <div class="sum-label-area">TOTAL PIGEONS</div>
+        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div>
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area" style="color:#ffcc00">REMAINING</div>
+        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
+        <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span>
         <div class="box-header"><span id="count-fly" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
-    
     <div id="box-time" class="box">
-        <span id="admin-time-label" class="header-info-text"></span>
+        <span class="header-title" id="header-time-info"></span>
         <div class="box-header"><span id="count-time" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
-
     <div id="box-out" class="box">
+        <span class="header-title flash-text" data-pa="❌ ਬਾਹਰ" data-en="❌ OUT"></span>
         <div class="box-header"><span id="count-out" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
@@ -104,7 +131,10 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="time-val">00:00:00 AM</div></div>
+    <div class="dt-box">
+        <div id="time-val">00:00:00 AM</div>
+        <div id="date-val">24 APR 2026</div>
+    </div>
 </div>
 
 <script>
@@ -117,6 +147,7 @@
     setInterval(() => {
         const now = new Date();
         document.getElementById('time-val').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
+        document.getElementById('date-val').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
     }, 1000);
 
     if(userID) {
@@ -125,21 +156,17 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            // Panel settings
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Time Label from Panel
-            const timeLabel = conf.boxTime || conf.timeRange || "";
-            document.getElementById('admin-time-label').innerText = timeLabel;
+            const adminTime = conf.boxTime || conf.timeRange || ""; 
+            document.getElementById('header-time-info').innerText = adminTime;
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
-            
             pigeons.forEach((p, idx) => {
-                let nameStr = p.name || "---";
-                let row = `<div class="item">${idx + 1}-${nameStr}</div>`;
+                let row = `<div class="item">${idx + 1}-${p.name}</div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
                 else if (p.status === 'time') { counts.time++; htmls.time += row; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
@@ -151,14 +178,12 @@
             ['fly','time','out'].forEach(id => {
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
-                
-                // ਜੇ ਪੈਨਲ ਵਿੱਚ ਡਾਟਾ ਹੈ ਤਾਂ ਹੀ ਦਿਖਾਵੇ
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
-                    let gap = '<div style="height:120px;"></div>';
+                    let gap = '<div style="height:100px;"></div>';
                     listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
-                    listArea.style.animationDuration = Math.max(counts[id] * 2.5, 5) + "s";
+                    listArea.style.animationDuration = (counts[id] * 2.8) + "s";
                 } else { el.style.display = "none"; }
             });
         });
