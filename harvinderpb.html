@@ -6,25 +6,31 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           Summary Box & Layout Controls
+           LAYOUT CONTROLS
            ====================================================== */
         :root {
             /* Summary Boxes (Total & Remain) */
-            --sum-bottom: 280px;    /* ਉੱਪਰ-ਥੱਲੇ */
-            --total-left: 400px;    /* TOTAL ਵਾਲਾ ਖੱਬੇ ਤੋਂ */
-            --rem-left: 1040px;     /* REMAIN ਵਾਲਾ ਖੱਬੇ ਤੋਂ */
-            --sum-w: 220px;         /* ਸਮਰੀ ਬਾਕਸ ਦੀ ਚੌੜਾਈ */
-            --sum-h: 60px;          /* ਸਮਰੀ ਬਾਕਸ ਦੀ ਉਚਾਈ */
-
-            /* Main List Boxes (Flying, Out, Time) */
-            --list-bottom: 70px;    /* ਟਿੱਕਰ ਦੇ ਬਿਲਕੁਲ ਉੱਪਰ */
-            --list-h: 280px;        /* ਲਿਸਟਾਂ ਦੀ ਉਚਾਈ */
+            --sum-bottom: 280px;    /* ਸਮਰੀ ਬਾਕਸ ਦੀ ਉਚਾਈ */
+            --total-left: 400px;    
+            --rem-left: 1040px;     
             
-            /* Colors & Fonts */
-            --hdr-bg: #ff9933;      
+            /* Status Headers (Flying, Out, Time) */
+            /* ਇਹਨਾਂ ਨੂੰ ਸਮਰੀ ਬਾਕਸ ਦੇ ਬਰਾਬਰ ਉਚਾਈ 'ਤੇ ਰੱਖਿਆ ਹੈ */
+            --fly-h-left: 10px;     /* FLYING ਹੈਡਰ ਖੱਬੇ ਤੋਂ */
+            --out-h-left: 710px;    /* OUT ਹੈਡਰ ਖੱਬੇ ਤੋਂ (ਅੰਦਾਜ਼ਨ ਸੈਂਟਰ) */
+            --time-h-left: 1410px;  /* TIME ਹੈਡਰ ਖੱਬੇ ਤੋਂ */
+
+            --common-w: 250px;      /* ਸਾਰੇ ਹੈਡਰਾਂ ਦੀ ਚੌੜਾਈ */
+            --common-h: 75px;       /* ਸਾਰੇ ਹੈਡਰਾਂ ਦੀ ਉਚਾਈ */
+
+            /* List Settings */
+            --list-bottom: 70px;    
+            --list-h: 210px;        /* ਲਿਸਟਾਂ ਦੀ ਉਚਾਈ (ਹੈਡਰ ਤੋਂ ਹੇਠਾਂ) */
+            
+            /* Design */
             --name-size: 40px;      
-            --label-size: 18px; 
-            --count-size: 42px;
+            --label-size: 22px; 
+            --count-size: 45px;
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
@@ -33,23 +39,25 @@
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* --- Updated Summary Section --- */
-        .summary-wrapper { 
-            position: absolute; width: 100%; height: 0; bottom: var(--sum-bottom); left: 0;
-            display: none; z-index: 1000; 
-        }
-        .sum-card { 
+        /* --- Global Card Style (Summary + Status Headers) --- */
+        .ui-card { 
             position: absolute; display: flex; border: 3px solid white; 
-            border-radius: 8px; overflow: hidden; width: var(--sum-w); height: var(--sum-h); 
-            background: #000;
+            border-radius: 8px; overflow: hidden; width: var(--common-w); height: var(--common-h); 
+            background: #000; z-index: 1000;
         }
-        #total-card { left: var(--total-left); }
-        #rem-card { left: var(--rem-left); }
+        .label-area { background: #000; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
+        .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        .sum-label-area { background: #000; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
-        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+        /* Positioning Summary Boxes */
+        #total-card { bottom: var(--sum-bottom); left: var(--total-left); }
+        #rem-card { bottom: var(--sum-bottom); left: var(--rem-left); }
 
-        /* --- Main Box Container --- */
+        /* Positioning Status Headers (Just like summary boxes) */
+        #fly-hdr { bottom: var(--sum-bottom); left: var(--fly-h-left); }
+        #out-hdr { bottom: var(--sum-bottom); left: var(--out-h-left); }
+        #time-hdr { bottom: var(--sum-bottom); left: var(--time-h-left); }
+
+        /* --- Main List Containers --- */
         .main-container { 
             position: absolute; left: 10px; right: 10px; bottom: var(--list-bottom); 
             height: var(--list-h); display: flex; flex-direction: row; gap: 15px; 
@@ -65,20 +73,9 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* Header Layout */
-        .box-header { 
-            height: 90px; width: 145px; background: var(--hdr-bg); color: black; 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: flex-start; padding-top: 10px;
-            position: absolute; right: 0; top: 0; 
-            border-left: 3px solid white; border-bottom: 3px solid white; z-index: 10; 
-        }
-        .header-label { font-size: 20px; font-weight: 900; line-height: 1.2; margin-bottom: 2px; }
-        .count-tag { font-size: 42px; font-weight: 1000; line-height: 1; }
-
-        /* Smooth Scroll */
+        /* Scroll Logic */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
@@ -94,28 +91,40 @@
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="sum-card" id="total-card">
-        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
-        <div id="m-total" class="sum-val-area">0</div>
+<div id="summary-div">
+    <div class="ui-card" id="total-card">
+        <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
+        <div id="m-total" class="val-area">0</div>
     </div>
-    <div class="sum-card" id="rem-card">
-        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
-        <div id="m-rem" class="sum-val-area">0</div>
+    <div class="ui-card" id="rem-card">
+        <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
+        <div id="m-rem" class="val-area">0</div>
+    </div>
+</div>
+
+<div id="headers-div">
+    <div class="ui-card" id="fly-hdr">
+        <div class="label-area flash-text" style="color:#ff9933" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
+        <div id="count-fly" class="val-area">0</div>
+    </div>
+    <div class="ui-card" id="out-hdr">
+        <div class="label-area flash-text" style="color:#ff9933" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
+        <div id="count-out" class="val-area">0</div>
+    </div>
+    <div class="ui-card" id="time-hdr">
+        <div class="label-area flash-text" style="color:#ff9933" data-pa="ਸਮਾਂ" data-en="TIME"></div>
+        <div id="count-time" class="val-area">0</div>
     </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span><span id="count-fly" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
     <div id="box-out" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span><span id="count-out" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
     <div id="box-time" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span><span id="count-time" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
@@ -144,8 +153,10 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            document.getElementById('summary-div').style.display = (pigeons.length > 0 && conf.showScoreboard) ? "block" : "none";
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            const showScore = conf.showScoreboard;
+            document.getElementById('summary-div').style.display = showScore ? "block" : "none";
+            document.getElementById('headers-div').style.display = showScore ? "block" : "none";
+            document.getElementById('scoreboard-div').style.display = showScore ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
 
@@ -161,19 +172,23 @@
             
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+            document.getElementById('count-fly').innerText = counts.fly;
+            document.getElementById('count-out').innerText = counts.out;
+            document.getElementById('count-time').innerText = counts.time;
 
             ['fly','out','time'].forEach(id => {
                 const box = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
-                const count = document.getElementById(`count-${id}`);
+                const hdr = document.getElementById(`${id}-hdr`);
                 
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.classList.add('has-data');
-                    count.innerText = counts[id];
+                    hdr.style.visibility = "visible";
                     list.innerHTML = htmls[id] + htmls[id]; 
                     list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
                 } else {
                     box.classList.remove('has-data');
+                    hdr.style.visibility = "hidden";
                 }
             });
         });
