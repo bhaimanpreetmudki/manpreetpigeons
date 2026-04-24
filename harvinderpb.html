@@ -6,40 +6,37 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਕੰਟਰੋਲ ਸੈਟਿੰਗ (Header & Summary Locations)
+           ਕੰਟਰੋਲ ਪੈਨਲ (ਇੱਥੋਂ ਸਾਈਜ਼ ਵਧਾਓ ਜਾਂ ਘਟਾਓ)
            ====================================================== */
         :root {
-            /* 1. FLYING HEADER */
-            --fly-h-bottom: 270px;   
-            --fly-h-left: 400px;    
+            /* 1. ਲਿਸਟਾਂ ਦੀ ਚੌੜਾਈ (WIDTH) */
+            --fly-list-w: 300px;   /* FLYING ਲਿਸਟ ਦੀ ਚੌੜਾਈ */
+            --out-list-w: 300px;   /* OUT ਲਿਸਟ ਦੀ ਚੌੜਾਈ */
+            --time-list-w: 300px;  /* TIME ਲਿਸਟ ਦੀ ਚੌੜਾਈ */
 
-            /* 2. OUT HEADER */
-            --out-h-bottom: 270px;   
-            --out-h-left: 1040px;    
+            /* 2. ਹੈਡਰ ਅਤੇ ਸਮਰੀ ਬਾਕਸ ਦੀ ਚੌੜਾਈ */
+            --header-w: 220px;      /* ਛੋਟੇ ਹੈਡਰ ਦੀ ਚੌੜਾਈ */
 
-            /* 3. TIME HEADER */
-            --time-h-bottom: 270px;  
-            --time-h-left: 1580px;  
-
-            /* 4. TOTAL BOX */
-            --total-bottom: 210px;
-            --total-left: 400px;
-
-            /* 5. REMAIN BOX */
-            --rem-bottom: 210px;
-            --rem-left: 1040px;
-
-            /* UI Sizes */
-            --header-w: 220px;      
-            --list-w: 300px;        
+            /* 3. ਉਚਾਈ (HEIGHT) - ਹੈਡਰ ਕਿੰਨਾ ਉੱਚਾ ਹੋਵੇ */
             --common-h: 60px;       
-            --hdr-bg: #ff9933;      
+
+            /* 4. ਟਿੱਕਰ ਦੀ ਉਚਾਈ */
+            --ticker-h: 70px;
+
+            /* 5. ਹੈਡਰਾਂ ਦੀ ਲੋਕੇਸ਼ਨ (ਤੁਹਾਡੀ ਸੈਟਿੰਗ ਮੁਤਾਬਕ) */
+            --fly-h-bottom: 270px;   --fly-h-left: 400px;    
+            --out-h-bottom: 270px;   --out-h-left: 1040px;    
+            --time-h-bottom: 270px;  --time-h-left: 1580px;  
+
+            /* 6. ਸਮਰੀ ਬਾਕਸ ਲੋਕੇਸ਼ਨ */
+            --total-bottom: 210px;   --total-left: 400px;
+            --rem-bottom: 210px;     --rem-left: 1040px;
+
+            /* ਫੌਂਟ ਸਾਈਜ਼ */
             --name-size: 35px;      
             --label-size: 18px; 
             --count-size: 40px;
-            
-            /* Ticker Height */
-            --ticker-h: 70px;
+            --hdr-bg: #ff9933;      
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
@@ -60,45 +57,47 @@
         /* List Containers */
         .list-container { 
             position: absolute; display: flex; flex-direction: column; 
-            align-items: center; visibility: hidden; width: var(--list-w);
-            /* ਇਹ ਟਿੱਕਰ ਤੋਂ ਲੈ ਕੇ ਹੈਡਰ ਦੀ ਹਾਈਟ ਤੱਕ ਫੈਲ ਜਾਵੇਗਾ */
+            align-items: center; visibility: hidden; 
             bottom: var(--ticker-h); 
         }
         .has-data { visibility: visible !important; }
 
-        /* Position Adjustment Logic for Lists */
+        /* Specific Width and Height Logic */
         #box-fly { 
-            left: calc(var(--fly-h-left) - (var(--list-w) - var(--header-w))/2); 
+            width: var(--fly-list-w);
+            left: calc(var(--fly-h-left) - (var(--fly-list-w) - var(--header-w))/2); 
             height: calc(var(--fly-h-bottom) + var(--common-h) - var(--ticker-h)); 
         }
         #box-out { 
-            left: calc(var(--out-h-left) - (var(--list-w) - var(--header-w))/2); 
+            width: var(--out-list-w);
+            left: calc(var(--out-h-left) - (var(--out-list-w) - var(--header-w))/2); 
             height: calc(var(--out-h-bottom) + var(--common-h) - var(--ticker-h));
         }
         #box-time { 
-            left: calc(var(--time-h-left) - (var(--list-w) - var(--header-w))/2); 
+            width: var(--time-list-w);
+            left: calc(var(--time-h-left) - (var(--time-list-w) - var(--header-w))/2); 
             height: calc(var(--time-h-bottom) + var(--common-h) - var(--ticker-h));
         }
 
-        /* Header UI (Inside Container) */
+        /* Header UI */
         .header-row { 
             display: flex; width: var(--header-w); height: var(--common-h); 
             border: 3px solid white; border-radius: 8px; flex-shrink: 0; z-index: 5; background: #000;
-            position: absolute; top: 0; /* ਹੈਡਰ ਹਮੇਸ਼ਾ ਟਾਪ ਤੇ ਰਹੇਗਾ */
+            position: absolute; top: 0;
         }
         .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
         .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
         .status-hdr .label-area { background: var(--hdr-bg); color: #000; }
 
-        /* Scroll Box (Header ਤੋਂ ਥੱਲੇ ਟਿੱਕਰ ਤੱਕ) */
+        /* Scroll Box (Width linked to variables) */
         .scroll-window { 
-            width: var(--list-w); 
+            width: 100%; 
             background: rgba(0,0,0,0.85); 
             border: 3px solid white; border-top: none; 
             border-radius: 0 0 12px 12px; 
             position: absolute; 
-            top: var(--common-h); /* ਹੈਡਰ ਦੇ ਠੀਕ ਹੇਠਾਂ ਤੋਂ ਸ਼ੁਰੂ */
-            bottom: 0; /* ਟਿੱਕਰ ਤੱਕ ਖਤਮ */
+            top: var(--common-h); 
+            bottom: 0; 
             overflow: hidden;
         }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; } 
@@ -106,7 +105,7 @@
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Ticker Footer */
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: var(--ticker-h); background: #fff; display: flex; align-items: center; border-top: 5px solid #ff0000; z-index: 100; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -129,76 +128,4 @@
 
 <div id="box-fly" class="list-container">
     <div class="header-row status-hdr">
-        <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
-        <div id="count-fly" class="val-area">0</div>
-    </div>
-    <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-</div>
-
-<div id="box-out" class="list-container">
-    <div class="header-row status-hdr">
-        <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
-        <div id="count-out" class="val-area">0</div>
-    </div>
-    <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-</div>
-
-<div id="box-time" class="list-container">
-    <div class="header-row status-hdr">
-        <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-        <div id="count-time" class="val-area">0</div>
-    </div>
-    <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-</div>
-
-<div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box" id="cur-time">00:00:00 AM</div>
-</div>
-
-<script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
-
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
-    }, 1000);
-
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const conf = data.config || {}; 
-            const pigeons = data.pigeons || [];
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
-            let counts = { fly:0, out:0, time:0 }; 
-            let htmls = { fly:'', out:'', time:'' };
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; } 
-                else if (p.status === 'time') { counts.time++; htmls.time += row; } 
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
-            });
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-            ['fly','out','time'].forEach(id => {
-                const box = document.getElementById(`box-${id}`);
-                const list = document.getElementById(`list-${id}`);
-                const count = document.getElementById(`count-${id}`);
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    box.classList.add('has-data');
-                    count.innerText = counts[id];
-                    list.innerHTML = htmls[id] + htmls[id]; 
-                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
-                } else { box.classList.remove('has-data'); }
-            });
-        });
-    }
-</script>
-</body>
-</html>
+        <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING">
