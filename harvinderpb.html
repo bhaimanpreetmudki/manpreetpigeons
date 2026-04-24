@@ -6,59 +6,66 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਤੁਹਾਡੀ ਸੈਟਿੰਗ (LAYOUT SETTINGS)
+           ਸਾਰੀ ਸੈਟਿੰਗ (SETTINGS)
            ====================================================== */
         :root {
+            /* ਸਾਰੇ ਡੱਬਿਆਂ ਦੀ ਚੌੜਾਈ ਸਮਰੀ ਬਾਕਸ ਜਿੰਨੀ (220px) */
             --common-w: 220px;
             --common-h: 60px;
-            --list-box-h: 300px; /* ਲਿਸਟ ਵਾਲੇ ਡੱਬਿਆਂ ਦੀ ਉਚਾਈ */
+            --list-h: 300px; /* ਲਿਸਟ ਦੀ ਉਚਾਈ */
 
-            /* ਸਮਰੀ ਬਾਕਸ (Bottom) */
-            --total-bottom: 220px;  --total-left: 410px; 
-            --rem-bottom: 220px;    --rem-left: 1050px; 
+            /* ਹੇਠਲੇ ਸਮਰੀ ਬਾਕਸ (Total & Rem) */
+            --total-bottom: 75px;   --total-left: 410px; 
+            --rem-bottom: 75px;     --rem-left: 1050px; 
 
-            /* ਲਿਸਟ ਬਾਕਸ (Top - Exact above summary boxes) */
-            --fly-bottom: 285px;    --fly-left: 410px;   /* Total ਦੇ ਉੱਪਰ */
-            --out-bottom: 285px;    --out-left: 730px;   /* ਵਿਚਕਾਰ */
-            --time-bottom: 285px;   --time-left: 1050px; /* Remain ਦੇ ਉੱਪਰ */
+            /* ਉੱਪਰਲੇ ਤਿੰਨੋਂ ਲਿਸਟ ਬਾਕਸ (ਟਿੱਕਰ ਦੇ ਨਾਲ ਜੁੜੇ ਹੋਏ) */
+            --fly-bottom: 75px;     --fly-left: 410px;    /* Total ਦੇ ਉੱਪਰ */
+            --out-bottom: 75px;     --out-left: 730px;    /* ਵਿਚਕਾਰ */
+            --time-bottom: 75px;    --time-left: 1050px;  /* Remain ਦੇ ਉੱਪਰ - LAST */
 
-            /* ਰੰਗ (Colors) */
-            --hdr-color: #ff9933;   /* ਤਿੰਨੋਂ ਹੈਡਰਾਂ ਦਾ ਸੰਤਰੀ ਰੰਗ */
+            /* ਲਿਸਟ ਨੂੰ ਹੈਡਰ ਦੇ ਉੱਪਰ ਦਿਖਾਉਣ ਲਈ Offset */
+            --list-offset: 65px; 
+
+            --hdr-bg: #ff9933;      /* Orange Headers */
             --name-size: 35px;      
             --label-size: 18px; 
             --count-size: 40px;
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
+        body { background: transparent; font-family: 'Arial', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Card Setup */
+        /* Common Card Style */
         .card { position: absolute; border: 3px solid white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; background: #000; width: var(--common-w); }
         .header-row { display: flex; width: 100%; height: var(--common-h); flex-shrink: 0; }
         
         .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
         .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* Style for Top List Headers */
-        .status-hdr .label-area { background: var(--hdr-color); color: #000; }
+        /* Position Summary Boxes */
+        #total-box { bottom: var(--total-bottom); left: var(--total-left); height: var(--common-h); z-index: 10; }
+        #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); height: var(--common-h); z-index: 10; }
 
-        /* Positioning */
-        #total-box { bottom: var(--total-bottom); left: var(--total-left); height: var(--common-h); }
-        #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); height: var(--common-h); }
-        
-        #box-fly { bottom: var(--fly-bottom); left: var(--fly-left); height: var(--list-box-h); visibility: hidden; }
-        #box-out { bottom: var(--out-bottom); left: var(--out-left); height: var(--list-box-h); visibility: hidden; }
-        #box-time { bottom: var(--time-bottom); left: var(--time-left); height: var(--list-box-h); visibility: hidden; }
-        
+        /* List Boxes (Headers + Lists) */
+        .list-container { position: absolute; width: var(--common-w); display: flex; flex-direction: column-reverse; visibility: hidden; }
         .has-data { visibility: visible !important; }
 
-        /* Scroll Area */
-        .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
+        #box-fly { bottom: var(--fly-bottom); left: var(--fly-left); }
+        #box-out { bottom: var(--out-bottom); left: var(--out-left); }
+        #box-time { bottom: var(--time-bottom); left: var(--time-left); }
+
+        /* Header in List Boxes */
+        .list-header { border: 3px solid white; border-radius: 8px; z-index: 11; }
+        .list-header .label-area { background: var(--hdr-bg); color: #000; }
+
+        /* Scroll Area (ਇਹ ਹੈਡਰ ਦੇ ਠੀਕ ਉੱਪਰ ਚਿਪਕਿਆ ਹੋਵੇਗਾ) */
+        .scroll-window { height: var(--list-h); background: rgba(0,0,0,0.85); border: 3px solid white; border-bottom: none; border-radius: 8px 8px 0 0; position: relative; overflow: hidden; margin-bottom: -3px; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; } 
         .item { padding: 5px 10px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* Footer Ticker */
@@ -86,24 +93,24 @@
     </div>
 </div>
 
-<div id="box-fly" class="card status-hdr">
-    <div class="header-row" style="border-bottom: 3px solid white;">
+<div id="box-fly" class="list-container">
+    <div class="header-row list-header">
         <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
         <div id="count-fly" class="val-area">0</div>
     </div>
     <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
 </div>
 
-<div id="box-out" class="card status-hdr">
-    <div class="header-row" style="border-bottom: 3px solid white;">
+<div id="box-out" class="list-container">
+    <div class="header-row list-header">
         <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
         <div id="count-out" class="val-area">0</div>
     </div>
     <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
 </div>
 
-<div id="box-time" class="card status-hdr">
-    <div class="header-row" style="border-bottom: 3px solid white;">
+<div id="box-time" class="list-container">
+    <div class="header-row list-header">
         <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
         <div id="count-time" class="val-area">0</div>
     </div>
