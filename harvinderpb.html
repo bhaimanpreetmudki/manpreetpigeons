@@ -9,24 +9,17 @@
            ਸਾਰੀ ਸੈਟਿੰਗ (SETTINGS)
            ====================================================== */
         :root {
-            /* ਸਾਰੇ ਡੱਬਿਆਂ ਦੀ ਚੌੜਾਈ ਸਮਰੀ ਬਾਕਸ ਜਿੰਨੀ (220px) */
-            --common-w: 220px;
-            --common-h: 60px;
-            --list-h: 300px; /* ਲਿਸਟ ਦੀ ਉਚਾਈ */
+            /* ਸਮਰੀ ਬਾਕਸਾਂ ਦੀ ਲੋਕੇਸ਼ਨ (ਤੁਹਾਡੀ ਪੁਰਾਣੀ ਸੈਟਿੰਗ) */
+            --total-bottom: 220px;  --total-left: 410px; 
+            --rem-bottom: 220px;    --rem-left: 1050px; 
+            --sum-w: 220px;         --sum-h: 60px;
 
-            /* ਹੇਠਲੇ ਸਮਰੀ ਬਾਕਸ (Total & Rem) */
-            --total-bottom: 75px;   --total-left: 410px; 
-            --rem-bottom: 75px;     --rem-left: 1050px; 
-
-            /* ਉੱਪਰਲੇ ਤਿੰਨੋਂ ਲਿਸਟ ਬਾਕਸ (ਟਿੱਕਰ ਦੇ ਨਾਲ ਜੁੜੇ ਹੋਏ) */
-            --fly-bottom: 75px;     --fly-left: 410px;    /* Total ਦੇ ਉੱਪਰ */
-            --out-bottom: 75px;     --out-left: 730px;    /* ਵਿਚਕਾਰ */
-            --time-bottom: 75px;    --time-left: 1050px;  /* Remain ਦੇ ਉੱਪਰ - LAST */
-
-            /* ਲਿਸਟ ਨੂੰ ਹੈਡਰ ਦੇ ਉੱਪਰ ਦਿਖਾਉਣ ਲਈ Offset */
-            --list-offset: 65px; 
-
-            --hdr-bg: #ff9933;      /* Orange Headers */
+            /* ਲਿਸਟ ਬਾਕਸਾਂ ਦੀ ਸੈਟਿੰਗ (ਟਿੱਕਰ ਦੇ ਉੱਪਰ ਪੂਰੀ ਚੌੜਾਈ) */
+            --list-bottom: 70px;    /* ਟਿੱਕਰ ਦੇ ਬਿਲਕੁਲ ਉੱਪਰ */
+            --list-h: 250px;        /* ਲਿਸਟ ਦੀ ਉਚਾਈ */
+            --hdr-h: 60px;          /* ਹੈਡਰ ਦੀ ਉਚਾਈ */
+            
+            --hdr-bg: #ff9933;      /* ਹੈਡਰ ਰੰਗ */
             --name-size: 35px;      
             --label-size: 18px; 
             --count-size: 40px;
@@ -38,37 +31,70 @@
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Common Card Style */
-        .card { position: absolute; border: 3px solid white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; background: #000; width: var(--common-w); }
-        .header-row { display: flex; width: 100%; height: var(--common-h); flex-shrink: 0; }
-        
-        .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
-        .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+        /* Summary Boxes (Fixed Positions) */
+        .summary-card { 
+            position: absolute; border: 3px solid white; border-radius: 8px; 
+            overflow: hidden; display: flex; background: #000; 
+            width: var(--sum-w); height: var(--sum-h); z-index: 20;
+        }
 
-        /* Position Summary Boxes */
-        #total-box { bottom: var(--total-bottom); left: var(--total-left); height: var(--common-h); z-index: 10; }
-        #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); height: var(--common-h); z-index: 10; }
+        #total-box { bottom: var(--total-bottom); left: var(--total-left); }
+        #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); }
 
-        /* List Boxes (Headers + Lists) */
-        .list-container { position: absolute; width: var(--common-w); display: flex; flex-direction: column-reverse; visibility: hidden; }
+        /* Main Container for 3 Equal List Boxes */
+        .list-wrapper {
+            position: absolute;
+            bottom: var(--list-bottom);
+            left: 0;
+            width: 100%;
+            height: var(--list-h);
+            display: flex;
+            padding: 0 10px;
+            gap: 15px;
+            pointer-events: none;
+        }
+
+        .list-column {
+            flex: 1; /* ਤਿੰਨੋਂ ਬਰਾਬਰ ਸਾਈਜ਼ ਦੇ ਹੋਣਗੇ */
+            display: flex;
+            flex-direction: column-reverse;
+            visibility: hidden;
+        }
         .has-data { visibility: visible !important; }
 
-        #box-fly { bottom: var(--fly-bottom); left: var(--fly-left); }
-        #box-out { bottom: var(--out-bottom); left: var(--out-left); }
-        #box-time { bottom: var(--time-bottom); left: var(--time-left); }
+        .header-row { 
+            display: flex; width: 100%; height: var(--hdr-h); 
+            border: 3px solid white; border-radius: 8px; 
+            background: #000; flex-shrink: 0;
+        }
+        
+        .label-area { 
+            background: #000; color: #fff; width: 65%; 
+            font-size: var(--label-size); font-weight: 900; 
+            display: flex; align-items: center; justify-content: center; 
+            border-right: 3px solid white; 
+        }
+        .val-area { 
+            background: #fff; color: #000; width: 35%; 
+            font-size: var(--count-size); font-weight: 1000; 
+            display: flex; align-items: center; justify-content: center; 
+        }
 
-        /* Header in List Boxes */
-        .list-header { border: 3px solid white; border-radius: 8px; z-index: 11; }
-        .list-header .label-area { background: var(--hdr-bg); color: #000; }
+        /* Status Header Colors */
+        .status-hdr .label-area { background: var(--hdr-bg); color: #000; }
 
-        /* Scroll Area (ਇਹ ਹੈਡਰ ਦੇ ਠੀਕ ਉੱਪਰ ਚਿਪਕਿਆ ਹੋਵੇਗਾ) */
-        .scroll-window { height: var(--list-h); background: rgba(0,0,0,0.85); border: 3px solid white; border-bottom: none; border-radius: 8px 8px 0 0; position: relative; overflow: hidden; margin-bottom: -3px; }
+        /* Scrolling Window */
+        .scroll-window { 
+            flex-grow: 1; position: relative; overflow: hidden; 
+            background: rgba(0,0,0,0.8); border: 3px solid white; 
+            border-bottom: none; border-radius: 8px 8px 0 0; margin-bottom: -3px;
+        }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; } 
-        .item { padding: 5px 10px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .item { padding: 5px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -79,42 +105,40 @@
 </head>
 <body>
 
-<div id="total-box" class="card">
-    <div class="header-row">
-        <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
-        <div id="m-total" class="val-area">0</div>
-    </div>
+<div id="total-box" class="summary-card">
+    <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
+    <div id="m-total" class="val-area">0</div>
 </div>
 
-<div id="rem-box" class="card">
-    <div class="header-row">
-        <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
-        <div id="m-rem" class="val-area">0</div>
-    </div>
+<div id="rem-box" class="summary-card">
+    <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
+    <div id="m-rem" class="val-area">0</div>
 </div>
 
-<div id="box-fly" class="list-container">
-    <div class="header-row list-header">
-        <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
-        <div id="count-fly" class="val-area">0</div>
+<div class="list-wrapper">
+    <div id="box-fly" class="list-column">
+        <div class="header-row status-hdr">
+            <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
+            <div id="count-fly" class="val-area">0</div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
-    <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-</div>
 
-<div id="box-out" class="list-container">
-    <div class="header-row list-header">
-        <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
-        <div id="count-out" class="val-area">0</div>
+    <div id="box-out" class="list-column">
+        <div class="header-row status-hdr">
+            <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
+            <div id="count-out" class="val-area">0</div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
-    <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-</div>
 
-<div id="box-time" class="list-container">
-    <div class="header-row list-header">
-        <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-        <div id="count-time" class="val-area">0</div>
+    <div id="box-time" class="list-column">
+        <div class="header-row status-hdr">
+            <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
+            <div id="count-time" class="val-area">0</div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
-    <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
 </div>
 
 <div class="footer" id="ticker-div">
