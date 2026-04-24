@@ -8,10 +8,11 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Standard Header/Summary Style --- */
+        /* --- Global Box Styling --- */
         .styled-card { 
             display: flex; border: 2px solid white; border-radius: 4px; 
             overflow: hidden; height: 38px; width: 100%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
         .card-label { 
             background: #000; color: white; padding: 0 8px; 
@@ -28,54 +29,74 @@
         /* --- Layout --- */
         .main-wrapper {
             position: absolute; left: 10px; right: 10px; bottom: 70px;
-            display: flex; flex-direction: row; gap: 10px; align-items: flex-end;
+            display: flex; flex-direction: row; gap: 12px; align-items: flex-end;
         }
 
-        .column-container { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .column-container { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
-        /* --- List Boxes --- */
+        /* --- Animated Glow Boxes (Diamond Shine Effect) --- */
         .list-box { 
-            width: 100%; height: 180px; position: relative; 
-            border: 2px solid white; border-radius: 8px; overflow: hidden;
+            width: 100%; height: 200px; position: relative; 
+            border: 3px solid white; border-radius: 8px; overflow: hidden;
+            animation: diamondGlow 2.5s infinite alternate;
         }
+
+        @keyframes diamondGlow {
+            0% { box-shadow: 0 0 5px #fff, inset 0 0 5px #fff; border-color: #fff; }
+            50% { box-shadow: 0 0 20px #00d2ff, inset 0 0 10px #00d2ff; border-color: #00d2ff; }
+            100% { box-shadow: 0 0 15px #ff00ff, inset 0 0 10px #ff00ff; border-color: #ff00ff; }
+        }
+
         #box-fly { background: #000000; }
         #box-out { background: #001a66; }
         #box-time { background: #cc0000; }
 
-        /* --- Header Position inside Box --- */
+        /* --- Header Position --- */
         .header-pos { position: absolute; right: 4px; top: 4px; z-index: 10; width: 120px; }
 
-        /* --- Smooth Continuous Scrolling --- */
+        /* --- Smooth Continuous Scrolling (No Jumps) --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { 
             position: absolute; width: 100%; 
-            animation: scroll-up linear infinite; 
+            animation: smoothScroll linear infinite; 
             padding-top: 50px; 
         } 
-        .item { padding: 3px 12px; font-size: 28px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
+        .item { 
+            padding: 4px 12px; font-size: 30px; font-weight: 950; 
+            color: #ffcc00; text-shadow: 2px 2px 4px black; 
+            white-space: nowrap;
+        }
 
-        @keyframes scroll-up { 
+        @keyframes smoothScroll { 
             0% { transform: translateY(0); } 
             100% { transform: translateY(-50%); } 
         }
 
-        /* --- Footer Section --- */
+        /* --- Footer with Flash Effect --- */
         .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 50px; 
-            background: white; display: flex; align-items: center; border-top: 3px solid #ff0000; 
+            position: absolute; bottom: 0; width: 100%; height: 55px; 
+            background: white; display: flex; align-items: center; 
+            border-top: 4px solid #ff0000; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 15px; height: 100%; display: flex; align-items: center; font-size: 24px; font-weight: 950; font-style: italic; }
+        .live-tag { 
+            background: #ff0000; color: white; padding: 0 20px; height: 100%; 
+            display: flex; align-items: center; font-size: 26px; font-weight: 950; font-style: italic; 
+        }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 15s linear infinite; font-size: 22px; font-weight: 900; color: black; padding-left: 100%; }
-        
+        .ticker-move { 
+            display: inline-block; animation: ticker 15s linear infinite; 
+            font-size: 24px; font-weight: 900; color: black; padding-left: 100%; 
+        }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Date/Time Flash Display */
-        .flash-dt {
-            background: #000; color: #fff; height: 100%; min-width: 160px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            border-left: 3px solid #ff0000; font-family: monospace;
+        /* Flash Info (Date/Time) */
+        .flash-info {
+            background: #000; color: #fff; height: 100%; padding: 0 15px;
+            display: flex; flex-direction: column; justify-content: center;
+            font-size: 14px; font-weight: 900; min-width: 160px; text-align: center;
+            border-left: 3px solid #ff0000;
         }
+        #live-date { color: #ffcc00; margin-bottom: -2px; }
     </style>
 </head>
 <body>
@@ -110,7 +131,7 @@
         </div>
         <div class="styled-card">
             <div class="card-label" style="font-size:13px; background:#ffcc00; color:#000;">ਸਮਾਂ</div>
-            <div id="admin-time" class="card-val" style="font-size:14px; flex:2;">10:00 AM - 11:35 AM</div>
+            <div id="admin-time" class="card-val" style="font-size:14px; flex:2;">--:--</div>
         </div>
     </div>
 </div>
@@ -118,9 +139,9 @@
 <div class="footer">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="flash-dt">
-        <div id="cur-date" style="font-size: 11px; color: #ffcc00;">--/--/----</div>
-        <div id="cur-time" style="font-size: 16px; font-weight: bold;">00:00:00</div>
+    <div class="flash-info">
+        <div id="live-date">---</div>
+        <div id="live-clock">00:00:00 PM</div>
     </div>
 </div>
 
@@ -131,15 +152,15 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Update Real-Time Date & Clock
-    function startClock() {
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('cur-date').innerText = now.toLocaleDateString('en-GB');
-            document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-        }, 1000);
+    // Date and Time Flash logic
+    function updateDateTime() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+        const timeStr = now.toLocaleTimeString('en-US', { hour12:true, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        document.getElementById('live-date').innerText = dateStr;
+        document.getElementById('live-clock').innerText = timeStr;
     }
-    startClock();
+    setInterval(updateDateTime, 1000);
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -168,12 +189,13 @@
 
             ['fly','out','time'].forEach(id => {
                 const list = document.getElementById(`list-${id}`);
-                // Double the content for a seamless loop
-                list.innerHTML = htmls[id] + htmls[id]; 
-                
-                // Speed control based on item count
-                let speed = Math.max(counts[id] * 2, 8); 
-                list.style.animationDuration = speed + "s";
+                // Duplicate content for smooth round-to-round looping
+                if (htmls[id] !== "") {
+                    list.innerHTML = htmls[id] + htmls[id] + htmls[id]; 
+                    list.style.animationDuration = Math.max(counts[id] * 2, 6) + "s";
+                } else {
+                    list.innerHTML = "";
+                }
             });
         });
     }
