@@ -6,33 +6,35 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਬਦਲੋ (SETTINGS PANEL)
+           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਅੱਡ-ਅੱਡ ਬਦਲੋ (ADVANCED SETTINGS)
            ====================================================== */
         :root {
-            /* 1. ਪੁਜੀਸ਼ਨ (Position) */
-            --board-bottom: 70px;      /* ਪੂਰੇ ਬੋਰਡ ਨੂੰ ਉੱਪਰ-ਥੱਲੇ ਕਰਨ ਲਈ */
-            --board-side-gap: 100px;    /* ਖੱਬੇ-ਸੱਜੇ ਤੋਂ ਜਗ੍ਹਾ */
-            --summary-gap: 15px;       /* ਸਮਰੀ ਬਾਕਸ ਅਤੇ ਬੋਰਡ ਵਿਚਲੀ ਦੂਰੀ */
+            /* 1. ਸਮਰੀ ਬਾਕਸ (TOTAL/REMAIN) ਦੀ ਸੈਟਿੰਗ */
+            --sum-bottom: 365px;      /* ਉੱਪਰ-ਥੱਲੇ (Bottom ਤੋਂ ਦੂਰੀ) */
+            --sum-left: 10px;        /* ਖੱਬੇ-ਸੱਜੇ (Left ਤੋਂ ਦੂਰੀ) */
+            --sum-height: 75px;       /* ਉਚਾਈ */
+            --sum-width: 280px;       /* ਚੌੜਾਈ */
 
-            /* 2. ਸਾਈਜ਼ (Size) */
-            --header-height: 75px;     /* ਹੈਡਰ (FLYING/TOTAL) ਦੀ ਉਚਾਈ */
-            --board-height: 280px;     /* ਹੇਠਲੇ ਤਿੰਨੋਂ ਡੱਬਿਆਂ ਦੀ ਕੁੱਲ ਉਚਾਈ */
-            --summary-width: 280px;    /* TOTAL/REMAIN ਬਾਕਸ ਦੀ ਚੌੜਾਈ */
-            
-            /* 3. ਅੱਖਰ (Text/Fonts) */
-            --pigeon-name-size: 40px;  /* ਕਬੂਤਰਾਂ ਦੇ ਨਾਵਾਂ ਦਾ ਸਾਈਜ਼ */
-            --header-label-size: 22px; /* ਲੇਬਲ (FLYING, OUT) ਦਾ ਸਾਈਜ਼ */
-            --header-count-size: 45px; /* ਗਿਣਤੀ (Numbers) ਦਾ ਸਾਈਜ਼ */
-            
-            /* 4. ਰੰਗ (Colors) */
-            --header-bg: #ff9933;      /* ਹੈਡਰ ਦਾ ਰੰਗ (Orange) */
-            --list-text-color: #ffcc00;/* ਨਾਵਾਂ ਦਾ ਰੰਗ (Yellow) */
+            /* 2. ਲਿਸਟ ਬਾਕਸ (FLY/OUT/TIME) ਦੀ ਸੈਟਿੰਗ (ਪੂਰਾ ਕੰਟੇਨਰ) */
+            --board-bottom: 70px;     /* ਪੂਰੇ ਬੋਰਡ ਨੂੰ ਉੱਪਰ-ਥੱਲੇ ਕਰਨ ਲਈ */
+            --board-left: 10px;       /* ਖੱਬੇ ਤੋਂ ਦੂਰੀ */
+            --board-right: 10px;      /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ */
+            --board-height: 280px;    /* ਬਾਕਸਾਂ ਦੀ ਕੁੱਲ ਉਚਾਈ */
+            --box-gap: 15px;          /* ਬਾਕਸਾਂ ਵਿਚਲੀ ਆਪਸੀ ਦੂਰੀ */
+
+            /* 3. ਹੈਡਰ ਬਾਕਸ (Headers Inside Boxes) */
+            --hdr-height: 75px;       /* ਸਿਰਫ ਹੈਡਰ ਦੀ ਉਚਾਈ */
+            --hdr-bg: #ff9933;        /* ਹੈਡਰ ਦਾ ਰੰਗ */
+
+            /* 4. ਅੱਖਰਾਂ ਦੀ ਸੈਟਿੰਗ (Text Settings) */
+            --name-size: 40px;        /* ਕਬੂਤਰਾਂ ਦੇ ਨਾਵਾਂ ਦਾ ਸਾਈਜ਼ */
+            --label-size: 22px;       /* ਲੇਬਲ (FLYING, OUT) ਦਾ ਸਾਈਜ਼ */
+            --count-size: 45px;       /* ਨੰਬਰਾਂ (Counts) ਦਾ ਸਾਈਜ਼ */
         }
 
         /* ======================================================
-           ਬਾਕੀ ਕੋਡ (ਇਸਨੂੰ ਬਦਲਣ ਦੀ ਲੋੜ ਨਹੀਂ)
+           ਕੋਡ ਸਟਰਕਚਰ (ਇਸਨੂੰ ਬਦਲਣ ਦੀ ਲੋੜ ਨਹੀਂ)
            ====================================================== */
-        
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
@@ -42,41 +44,47 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Summary Wrapper */
+        /* Summary Area */
         .summary-wrapper { 
             position: absolute; 
-            bottom: calc(var(--board-bottom) + var(--board-height) + var(--summary-gap)); 
-            left: var(--board-side-gap); 
+            bottom: var(--sum-bottom); 
+            left: var(--sum-left); 
             display: none; gap: 12px; z-index: 1000; 
         }
-        
-        .styled-card, .box-header-new { 
+        .styled-card { 
             display: flex; border: 3px solid white; border-radius: 8px; 
-            overflow: hidden; height: var(--header-height); background: #000;
+            overflow: hidden; height: var(--sum-height); width: var(--sum-width); background: #000;
         }
-        .summary-card { min-width: var(--summary-width); }
+
+        /* Main Box Headers */
+        .box-header-new { 
+            display: flex; border-bottom: 3px solid white; 
+            height: var(--hdr-height); width: 100%; flex-shrink: 0; background: #000;
+        }
 
         .label-area { 
             background: #000; color: #fff; width: 65%; 
-            font-size: var(--header-label-size); font-weight: 900; display: flex; 
+            font-size: var(--label-size); font-weight: 900; display: flex; 
             align-items: center; justify-content: center; border-right: 3px solid white; 
         }
         .val-area { 
             background: #fff; color: #000; width: 35%; 
-            font-size: var(--header-count-size); font-weight: 1000; display: flex; 
+            font-size: var(--count-size); font-weight: 1000; display: flex; 
             align-items: center; justify-content: center; 
         }
 
-        /* Main Boards */
+        /* Main Containers */
         .main-container { 
-            position: absolute; left: var(--board-side-gap); right: var(--board-side-gap); 
+            position: absolute; 
+            left: var(--board-left); 
+            right: var(--board-right); 
             bottom: var(--board-bottom); 
-            height: var(--board-height); display: flex; flex-direction: row; gap: 15px; 
+            height: var(--board-height); 
+            display: flex; flex-direction: row; gap: var(--box-gap); 
         }
         .box { 
-            width: calc(33.33% - 10px); flex-shrink: 0; height: 100%; 
-            position: relative; border: 3px solid white; border-radius: 12px; 
-            overflow: hidden; display: flex; flex-direction: column; visibility: hidden;
+            flex: 1; height: 100%; position: relative; border: 3px solid white; 
+            border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; visibility: hidden;
         }
         .has-data { visibility: visible; }
 
@@ -84,23 +92,21 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        .box-header-new { width: 100%; border: none; border-bottom: 3px solid white; border-radius: 0; flex-shrink: 0; }
-        .box-header-new .label-area { background: var(--header-bg); color: #000; }
+        .box-header-new .label-area { background: var(--hdr-bg); color: #000; }
 
-        /* Scrolling Area */
+        /* List Styling */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
-        .item { padding: 6px 15px; font-size: var(--pigeon-name-size); font-weight: 950; color: var(--list-text-color); text-shadow: 3px 3px 5px black; }
+        .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; }
         #cur-time { font-size: 32px; font-weight: 950; }
     </style>
@@ -108,12 +114,12 @@
 <body>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="styled-card summary-card">
-        <div class="label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
+    <div class="styled-card">
+        <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
-    <div class="styled-card summary-card">
-        <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
+    <div class="styled-card">
+        <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
 </div>
@@ -133,64 +139,4 @@
     </div>
 </div>
 
-<div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
-</div>
-
-<script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
-
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
-    }, 1000);
-
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const conf = data.config || {}; 
-            const pigeons = data.pigeons || [];
-            
-            document.getElementById('summary-div').style.display = (pigeons.length > 0 && conf.showScoreboard) ? "flex" : "none";
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
-
-            let counts = { fly:0, out:0, time:0 }; 
-            let htmls = { fly:'', out:'', time:'' };
-
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; } 
-                else if (p.status === 'time') { counts.time++; htmls.time += row; } 
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
-            });
-            
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-
-            ['fly','out','time'].forEach(id => {
-                const box = document.getElementById(`box-${id}`);
-                const list = document.getElementById(`list-${id}`);
-                const count = document.getElementById(`count-${id}`);
-                
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    box.classList.add('has-data');
-                    count.innerText = counts[id];
-                    list.innerHTML = htmls[id] + htmls[id]; 
-                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
-                } else {
-                    box.classList.remove('has-data');
-                }
-            });
-        });
-    }
-</script>
-</body>
-</html>
+<div
