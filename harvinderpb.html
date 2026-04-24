@@ -6,55 +6,46 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਬਦਲੋ (SETTINGS)
+           ਤੁਹਾਡੀ ਸੈਟਿੰਗ (LAYOUT SETTINGS)
            ====================================================== */
         :root {
-            /* ਸਾਰੇ ਬਾਕਸਾਂ ਲਈ ਇੱਕੋ ਜਿਹਾ ਸਾਈਜ਼ */
             --common-w: 220px;
             --common-h: 60px;
-            --list-box-h: 300px; /* ਲਿਸਟ ਵਾਲੇ ਡੱਬੇ ਦੀ ਪੂਰੀ ਉਚਾਈ */
+            --list-box-h: 300px; /* ਲਿਸਟ ਵਾਲੇ ਡੱਬਿਆਂ ਦੀ ਉਚਾਈ */
 
-            /* 1. TOTAL PIGEONS (ਨੀਚੇ) */
+            /* ਸਮਰੀ ਬਾਕਸ (Bottom) */
             --total-bottom: 220px;  --total-left: 410px; 
-
-            /* 2. REMAIN PIGEONS (ਨੀਚੇ) */
             --rem-bottom: 220px;    --rem-left: 1050px; 
 
-            /* 3. FLYING LIST (TOTAL ਦੇ ਠੀਕ ਉੱਪਰ) */
-            --fly-bottom: 285px;    --fly-left: 410px; 
-            --fly-bg: #ff9933;
+            /* ਲਿਸਟ ਬਾਕਸ (Top - Exact above summary boxes) */
+            --fly-bottom: 285px;    --fly-left: 410px;   /* Total ਦੇ ਉੱਪਰ */
+            --out-bottom: 285px;    --out-left: 730px;   /* ਵਿਚਕਾਰ */
+            --time-bottom: 285px;   --time-left: 1050px; /* Remain ਦੇ ਉੱਪਰ */
 
-            /* 4. OUT LIST (ਵਿਚਕਾਰ) */
-            --out-bottom: 285px;    --out-left: 730px; 
-            --out-bg: #00ff00;
-
-            /* 5. TIME LIST (REM ਦੇ ਠੀਕ ਉੱਪਰ) */
-            --time-bottom: 285px;   --time-left: 1050px; 
-            --time-bg: #ff0000;
-
-            /* FONTS */
-            --name-size: 35px;      --label-size: 18px; --count-size: 40px;
+            /* ਰੰਗ (Colors) */
+            --hdr-color: #ff9933;   /* ਤਿੰਨੋਂ ਹੈਡਰਾਂ ਦਾ ਸੰਤਰੀ ਰੰਗ */
+            --name-size: 35px;      
+            --label-size: 18px; 
+            --count-size: 40px;
         }
 
-        /* --- STRUCTURE --- */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
+        /* Card Setup */
         .card { position: absolute; border: 3px solid white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; background: #000; width: var(--common-w); }
-        .row { display: flex; width: 100%; height: var(--common-h); flex-shrink: 0; }
+        .header-row { display: flex; width: 100%; height: var(--common-h); flex-shrink: 0; }
         
         .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
         .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* LIST HEADERS COLOR */
-        .hdr-fly .label-area { background: var(--fly-bg); color: #000; }
-        .hdr-out .label-area { background: var(--out-bg); color: #000; }
-        .hdr-time .label-area { background: var(--time-bg); color: #000; }
+        /* Style for Top List Headers */
+        .status-hdr .label-area { background: var(--hdr-color); color: #000; }
 
-        /* POSITIONING */
+        /* Positioning */
         #total-box { bottom: var(--total-bottom); left: var(--total-left); height: var(--common-h); }
         #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); height: var(--common-h); }
         
@@ -64,13 +55,13 @@
         
         .has-data { visibility: visible !important; }
 
-        /* SCROLLING */
+        /* Scroll Area */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; } 
         .item { padding: 5px 10px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; border-bottom: 1px solid rgba(255,255,255,0.1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* FOOTER */
+        /* Footer Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -82,37 +73,37 @@
 <body>
 
 <div id="total-box" class="card">
-    <div class="row">
+    <div class="header-row">
         <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
 </div>
 
 <div id="rem-box" class="card">
-    <div class="row">
+    <div class="header-row">
         <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
 </div>
 
-<div id="box-fly" class="card">
-    <div class="row hdr-fly" style="border-bottom: 3px solid white;">
+<div id="box-fly" class="card status-hdr">
+    <div class="header-row" style="border-bottom: 3px solid white;">
         <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
         <div id="count-fly" class="val-area">0</div>
     </div>
     <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
 </div>
 
-<div id="box-out" class="card" style="background: #001a66;">
-    <div class="row hdr-out" style="border-bottom: 3px solid white;">
+<div id="box-out" class="card status-hdr">
+    <div class="header-row" style="border-bottom: 3px solid white;">
         <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
         <div id="count-out" class="val-area">0</div>
     </div>
     <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
 </div>
 
-<div id="box-time" class="card" style="background: #660000;">
-    <div class="row hdr-time" style="border-bottom: 3px solid white;">
+<div id="box-time" class="card status-hdr">
+    <div class="header-row" style="border-bottom: 3px solid white;">
         <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
         <div id="count-time" class="val-area">0</div>
     </div>
