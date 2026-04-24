@@ -15,11 +15,11 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Admin Time (Box ton bahr uprle corner te) */
+        /* Admin Time Badge */
         .admin-time-badge {
             position: absolute;
             right: 20px;
-            bottom: 355px; /* Box ਦੇ ਉੱਪਰ */
+            bottom: 355px;
             background: rgba(0,0,0,0.8);
             padding: 5px 15px;
             border: 2px solid #ffcc00;
@@ -41,10 +41,10 @@
         .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
 
         #box-fly { background: #000000; }
-        #box-time { background: #001a66; }
-        #box-out { background: #660000; }
+        #box-time { background: #001a66; } /* Middle Box */
+        #box-out { background: #660000; }  /* Right Box */
 
-        /* --- Yellow Header --- */
+        /* Yellow Header */
         .box-header { 
             height: 90px; 
             width: 140px; 
@@ -160,7 +160,6 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Admin Time Display (Outside the box)
             document.getElementById('admin-time-display').innerText = conf.boxTime || conf.timeRange || "";
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
