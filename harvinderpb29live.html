@@ -8,95 +8,106 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        @keyframes langFlash {
-            0%, 45% { content: attr(data-pa); }
-            50%, 95% { content: attr(data-en); }
+        /* --- Header Labels (Yellow) --- */
+        .box-header { 
+            height: 45px; 
+            width: 130px; 
+            background: #ff9933; 
+            color: black; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: absolute; 
+            right: 0; 
+            top: 0; 
+            border-left: 3px solid white; 
+            border-bottom: 3px solid white; 
+            z-index: 10; 
+            font-size: 22px; 
+            font-weight: 900;
         }
-        .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Main Container */
+        /* --- Main Box Layout --- */
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 70px; 
-            height: 280px; display: flex; flex-direction: row; gap: 15px; 
+            position: absolute; 
+            left: 10px; 
+            right: 10px; 
+            bottom: 80px; 
+            height: 280px; 
+            display: flex; 
+            flex-direction: row; 
+            gap: 15px; 
         }
 
         .box { 
-            width: calc(33.33% - 10px); flex-shrink: 0; height: 100%; position: relative; 
-            border: 3px solid white; border-radius: 12px; overflow: hidden;
-            display: block; visibility: hidden; 
+            flex: 1; 
+            height: 100%; 
+            position: relative; 
+            border: 3px solid white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.5);
         }
-        .has-data { visibility: visible; }
 
-        /* ਬਾਕਸਾਂ ਦੇ ਵੱਖਰੇ ਰੰਗ */
         #box-fly { background: #000000; } /* Black */
-        #box-out { background: #001a66; } /* Blue */
-        #box-time { background: #660000; } /* Maroon */
+        #box-out { background: #001a66; } /* Dark Blue */
+        #box-time { background: #cc0000; } /* Red */
 
-        /* Header Style (Back to Side-Box style) */
-        .box-header { 
-            height: 80px; width: 140px; background: #ff9933; color: black; 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; position: absolute; right: 0; top: 0; 
-            border-left: 3px solid white; border-bottom: 3px solid white; z-index: 10; 
+        /* --- List & Items --- */
+        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
+        .item { 
+            padding: 5px 20px; 
+            font-size: 38px; 
+            font-weight: 950; 
+            color: #ffcc00; 
+            text-shadow: 3px 3px 5px black; 
+            white-space: nowrap;
         }
 
-        /* ਵੱਖਰੇ ਕਾਊਂਟਰ ਬਾਕਸਾਂ ਲਈ ਰੰਗ (Optional) */
-        #box-out .box-header { background: #ffffff; } /* ਬਾਕੀ ਕਬੂਤਰ ਵਾਲਾ ਸਫੇਦ ਬਾਕਸ */
-        #box-time .box-header { background: #ffcc00; }
-
-        .header-label { font-size: 18px; font-weight: 900; line-height: 1.2; }
-        .count-tag { font-size: 40px; font-weight: 1000; line-height: 1; }
-
-        /* Scroll Area */
-        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
-        .item { padding: 6px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
-        
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        /* --- Summary Section (Total/Remain) --- */
+        .summary-wrapper { position: absolute; bottom: 370px; left: 10px; display: flex; gap: 15px; }
+        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; height: 60px; min-width: 220px; }
+        .sum-label { background: #000; color: white; padding: 0 15px; font-size: 22px; font-weight: 900; display: flex; align-items: center; border-right: 2px solid white; }
+        .sum-val { background: #fff; color: #000; flex: 1; font-size: 40px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; }
-        #cur-time { font-size: 32px; font-weight: 950; }
+        /* --- Footer Ticker --- */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: white; display: flex; align-items: center; border-top: 5px solid #ff0000; }
+        .live-tag { background: #ff0000; color: white; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 950; font-style: italic; }
+        .ticker-wrap { flex: 1; overflow: hidden; }
+        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; font-size: 32px; font-weight: 900; color: black; padding-left: 100%; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
 
-<div class="main-container" id="scoreboard-div">
+<div class="summary-wrapper">
+    <div class="sum-card"><div class="sum-label">ਕੁੱਲ ਕਬੂਤਰ</div><div id="m-total" class="sum-val">0</div></div>
+    <div class="sum-card"><div class="sum-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="sum-val">0</div></div>
+</div>
+
+<div class="main-container">
     <div id="box-fly" class="box">
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></span>
-            <span id="m-total" class="count-tag">0</span>
-        </div>
+        <div class="box-header">ਉੱਡ ਰਹੇ</div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></span>
-            <span id="m-rem" class="count-tag">0</span>
-        </div>
+        <div class="box-header">ਕੱਟੇ ਗਏ</div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
-            <span id="count-time" class="count-tag">0</span>
-        </div>
+        <div class="box-header">ਸਮਾਂ</div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
 
-<div class="footer" id="ticker-div">
+<div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT 2026 LIVE</div></div>
 </div>
 
 <script>
@@ -106,46 +117,32 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
-    }, 1000);
-
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
-            const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
+            const conf = data.config || {};
             
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
+            document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
 
-            let counts = { fly:0, out:0, time:0 }; 
-            let htmls = { fly:'', out:'', time:'' };
+            let htmls = { fly: '', out: '', time: '' };
+            let counts = { fly: 0, out: 0, time: 0 };
 
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; } 
-                else if (p.status === 'time') { counts.time++; htmls.time += row; } 
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
+                if(p.status === 'fly') { htmls.fly += row; counts.fly++; }
+                else if(p.status === 'out') { htmls.out += row; counts.out++; }
+                else if(p.status === 'time') { htmls.time += row; counts.time++; }
             });
-            
+
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-            document.getElementById('count-time').innerText = counts.time;
 
-            ['fly','out','time'].forEach(id => {
-                const box = document.getElementById(`box-${id}`);
+            // Update Lists & Animations
+            ['fly', 'out', 'time'].forEach(id => {
                 const list = document.getElementById(`list-${id}`);
-                
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    box.classList.add('has-data');
-                    list.innerHTML = htmls[id] + htmls[id]; 
-                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
-                } else {
-                    box.classList.remove('has-data');
-                }
+                list.innerHTML = htmls[id] + htmls[id]; // Loop fix
+                list.style.animationDuration = Math.max(counts[id] * 3, 10) + "s";
             });
         });
     }
