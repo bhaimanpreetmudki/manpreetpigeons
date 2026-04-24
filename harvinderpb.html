@@ -6,34 +6,35 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਅੱਡ-ਅੱਡ ਬਦਲੋ (ADVANCED SETTINGS)
+           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਅੱਡ-ਅੱਡ ਬਦਲੋ (INDIVIDUAL SETTINGS)
            ====================================================== */
         :root {
-            /* 1. ਸਮਰੀ ਬਾਕਸ (TOTAL/REMAIN) ਦੀ ਸੈਟਿੰਗ */
-            --sum-bottom: 365px;      /* ਉੱਪਰ-ਥੱਲੇ (Bottom ਤੋਂ ਦੂਰੀ) */
-            --sum-left: 10px;        /* ਖੱਬੇ-ਸੱਜੇ (Left ਤੋਂ ਦੂਰੀ) */
-            --sum-height: 75px;       /* ਉਚਾਈ */
-            --sum-width: 280px;       /* ਚੌੜਾਈ */
+            /* 1. ਪਹਿਲਾ ਸਮਰੀ ਬਾਕਸ (TOTAL PIGEONS) */
+            --total-bottom: 450px;    /* ਉੱਪਰ-ਥੱਲੇ */
+            --total-left: 10px;      /* ਖੱਬੇ-ਸੱਜੇ */
+            --total-w: 280px;        /* ਚੌੜਾਈ */
+            --total-h: 75px;         /* ਉਚਾਈ */
 
-            /* 2. ਲਿਸਟ ਬਾਕਸ (FLY/OUT/TIME) ਦੀ ਸੈਟਿੰਗ (ਪੂਰਾ ਕੰਟੇਨਰ) */
-            --board-bottom: 70px;     /* ਪੂਰੇ ਬੋਰਡ ਨੂੰ ਉੱਪਰ-ਥੱਲੇ ਕਰਨ ਲਈ */
-            --board-left: 10px;       /* ਖੱਬੇ ਤੋਂ ਦੂਰੀ */
-            --board-right: 10px;      /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ */
-            --board-height: 280px;    /* ਬਾਕਸਾਂ ਦੀ ਕੁੱਲ ਉਚਾਈ */
-            --box-gap: 15px;          /* ਬਾਕਸਾਂ ਵਿਚਲੀ ਆਪਸੀ ਦੂਰੀ */
+            /* 2. ਦੂਜਾ ਸਮਰੀ ਬਾਕਸ (REMAIN PIGEONS) */
+            --rem-bottom: 365px;     /* ਉੱਪਰ-ਥੱਲੇ */
+            --rem-left: 10px;       /* ਖੱਬੇ-ਸੱਜੇ */
+            --rem-w: 280px;         /* ਚੌੜਾਈ */
+            --rem-h: 75px;          /* ਉਚਾਈ */
 
-            /* 3. ਹੈਡਰ ਬਾਕਸ (Headers Inside Boxes) */
-            --hdr-height: 75px;       /* ਸਿਰਫ ਹੈਡਰ ਦੀ ਉਚਾਈ */
-            --hdr-bg: #ff9933;        /* ਹੈਡਰ ਦਾ ਰੰਗ */
+            /* 3. ਲਿਸਟ ਬਾਕਸਾਂ ਦਾ ਕੰਟੇਨਰ (FLY/OUT/TIME) */
+            --board-bottom: 70px;
+            --board-left: 10px;
+            --board-right: 10px;
+            --board-height: 280px;
 
-            /* 4. ਅੱਖਰਾਂ ਦੀ ਸੈਟਿੰਗ (Text Settings) */
-            --name-size: 40px;        /* ਕਬੂਤਰਾਂ ਦੇ ਨਾਵਾਂ ਦਾ ਸਾਈਜ਼ */
-            --label-size: 22px;       /* ਲੇਬਲ (FLYING, OUT) ਦਾ ਸਾਈਜ਼ */
-            --count-size: 45px;       /* ਨੰਬਰਾਂ (Counts) ਦਾ ਸਾਈਜ਼ */
+            /* 4. ਟੈਕਸਟ ਸਾਈਜ਼ */
+            --name-size: 40px;
+            --label-size: 20px;
+            --count-size: 45px;
         }
 
         /* ======================================================
-           ਕੋਡ ਸਟਰਕਚਰ (ਇਸਨੂੰ ਬਦਲਣ ਦੀ ਲੋੜ ਨਹੀਂ)
+           ਡਿਜ਼ਾਈਨ ਕੋਡ
            ====================================================== */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
@@ -44,22 +45,25 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Summary Area */
-        .summary-wrapper { 
-            position: absolute; 
-            bottom: var(--sum-bottom); 
-            left: var(--sum-left); 
-            display: none; gap: 12px; z-index: 1000; 
-        }
-        .styled-card { 
-            display: flex; border: 3px solid white; border-radius: 8px; 
-            overflow: hidden; height: var(--sum-height); width: var(--sum-width); background: #000;
+        /* TOTAL Box */
+        #total-wrapper {
+            position: absolute;
+            bottom: var(--total-bottom);
+            left: var(--total-left);
+            z-index: 1000;
         }
 
-        /* Main Box Headers */
-        .box-header-new { 
-            display: flex; border-bottom: 3px solid white; 
-            height: var(--hdr-height); width: 100%; flex-shrink: 0; background: #000;
+        /* REMAIN Box */
+        #rem-wrapper {
+            position: absolute;
+            bottom: var(--rem-bottom);
+            left: var(--rem-left);
+            z-index: 1000;
+        }
+
+        .styled-card { 
+            display: flex; border: 3px solid white; border-radius: 8px; 
+            overflow: hidden; background: #000;
         }
 
         .label-area { 
@@ -73,32 +77,32 @@
             align-items: center; justify-content: center; 
         }
 
-        /* Main Containers */
+        /* Main Boards */
         .main-container { 
-            position: absolute; 
-            left: var(--board-left); 
-            right: var(--board-right); 
-            bottom: var(--board-bottom); 
-            height: var(--board-height); 
-            display: flex; flex-direction: row; gap: var(--box-gap); 
+            position: absolute; left: var(--board-left); right: var(--board-right); 
+            bottom: var(--board-bottom); height: var(--board-height); 
+            display: flex; flex-direction: row; gap: 15px; 
         }
         .box { 
             flex: 1; height: 100%; position: relative; border: 3px solid white; 
             border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; visibility: hidden;
         }
         .has-data { visibility: visible; }
+        
+        .box-header-new { 
+            display: flex; border-bottom: 3px solid white; height: 75px; background: #000; flex-shrink: 0;
+        }
+        .box-header-new .label-area { background: #ff9933; color: #000; }
 
-        #box-fly { background: #000000; }
+        /* Colors */
+        #box-fly { background: #000; }
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        .box-header-new .label-area { background: var(--hdr-bg); color: #000; }
-
-        /* List Styling */
+        /* Scroll */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
-        
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* Footer */
@@ -113,12 +117,15 @@
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="styled-card">
+<div id="total-wrapper" style="display: none;">
+    <div class="styled-card" style="width: var(--total-w); height: var(--total-h);">
         <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
-    <div class="styled-card">
+</div>
+
+<div id="rem-wrapper" style="display: none;">
+    <div class="styled-card" style="width: var(--rem-w); height: var(--rem-h);">
         <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
@@ -139,4 +146,66 @@
     </div>
 </div>
 
-<div
+<div class="footer" id="ticker-div">
+    <div class="live-tag">LIVE</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
+</div>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
+    }, 1000);
+
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const conf = data.config || {}; 
+            const pigeons = data.pigeons || [];
+            
+            const isVisible = (pigeons.length > 0 && conf.showScoreboard);
+            document.getElementById('total-wrapper').style.display = isVisible ? "block" : "none";
+            document.getElementById('rem-wrapper').style.display = isVisible ? "block" : "none";
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
+            document.getElementById('ticker-text').innerText = conf.ticker || "";
+
+            let counts = { fly:0, out:0, time:0 }; 
+            let htmls = { fly:'', out:'', time:'' };
+
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
+                if (p.status === 'fly') { counts.fly++; htmls.fly += row; } 
+                else if (p.status === 'time') { counts.time++; htmls.time += row; } 
+                else if (p.status === 'out') { counts.out++; htmls.out += row; }
+            });
+            
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+
+            ['fly','out','time'].forEach(id => {
+                const box = document.getElementById(`box-${id}`);
+                const list = document.getElementById(`list-${id}`);
+                const count = document.getElementById(`count-${id}`);
+                
+                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
+                    box.classList.add('has-data');
+                    count.innerText = counts[id];
+                    list.innerHTML = htmls[id] + htmls[id]; 
+                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
+                } else {
+                    box.classList.remove('has-data');
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
