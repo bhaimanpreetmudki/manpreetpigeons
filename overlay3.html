@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- Animations --- */
+        /* Animations */
         @keyframes langFlashThree {
             0%, 30% { content: attr(data-pa); }
             33%, 63% { content: attr(data-en); }
@@ -22,16 +22,16 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlashTwo 10s infinite; }
 
-        /* Main Container */
+        /* Layout */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
         
         .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
 
         #box-fly { background: #000000; }
-        #box-time { background: #001a66; overflow: visible; } /* Visible to show outside label */
+        #box-time { background: #001a66; overflow: visible; } /* Keep visible for outside label */
         #box-out { background: #660000; }
 
-        /* --- Yellow Header --- */
+        /* Yellow Header */
         .box-header { 
             height: 90px; width: 140px; background: #ff9933; color: black; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -41,25 +41,27 @@
         .header-label { font-size: 20px; font-weight: 900; }
         .count-tag { font-size: 42px; font-weight: 1000; }
 
-        /* --- Label Outside Only for Time --- */
+        /* Labels Outside Only for Time Section */
         .top-label-outside {
             position: absolute; top: -45px; right: 5px;
             font-size: 26px; font-weight: 1000; color: #ff9933;
             text-shadow: 2px 2px 4px black; white-space: nowrap; z-index: 20;
         }
 
-        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; border-radius: 12px; }
+        /* Scroll Area */
+        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; border-radius: 12px; z-index: 5; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
         .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Summary & Footer */
+        /* Summary */
         .summary-wrapper { position: absolute; bottom: 385px; left: 10px; display: flex; gap: 12px; }
         .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 230px; height: 65px; }
         .sum-label-area { background: #000; width: 60%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
         .sum-val-area { background: #fff; color: #000; width: 40%; font-size: 40px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; }
@@ -137,4 +139,39 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex"
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
+            document.getElementById('ticker-text').innerText = conf.ticker || "";
+            
+            const adminTimeVal = conf.boxTime || conf.timeRange || ""; 
+            document.getElementById('time-header-label').setAttribute('data-val', adminTimeVal);
+
+            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
+                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
+                else if (p.status === 'time') { counts.time++; htmls.time += row; }
+                else if (p.status === 'out') { counts.out++; htmls.out += row; }
+            });
+            
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+
+            ['fly','time','out'].forEach(id => {
+                const el = document.getElementById(`box-${id}`);
+                const listArea = document.getElementById(`list-${id}`);
+                const countTag = document.getElementById(`count-${id}`);
+                
+                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
+                    el.style.display = "block";
+                    countTag.innerText = counts[id];
+                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
+                    listArea.style.animationDuration = Math.max(counts[id] * 2.5, 5) + "s";
+                } else { el.style.display = "none"; }
+            });
+        });
+    }
+</script>
+</body>
+</html>
