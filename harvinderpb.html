@@ -6,79 +6,39 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           MASTER CONTROLS (ਸਾਈਜ਼ ਅਤੇ ਪੁਜੀਸ਼ਨ ਪਹਿਲਾਂ ਵਾਲੀ ਹੀ ਹੈ)
+           MASTER CONTROLS
            ====================================================== */
         :root {
-            /* 1. DIMENSIONS */
             --box-w: 240px;          
-            --box-h: 65px;           
-            --font-label: 24px;      
-            --font-count: 35px;      
+            --box-h: 70px;           
+            --font-label: 20px;      
+            --font-count: 38px;      /* ਨੰਬਰ ਥੋੜ੍ਹੇ ਹੋਰ ਵੱਡੇ ਕੀਤੇ ਹਨ */
 
-            /* 2. POSITIONS */
-            --sum-bottom: 280px;    
-            --total-left: 400px;    
-            --rem-left: 1040px;     
+            --sub-box-top: 73px;     
+            --list-bottom: 70px;     
+            --list-h: 350px;         
+            --list-gap: 15px;        
+            --side-margin: 10px; 
 
-            /* 3. MAIN LIST BOXES */
-            --list-bottom: 70px;    
-            --list-h: 280px;        
-            --list-gap: 15px;       
-            --list-side-margin: 10px; 
-
-            /* 4. ADMIN TIME FLASH BOX */
-            --admin-time-w: 240px;    
-            --admin-time-h: 65px;     
-            --admin-time-top: 95px;   
-            --admin-time-right: 5px;  
-            --admin-time-font: 28px;  
-
-            /* 5. LIST ITEMS */
             --name-size: 40px;      
             --scroll-speed: 3s;     
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Arial Black', sans-serif; overflow: hidden; height: 100vh; color: white; }
+        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Animation for Flashing Labels */
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
         @keyframes timeDateFlash { 0%, 45% { content: attr(data-time); } 50%, 95% { content: attr(data-date); } }
         .flash-admin-time::after { content: attr(data-time); animation: timeDateFlash 10s infinite; }
 
-        /* --- Updated Summary Design (Photo Style) --- */
-        .sum-card { 
-            position: absolute; display: flex; 
-            border: 3px solid white; 
-            border-radius: 8px; overflow: hidden; 
-            width: var(--box-w); height: var(--box-h); 
-            background: #e0e4f0; /* Light Grey/Blue background */
-        }
-        #total-card { left: var(--total-left); }
-        #rem-card { left: var(--rem-left); }
-
-        .label-area { 
-            background: #0d1b3e; /* Dark Blue from Image */
-            width: 65%; font-size: var(--font-label); font-weight: 900; 
-            display: flex; align-items: center; justify-content: center; 
-            border-right: 2px solid white; color: white; 
-            text-align: center;
-        }
-        .val-area { 
-            background: #e0e4f0; 
-            color: #000; /* Black text for numbers as per image */
-            width: 35%; font-size: var(--font-count); font-weight: 1000; 
-            display: flex; align-items: center; justify-content: center; 
-        }
-
-        /* --- Main Box Container --- */
         .main-container { 
-            position: absolute; left: var(--list-side-margin); right: var(--list-side-margin); 
+            position: absolute; left: var(--side-margin); right: var(--side-margin); 
             bottom: var(--list-bottom); height: var(--list-h); 
             display: flex; flex-direction: row; gap: var(--list-gap); 
         }
+
         .box { 
             flex: 1; height: 100%; position: relative; 
             border: 3px solid white; border-radius: 12px; overflow: hidden;
@@ -90,41 +50,36 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- Header Design (Matching Photo Style) --- */
-        .box-header-new { 
-            position: absolute; top: 0; right: 0; 
+        /* Headers & Sub-Boxes */
+        .box-header-new, .sub-box { 
+            position: absolute; right: 0; 
             width: var(--box-w); height: var(--box-h); 
             display: flex; border-left: 3px solid white; border-bottom: 3px solid white; 
-            z-index: 100; background: #e0e4f0;
+            z-index: 100; 
         }
-        .hdr-label { 
-            background: #0d1b3e; color: #fff; width: 65%; 
+        .box-header-new { top: 0; }
+        .sub-box { top: var(--sub-box-top); z-index: 99; border-radius: 0 0 0 8px; }
+
+        .lbl { 
+            background: #0d1b3e; color: #fff; width: 60%; 
             font-size: var(--font-label); font-weight: 900; 
             display: flex; align-items: center; justify-content: center; 
-            border-right: 2px solid white; 
+            border-right: 3px solid white; text-align: center;
         }
-        .hdr-val { 
-            background: #e0e4f0; color: #000; width: 35%; 
-            font-size: var(--font-count); font-weight: 1000; 
+
+        /* ਨੰਬਰ ਵਾਲਾ ਹਿੱਸਾ - ਹੁਣ ਬਿਲਕੁਲ ਵਾਈਟ (White) ਹੈ */
+        .val { 
+            background: #ffffff; /* PURE WHITE */
+            color: #000000;       /* BLACK TEXT ON WHITE */
+            width: 40%; font-size: var(--font-count); font-weight: 1000; 
             display: flex; align-items: center; justify-content: center; 
         }
 
-        /* Admin Time Flash Box */
-        .admin-time-box {
-            position: absolute; top: var(--admin-time-top); right: var(--admin-time-right);
-            width: var(--admin-time-w); height: var(--admin-time-h);
-            background: #000; border: 2px solid white; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: var(--admin-time-font); font-weight: 900; color: #fff; z-index: 99;
-        }
-
-        /* Scrolling names */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 20px; } 
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 150px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; z-index: 1100; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -135,40 +90,40 @@
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="sum-card" id="total-card">
-        <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
-        <div id="m-total" class="val-area">0</div>
-    </div>
-    <div class="sum-card" id="rem-card">
-        <div class="label-area flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
-        <div id="m-rem" class="val-area">0</div>
-    </div>
-</div>
-
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="box-header-new">
-            <div class="hdr-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
-            <div id="count-fly" class="hdr-val">0</div>
+            <div class="lbl flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
+            <div id="count-fly" class="val">0</div>
+        </div>
+        <div class="sub-box">
+            <div class="lbl flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
+            <div id="m-total" class="val">0</div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
         <div class="box-header-new">
-            <div class="hdr-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
-            <div id="count-out" class="hdr-val">0</div>
+            <div class="lbl flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
+            <div id="count-out" class="val">0</div>
+        </div>
+        <div class="sub-box">
+            <div class="lbl flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
+            <div id="m-rem" class="val">0</div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
         <div class="box-header-new">
-            <div class="hdr-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-            <div id="count-time" class="hdr-val">0</div>
+            <div class="lbl flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
+            <div id="count-time" class="val">0</div>
         </div>
-        <div id="admin-time-display" class="admin-time-box flash-admin-time" data-time="00:00:00" data-date="01-01"></div>
+        <div class="sub-box">
+            <div class="lbl flash-text" data-pa="ਟਾਈਮ" data-en="ADMIN"></div>
+            <div id="admin-time-display" class="val flash-admin-time" data-time="00:00" data-date="01-01"></div>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
@@ -197,7 +152,6 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            document.getElementById('summary-div').style.display = (pigeons.length > 0 && conf.showScoreboard) ? "block" : "none";
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
@@ -205,8 +159,7 @@
             const adminBox = document.getElementById('admin-time-display');
             const today = new Date();
             const dateStr = today.getDate() + "-" + (today.getMonth() + 1);
-            
-            adminBox.setAttribute('data-time', conf.time || "00:00:00");
+            adminBox.setAttribute('data-time', conf.time || "00:00");
             adminBox.setAttribute('data-date', dateStr);
 
             let counts = { fly:0, out:0, time:0 }; 
