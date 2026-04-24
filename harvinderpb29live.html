@@ -55,17 +55,16 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- Header Adjusted for Top Space --- */
         .box-header { 
-            height: 90px; /* ਥੋੜੀ ਹਾਈਟ ਵਧਾਈ ਹੈ */
+            height: 90px; 
             width: 145px; 
             background: #ff9933; 
             color: black; 
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            justify-content: flex-start; /* ਉੱਪਰ ਤੋਂ ਸੈੱਟ ਕਰਨ ਲਈ */
-            padding-top: 8px; /* ਉੱਪਰਲੇ ਕਿਨਾਰੇ ਤੋਂ ਦੂਰੀ */
+            justify-content: flex-start; 
+            padding-top: 8px; 
             position: absolute; 
             right: 0; 
             top: 0; 
@@ -74,30 +73,49 @@
             z-index: 10; 
         }
 
-        .header-label { 
-            font-size: 20px; 
-            font-weight: 900; 
-            line-height: 1.3; /* ਅੱਖਰਾਂ ਵਿਚਕਾਰ ਵਿੱਥ */
-            margin-bottom: 2px;
-        }
-        .count-tag { 
-            font-size: 42px; 
-            font-weight: 1000; 
-            line-height: 1;
-        }
+        .header-label { font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 2px; }
+        .count-tag { font-size: 42px; font-weight: 1000; line-height: 1; }
 
+        /* --- Smooth Scrolling Fix --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
+        
+        .list-area { 
+            position: absolute; 
+            width: 100%; 
+            animation: constantScroll linear infinite; 
+            padding-top: 15px; 
+            /* GPU acceleration for smooth motion */
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        } 
+
         .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
-        @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes constantScroll { 
+            0% { transform: translate3d(0, 0, 0); } 
+            100% { transform: translate3d(0, -50%, 0); } 
+        }
 
-        /* Footer */
+        /* Footer Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        .ticker-move { 
+            display: inline-block; 
+            animation: ticker 25s linear infinite; 
+            font-size: 32px; 
+            font-weight: 950; 
+            color: #000; 
+            padding-left: 100%; 
+            will-change: transform;
+        }
+        
+        @keyframes ticker { 
+            0% { transform: translate3d(0, 0, 0); } 
+            100% { transform: translate3d(-100%, 0, 0); } 
+        }
 
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; }
         #cur-time { font-size: 32px; font-weight: 950; }
@@ -198,6 +216,7 @@
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.style.display = "block";
                     count.innerText = counts[id];
+                    // Double content for infinite scroll
                     list.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
                     list.style.animationDuration = Math.max(counts[id] * 3, 5) + "s";
                 } else {
