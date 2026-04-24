@@ -22,11 +22,11 @@
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- Updated Yellow Header (As per Photo) --- */
+        /* --- Updated Yellow Header (Wider & Larger Text) --- */
         .box-header { 
-            height: 65px; 
-            width: 100px; 
-            background: #ff9933; /* Orange-Yellow Color like photo */
+            height: 85px; /* Size Vadha ditta */
+            width: 130px; /* Width Vadha ditti */
+            background: #ff9933; 
             color: black; 
             display: flex; 
             flex-direction: column;
@@ -38,16 +38,17 @@
             border-left: 3px solid white; 
             border-bottom: 3px solid white; 
             z-index: 10; 
-            line-height: 1;
+            line-height: 1.1;
         }
 
-        .header-label { font-size: 16px; font-weight: 900; margin-bottom: 2px; }
-        .count-tag { font-size: 32px; font-weight: 1000; }
+        /* Yellow box labels like scrolling list size */
+        .header-label { font-size: 20px; font-weight: 900; margin-bottom: 2px; }
+        .count-tag { font-size: 40px; font-weight: 1000; }
 
         /* Scrolling List Area */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 20px; } 
-        .item { padding: 4px 15px; font-size: 36px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
+        .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
@@ -58,8 +59,13 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 230px; border-left: 4px solid #000; }
-        #time-val { font-size: 32px; font-weight: 950; }
+        /* --- Date/Time Flash Back --- */
+        @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+
+        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 230px; border-left: 4px solid #000; position: relative; overflow: hidden; }
+        #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
+        #date-val { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
     </style>
 </head>
 <body>
@@ -86,7 +92,7 @@
 
     <div id="box-time" class="box">
         <div class="box-header">
-            <span class="header-label" id="time-head-txt">ਟਾਈਮ</span>
+            <span class="header-label" id="time-head-txt">ਸਮਾਂ</span>
             <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -104,7 +110,10 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="time-val">00:00:00 AM</div></div>
+    <div class="dt-box">
+        <div id="time-val">00:00:00 AM</div>
+        <div id="date-val">24 APR 2026</div>
+    </div>
 </div>
 
 <script>
@@ -117,6 +126,7 @@
     setInterval(() => {
         const now = new Date();
         document.getElementById('time-val').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
+        document.getElementById('date-val').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
     }, 1000);
 
     if(userID) {
@@ -130,8 +140,7 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Admin Panel Time Label
-            const adminTime = conf.boxTime || conf.timeRange || "ਟਾਈਮ"; 
+            const adminTime = conf.boxTime || conf.timeRange || "ਸਮਾਂ"; 
             document.getElementById('time-head-txt').innerText = adminTime;
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
