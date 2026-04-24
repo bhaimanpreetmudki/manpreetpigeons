@@ -5,10 +5,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
+        /* CSS Reset */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- ਹੈਡਰ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
+        /* --- Animations --- */
         @keyframes langFlashThree {
             0%, 30% { content: attr(data-pa); }
             33%, 63% { content: attr(data-en); }
@@ -22,9 +23,11 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlashTwo 10s infinite; }
 
-        /* Main Container */
+        /* Main Container - Space added on top for labels */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
-        .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
+        
+        /* Box Style - Removed overflow:hidden to show labels outside */
+        .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; }
 
         #box-fly { background: #000000; }
         #box-time { background: #001a66; }
@@ -32,58 +35,45 @@
 
         /* --- Yellow Header --- */
         .box-header { 
-            height: 95px; 
-            width: 150px; 
-            background: #ff9933; 
-            color: black; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            position: absolute; 
-            right: 0; 
-            top: 0; 
-            border-left: 3px solid white; 
-            border-bottom: 3px solid white; 
-            z-index: 10; 
+            height: 90px; width: 140px; background: #ff9933; color: black; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: absolute; right: 0; top: 0; border-left: 3px solid white; border-bottom: 3px solid white; 
+            z-index: 10; border-top-right-radius: 9px;
         }
+        .count-tag { font-size: 42px; font-weight: 1000; }
 
-        /* --- ਉੱਪਰ ਵਾਲੀ ਲਾਈਨ (Label outside/above the box) --- */
+        /* --- Label Outside the Box (At the top edge) --- */
         .top-label-outside {
             position: absolute;
-            top: -45px; /* ਬਾਕਸ ਤੋਂ ਬਾਹਰ ਉੱਪਰ */
-            right: 5px;
-            font-size: 24px;
+            top: -40px; /* Moves it above the top border */
+            right: 10px;
+            font-size: 26px;
             font-weight: 1000;
-            color: #ff9933; /* ਪੀਲਾ ਰੰਗ */
+            color: #ff9933;
             text-shadow: 2px 2px 4px black;
             white-space: nowrap;
             z-index: 20;
         }
 
-        .header-label { font-size: 18px; font-weight: 900; }
-        .count-tag { font-size: 40px; font-weight: 1000; }
-
-        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
+        /* List Area with its own overflow control */
+        .scroll-window { position: absolute; top: 0; bottom: 0; left:0; width: 100%; overflow: hidden; border-radius: 12px; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
-        .item { padding: 4px 15px; font-size: 38px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
+        /* Summary & Footer */
+        .summary-wrapper { position: absolute; bottom: 390px; left: 10px; display: flex; gap: 12px; }
+        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 220px; height: 60px; }
+        .sum-label-area { background: #000; width: 60%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
+        .sum-val-area { background: #fff; color: #000; width: 40%; font-size: 38px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
+        .ticker-wrap { flex: 1; overflow: hidden; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; white-space: nowrap; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Summary Wrapper */
-        .summary-wrapper { position: absolute; bottom: 385px; left: 10px; display: flex; gap: 12px; z-index: 1000; }
-        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 230px; height: 65px; }
-        .sum-label-area { background: #000; width: 60%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
-        .sum-val-area { background: #fff; color: #000; width: 40%; font-size: 40px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
-
-        /* Clock in Footer */
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; align-items: center; min-width: 250px; border-left: 4px solid #000; position: relative; }
         #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
         #date-val { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
@@ -107,25 +97,19 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="top-label-outside flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
-        <div class="box-header">
-            <span id="count-fly" class="count-tag">0</span>
-        </div>
+        <div class="box-header"><span id="count-fly" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-time" class="box">
         <div id="time-header-label" class="top-label-outside flash-time" data-pa="ਸਮਾਂ" data-en="TIME" data-val=""></div>
-        <div class="box-header">
-            <span id="count-time" class="count-tag">0</span>
-        </div>
+        <div class="box-header"><span id="count-time" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 
     <div id="box-out" class="box">
         <div class="top-label-outside flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
-        <div class="box-header">
-            <span id="count-out" class="count-tag">0</span>
-        </div>
+        <div class="box-header"><span id="count-out" class="count-tag">0</span></div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 </div>
@@ -133,10 +117,59 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box">
-        <div id="time-val">00:00:00 AM</div>
-        <div id="date-val">24 APR 2026</div>
-    </div>
+    <div class="dt-box"><div id="time-val">00:00:00 AM</div><div id="date-val">24 APR 2026</div></div>
 </div>
 
-<script
+<script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('time-val').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
+        document.getElementById('date-val').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+    }, 1000);
+
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const conf = data.config || {}; 
+            const pigeons = data.pigeons || [];
+            
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
+            document.getElementById('ticker-text').innerText = conf.ticker || "";
+            
+            const adminTimeVal = conf.boxTime || conf.timeRange || ""; 
+            document.getElementById('time-header-label').setAttribute('data-val', adminTimeVal);
+
+            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
+                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
+                else if (p.status === 'time') { counts.time++; htmls.time += row; }
+                else if (p.status === 'out') { counts.out++; htmls.out += row; }
+            });
+            
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+
+            ['fly','time','out'].forEach(id => {
+                const el = document.getElementById(`box-${id}`);
+                const listArea = document.getElementById(`list-${id}`);
+                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
+                    listArea.style.animationDuration = Math.max(counts[id] * 3, 5) + "s";
+                } else { el.style.display = "none"; }
+            });
+        });
+    }
+</script>
+</body>
+</html>
