@@ -12,40 +12,40 @@
         .styled-card { 
             display: flex; 
             border: 3px solid white; 
-            border-radius: 8px; 
+            border-radius: 10px; 
             overflow: hidden; 
-            height: 60px; 
+            height: 70px; /* ਹਾਈਟ ਵਧਾਈ ਗਈ ਹੈ */
             box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
         }
         .card-label { 
             background: #000; 
             color: white; 
-            padding: 0 15px; 
-            font-size: 20px; 
+            padding: 0 20px; 
+            font-size: 24px; /* ਫੋਂਟ ਸਾਈਜ਼ ਵਧਾਇਆ ਗਿਆ ਹੈ */
             font-weight: 900; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            border-right: 2px solid white;
-            min-width: 140px;
+            border-right: 3px solid white;
+            min-width: 160px; /* ਚੌੜਾਈ ਵਧਾਈ ਗਈ ਹੈ */
         }
         .card-val { 
             background: #fff; 
             color: #000; 
             flex: 1; 
-            font-size: 38px; 
+            font-size: 45px; /* ਨੰਬਰਾਂ ਦਾ ਸਾਈਜ਼ ਵਧਾਇਆ ਗਿਆ ਹੈ */
             font-weight: 1000; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            min-width: 60px;
+            min-width: 80px;
         }
 
         /* --- Main Layout --- */
-        .summary-wrapper { position: absolute; bottom: 375px; left: 10px; display: flex; gap: 12px; }
+        .summary-wrapper { position: absolute; bottom: 380px; left: 10px; display: flex; gap: 15px; }
         
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 80px; 
+            position: absolute; left: 10px; right: 10px; bottom: 85px; 
             height: 280px; display: flex; flex-direction: row; gap: 15px; 
         }
 
@@ -57,26 +57,26 @@
         #box-out { background: #001a66; }
         #box-time { background: #cc0000; }
 
-        /* --- Header Positioning (Matching Summary Look) --- */
+        /* --- Header Positioning --- */
         .box-header-wrap {
             position: absolute;
-            right: 5px;
-            top: 5px;
+            right: 8px;
+            top: 8px;
             z-index: 10;
         }
 
         /* --- Scrolling List --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 70px; } 
-        .item { padding: 5px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 85px; } 
+        .item { padding: 6px 20px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 6px black; }
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* --- Footer --- */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: white; display: flex; align-items: center; border-top: 5px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 950; font-style: italic; }
+        .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; }
+        .live-tag { background: #ff0000; color: white; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 900; color: black; padding-left: 100%; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 34px; font-weight: 900; color: black; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
@@ -90,9 +90,8 @@
 <div class="main-container">
     <div id="box-fly" class="box">
         <div class="box-header-wrap">
-            <div class="styled-card" style="height: 50px;">
-                <div class="card-label" style="font-size: 16px; min-width: 100px;">ਉੱਡ ਰਹੇ</div>
-                <div id="count-fly" class="card-val" style="font-size: 30px;">0</div>
+            <div class="styled-card" style="height: 60px;"> <div class="card-label" style="font-size: 20px; min-width: 120px;">ਉੱਡ ਰਹੇ</div>
+                <div id="count-fly" class="card-val" style="font-size: 38px;">0</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
@@ -100,9 +99,9 @@
 
     <div id="box-out" class="box">
         <div class="box-header-wrap">
-            <div class="styled-card" style="height: 50px;">
-                <div class="card-label" style="font-size: 16px; min-width: 100px;">ਕੱਟੇ ਗਏ</div>
-                <div id="count-out" class="card-val" style="font-size: 30px;">0</div>
+            <div class="styled-card" style="height: 60px;">
+                <div class="card-label" style="font-size: 20px; min-width: 120px;">ਕੱਟੇ ਗਏ</div>
+                <div id="count-out" class="card-val" style="font-size: 38px;">0</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
@@ -110,9 +109,9 @@
 
     <div id="box-time" class="box">
         <div class="box-header-wrap">
-            <div class="styled-card" style="height: 50px;">
-                <div class="card-label" style="font-size: 16px; min-width: 100px;">ਸਮਾਂ</div>
-                <div id="count-time" class="card-val" style="font-size: 30px;">0</div>
+            <div class="styled-card" style="height: 60px;">
+                <div class="card-label" style="font-size: 20px; min-width: 120px;">ਸਮਾਂ</div>
+                <div id="count-time" class="card-val" style="font-size: 38px;">0</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
