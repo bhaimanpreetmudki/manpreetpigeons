@@ -27,32 +27,25 @@
         }
         .has-data { visibility: visible; }
 
-        #box-fly { background: #000000; }
-        #box-out { background: #001a66; }
-        #box-time { background: #660000; }
+        /* ਬਾਕਸਾਂ ਦੇ ਵੱਖਰੇ ਰੰਗ */
+        #box-fly { background: #000000; } /* Black */
+        #box-out { background: #001a66; } /* Blue */
+        #box-time { background: #660000; } /* Maroon */
 
-        /* --- New Header & Summary Style (Like Remaining Box) --- */
-        .header-group {
-            position: absolute; right: 8px; top: 8px; 
-            display: flex; flex-direction: column; gap: 5px; z-index: 20;
-        }
-
-        /* Title Header Style */
+        /* Header Style (Back to Side-Box style) */
         .box-header { 
-            height: 45px; width: 140px; background: #ff9933; color: black; 
-            display: flex; align-items: center; justify-content: center; 
-            border: 3px solid white; border-radius: 10px;
+            height: 80px; width: 140px; background: #ff9933; color: black; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; position: absolute; right: 0; top: 0; 
+            border-left: 3px solid white; border-bottom: 3px solid white; z-index: 10; 
         }
-        .header-label { font-size: 18px; font-weight: 900; }
 
-        /* Summary Box Style (Placed below header) */
-        .sub-sum-box {
-            height: 60px; width: 140px; background: #fff; color: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 3px solid white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .sub-sum-label { font-size: 12px; font-weight: 900; color: #555; margin-bottom: -2px; }
-        .sub-sum-val { font-size: 35px; font-weight: 1000; line-height: 1; }
+        /* ਵੱਖਰੇ ਕਾਊਂਟਰ ਬਾਕਸਾਂ ਲਈ ਰੰਗ (Optional) */
+        #box-out .box-header { background: #ffffff; } /* ਬਾਕੀ ਕਬੂਤਰ ਵਾਲਾ ਸਫੇਦ ਬਾਕਸ */
+        #box-time .box-header { background: #ffcc00; }
+
+        .header-label { font-size: 18px; font-weight: 900; line-height: 1.2; }
+        .count-tag { font-size: 40px; font-weight: 1000; line-height: 1; }
 
         /* Scroll Area */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
@@ -76,34 +69,25 @@
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="header-group">
-            <div class="box-header"><span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span></div>
-            <div class="sub-sum-box">
-                <span class="sub-sum-label">TOTAL</span>
-                <span id="m-total" class="sub-sum-val">0</span>
-            </div>
+        <div class="box-header">
+            <span class="header-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></span>
+            <span id="m-total" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
-        <div class="header-group">
-            <div class="box-header"><span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span></div>
-            <div class="sub-sum-box">
-                <span class="sub-sum-label">REMAIN</span>
-                <span id="m-rem" class="sub-sum-val">0</span>
-            </div>
+        <div class="box-header">
+            <span class="header-label flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></span>
+            <span id="m-rem" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
-        <div class="header-group">
-            <div class="box-header"><span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span></div>
-            <div class="sub-sum-box">
-                <span class="sub-sum-label">COUNT</span>
-                <span id="count-time" class="sub-sum-val">0</span>
-            </div>
+        <div class="box-header">
+            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
+            <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
