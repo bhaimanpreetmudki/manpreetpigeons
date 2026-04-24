@@ -8,133 +8,103 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Golden Animated Border --- */
-        .box-wrapper {
-            position: relative; flex: 1; height: 100%; padding: 4px; 
-            border-radius: 12px; overflow: hidden; display: none;
-        }
-        .box-wrapper::before {
-            content: ''; position: absolute; width: 150%; height: 150%; 
-            top: -25%; left: -25%; 
-            background: conic-gradient(transparent, #ffd700, #fffb00, transparent 40%);
-            animation: goldRotate 6s linear infinite;
-        }
-        @keyframes goldRotate { 100% { transform: rotate(360deg); } }
-
-        .box { 
-            position: relative; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.95); border-radius: 9px; 
-            overflow: hidden; z-index: 2; 
-        }
-        #box-fly .box { background: #000; }
-        #box-out .box { background: #001a66; }
-        #box-time .box { background: #660000; }
-
-        /* --- Styled Labels (Summary & Headers) --- */
+        /* --- Reusable Styled Card (For Headers and Summaries) --- */
         .styled-card { 
-            display: flex; border: 3px solid #ffd700; border-radius: 8px; 
-            overflow: hidden; height: 60px; background: #000;
+            display: flex; border: 2px solid white; border-radius: 6px; 
+            overflow: hidden; height: 45px; width: 100%;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         }
         .card-label { 
-            background: #000; color: #ffd700; padding: 0 15px; 
-            font-size: 22px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 3px solid #ffd700;
-            min-width: 140px;
+            background: #000; color: white; padding: 0 10px; 
+            font-size: 16px; font-weight: 900; display: flex; 
+            align-items: center; justify-content: center; border-right: 2px solid white;
+            flex: 1.5;
         }
         .card-val { 
             background: #fff; color: #000; flex: 1; 
-            font-size: 45px; font-weight: 1000; display: flex; 
-            align-items: center; justify-content: center; min-width: 70px;
+            font-size: 28px; font-weight: 1000; display: flex; 
+            align-items: center; justify-content: center;
         }
 
-        /* --- Layout Positioning --- */
-        .summary-wrapper { 
-            position: absolute; bottom: 335px; left: 10px; display: flex; gap: 15px; 
-            z-index: 20;
+        /* --- Main Layout Container --- */
+        .main-wrapper {
+            position: absolute; left: 10px; right: 10px; bottom: 80px;
+            display: flex; flex-direction: row; gap: 15px; align-items: flex-end;
         }
-        .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 70px; 
-            height: 255px; display: flex; flex-direction: row; gap: 15px; 
-        }
-        .box-header-wrap { position: absolute; right: 8px; top: 8px; z-index: 10; }
 
-        /* --- Admin Time Slot --- */
-        .admin-time-slot {
-            position: absolute; width: 100%; bottom: 0;
-            background: linear-gradient(180deg, #ffd700, #b8860b);
-            color: #000; text-align: center; font-size: 24px; 
-            font-weight: 1000; padding: 6px 0; border-top: 2px solid white; z-index: 11;
+        /* --- Vertical Column for Box + its Summary --- */
+        .column-container {
+            flex: 1; display: flex; flex-direction: column; gap: 8px;
         }
+
+        /* --- List Box --- */
+        .box { 
+            width: 100%; height: 240px; /* ਲਿਸਟ ਬਾਕਸ ਵੱਡਾ ਕੀਤਾ */
+            position: relative; border: 2px solid white; border-radius: 10px; 
+            overflow: hidden; display: none; 
+        }
+        #box-fly { background: #000000; }
+        #box-out { background: #001a66; }
+        #box-time { background: #cc0000; }
+
+        /* --- Header Positioning inside Box --- */
+        .box-header-wrap { position: absolute; right: 5px; top: 5px; z-index: 10; width: 140px; }
 
         /* --- Scrolling List --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 75px; } 
-        .item { padding: 5px 20px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 6px black; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 60px; } 
+        .item { padding: 4px 15px; font-size: 34px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
+
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Footer with Date/Time --- */
-        .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 70px; 
-            background: white; display: flex; align-items: center; border-top: 5px solid #ff0000; 
-        }
-        .live-tag { 
-            background: #ff0000; color: white; padding: 0 30px; height: 100%; 
-            display: flex; align-items: center; font-size: 32px; font-weight: 950; 
-        }
+        /* --- Footer --- */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; border-top: 4px solid #ff0000; }
+        .live-tag { background: #ff0000; color: white; padding: 0 20px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { 
-            display: inline-block; animation: ticker 20s linear infinite; 
-            font-size: 30px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap;
-        }
+        .ticker-move { display: inline-block; animation: ticker 15s linear infinite; font-size: 28px; font-weight: 900; color: black; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        .date-time-box {
-            background: #000; color: #fff; height: 100%; padding: 0 20px;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; border-left: 4px solid #ff0000; min-width: 250px;
-        }
-        #cur-date { font-size: 16px; font-weight: 800; color: #ffd700; }
-        #cur-time { font-size: 28px; font-weight: 900; }
     </style>
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-area">
-    <div class="styled-card"><div class="card-label">ਕੁੱਲ ਕਬੂਤਰ</div><div id="m-total" class="card-val">0</div></div>
-    <div class="styled-card"><div class="card-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="card-val">0</div></div>
-</div>
-
-<div class="main-container">
-    <div id="box-fly" class="box-wrapper">
-        <div class="box">
-            <div class="box-header-wrap"><div class="styled-card"><div class="card-label">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="card-val">0</div></div></div>
+<div class="main-wrapper">
+    <div class="column-container" id="col-fly">
+        <div id="box-fly" class="box">
+            <div class="box-header-wrap">
+                <div class="styled-card" style="height:35px;"><div class="card-label" style="font-size:12px;">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="card-val" style="font-size:20px;">0</div></div>
+            </div>
             <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
         </div>
+        <div class="styled-card"><div class="card-label">ਕੁੱਲ ਕਬੂਤਰ</div><div id="m-total" class="card-val">0</div></div>
     </div>
 
-    <div id="box-out" class="box-wrapper">
-        <div class="box">
-            <div class="box-header-wrap"><div class="styled-card"><div class="card-label">ਕੱਟੇ ਗਏ</div><div id="count-out" class="card-val">0</div></div></div>
+    <div class="column-container" id="col-out">
+        <div id="box-out" class="box">
+            <div class="box-header-wrap">
+                <div class="styled-card" style="height:35px;"><div class="card-label" style="font-size:12px;">ਕੱਟੇ ਗਏ</div><div id="count-out" class="card-val" style="font-size:20px;">0</div></div>
+            </div>
             <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
         </div>
+        <div class="styled-card"><div class="card-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="card-val">0</div></div>
     </div>
 
-    <div id="box-time" class="box-wrapper">
-        <div class="box">
-            <div class="box-header-wrap"><div class="styled-card"><div class="card-label">ਸਮਾਂ</div><div id="count-time" class="card-val">0</div></div></div>
+    <div class="column-container" id="col-time">
+        <div id="box-time" class="box">
+            <div class="box-header-wrap">
+                <div class="styled-card" style="height:35px;"><div class="card-label" style="font-size:12px;">ਸਮੇਂ ਚ</div><div id="count-time" class="card-val" style="font-size:20px;">0</div></div>
+            </div>
             <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-            <div id="admin-time-val" class="admin-time-slot">--:--</div>
+        </div>
+        <div class="styled-card">
+            <div class="card-label" style="font-size:14px; background:#ffcc00; color:#000;">ਸਮਾਂ</div>
+            <div id="admin-time-val" class="card-val" style="font-size:18px; flex:2;">--:--</div>
         </div>
     </div>
 </div>
 
 <div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
-    <div class="date-time-box">
-        <div id="cur-date">--/--/----</div>
-        <div id="cur-time">00:00:00</div>
-    </div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
 </div>
 
 <script>
@@ -143,15 +113,6 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-
-    // Live Date and Time
-    setInterval(() => {
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('en-GB').toUpperCase();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' }).toUpperCase();
-        document.getElementById('cur-date').innerText = dateStr;
-        document.getElementById('cur-time').innerText = timeStr;
-    }, 1000);
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -179,14 +140,15 @@
             document.getElementById('count-time').innerText = counts.time;
 
             ['fly','out','time'].forEach(id => {
-                const wrap = document.getElementById(`box-${id}`);
+                const box = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
+                
                 if (counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    wrap.style.display = "block";
+                    box.style.display = "block";
                     list.innerHTML = htmls[id] + htmls[id];
-                    list.style.animationDuration = Math.max(counts[id] * 2, 7) + "s";
+                    list.style.animationDuration = Math.max(counts[id] * 2, 5) + "s";
                 } else {
-                    wrap.style.display = "none";
+                    box.style.display = "none";
                 }
             });
         });
