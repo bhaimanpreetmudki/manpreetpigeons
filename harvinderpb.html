@@ -20,11 +20,15 @@
             display: none; gap: 12px; z-index: 1000; 
         }
         
-        /* ਸਾਂਝਾ ਡਿਜ਼ਾਈਨ (Summary ਅਤੇ Header ਲਈ) */
-        .styled-card { 
+        /* ਸਾਂਝਾ ਡਿਜ਼ਾਈਨ (Summary ਅਤੇ Box Header ਲਈ) */
+        .styled-card, .box-header-new { 
             display: flex; border: 3px solid white; border-radius: 8px; 
             overflow: hidden; height: 75px; background: #000;
         }
+        
+        /* Summary ਵਾਲੇ ਬਾਕਸ ਦੀ ਫਿਕਸ ਚੌੜਾਈ */
+        .summary-card { min-width: 280px; }
+
         .label-area { 
             background: #000; color: #fff; width: 65%; 
             font-size: 22px; font-weight: 900; display: flex; 
@@ -52,24 +56,17 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- Header Fix (Summary Box ਵਾਂਗੂ) --- */
+        /* --- Header Fix (ਬਿਲਕੁਲ Summary Box ਵਰਗਾ) --- */
         .box-header-new { 
-            width: 100%; 
-            height: 75px; /* Summary card ਦੀ ਉਚਾਈ ਦੇ ਬਰਾਬਰ */
-            display: flex; 
+            width: 100%; /* ਆਪਣੇ ਪੇਰੈਂਟ ਬਾਕਸ ਦੇ ਮੁਤਾਬਕ */
+            border: none; /* ਪਹਿਲਾਂ ਹੀ ਬਾਕਸ ਦੇ ਬਾਰਡਰ ਹਨ */
             border-bottom: 3px solid white;
-            flex-shrink: 0; /* ਇਸਦੀ ਜਗ੍ਹਾ ਫਿਕਸ ਰੱਖਣ ਲਈ */
+            border-radius: 0; /* ਬਾਕਸ ਦੇ ਅੰਦਰ ਫਿੱਟ ਕਰਨ ਲਈ */
+            flex-shrink: 0;
         }
         
-        /* Header ਦੇ ਅੰਦਰਲੇ ਹਿੱਸੇ Summary ਵਰਗੇ */
-        .box-header-new .label-area { 
-            background: #ff9933; /* Header ਦਾ ਖਾਸ ਰੰਗ */
-            color: #000; 
-            font-size: 20px;
-        }
-        .box-header-new .val-area { 
-            font-size: 45px; /* Summary ਵਰਗਾ ਸਾਈਜ਼ */
-        }
+        /* Header ਦਾ ਰੰਗ ਸੰਤਰੀ (Orange) ਰੱਖਿਆ ਹੈ ਜਿਵੇਂ ਪਹਿਲਾਂ ਸੀ */
+        .box-header-new .label-area { background: #ff9933; color: #000; }
 
         /* --- Smooth Scroll --- */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
@@ -92,11 +89,11 @@
 <body>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="styled-card" style="min-width: 280px;">
+    <div class="styled-card summary-card">
         <div class="label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
-    <div class="styled-card" style="min-width: 280px;">
+    <div class="styled-card summary-card">
         <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
@@ -135,6 +132,7 @@
 </div>
 
 <script>
+    // ਫਾਇਰਬੇਸ ਅਤੇ ਬਾਕੀ ਸਕ੍ਰਿਪਟ ਪਹਿਲਾਂ ਵਾਂਗ ਹੀ ਹੈ
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
