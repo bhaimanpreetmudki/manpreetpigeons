@@ -8,114 +8,142 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; }
 
-        /* Diamond Glow Animation for all boxes */
-        @keyframes boxGlow {
-            0% { border-color: #fff; box-shadow: 0 0 5px #fff; }
-            50% { border-color: #00d2ff; box-shadow: 0 0 15px #00d2ff; }
-            100% { border-color: #fff; box-shadow: 0 0 5px #fff; }
+        /* --- Diamond Glow Animation for List Boxes --- */
+        @keyframes diamondGlow {
+            0% { border-color: #fff; box-shadow: 0 0 5px #fff, inset 0 0 5px #fff; }
+            50% { border-color: #00d2ff; box-shadow: 0 0 15px #00d2ff, inset 0 0 10px #00d2ff; }
+            100% { border-color: #fff; box-shadow: 0 0 5px #fff, inset 0 0 5px #fff; }
         }
 
+        /* --- Main Container --- */
         .main-wrapper {
-            position: absolute; left: 15px; right: 15px; bottom: 80px;
-            display: flex; flex-direction: row; gap: 20px; align-items: flex-end;
+            position: absolute; left: 10px; right: 10px; bottom: 55px; /* Ticker ਦੇ ਬਿਲਕੁਲ ਉੱਪਰ ਤੱਕ */
+            display: flex; flex-direction: row; gap: 12px; align-items: stretch;
         }
 
-        .column { flex: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .column-container { flex: 1; display: flex; flex-direction: column; gap: 0px; }
 
-        /* List Box Styling */
-        .list-box { 
-            width: 100%; height: 200px; position: relative; 
-            border: 3px solid white; border-radius: 8px; overflow: hidden;
-            animation: boxGlow 2s infinite ease-in-out;
+        /* --- Enlarged Header Style --- */
+        .title-header { 
+            display: flex; border: 3px solid white; border-radius: 6px 6px 0 0; 
+            overflow: hidden; height: 45px; width: 100%; background: #000;
         }
-        #box-fly { background: #000; }
-        #box-out { background: #001a66; }
-        #box-time { background: #cc0000; }
-
-        /* Header Boxes (Inside List Box) */
-        .header-pos { position: absolute; right: 5px; top: 5px; z-index: 10; width: 140px; }
-        
-        /* Summary Boxes (Below List Box) */
-        .summary-pos { width: 140px; }
-
-        .styled-card { 
-            display: flex; border: 2px solid white; border-radius: 4px; 
-            overflow: hidden; height: 35px; width: 100%; background: #000;
+        .header-label { 
+            background: #000; color: #fff; padding: 0 12px; 
+            font-size: 18px; font-weight: 1000; display: flex; 
+            align-items: center; justify-content: center; border-right: 3px solid white;
+            flex: 1.8; /* ਪਹਿਲਾਂ ਨਾਲੋਂ ਵੱਡਾ ਸਾਈਜ਼ */
         }
-        .card-label { 
-            background: #000; color: #fff; padding: 0 5px; 
-            font-size: 11px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white; flex: 1.2;
-        }
-        .card-val { 
+        .header-count { 
             background: #fff; color: #000; flex: 1; 
-            font-size: 20px; font-weight: 1000; display: flex; 
+            font-size: 28px; font-weight: 1000; display: flex; 
             align-items: center; justify-content: center;
         }
 
-        /* Seamless Scroll */
+        /* --- Seamless Scroll List Box --- */
+        .list-box { 
+            width: 100%; flex-grow: 1; min-height: 250px; position: relative; 
+            border: 3px solid white; border-top: none; border-bottom: none; 
+            overflow: hidden; animation: diamondGlow 2s infinite ease-in-out;
+        }
+        #box-fly { background: rgba(0, 0, 0, 0.9); }
+        #box-out { background: rgba(0, 26, 102, 0.9); }
+        #box-time { background: rgba(204, 0, 0, 0.9); }
+
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: loop linear infinite; padding-top: 45px; } 
-        .item { padding: 4px 15px; font-size: 28px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
+        .list-area { 
+            position: absolute; width: 100%; 
+            display: flex; flex-direction: column;
+            animation: seamlessScroll linear infinite; 
+        } 
+        .item { padding: 6px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
 
-        @keyframes loop { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes seamlessScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer with Date/Time */
+        /* --- Bottom Summary/Time Cards --- */
+        .bottom-card { 
+            display: flex; border: 3px solid white; border-radius: 0 0 6px 6px; 
+            overflow: hidden; height: 45px; width: 100%; background: #000;
+        }
+        .bottom-label { 
+            background: #000; color: #fff; padding: 0 10px; 
+            font-size: 16px; font-weight: 900; display: flex; 
+            align-items: center; justify-content: center; border-right: 3px solid white;
+            flex: 1.5;
+        }
+        .bottom-val { 
+            background: #fff; color: #000; flex: 1; 
+            font-size: 26px; font-weight: 1000; display: flex; 
+            align-items: center; justify-content: center;
+        }
+
+        /* --- Footer Ticker --- */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 55px; 
-            background: white; display: flex; align-items: center; border-top: 4px solid #ff0000; 
+            background: white; display: flex; align-items: center; 
+            border-top: 4px solid #ff0000; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 20px; height: 100%; display: flex; align-items: center; font-size: 24px; font-weight: 950; font-style: italic; }
+        .live-tag { 
+            background: #ff0000; color: white; padding: 0 20px; height: 100%; 
+            display: flex; align-items: center; font-size: 26px; font-weight: 950; font-style: italic; 
+        }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 20s linear infinite; font-size: 24px; font-weight: 900; color: black; white-space: nowrap; }
+        .ticker-move { 
+            display: inline-block; animation: ticker 20s linear infinite; 
+            font-size: 24px; font-weight: 900; color: black; white-space: nowrap;
+        }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .time-flash {
+        .flash-info {
             background: #000; color: #fff; height: 100%; padding: 0 15px;
             display: flex; flex-direction: column; justify-content: center;
-            font-size: 15px; font-weight: 900; min-width: 170px; text-align: center; border-left: 4px solid #ff0000;
+            font-size: 14px; font-weight: 900; min-width: 170px; text-align: center;
+            border-left: 4px solid #ff0000;
         }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-    <div class="column">
+    <div class="column-container">
+        <div class="title-header">
+            <div class="header-label">ਉੱਡ ਰਹੇ</div>
+            <div id="count-fly" class="header-count">0</div>
+        </div>
         <div id="box-fly" class="list-box">
-            <div class="header-pos">
-                <div class="styled-card"><div class="card-label">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="card-val">0</div></div>
-            </div>
             <div class="scroll-window"><div id="list-fly" class="list-area"></div></div>
         </div>
-        <div class="summary-pos">
-            <div class="styled-card"><div class="card-label">ਕੁੱਲ</div><div id="m-total" class="card-val">0</div></div>
+        <div class="bottom-card">
+            <div class="bottom-label">ਕੁੱਲ ਕਬੂਤਰ</div>
+            <div id="m-total" class="bottom-val">0</div>
         </div>
     </div>
 
-    <div class="column">
+    <div class="column-container">
+        <div class="title-header">
+            <div class="header-label">ਕੱਟੇ ਗਏ</div>
+            <div id="count-out" class="header-count">0</div>
+        </div>
         <div id="box-out" class="list-box">
-            <div class="header-pos">
-                <div class="styled-card"><div class="card-label">ਕੱਟੇ ਗਏ</div><div id="count-out" class="card-val">0</div></div>
-            </div>
             <div class="scroll-window"><div id="list-out" class="list-area"></div></div>
         </div>
-        <div class="summary-pos">
-            <div class="styled-card"><div class="card-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="card-val">0</div></div>
+        <div class="bottom-card">
+            <div class="bottom-label" style="color:#ffcc00">ਬਾਕੀ</div>
+            <div id="m-rem" class="bottom-val">0</div>
         </div>
     </div>
 
-    <div class="column">
+    <div class="column-container">
+        <div class="title-header">
+            <div class="header-label">ਸਮੇਂ ਚ</div>
+            <div id="count-time" class="header-count">0</div>
+        </div>
         <div id="box-time" class="list-box">
-            <div class="header-pos">
-                <div class="styled-card"><div class="card-label">ਸਮੇਂ ਚ</div><div id="count-time" class="card-val">0</div></div>
-            </div>
             <div class="scroll-window"><div id="list-time" class="list-area"></div></div>
         </div>
-        <div class="summary-pos">
-            <div class="styled-card">
-                <div class="card-label" style="background:#ffcc00; color:#000;">ਸਮਾਂ</div>
-                <div id="admin-time" class="card-val" style="font-size:12px; flex:2;">--:--</div>
-            </div>
+        <div class="bottom-card">
+            <div class="bottom-label" style="background:#ffcc00; color:#000;">ਸਮਾਂ</div>
+            <div id="admin-time" class="bottom-val" style="font-size:16px; flex:2;">--:--</div>
         </div>
     </div>
 </div>
@@ -123,9 +151,9 @@
 <div class="footer">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="time-flash">
-        <div id="live-date" style="color:#ffcc00">-- --- ----</div>
-        <div id="live-clock">00:00:00 AM</div>
+    <div class="flash-info">
+        <div id="live-date" style="color:#ffcc00">---</div>
+        <div id="live-clock">00:00:00</div>
     </div>
 </div>
 
@@ -136,12 +164,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    function updateClock() {
+    function updateDateTime() {
         const now = new Date();
         document.getElementById('live-date').innerText = now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
         document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-US', { hour12:true, hour:'2-digit', minute:'2-digit', second:'2-digit' });
     }
-    setInterval(updateClock, 1000);
+    setInterval(updateDateTime, 1000);
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -150,16 +178,16 @@
             const conf = data.config || {};
             
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
-            document.getElementById('admin-time').innerText = conf.tournamentTime || "10:00AM-11:35AM";
+            document.getElementById('admin-time').innerText = conf.tournamentTime || "10:00 AM - 11:35 AM";
 
-            let htmls = { fly:'', out:'', time:'' };
+            let lists = { fly:'', out:'', time:'' };
             let counts = { fly:0, out:0, time:0 };
 
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if(p.status === 'fly') { htmls.fly += row; counts.fly++; }
-                else if(p.status === 'out') { htmls.out += row; counts.out++; }
-                else if(p.status === 'time') { htmls.time += row; counts.time++; }
+                if(p.status === 'fly') { lists.fly += row; counts.fly++; }
+                else if(p.status === 'out') { lists.out += row; counts.out++; }
+                else if(p.status === 'time') { lists.time += row; counts.time++; }
             });
 
             document.getElementById('m-total').innerText = pigeons.length;
@@ -170,8 +198,8 @@
 
             ['fly','out','time'].forEach(id => {
                 const el = document.getElementById(`list-${id}`);
-                el.innerHTML = htmls[id] + htmls[id]; // Double for seamless loop
-                el.style.animationDuration = Math.max(counts[id] * 2, 7) + "s";
+                el.innerHTML = lists[id] + lists[id]; 
+                el.style.animationDuration = Math.max(counts[id] * 2, 8) + "s";
             });
         });
     }
