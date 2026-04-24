@@ -6,47 +6,38 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਬਦਲੋ (SETTINGS PANEL)
+           ਸਾਰੀ ਸੈਟਿੰਗ (CUSTOM SETTINGS)
            ====================================================== */
         :root {
-            /* 1. TOTAL PIGEONS BOX (ਕੁੱਲ ਕਬੂਤਰ) */
+            /* COMMON SIZE FOR ALL BOXES */
+            --common-w: 220px;
+            --common-h: 60px;
+            --header-bg: #ff9933; /* ਤਿੰਨਾਂ ਹੈਡਰਾਂ ਦਾ ਇੱਕੋ ਰੰਗ (Orange) */
+
+            /* 1. TOTAL PIGEONS (Bottom Box) */
             --total-bottom: 220px;  
             --total-left: 410px; 
-            --total-right: auto;
-            --total-w: 220px;       
-            --total-h: 60px;
-            --total-bg: #000000;    /* ਬੈਕਗਰਾਊਂਡ ਰੰਗ */
 
-            /* 2. REMAIN PIGEONS BOX (ਬਾਕੀ ਕਬੂਤਰ) */
+            /* 2. REMAIN PIGEONS (Bottom Box) */
             --rem-bottom: 220px;    
             --rem-left: 1050px; 
-            --rem-right: auto;
-            --rem-w: 220px;         
-            --rem-h: 60px;
-            --rem-bg: #000000;      /* ਬੈਕਗਰਾਊਂਡ ਰੰਗ */
 
-            /* 3. FLYING BOX (ਬਿਲਕੁਲ TOTAL ਦੇ ਉੱਪਰ) */
-            --fly-hdr-bg: #ff9933;
-            --fly-hdr-h: 60px;      /* ਹੈਡਰ ਦੀ ਉਚਾਈ ਵੀ 60px ਕੀਤੀ */
-            --fly-box-w: 220px;     /* ਚੌੜਾਈ TOTAL ਜਿੰਨੀ */
-            --fly-left: 410px;      /* TOTAL ਵਾਲੀ ਸੇਮ ਜਗ੍ਹਾ */
-            --fly-bottom: 290px;    /* TOTAL ਤੋਂ ਥੋੜਾ ਉੱਪਰ */
+            /* 3. FLYING BOX (TOTAL ਦੇ ਠੀਕ ਉੱਪਰ) */
+            --fly-bottom: 285px;    /* 220 + 60 + 5px gap */
+            --fly-left: 410px; 
+            --fly-list-h: 300px;    /* ਲਿਸਟ ਦੀ ਉਚਾਈ */
 
-            /* 4. OUT BOX (ਬਿਲਕੁਲ REMAIN ਦੇ ਉੱਪਰ) */
-            --out-hdr-bg: #00ff00;
-            --out-hdr-h: 60px;
-            --out-box-w: 220px;
-            --out-left: 1050px;     /* REM ਵਾਲੀ ਸੇਮ ਜਗ੍ਹਾ */
-            --out-bottom: 290px;
+            /* 4. OUT BOX (REM ਦੇ ਠੀਕ ਉੱਪਰ) */
+            --out-bottom: 285px;    
+            --out-left: 1050px; 
+            --out-list-h: 300px;
 
-            /* 5. TIME BOX (ਵਿਚਕਾਰ ਜਾਂ ਕਿਤੇ ਵੀ ਸੈੱਟ ਕਰੋ) */
-            --time-hdr-bg: #ff0000;
-            --time-hdr-h: 60px;
-            --time-box-w: 220px;
-            --time-left: 730px;     /* ਦੋਵਾਂ ਦੇ ਸੈਂਟਰ ਵਿੱਚ */
-            --time-bottom: 290px;
+            /* 5. TIME BOX (ਸੈਂਟਰ ਵਿੱਚ) */
+            --time-bottom: 285px;   
+            --time-left: 730px; 
+            --time-list-h: 300px;
 
-            /* 6. FONTS */
+            /* FONTS */
             --name-size: 35px;      
             --label-size: 18px; 
             --count-size: 40px;
@@ -55,88 +46,88 @@
         /* --- STRUCTURE --- */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
+
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* --- WRAPPERS --- */
-        #total-wrapper { position: absolute; bottom: var(--total-bottom); left: var(--total-left); right: var(--total-right); z-index: 1000; }
-        #rem-wrapper { position: absolute; bottom: var(--rem-bottom); left: var(--rem-left); right: var(--rem-right); z-index: 1000; }
-
-        .styled-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; }
+        .card { position: absolute; border: 3px solid white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; background: #000; width: var(--common-w); }
+        .row { display: flex; width: 100%; height: var(--common-h); }
+        
         .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
         .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* --- MAIN BOARD --- */
-        .main-container { position: absolute; left: var(--board-left); right: var(--board-right); bottom: var(--board-bottom); height: var(--board-height); display: flex; flex-direction: row; gap: 15px; }
-        .box { flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; visibility: hidden; }
-        .has-data { visibility: visible; }
+        /* HEADER COLOR FOR LIST BOXES */
+        .list-header .label-area { background: var(--header-bg); color: #000; }
 
-        /* --- INDIVIDUAL HEADERS --- */
-        .box-header-new { display: flex; border-bottom: 3px solid white; flex-shrink: 0; }
-        .hdr-fly { height: var(--fly-hdr-h); }
-        .hdr-out { height: var(--out-hdr-h); }
-        .hdr-time { height: var(--time-hdr-h); }
+        /* POSITIONING */
+        #total-box { bottom: var(--total-bottom); left: var(--total-left); height: var(--common-h); }
+        #rem-box { bottom: var(--rem-bottom); left: var(--rem-left); height: var(--common-h); }
+        
+        #box-fly { bottom: var(--fly-bottom); left: var(--fly-left); height: var(--fly-list-h); visibility: hidden; }
+        #box-out { bottom: var(--out-bottom); left: var(--out-left); height: var(--out-list-h); visibility: hidden; }
+        #box-time { bottom: var(--time-bottom); left: var(--time-left); height: var(--time-list-h); visibility: hidden; }
+        
+        .has-data { visibility: visible !important; }
 
-        .hdr-fly .label-area { background: var(--fly-hdr-bg); color: #000; }
-        .hdr-out .label-area { background: var(--out-hdr-bg); color: #000; }
-        .hdr-time .label-area { background: var(--time-hdr-bg); color: #000; }
-
-        /* --- BOX COLORS --- */
-        #box-fly { background: #000; }
-        #box-out { background: #001a66; }
-        #box-time { background: #660000; }
-
-        /* --- SCROLLING --- */
+        /* SCROLLING */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
-        .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; } 
+        .item { padding: 5px 10px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; border-bottom: 1px solid rgba(255,255,255,0.1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- FOOTER --- */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
+        /* FOOTER */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
+        .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; }
-        #cur-time { font-size: 32px; font-weight: 950; }
+        .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; font-size: 32px; font-weight: 950; }
     </style>
 </head>
 <body>
 
-<div id="total-wrapper">
-    <div class="styled-card" style="width: var(--total-w); height: var(--total-h); background: var(--total-bg);">
+<div id="total-box" class="card">
+    <div class="row">
         <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
 </div>
 
-<div id="rem-wrapper">
-    <div class="styled-card" style="width: var(--rem-w); height: var(--rem-h); background: var(--rem-bg);">
+<div id="rem-box" class="card">
+    <div class="row">
         <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
 </div>
 
-<div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box">
-        <div class="box-header-new hdr-fly"><div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div><div id="count-fly" class="val-area">0</div></div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+<div id="box-fly" class="card">
+    <div class="row list-header" style="border-bottom: 3px solid white;">
+        <div class="label-area flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
+        <div id="count-fly" class="val-area">0</div>
     </div>
-    <div id="box-out" class="box">
-        <div class="box-header-new hdr-out"><div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div><div id="count-out" class="val-area">0</div></div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+</div>
+
+<div id="box-out" class="card">
+    <div class="row list-header" style="border-bottom: 3px solid white;">
+        <div class="label-area flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
+        <div id="count-out" class="val-area">0</div>
     </div>
-    <div id="box-time" class="box">
-        <div class="box-header-new hdr-time"><div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div><div id="count-time" class="val-area">0</div></div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+</div>
+
+<div id="box-time" class="card">
+    <div class="row list-header" style="border-bottom: 3px solid white;">
+        <div class="label-area flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
+        <div id="count-time" class="val-area">0</div>
     </div>
+    <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
 </div>
 
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
+    <div class="dt-box" id="cur-time">00:00:00 AM</div>
 </div>
 
 <script>
@@ -157,11 +148,6 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            // Show/Hide Logic
-            const isVisible = (pigeons.length > 0 && conf.showScoreboard);
-            document.getElementById('total-wrapper').style.display = isVisible ? "block" : "none";
-            document.getElementById('rem-wrapper').style.display = isVisible ? "block" : "none";
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
 
