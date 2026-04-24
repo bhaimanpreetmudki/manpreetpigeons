@@ -6,36 +6,34 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           MASTER CONTROLS (ਇੱਥੋਂ ਸਭ ਕੁਝ ਸੈੱਟ ਕਰੋ)
+           MASTER CONTROLS (ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਹੋਵੇਗੀ)
            ====================================================== */
         :root {
-            /* 1. SUMMARY BOXES (Total & Remain) */
+            /* 1. SUMMARY & HEADER DIMENSIONS (ਦੋਵੇਂ ਬਰਾਬਰ) */
+            --box-w: 220px;          /* ਚੌੜਾਈ */
+            --box-h: 85px;           /* ਉਚਾਈ */
+            --font-label: 28px;      /* ਲੇਬਲ ਦਾ ਸਾਈਜ਼ (TOTAL/FLYING) */
+            --font-count: 35px;      /* ਨੰਬਰਾਂ ਦਾ ਸਾਈਜ਼ (10, 20 etc) */
+
+            /* 2. SUMMARY POSITIONS (TOTAL & REMAIN) */
             --sum-bottom: 280px;    
             --total-left: 430px;    
             --rem-left: 1070px;     
-            --sum-w: 200px;         
-            --sum-h: 85px;          
 
-            /* 2. MAIN LIST BOXES (Flying, Out, Time) */
+            /* 3. MAIN LIST BOXES (Flying, Out, Time) */
             --list-bottom: 70px;    
             --list-h: 280px;        
             --list-gap: 15px;       
             --list-side-margin: 10px; 
 
-            /* 3. INNER HEADERS (ਬਕਸੇ ਦੇ ਅੰਦਰ ਵਾਲੇ ਹੈਡਰ) */
-            --hdr-w: 200px;         
-            --hdr-h: 85px;          
-            --hdr-font-label: 30px; 
-            --hdr-font-count: 35px; 
+            /* 4. ADMIN TIME/DATE FLASH BOX (TIME ਹੈਡਰ ਦੇ ਹੇਠਾਂ) */
+            --admin-time-w: 200px;    /* ਚੌੜਾਈ */
+            --admin-time-h: 55px;     /* ਉਚਾਈ */
+            --admin-time-top: 95px;   /* ਹੈਡਰ ਤੋਂ ਕਿੰਨੀ ਦੂਰੀ (ਹੇਠਾਂ) */
+            --admin-time-right: 5px;  /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ */
+            --admin-time-font: 28px;  /* ਅੱਖਰਾਂ ਦਾ ਸਾਈਜ਼ */
 
-            /* 4. ADMIN TIME BOX (ਸਮਾਂ ਹੈਡਰ ਦੇ ਹੇਠਾਂ ਵਾਲਾ ਟਾਈਮ) */
-            --admin-time-w: 180px;    /* ਟਾਈਮ ਬਾਕਸ ਦੀ ਚੌੜਾਈ */
-            --admin-time-h: 50px;     /* ਟਾਈਮ ਬਾਕਸ ਦੀ ਉਚਾਈ */
-            --admin-time-top: 70px;   /* ਹੈਡਰ ਤੋਂ ਕਿੰਨਾ ਹੇਠਾਂ ਹੋਵੇ */
-            --admin-time-right: 5px;  /* ਸੱਜੇ ਪਾਸੇ ਤੋਂ ਦੂਰੀ */
-            --admin-time-font: 30px;  /* ਟਾਈਮ ਦੇ ਅੱਖਰਾਂ ਦਾ ਸਾਈਜ਼ */
-
-            /* 5. LIST ITEMS (ਕਬੂਤਰਾਂ ਦੇ ਨਾਮ) */
+            /* 5. LIST ITEMS */
             --name-size: 40px;      
             --scroll-speed: 3s;     
         }
@@ -43,8 +41,12 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* Animation for Flashing Labels & Admin Time */
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
+
+        @keyframes timeDateFlash { 0%, 45% { content: attr(data-time); } 50%, 95% { content: attr(data-date); } }
+        .flash-admin-time::after { content: attr(data-time); animation: timeDateFlash 10s infinite; }
 
         /* --- Summary Section --- */
         .summary-wrapper { 
@@ -53,15 +55,14 @@
         }
         .sum-card { 
             position: absolute; display: flex; border: 3px solid white; 
-            border-radius: 8px; overflow: hidden; width: var(--sum-w); height: var(--sum-h); 
+            border-radius: 8px; overflow: hidden; width: var(--box-w); height: var(--box-h); 
             background: #000;
         }
         #total-card { left: var(--total-left); }
         #rem-card { left: var(--rem-left); }
 
-        /* Label & Val Areas - All Text White */
-        .label-area { background: #000; width: 65%; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; color: white; }
-        .val-area { background: #000; color: white; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+        .label-area { background: #000; width: 65%; font-size: var(--font-label); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; color: white; }
+        .val-area { background: #000; color: white; width: 35%; font-size: var(--font-count); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
         /* --- Main Box Container --- */
         .main-container { 
@@ -83,23 +84,23 @@
         /* --- Header Inside Box --- */
         .box-header-new { 
             position: absolute; top: 0; right: 0; 
-            width: var(--hdr-w); height: var(--hdr-h); 
+            width: var(--box-w); height: var(--box-h); 
             display: flex; border-left: 3px solid white; border-bottom: 3px solid white; 
             z-index: 100; background: #000;
         }
         .hdr-label { 
             background: #000; color: #fff; width: 65%; 
-            font-size: var(--hdr-font-label); font-weight: 900; 
+            font-size: var(--font-label); font-weight: 900; 
             display: flex; align-items: center; justify-content: center; 
             border-right: 2px solid white; 
         }
         .hdr-val { 
             background: #000; color: #fff; width: 35%; 
-            font-size: var(--hdr-font-count); font-weight: 1000; 
+            font-size: var(--font-count); font-weight: 1000; 
             display: flex; align-items: center; justify-content: center; 
         }
 
-        /* Admin Time Style (Special box under TIME header) */
+        /* Admin Time Flash Box */
         .admin-time-box {
             position: absolute;
             top: var(--admin-time-top);
@@ -108,7 +109,7 @@
             height: var(--admin-time-h);
             background: #000;
             border: 2px solid white;
-            border-radius: 5px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -169,7 +170,7 @@
             <div class="hdr-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
             <div id="count-time" class="hdr-val">0</div>
         </div>
-        <div id="admin-time-display" class="admin-time-box">00:00:00</div>
+        <div id="admin-time-display" class="admin-time-box flash-admin-time" data-time="00:00:00" data-date="01-01"></div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
@@ -203,8 +204,13 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Display Admin's custom time (using 'time' from config)
-            document.getElementById('admin-time-display').innerText = conf.time || "00:00:00";
+            // Set Admin Time and Current Date for Flash Effect
+            const adminBox = document.getElementById('admin-time-display');
+            const today = new Date();
+            const dateStr = today.getDate() + "-" + (today.getMonth() + 1);
+            
+            adminBox.setAttribute('data-time', conf.time || "00:00:00");
+            adminBox.setAttribute('data-date', dateStr);
 
             let counts = { fly:0, out:0, time:0 }; 
             let htmls = { fly:'', out:'', time:'' };
