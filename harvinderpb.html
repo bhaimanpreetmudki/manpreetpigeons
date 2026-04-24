@@ -6,35 +6,37 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਅੱਡ-ਅੱਡ ਬਦਲੋ (INDIVIDUAL SETTINGS)
+           ਹਰ ਇੱਕ ਬਾਕਸ ਦੀ ਅੱਡ-ਅੱਡ ਸੈਟਿੰਗ (Saje, Khabe, Upre, Thale)
            ====================================================== */
         :root {
-            /* 1. ਪਹਿਲਾ ਸਮਰੀ ਬਾਕਸ (TOTAL PIGEONS) */
-            --total-bottom: 450px;    /* ਉੱਪਰ-ਥੱਲੇ */
-            --total-left: 700px;      /* ਖੱਬੇ-ਸੱਜੇ */
+            /* --- 1. TOTAL PIGEONS BOX --- */
+            --total-bottom: 450px;   /* ਥੱਲਿਓਂ ਉਚਾਈ */
+            --total-left: 10px;      /* ਖੱਬੇ ਤੋਂ ਦੂਰੀ (ਜੇ ਸੱਜੇ ਕਰਨਾ ਹੈ ਤਾਂ ਇਸਨੂੰ auto ਲਿਖੋ) */
+            --total-right: auto;     /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ (ਜੇ ਸੱਜੇ ਕਰਨਾ ਹੈ ਤਾਂ ਇੱਥੇ ਨੰਬਰ ਲਿਖੋ, ਜਿਵੇਂ 10px) */
             --total-w: 280px;        /* ਚੌੜਾਈ */
             --total-h: 75px;         /* ਉਚਾਈ */
 
-            /* 2. ਦੂਜਾ ਸਮਰੀ ਬਾਕਸ (REMAIN PIGEONS) */
-            --rem-bottom: 365px;     /* ਉੱਪਰ-ਥੱਲੇ */
-            --rem-left: 10px;       /* ਖੱਬੇ-ਸੱਜੇ */
-            --rem-w: 280px;         /* ਚੌੜਾਈ */
-            --rem-h: 75px;          /* ਉਚਾਈ */
+            /* --- 2. REMAIN PIGEONS BOX --- */
+            --rem-bottom: 365px;     /* ਥੱਲਿਓਂ ਉਚਾਈ */
+            --rem-left: 10px;        /* ਖੱਬੇ ਤੋਂ ਦੂਰੀ (ਜੇ ਸੱਜੇ ਕਰਨਾ ਹੈ ਤਾਂ ਇਸਨੂੰ auto ਲਿਖੋ) */
+            --rem-right: auto;       /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ (ਜੇ ਸੱਜੇ ਕਰਨਾ ਹੈ ਤਾਂ ਇੱਥੇ ਨੰਬਰ ਲਿਖੋ) */
+            --rem-w: 280px;          /* ਚੌੜਾਈ */
+            --rem-h: 75px;           /* ਉਚਾਈ */
 
-            /* 3. ਲਿਸਟ ਬਾਕਸਾਂ ਦਾ ਕੰਟੇਨਰ (FLY/OUT/TIME) */
-            --board-bottom: 70px;
-            --board-left: 10px;
-            --board-right: 10px;
-            --board-height: 280px;
+            /* --- 3. LIST BOXES (FLY/OUT/TIME) --- */
+            --board-bottom: 70px;    /* ਪੂਰੇ ਬੋਰਡ ਦੀ ਥੱਲਿਓਂ ਉਚਾਈ */
+            --board-left: 10px;      /* ਖੱਬੇ ਤੋਂ ਪੂਰੇ ਬੋਰਡ ਦੀ ਦੂਰੀ */
+            --board-right: 10px;     /* ਸੱਜੇ ਤੋਂ ਪੂਰੇ ਬੋਰਡ ਦੀ ਦੂਰੀ */
+            --board-height: 280px;   /* ਬਾਕਸਾਂ ਦੀ ਉਚਾਈ */
 
-            /* 4. ਟੈਕਸਟ ਸਾਈਜ਼ */
-            --name-size: 40px;
-            --label-size: 20px;
-            --count-size: 45px;
+            /* --- 4. ਲਿਖਾਈ (Fonts) --- */
+            --name-size: 40px;       /* ਨਾਵਾਂ ਦਾ ਸਾਈਜ਼ */
+            --label-size: 20px;      /* TOTAL/REM ਲਿਖਤ ਦਾ ਸਾਈਜ਼ */
+            --count-size: 45px;      /* ਨੰਬਰਾਂ ਦਾ ਸਾਈਜ਼ */
         }
 
         /* ======================================================
-           ਡਿਜ਼ਾਈਨ ਕੋਡ
+           ਡਿਜ਼ਾਈਨ (ਇਸ ਨੂੰ ਬਦਲਣ ਦੀ ਲੋੜ ਨਹੀਂ)
            ====================================================== */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
@@ -45,19 +47,21 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* TOTAL Box */
+        /* TOTAL Box Position Control */
         #total-wrapper {
             position: absolute;
             bottom: var(--total-bottom);
             left: var(--total-left);
+            right: var(--total-right);
             z-index: 1000;
         }
 
-        /* REMAIN Box */
+        /* REMAIN Box Position Control */
         #rem-wrapper {
             position: absolute;
             bottom: var(--rem-bottom);
             left: var(--rem-left);
+            right: var(--rem-right);
             z-index: 1000;
         }
 
@@ -77,12 +81,16 @@
             align-items: center; justify-content: center; 
         }
 
-        /* Main Boards */
+        /* Board Container Control */
         .main-container { 
-            position: absolute; left: var(--board-left); right: var(--board-right); 
-            bottom: var(--board-bottom); height: var(--board-height); 
+            position: absolute; 
+            left: var(--board-left); 
+            right: var(--board-right); 
+            bottom: var(--board-bottom); 
+            height: var(--board-height); 
             display: flex; flex-direction: row; gap: 15px; 
         }
+        
         .box { 
             flex: 1; height: 100%; position: relative; border: 3px solid white; 
             border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; visibility: hidden;
@@ -94,12 +102,10 @@
         }
         .box-header-new .label-area { background: #ff9933; color: #000; }
 
-        /* Colors */
         #box-fly { background: #000; }
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* Scroll */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
