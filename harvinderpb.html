@@ -9,59 +9,61 @@
            ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਬਦਲੋ (SETTINGS PANEL)
            ====================================================== */
         :root {
-            /* --- 1. TOTAL PIGEONS BOX --- */
-            --total-bottom: 200px;  --total-left: 350px; --total-right: auto;
-            --total-w: 250px;       --total-h: 65px;
+            /* 1. TOTAL PIGEONS BOX (ਕੁੱਲ ਕਬੂਤਰ) */
+            --total-bottom: 200px;  
+            --total-left: 350px; 
+            --total-right: auto;
+            --total-w: 250px;       
+            --total-h: 65px;
+            --total-bg: #000000;    /* ਬੈਕਗਰਾਊਂਡ ਰੰਗ */
 
-            /* --- 2. REMAIN PIGEONS BOX --- */
-            --rem-bottom: 200px;    --rem-left: 1000px; --rem-right: auto;
-            --rem-w: 250px;         --rem-h: 65px;
+            /* 2. REMAIN PIGEONS BOX (ਬਾਕੀ ਕਬੂਤਰ) */
+            --rem-bottom: 200px;    
+            --rem-left: 1000px; 
+            --rem-right: auto;
+            --rem-w: 250px;         
+            --rem-h: 65px;
+            --rem-bg: #000000;      /* ਬੈਕਗਰਾਊਂਡ ਰੰਗ */
 
-            /* --- 3. FLYING HEADER (Box 1) --- */
-            --fly-hdr-bg: #ff9933;  /* ਰੰਗ */
-            --fly-hdr-h: 75px;      /* ਉਚਾਈ */
-
-            /* --- 4. OUT HEADER (Box 2) --- */
-            --out-hdr-bg: #00ff00;  /* ਰੰਗ (Green) */
-            --out-hdr-h: 75px;      /* ਉਚਾਈ */
-
-            /* --- 5. TIME HEADER (Box 3) --- */
-            --time-hdr-bg: #ff0000; /* ਰੰਗ (Red) */
-            --time-hdr-h: 75px;     /* ਉਚਾਈ */
-
-            /* --- 6. LIST BOXES CONTAINER --- */
-            --board-bottom: 70px;   --board-left: 10px; --board-right: 10px;
+            /* 3. ਲਿਸਟ ਬਾਕਸ (FLY/OUT/TIME) ਦੀ ਸੈਟਿੰਗ */
+            --board-bottom: 70px;   
+            --board-left: 10px; 
+            --board-right: 10px;
             --board-height: 280px;
 
-            /* --- 7. ਲਿਖਾਈ (Fonts) --- */
-            --name-size: 40px;      --label-size: 20px; --count-size: 45px;
+            /* 4. ਹੈਡਰਾਂ ਦੇ ਰੰਗ ਅਤੇ ਉਚਾਈ (Individual Headers) */
+            --fly-hdr-bg: #ff9933;  --fly-hdr-h: 75px;   /* FLYING */
+            --out-hdr-bg: #00ff00;  --out-hdr-h: 75px;   /* OUT */
+            --time-hdr-bg: #ff0000; --time-hdr-h: 75px;  /* TIME */
+
+            /* 5. ਅੱਖਰਾਂ ਦੇ ਸਾਈਜ਼ (Fonts) */
+            --name-size: 40px;      
+            --label-size: 20px; 
+            --count-size: 45px;
         }
 
-        /* ======================================================
-           ਡਿਜ਼ਾਈਨ (STRUCTURE)
-           ====================================================== */
+        /* --- BASIC SETUP --- */
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Positioning Wrappers */
+        /* --- WRAPPERS --- */
         #total-wrapper { position: absolute; bottom: var(--total-bottom); left: var(--total-left); right: var(--total-right); z-index: 1000; }
         #rem-wrapper { position: absolute; bottom: var(--rem-bottom); left: var(--rem-left); right: var(--rem-right); z-index: 1000; }
 
-        .styled-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; background: #000; }
+        .styled-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; }
         .label-area { background: #000; color: #fff; width: 65%; font-size: var(--label-size); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 3px solid white; }
         .val-area { background: #fff; color: #000; width: 35%; font-size: var(--count-size); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* Board Styling */
+        /* --- MAIN BOARD --- */
         .main-container { position: absolute; left: var(--board-left); right: var(--board-right); bottom: var(--board-bottom); height: var(--board-height); display: flex; flex-direction: row; gap: 15px; }
         .box { flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; visibility: hidden; }
         .has-data { visibility: visible; }
 
-        /* Individual Header Setup */
-        .box-header-new { display: flex; border-bottom: 3px solid white; background: #000; flex-shrink: 0; }
-        
+        /* --- INDIVIDUAL HEADERS --- */
+        .box-header-new { display: flex; border-bottom: 3px solid white; flex-shrink: 0; }
         .hdr-fly { height: var(--fly-hdr-h); }
         .hdr-out { height: var(--out-hdr-h); }
         .hdr-time { height: var(--time-hdr-h); }
@@ -70,15 +72,18 @@
         .hdr-out .label-area { background: var(--out-hdr-bg); color: #000; }
         .hdr-time .label-area { background: var(--time-hdr-bg); color: #000; }
 
+        /* --- BOX COLORS --- */
         #box-fly { background: #000; }
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
+        /* --- SCROLLING --- */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 10px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
+        /* --- FOOTER --- */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -90,15 +95,15 @@
 </head>
 <body>
 
-<div id="total-wrapper" style="display: none;">
-    <div class="styled-card" style="width: var(--total-w); height: var(--total-h);">
+<div id="total-wrapper">
+    <div class="styled-card" style="width: var(--total-w); height: var(--total-h); background: var(--total-bg);">
         <div class="label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
         <div id="m-total" class="val-area">0</div>
     </div>
 </div>
 
-<div id="rem-wrapper" style="display: none;">
-    <div class="styled-card" style="width: var(--rem-w); height: var(--rem-h);">
+<div id="rem-wrapper">
+    <div class="styled-card" style="width: var(--rem-w); height: var(--rem-h); background: var(--rem-bg);">
         <div class="label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REM"></div>
         <div id="m-rem" class="val-area">0</div>
     </div>
@@ -143,6 +148,7 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
+            // Show/Hide Logic
             const isVisible = (pigeons.length > 0 && conf.showScoreboard);
             document.getElementById('total-wrapper').style.display = isVisible ? "block" : "none";
             document.getElementById('rem-wrapper').style.display = isVisible ? "block" : "none";
@@ -168,4 +174,17 @@
                 const list = document.getElementById(`list-${id}`);
                 const count = document.getElementById(`count-${id}`);
                 
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0
+                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
+                    box.classList.add('has-data');
+                    count.innerText = counts[id];
+                    list.innerHTML = htmls[id] + htmls[id]; 
+                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
+                } else {
+                    box.classList.remove('has-data');
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
