@@ -52,14 +52,24 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- Header (ਹੁਣ Summary ਵਰਗਾ ਹੈ) --- */
+        /* --- Header Fix (Summary Box ਵਾਂਗੂ) --- */
         .box-header-new { 
-            width: 100%; height: 70px; /* ਲਿਸਟ ਦੇ ਉੱਪਰ ਪੂਰੀ ਚੌੜਾਈ ਵਿੱਚ */
-            display: flex; border-bottom: 3px solid white;
+            width: 100%; 
+            height: 75px; /* Summary card ਦੀ ਉਚਾਈ ਦੇ ਬਰਾਬਰ */
+            display: flex; 
+            border-bottom: 3px solid white;
+            flex-shrink: 0; /* ਇਸਦੀ ਜਗ੍ਹਾ ਫਿਕਸ ਰੱਖਣ ਲਈ */
         }
-        /* Header ਦੇ ਅੰਦਰਲਾ ਲੇਬਲ ਅਤੇ ਕਾਊਂਟ Summary ਵਰਗਾ ਸੈੱਟ ਕੀਤਾ */
-        .box-header-new .label-area { font-size: 20px; background: #ff9933; color: #000; border-right: 3px solid white; }
-        .box-header-new .val-area { font-size: 40px; background: #fff; color: #000; }
+        
+        /* Header ਦੇ ਅੰਦਰਲੇ ਹਿੱਸੇ Summary ਵਰਗੇ */
+        .box-header-new .label-area { 
+            background: #ff9933; /* Header ਦਾ ਖਾਸ ਰੰਗ */
+            color: #000; 
+            font-size: 20px;
+        }
+        .box-header-new .val-area { 
+            font-size: 45px; /* Summary ਵਰਗਾ ਸਾਈਜ਼ */
+        }
 
         /* --- Smooth Scroll --- */
         .scroll-window { flex-grow: 1; position: relative; overflow: hidden; }
