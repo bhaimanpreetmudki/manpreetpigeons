@@ -15,78 +15,75 @@
             100% { border-color: #fff; box-shadow: 0 0 5px #fff; }
         }
 
-        /* --- Main Layout --- */
+        /* --- Main Container --- */
         .main-wrapper {
             position: absolute; left: 10px; right: 10px; bottom: 55px;
-            display: flex; flex-direction: row; gap: 8px; align-items: stretch;
+            display: flex; flex-direction: row; gap: 10px; align-items: flex-end;
         }
 
-        .column-container { flex: 1; display: flex; flex-direction: column; gap: 0px; }
+        /* --- Column Setup --- */
+        .column-container { flex: 1; display: flex; flex-direction: column; gap: 5px; }
 
-        /* --- Header (Shtote Title Box) --- */
-        .title-header { 
-            display: flex; border: 2px solid white; border-radius: 5px 5px 0 0; 
-            height: 35px; width: 100%; background: #000;
+        /* --- Title Header (Top) --- */
+        .header-box { 
+            display: flex; border: 2px solid white; border-radius: 4px; 
+            overflow: hidden; height: 35px; background: #000;
         }
         .header-label { 
-            background: #000; color: #fff; padding: 0 8px; 
-            font-size: 14px; font-weight: 1000; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white;
-            flex: 1.5;
+            background: #000; color: #fff; flex: 1.5; font-size: 14px; 
+            font-weight: 900; display: flex; align-items: center; justify-content: center; 
+            border-right: 2px solid white;
         }
-        .header-count { 
-            background: #fff; color: #000; flex: 1; 
-            font-size: 22px; font-weight: 1000; display: flex; 
-            align-items: center; justify-content: center;
+        .header-val { 
+            background: #fff; color: #000; flex: 1; font-size: 22px; 
+            font-weight: 1000; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- Compact List Box --- */
+        /* --- List Box (Middle) --- */
         .list-box { 
-            width: 100%; flex-grow: 1; min-height: 180px; position: relative; 
-            border: 2px solid white; border-top: none; border-bottom: none; 
-            overflow: hidden; animation: diamondGlow 2s infinite ease-in-out;
+            width: 100%; height: 200px; position: relative; 
+            border: 3px solid white; border-radius: 6px; overflow: hidden;
+            animation: diamondGlow 2s infinite ease-in-out;
         }
-        #box-fly { background: rgba(0, 0, 0, 0.95); }
-        #box-out { background: rgba(0, 20, 80, 0.95); }
-        #box-time { background: rgba(180, 0, 0, 0.95); }
+        #box-fly { background: rgba(0, 0, 0, 0.9); }
+        #box-out { background: rgba(0, 26, 102, 0.9); }
+        #box-time { background: rgba(204, 0, 0, 0.9); }
 
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: seamlessScroll linear infinite; } 
-        .item { padding: 4px 10px; font-size: 26px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 3px black; }
+        .list-area { position: absolute; width: 100%; animation: seamless linear infinite; } 
+        .item { padding: 5px 12px; font-size: 28px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
 
-        @keyframes seamlessScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes seamless { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Summary Boxes (One below another) --- */
-        .summary-stack { display: flex; flex-direction: column; border: 2px solid white; border-top: none; border-radius: 0 0 5px 5px; }
-        
-        .bottom-row { display: flex; height: 32px; border-top: 1px solid white; }
-        .bottom-label { 
-            background: #000; color: #fff; padding: 0 8px; 
-            font-size: 12px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white;
-            flex: 1.5;
+        /* --- Summary Card (Bottom) --- */
+        .summary-box { 
+            display: flex; border: 2px solid white; border-radius: 4px; 
+            overflow: hidden; height: 38px; background: #000;
         }
-        .bottom-val { 
-            background: #fff; color: #000; flex: 1; 
-            font-size: 20px; font-weight: 1000; display: flex; 
-            align-items: center; justify-content: center;
+        .summary-label { 
+            background: #000; color: #fff; flex: 1.5; font-size: 13px; 
+            font-weight: 900; display: flex; align-items: center; justify-content: center; 
+            border-right: 2px solid white;
+        }
+        .summary-val { 
+            background: #fff; color: #000; flex: 1; font-size: 24px; 
+            font-weight: 1000; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- Footer Ticker --- */
+        /* --- Footer --- */
         .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 55px; 
-            background: white; display: flex; align-items: center; 
-            border-top: 4px solid #ff0000; 
+            position: absolute; bottom: 0; width: 100%; height: 50px; 
+            background: white; display: flex; align-items: center; border-top: 4px solid #ff0000; 
         }
-        .live-tag { background: #ff0000; color: white; padding: 0 20px; height: 100%; display: flex; align-items: center; font-size: 24px; font-weight: 950; font-style: italic; }
+        .live-tag { background: #ff0000; color: white; padding: 0 15px; height: 100%; display: flex; align-items: center; font-size: 24px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; }
         .ticker-move { display: inline-block; animation: ticker 20s linear infinite; font-size: 22px; font-weight: 900; color: black; white-space: nowrap; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .flash-info {
+        .time-flash {
             background: #000; color: #fff; height: 100%; padding: 0 10px;
             display: flex; flex-direction: column; justify-content: center;
-            font-size: 13px; font-weight: 900; min-width: 160px; text-align: center; border-left: 4px solid #ff0000;
+            font-size: 12px; font-weight: 900; min-width: 150px; text-align: center;
         }
     </style>
 </head>
@@ -94,37 +91,31 @@
 
 <div class="main-wrapper">
     <div class="column-container">
-        <div class="title-header"><div class="header-label">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="header-count">0</div></div>
+        <div class="header-box"><div class="header-label">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="header-val">0</div></div>
         <div id="box-fly" class="list-box"><div class="scroll-window"><div id="list-fly" class="list-area"></div></div></div>
-        <div class="summary-stack">
-            <div class="bottom-row"><div class="bottom-label">ਕੁੱਲ</div><div id="m-total" class="bottom-val">0</div></div>
-        </div>
+        <div class="summary-box"><div class="summary-label">ਕੁੱਲ ਕਬੂਤਰ</div><div id="m-total" class="summary-val">0</div></div>
     </div>
 
     <div class="column-container">
-        <div class="title-header"><div class="header-label">ਕੱਟੇ ਗਏ</div><div id="count-out" class="header-count">0</div></div>
+        <div class="header-box"><div class="header-label">ਕੱਟੇ ਗਏ</div><div id="count-out" class="header-val">0</div></div>
         <div id="box-out" class="list-box"><div class="scroll-window"><div id="list-out" class="list-area"></div></div></div>
-        <div class="summary-stack">
-            <div class="bottom-row"><div class="bottom-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="bottom-val">0</div></div>
-        </div>
+        <div class="summary-box"><div class="summary-label" style="color:#ffcc00">ਬਾਕੀ</div><div id="m-rem" class="summary-val">0</div></div>
     </div>
 
     <div class="column-container">
-        <div class="title-header"><div class="header-label">ਸਮੇਂ ਚ</div><div id="count-time" class="header-count">0</div></div>
+        <div class="header-box"><div class="header-label">ਸਮੇਂ ਚ</div><div id="count-time" class="header-count header-val">0</div></div>
         <div id="box-time" class="list-box"><div class="scroll-window"><div id="list-time" class="list-area"></div></div></div>
-        <div class="summary-stack">
-            <div class="bottom-row">
-                <div class="bottom-label" style="background:#ffcc00; color:#000;">ਸਮਾਂ</div>
-                <div id="admin-time" class="bottom-val" style="font-size:12px; flex:2;">--:--</div>
-            </div>
+        <div class="summary-box">
+            <div class="summary-label" style="background:#ffcc00; color:#000;">ਸਮਾਂ</div>
+            <div id="admin-time" class="summary-val" style="font-size:14px; flex:2;">--:--</div>
         </div>
     </div>
 </div>
 
 <div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="flash-info"><div id="live-date" style="color:#ffcc00">---</div><div id="live-clock">00:00:00</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
+    <div class="time-flash"><div id="live-date" style="color:#ffcc00">---</div><div id="live-clock">00:00:00</div></div>
 </div>
 
 <script>
@@ -134,12 +125,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    function updateDateTime() {
-        const now = new Date();
-        document.getElementById('live-date').innerText = now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-        document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-US', { hour12:true, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    function updateDT() {
+        const n = new Date();
+        document.getElementById('live-date').innerText = n.toLocaleDateString('en-GB');
+        document.getElementById('live-clock').innerText = n.toLocaleTimeString();
     }
-    setInterval(updateDateTime, 1000);
+    setInterval(updateDT, 1000);
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -150,26 +141,26 @@
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
             document.getElementById('admin-time').innerText = conf.tournamentTime || "10:00 AM - 11:35 AM";
 
-            let lists = { fly:'', out:'', time:'' };
-            let counts = { fly:0, out:0, time:0 };
+            let html = { fly:'', out:'', time:'' };
+            let cnt = { fly:0, out:0, time:0 };
 
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if(p.status === 'fly') { lists.fly += row; counts.fly++; }
-                else if(p.status === 'out') { lists.out += row; counts.out++; }
-                else if(p.status === 'time') { lists.time += row; counts.time++; }
+            pigeons.forEach((p, i) => {
+                let r = `<div class="item">${i+1}-${p.name || '--'}</div>`;
+                if(p.status==='fly'){ html.fly+=r; cnt.fly++; }
+                else if(p.status==='out'){ html.out+=r; cnt.out++; }
+                else if(p.status==='time'){ html.time+=r; cnt.time++; }
             });
 
             document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-            document.getElementById('count-fly').innerText = counts.fly;
-            document.getElementById('count-out').innerText = counts.out;
-            document.getElementById('count-time').innerText = counts.time;
+            document.getElementById('m-rem').innerText = pigeons.length - cnt.out;
+            document.getElementById('count-fly').innerText = cnt.fly;
+            document.getElementById('count-out').innerText = cnt.out;
+            document.getElementById('count-time').innerText = cnt.time;
 
             ['fly','out','time'].forEach(id => {
                 const el = document.getElementById(`list-${id}`);
-                el.innerHTML = lists[id] + lists[id]; 
-                el.style.animationDuration = Math.max(counts[id] * 2, 8) + "s";
+                el.innerHTML = html[id] + html[id]; 
+                el.style.animationDuration = Math.max(cnt[id]*2, 8) + "s";
             });
         });
     }
