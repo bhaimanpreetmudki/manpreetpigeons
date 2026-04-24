@@ -8,6 +8,16 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* --- Plan Expired Overlay --- */
+        #expired-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; color: white;
+        }
+        #expired-overlay h1 { font-size: 60px; color: #ff0000; margin-bottom: 20px; }
+        #expired-overlay p { font-size: 30px; }
+
         /* --- ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
@@ -21,71 +31,42 @@
         .sum-label-area { background: #000; width: 65%; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
         .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* Main Container - Fixed Width for Boxes */
+        /* Main Container */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
         .box { 
-            visibility: hidden; /* Use visibility to keep space even when hidden */
-            width: 32%; /* Fixed width so they don't grow */
-            height: 100%; 
-            position: relative; 
-            border: 3px solid white; 
-            border-radius: 20px; /* Rounded Corners */
-            overflow: hidden; 
+            visibility: hidden; width: 32%; height: 100%; position: relative; 
+            border: 3px solid white; border-radius: 20px; overflow: hidden; 
         }
 
         #box-fly { background: #000000; } 
         #box-out { background: #001a66; } 
-        #box-time { background: #660000; overflow: visible; } /* Visible for top time label */
+        #box-time { background: #660000; overflow: visible; }
 
         /* Admin Time Floating Label */
         .admin-time-floating {
-            position: absolute;
-            top: -45px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff9933;
-            color: black;
-            padding: 2px 20px;
-            font-size: 24px;
-            font-weight: 1000;
-            border: 3px solid white;
-            border-radius: 10px;
-            white-space: nowrap;
-            z-index: 20;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: #ff9933; color: black; padding: 2px 20px; font-size: 24px;
+            font-weight: 1000; border: 3px solid white; border-radius: 10px;
+            white-space: nowrap; z-index: 20; box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* --- Yellow Header (Rounded) --- */
         .box-header { 
-            height: 80px; 
-            width: 140px; 
-            background: #ff9933; 
-            color: black; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            position: absolute; 
-            right: 0; 
-            top: 0; 
-            border-left: 3px solid white; 
-            border-bottom: 3px solid white; 
-            border-bottom-left-radius: 15px; /* Rounded corner */
-            z-index: 10; 
-            line-height: 1.1;
+            height: 80px; width: 140px; background: #ff9933; color: black; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: absolute; right: 0; top: 0; border-left: 3px solid white; border-bottom: 3px solid white; 
+            border-bottom-left-radius: 15px; z-index: 10; line-height: 1.1;
         }
 
         .header-label { font-size: 22px; font-weight: 900; }
         .count-tag { font-size: 40px; font-weight: 1000; }
 
-        /* Scrolling List */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; border-radius: 20px; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
         .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -98,48 +79,55 @@
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="sum-card">
-        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
-        <div id="m-total" class="sum-val-area">0</div>
-    </div>
-    <div class="sum-card">
-        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
-        <div id="m-rem" class="sum-val-area">0</div>
-    </div>
+<div id="expired-overlay">
+    <h1>PLAN EXPIRED</h1>
+    <p>Please contact admin to renew your plan.</p>
 </div>
 
-<div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box">
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span>
-            <span id="count-fly" class="count-tag">0</span>
+<div id="main-content">
+    <div class="summary-wrapper" id="summary-div">
+        <div class="sum-card">
+            <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
+            <div id="m-total" class="sum-val-area">0</div>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+        <div class="sum-card">
+            <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
+            <div id="m-rem" class="sum-val-area">0</div>
+        </div>
     </div>
 
-    <div id="box-out" class="box">
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span>
-            <span id="count-out" class="count-tag">0</span>
+    <div class="main-container" id="scoreboard-div">
+        <div id="box-fly" class="box">
+            <div class="box-header">
+                <span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span>
+                <span id="count-fly" class="count-tag">0</span>
+            </div>
+            <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+
+        <div id="box-out" class="box">
+            <div class="box-header">
+                <span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span>
+                <span id="count-out" class="count-tag">0</span>
+            </div>
+            <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+        </div>
+
+        <div id="box-time" class="box">
+            <div class="admin-time-floating" id="admin-time-display"></div>
+            <div class="box-header">
+                <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
+                <span id="count-time" class="count-tag">0</span>
+            </div>
+            <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+        </div>
     </div>
 
-    <div id="box-time" class="box">
-        <div class="admin-time-floating" id="admin-time-display"></div>
-        <div class="box-header">
-            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
-            <span id="count-time" class="count-tag">0</span>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    <div class="footer" id="ticker-div">
+        <div class="live-tag">LIVE</div>
+        <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+        <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
     </div>
-</div>
-
-<div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
 </div>
 
 <script>
@@ -157,6 +145,21 @@
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
+            
+            // --- Check Expiry ---
+            const planExpiry = data.planExpiry; // Format: YYYY-MM-DD
+            if (planExpiry) {
+                const today = new Date().toISOString().split('T')[0];
+                if (today > planExpiry) {
+                    document.getElementById('expired-overlay').style.display = "flex";
+                    document.getElementById('main-content').style.display = "none";
+                    return;
+                } else {
+                    document.getElementById('expired-overlay').style.display = "none";
+                    document.getElementById('main-content').style.display = "block";
+                }
+            }
+
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
@@ -165,7 +168,6 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Admin Time Display
             const aTime = conf.boxTime || conf.timeRange || "";
             document.getElementById('admin-time-display').innerText = aTime;
             document.getElementById('admin-time-display').style.display = aTime ? "block" : "none";
@@ -188,7 +190,6 @@
                 const list = document.getElementById(`list-${id}`);
                 const count = document.getElementById(`count-${id}`);
                 
-                // Keep space even if count is 0 to maintain layout
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.style.visibility = "visible";
                     count.innerText = counts[id];
