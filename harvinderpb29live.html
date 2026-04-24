@@ -8,65 +8,91 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Compact Styled Card --- */
+        /* --- Golden Rotating Border Effect --- */
+        .box-wrapper {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            padding: 4px; /* Border Thickness */
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+        }
+
+        /* The Animated Golden Layer */
+        .box-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: conic-gradient(transparent, #ffd700, #fffb00, transparent 40%);
+            animation: goldRotate 6s linear infinite; /* Slow & Smooth Round */
+        }
+
+        @keyframes goldRotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Inner Content --- */
+        .box { 
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9); /* Inner Black */
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        #box-fly .box { background: #000; }
+        #box-out .box { background: #001a66; }
+        #box-time .box { background: #660000; }
+
+        /* --- Styled Headers --- */
         .styled-card { 
-            display: flex; border: 2px solid white; border-radius: 6px; 
-            overflow: hidden; height: 45px; /* ਹੋਰ ਛੋਟਾ ਸਾਈਜ਼ */
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+            display: flex; border: 2px solid #ffd700; border-radius: 6px; 
+            overflow: hidden; height: 45px; background: #000;
         }
         .card-label { 
-            background: #000; color: white; padding: 0 10px; 
+            background: #000; color: #ffd700; padding: 0 10px; 
             font-size: 16px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white;
-            min-width: 100px;
+            align-items: center; justify-content: center; border-right: 2px solid #ffd700;
         }
         .card-val { 
             background: #fff; color: #000; flex: 1; 
             font-size: 28px; font-weight: 1000; display: flex; 
-            align-items: center; justify-content: center; min-width: 50px;
+            align-items: center; justify-content: center;
         }
 
         /* --- Layout --- */
-        .summary-wrapper { position: absolute; bottom: 300px; left: 10px; display: flex; gap: 10px; }
-        
+        .summary-wrapper { position: absolute; bottom: 310px; left: 10px; display: flex; gap: 10px; }
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 80px; 
-            height: 200px; /* ਲਿਸਟ ਬਾਕਸ ਛੋਟਾ ਕੀਤਾ */
-            display: flex; flex-direction: row; gap: 12px; 
+            position: absolute; left: 10px; right: 10px; bottom: 85px; 
+            height: 210px; display: flex; flex-direction: row; gap: 12px; 
         }
 
-        .box { 
-            flex: 1; height: 100%; position: relative; 
-            border: 2px solid white; border-radius: 10px; overflow: hidden;
-            display: none; /* ਸਿਰਫ ਡਾਟਾ ਹੋਣ ਤੇ ਦਿਖੇਗਾ */
-        }
-        #box-fly { background: #000000; }
-        #box-out { background: #001a66; }
-        #box-time { background: #cc0000; }
+        .box-header-wrap { position: absolute; right: 5px; top: 5px; z-index: 10; }
 
-        .box-header-wrap { position: absolute; right: 4px; top: 4px; z-index: 10; }
-
-        /* --- Admin Time Label (ਸਮਾਂ ਬਾਕਸ ਦੇ ਹੇਠਾਂ) --- */
         .admin-time-slot {
             position: absolute; width: 100%; bottom: 0;
-            background: #ffcc00; color: #000; text-align: center;
-            font-size: 24px; font-weight: 1000; padding: 4px 0;
+            background: linear-gradient(to bottom, #ffd700, #b8860b); /* Glassy Gold */
+            color: #000; text-align: center;
+            font-size: 22px; font-weight: 1000; padding: 5px 0;
             border-top: 2px solid white; z-index: 11;
         }
 
-        /* --- Fast & Smooth Scroll --- */
+        /* --- Scroll --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 55px; } 
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 60px; } 
         .item { padding: 4px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; text-shadow: 2px 2px 4px black; }
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* --- Footer --- */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 60px; background: white; display: flex; align-items: center; border-top: 4px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 20px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 15s linear infinite; font-size: 28px; font-weight: 900; color: black; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        .footer { position: absolute; bottom: 0; width: 100%; height: 65px; background: white; display: flex; align-items: center; border-top: 4px solid #ff0000; }
+        .live-tag { background: #ff0000; color: white; padding: 0 20px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 950; }
     </style>
 </head>
 <body>
@@ -77,26 +103,32 @@
 </div>
 
 <div class="main-container">
-    <div id="box-fly" class="box">
-        <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label" style="min-width:80px; font-size:14px;">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="card-val" style="font-size:24px;">0</div></div></div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    <div id="box-fly" class="box-wrapper">
+        <div class="box">
+            <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label">ਉੱਡ ਰਹੇ</div><div id="count-fly" class="card-val">0</div></div></div>
+            <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+        </div>
     </div>
 
-    <div id="box-out" class="box">
-        <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label" style="min-width:80px; font-size:14px;">ਕੱਟੇ ਗਏ</div><div id="count-out" class="card-val" style="font-size:24px;">0</div></div></div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    <div id="box-out" class="box-wrapper">
+        <div class="box">
+            <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label">ਕੱਟੇ ਗਏ</div><div id="count-out" class="card-val">0</div></div></div>
+            <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+        </div>
     </div>
 
-    <div id="box-time" class="box">
-        <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label" style="min-width:80px; font-size:14px;">ਸਮਾਂ</div><div id="count-time" class="card-val" style="font-size:24px;">0</div></div></div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-        <div id="admin-time-val" class="admin-time-slot">--:--</div>
+    <div id="box-time" class="box-wrapper">
+        <div class="box">
+            <div class="box-header-wrap"><div class="styled-card" style="height:40px;"><div class="card-label">ਸਮਾਂ</div><div id="count-time" class="card-val">0</div></div></div>
+            <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+            <div id="admin-time-val" class="admin-time-slot">--:--</div>
+        </div>
     </div>
 </div>
 
 <div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
+    <div style="flex:1; overflow:hidden; font-size:28px; font-weight:900; padding-left:20px;" id="ticker-text">WELCOME</div>
 </div>
 
 <script>
@@ -132,16 +164,15 @@
             document.getElementById('count-time').innerText = counts.time;
 
             ['fly','out','time'].forEach(id => {
-                const box = document.getElementById(`box-${id}`);
+                const wrap = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
                 
-                // ਜੇਕਰ ਲਿਸਟ ਖਾਲੀ ਹੈ ਤਾਂ ਬਾਕਸ ਨਹੀਂ ਦਿਖੇਗਾ
                 if (counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    box.style.display = "block";
+                    wrap.style.display = "block";
                     list.innerHTML = htmls[id] + htmls[id];
-                    list.style.animationDuration = Math.max(counts[id] * 2, 6) + "s"; // ਤੇਜ਼ ਸਪੀਡ
+                    list.style.animationDuration = Math.max(counts[id] * 2, 6) + "s";
                 } else {
-                    box.style.display = "none";
+                    wrap.style.display = "none";
                 }
             });
         });
