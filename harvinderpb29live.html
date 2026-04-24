@@ -8,7 +8,6 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Animation for Punjabi/English Flash --- */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
@@ -23,37 +22,55 @@
 
         .box { 
             flex: 1; height: 100%; position: relative; 
-            border: 3px solid white; border-radius: 20px; /* Round Corners */
+            border: 3px solid white; border-radius: 20px; 
             overflow: hidden; display: none; 
-            /* --- Glow Effect --- */
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
         }
-        #box-fly { background: #000000; border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+        #box-fly { background: #000000; }
         #box-out { background: #001a66; border-color: #00ccff; box-shadow: 0 0 20px rgba(0, 204, 255, 0.5); }
         #box-time { background: #660000; border-color: #ff3300; box-shadow: 0 0 20px rgba(255, 51, 0, 0.5); }
 
-        /* --- Side Panel (Header & Summary Boxes - Made Larger) --- */
+        /* --- Side Panel (Header & Summary - Labels made Wider) --- */
         .side-panel {
             position: absolute; right: 10px; top: 10px; 
             display: flex; flex-direction: column; gap: 8px; z-index: 20;
-            width: 210px; /* Width Increased */
+            width: 240px; /* ਚੌੜਾਈ ਹੋਰ ਵਧਾਈ ਹੈ */
         }
 
         .mini-card { 
             display: flex; border: 3px solid white; border-radius: 10px; 
-            overflow: hidden; height: 65px; /* Height Increased */
-            background: white; box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
+            overflow: hidden; height: 65px; background: white;
+            box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
         }
         .mini-label { 
-            background: #000; color: white; flex: 1.6;
-            font-size: 18px; font-weight: 900; display: flex; 
+            background: #000; color: white; 
+            flex: 2.2; /* ਨਾਮ ਵਾਲੀ ਸਾਈਡ ਹੋਰ ਚੌੜੀ ਕੀਤੀ */
+            font-size: 19px; font-weight: 900; display: flex; 
             align-items: center; justify-content: center; border-right: 3px solid white;
-            text-align: center; line-height: 1.1;
+            text-align: center; padding: 0 5px;
         }
         .mini-val { 
-            background: #fff; color: #000; flex: 1; 
+            background: #fff; color: #000; 
+            flex: 0.8; /* ਕਾਊਂਟ ਵਾਲੀ ਸਾਈਡ ਪਤਲੀ ਰੱਖੀ */
             font-size: 38px; font-weight: 1000; display: flex; 
             align-items: center; justify-content: center;
+        }
+
+        /* --- Time Slot Style (Single Line & Bold) --- */
+        .time-row-card {
+            flex-direction: row !important; /* ਇਕੋ ਲਾਈਨ ਲਈ */
+            height: 65px !important;
+        }
+        .time-label-small {
+            background: #ff9933 !important; color: black !important;
+            flex: 1 !important; font-size: 18px !important; font-weight: 950 !important;
+            border-right: 3px solid white !important;
+        }
+        .time-val-text {
+            background: white !important; color: black !important;
+            flex: 2 !important; font-size: 20px !important; 
+            font-weight: 1000 !important; /* ਬੋਲਡ ਅੱਖਰ */
+            display: flex; align-items: center; justify-content: center;
         }
 
         /* --- Scrolling List --- */
@@ -63,7 +80,7 @@
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Footer Ticker --- */
+        /* --- Footer --- */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; 
@@ -72,7 +89,7 @@
             background: #ff0000; color: white; padding: 0 35px; height: 100%; 
             display: flex; align-items: center; font-size: 40px; font-weight: 950; font-style: italic; 
         }
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
+        .ticker-wrap { flex: 1; overflow: hidden; }
         .ticker-move { 
             display: inline-block; animation: ticker 25s linear infinite; 
             font-size: 34px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap;
@@ -94,7 +111,7 @@
     <div id="box-fly" class="box">
         <div class="side-panel">
             <div class="mini-card"><div class="mini-label flash" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div><div id="count-fly" class="mini-val">0</div></div>
-            <div class="mini-card"><div class="mini-label flash" data-pa="ਕੁੱਲ" data-en="TOTAL"></div><div id="m-total" class="mini-val">0</div></div>
+            <div class="mini-card"><div class="mini-label flash" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div><div id="m-total" class="mini-val">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
@@ -110,9 +127,9 @@
     <div id="box-time" class="box">
         <div class="side-panel">
             <div class="mini-card"><div class="mini-label flash" data-pa="ਸਮੇਂ ਚ" data-en="TIME IN"></div><div id="count-time" class="mini-val">0</div></div>
-            <div class="mini-card" style="height: auto; min-height: 65px; flex-direction: column;">
-                <div class="mini-label flash" style="width: 100%; border-right: 0; border-bottom: 2px solid white; background: #ff9933; color: black;" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-                <div id="admin-time-val" style="background: white; color: black; font-size: 20px; font-weight: 1000; text-align: center; padding: 6px;">--:--</div>
+            <div class="mini-card time-row-card">
+                <div class="mini-label time-label-small flash" data-pa="ਸਮਾਂ" data-en="TIME"></div>
+                <div id="admin-time-val" class="time-val-text">--:--</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -121,7 +138,7 @@
 
 <div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE LIVE SCOREBOARD 2026</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
     <div class="dt-flash-box">
         <div id="cur-date">-- --- ----</div>
         <div id="cur-time">00:00:00 AM</div>
@@ -149,7 +166,7 @@
             const conf = data.config || {};
             
             document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
-            document.getElementById('admin-time-val').innerText = conf.tournamentTime || "10:00 AM - 11:35 AM";
+            document.getElementById('admin-time-val').innerText = conf.tournamentTime || "10:00 - 11:35";
 
             let htmls = { fly:'', out:'', time:'' };
             let counts = { fly:0, out:0, time:0 };
