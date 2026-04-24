@@ -17,74 +17,75 @@
 
         /* --- Main Container --- */
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 85px; 
-            height: 260px; display: flex; flex-direction: row; gap: 15px; 
+            position: absolute; left: 15px; right: 15px; bottom: 90px; 
+            height: 280px; display: flex; flex-direction: row; gap: 20px; 
         }
 
         .box { 
             flex: 1; height: 100%; position: relative; 
-            border: 3px solid white; border-radius: 12px; overflow: hidden; 
-            display: none; 
+            border: 3px solid white; border-radius: 20px; /* Round Corners */
+            overflow: hidden; display: none; 
+            /* --- Glow Effect --- */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.2);
         }
-        #box-fly { background: #000000; }
-        #box-out { background: #001a66; }
-        #box-time { background: #660000; }
+        #box-fly { background: #000000; border-color: #ffffff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+        #box-out { background: #001a66; border-color: #00ccff; box-shadow: 0 0 20px rgba(0, 204, 255, 0.5); }
+        #box-time { background: #660000; border-color: #ff3300; box-shadow: 0 0 20px rgba(255, 51, 0, 0.5); }
 
-        /* --- Side Panel (Headers & Summary) --- */
+        /* --- Side Panel (Header & Summary Boxes - Made Larger) --- */
         .side-panel {
-            position: absolute; right: 8px; top: 8px; 
-            display: flex; flex-direction: column; gap: 6px; z-index: 20;
-            width: 180px; /* ਵੱਡਾ ਕੀਤਾ ਗਿਆ */
+            position: absolute; right: 10px; top: 10px; 
+            display: flex; flex-direction: column; gap: 8px; z-index: 20;
+            width: 210px; /* Width Increased */
         }
 
         .mini-card { 
-            display: flex; border: 3px solid white; border-radius: 8px; 
-            overflow: hidden; height: 50px; background: white;
-            box-shadow: 0px 4px 8px rgba(0,0,0,0.4);
+            display: flex; border: 3px solid white; border-radius: 10px; 
+            overflow: hidden; height: 65px; /* Height Increased */
+            background: white; box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
         }
         .mini-label { 
-            background: #000; color: white; flex: 1.8;
-            font-size: 15px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white;
-            text-align: center;
+            background: #000; color: white; flex: 1.6;
+            font-size: 18px; font-weight: 900; display: flex; 
+            align-items: center; justify-content: center; border-right: 3px solid white;
+            text-align: center; line-height: 1.1;
         }
         .mini-val { 
             background: #fff; color: #000; flex: 1; 
-            font-size: 32px; font-weight: 1000; display: flex; 
+            font-size: 38px; font-weight: 1000; display: flex; 
             align-items: center; justify-content: center;
         }
 
         /* --- Scrolling List --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 115px; } 
-        .item { padding: 5px 20px; font-size: 38px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 150px; } 
+        .item { padding: 6px 25px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 6px black; }
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Footer Ticker (With Date/Time Flash) --- */
+        /* --- Footer Ticker --- */
         .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 75px; 
+            position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; 
         }
         .live-tag { 
-            background: #ff0000; color: white; padding: 0 30px; height: 100%; 
-            display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; 
+            background: #ff0000; color: white; padding: 0 35px; height: 100%; 
+            display: flex; align-items: center; font-size: 40px; font-weight: 950; font-style: italic; 
         }
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
         .ticker-move { 
             display: inline-block; animation: ticker 25s linear infinite; 
-            font-size: 32px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap;
+            font-size: 34px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap;
         }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- Date/Time Box in Footer --- */
         .dt-flash-box {
-            background: #ff0000; color: white; height: 100%; padding: 0 20px;
+            background: #ff0000; color: white; height: 100%; padding: 0 25px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-width: 260px; border-left: 5px solid black; font-weight: 1000;
+            min-width: 280px; border-left: 6px solid black; font-weight: 1000;
         }
-        #cur-date { font-size: 20px; border-bottom: 1px solid white; margin-bottom: 2px; }
-        #cur-time { font-size: 28px; }
+        #cur-date { font-size: 22px; border-bottom: 2px solid white; margin-bottom: 3px; }
+        #cur-time { font-size: 30px; }
     </style>
 </head>
 <body>
@@ -109,9 +110,9 @@
     <div id="box-time" class="box">
         <div class="side-panel">
             <div class="mini-card"><div class="mini-label flash" data-pa="ਸਮੇਂ ਚ" data-en="TIME IN"></div><div id="count-time" class="mini-val">0</div></div>
-            <div class="mini-card" style="height: auto; min-height: 50px; flex-direction: column;">
+            <div class="mini-card" style="height: auto; min-height: 65px; flex-direction: column;">
                 <div class="mini-label flash" style="width: 100%; border-right: 0; border-bottom: 2px solid white; background: #ff9933; color: black;" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-                <div id="admin-time-val" style="background: white; color: black; font-size: 18px; font-weight: 900; text-align: center; padding: 4px;">--:--</div>
+                <div id="admin-time-val" style="background: white; color: black; font-size: 20px; font-weight: 1000; text-align: center; padding: 6px;">--:--</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -134,7 +135,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // Update Date and Time
     setInterval(() => {
         const now = new Date();
         const options = { day: '2-digit', month: 'short', year: 'numeric' };
