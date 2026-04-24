@@ -8,15 +8,25 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- Plan Expired Overlay --- */
+        /* --- Plan Expired Overlay & Ticker --- */
         #expired-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 9999;
+            background: rgba(0,0,0,0.9); z-index: 9999;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; color: white;
         }
-        #expired-overlay h1 { font-size: 60px; color: #ff0000; margin-bottom: 20px; }
-        #expired-overlay p { font-size: 30px; }
+        #expired-overlay h1 { font-size: 80px; color: #ff0000; text-shadow: 4px 4px 10px black; }
+        
+        /* Expired Ticker */
+        .expired-ticker {
+            position: absolute; bottom: 0; width: 100%; height: 80px;
+            background: #ff0000; display: flex; align-items: center;
+            border-top: 5px solid white; overflow: hidden;
+        }
+        .expired-move {
+            display: inline-block; white-space: nowrap; font-size: 35px;
+            font-weight: 900; color: white; animation: ex-ticker 15s linear infinite;
+        }
+        @keyframes ex-ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         /* --- ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
         @keyframes langFlash {
@@ -33,21 +43,17 @@
 
         /* Main Container */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
-        .box { 
-            visibility: hidden; width: 32%; height: 100%; position: relative; 
-            border: 3px solid white; border-radius: 20px; overflow: hidden; 
-        }
+        .box { visibility: hidden; width: 32%; height: 100%; position: relative; border: 3px solid white; border-radius: 20px; overflow: hidden; }
 
         #box-fly { background: #000000; } 
         #box-out { background: #001a66; } 
         #box-time { background: #660000; overflow: visible; }
 
-        /* Admin Time Floating Label */
         .admin-time-floating {
             position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
             background: #ff9933; color: black; padding: 2px 20px; font-size: 24px;
             font-weight: 1000; border: 3px solid white; border-radius: 10px;
-            white-space: nowrap; z-index: 20; box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+            z-index: 20; box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
         }
 
         .box-header { 
@@ -66,7 +72,7 @@
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer */
+        /* Normal Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -81,7 +87,9 @@
 
 <div id="expired-overlay">
     <h1>PLAN EXPIRED</h1>
-    <p>Please contact admin to renew your plan.</p>
+    <div class="expired-ticker">
+        <div class="expired-move" id="expired-msg">ਰੀਚਾਰਜ ਕਰਵਾਉਣ ਲਈ ਸੰਪਰਕ ਕਰੋ: 90416-16000 | PLEASE CONTACT FOR RECHARGE: 90416-16000</div>
+    </div>
 </div>
 
 <div id="main-content">
@@ -147,12 +155,14 @@
             const data = snap.val(); if(!data) return;
             
             // --- Check Expiry ---
-            const planExpiry = data.planExpiry; // Format: YYYY-MM-DD
+            const planExpiry = data.planExpiry; 
             if (planExpiry) {
                 const today = new Date().toISOString().split('T')[0];
                 if (today > planExpiry) {
                     document.getElementById('expired-overlay').style.display = "flex";
                     document.getElementById('main-content').style.display = "none";
+                    // Custom expiry message from database if exists
+                    if(data.expiryMessage) document.getElementById('expired-msg').innerText = data.expiryMessage;
                     return;
                 } else {
                     document.getElementById('expired-overlay').style.display = "none";
