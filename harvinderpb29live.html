@@ -25,72 +25,73 @@
             55%, 95% { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Styled Card Design (Bigger Headers) --- */
+        /* --- Styled Card Design --- */
         .styled-card { 
-            display: flex; border: 3px solid white; border-radius: 10px; 
-            overflow: hidden; box-shadow: 0px 5px 15px rgba(0,0,0,0.8);
-            background: #fff; margin-bottom: 8px; height: 65px; /* ਉਚਾਈ ਵਧਾਈ */
+            display: flex; border: 2.5px solid #ffd700; border-radius: 8px; 
+            overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.8);
+            background: #fff; margin-bottom: 6px; height: 60px;
         }
         .card-label { 
-            background: #000; color: white; padding: 0 12px; 
-            font-size: 22px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 3px solid white;
-            min-width: 150px; /* ਚੌੜਾਈ ਵਧਾਈ */
+            background: #000; color: white; padding: 0 10px; 
+            font-size: 20px; font-weight: 900; display: flex; 
+            align-items: center; justify-content: center; border-right: 2px solid #ffd700;
+            min-width: 140px;
         }
         .card-val { 
             background: #fff; color: #000; flex: 1; 
-            font-size: 40px; font-weight: 1000; display: flex; 
+            font-size: 38px; font-weight: 1000; display: flex; 
             align-items: center; justify-content: center;
         }
 
-        /* --- Main Layout (Wider Boxes) --- */
+        /* --- Main Layout with Golden Shiny Border --- */
         .main-container { 
             position: absolute; left: 5px; right: 5px; bottom: 85px; 
-            height: 380px; 
-            display: flex; flex-direction: row; gap: 10px; 
+            height: 380px; display: flex; flex-direction: row; gap: 12px; 
         }
         .box { 
-            flex: 1.2; /* ਚੌੜਾਈ ਵਧਾਈ ਗਈ ਹੈ */
-            height: 100%; position: relative; border: 4px solid white; border-radius: 15px; overflow: hidden; 
+            flex: 1.2; height: 100%; position: relative; 
+            border: 5px solid #ffd700; /* Golden Border */
+            border-radius: 15px; overflow: hidden; 
+            box-shadow: 0 0 15px #ffd700, inset 0 0 10px rgba(255,215,0,0.5); /* Shiny Glow */
         }
         
         #box-fly { background: #000000; }
         #box-out { background: #001a66; }
-        #box-time { background: #cc0000; flex: 1; } /* Time ਵਾਲਾ ਥੋੜਾ ਛੋਟਾ ਰੱਖਿਆ */
+        #box-time { background: #cc0000; flex: 1; }
 
         .header-stack {
-            position: absolute; right: 10px; top: 10px; z-index: 10; 
-            display: flex; flex-direction: column; width: 220px;
+            position: absolute; right: 8px; top: 8px; z-index: 10; 
+            display: flex; flex-direction: column; width: 210px;
         }
 
-        /* --- List Area --- */
+        /* --- Smooth & Faster Scrolling --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 160px; } 
-        .item { padding: 6px 20px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 4px 4px 8px black; }
+        .list-area { 
+            position: absolute; width: 100%; 
+            animation: constantScroll linear infinite; 
+            padding-top: 150px; 
+            will-change: transform; /* Smoothness boost */
+        } 
+        .item { padding: 5px 20px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 4px 4px 8px black; }
 
-        @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes constantScroll { 
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-50%); } 
+        }
 
         /* --- Footer --- */
         .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 40px; font-weight: 950; font-style: italic; }
-        
+        .live-tag { background: #ff0000; color: white; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 38px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 34px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: ticker 22s linear infinite; font-size: 32px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Date Time Flash Styling */
         .dt-box { 
-            background: #ff0000; color: white; height: 100%; min-width: 320px; 
+            background: #ff0000; color: white; height: 100%; min-width: 300px; 
             border-left: 5px solid #000; position: relative; overflow: hidden;
         }
-        #cur-date { 
-            position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-            font-size: 26px; font-weight: 900; animation: dtFlash 8s infinite;
-        }
-        #cur-time { 
-            position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-            font-size: 36px; font-weight: 1000; animation: dtFlash2 8s infinite;
-        }
+        #cur-date { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; animation: dtFlash 8s infinite; }
+        #cur-time { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 1000; animation: dtFlash2 8s infinite; }
     </style>
 </head>
 <body>
@@ -98,42 +99,24 @@
 <div class="main-container">
     <div id="box-fly" class="box">
         <div class="header-stack">
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
-                <div id="count-fly" class="card-val">0</div>
-            </div>
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
-                <div id="m-total" class="card-val">0</div>
-            </div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div><div id="count-fly" class="card-val">0</div></div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div><div id="m-total" class="card-val">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
         <div class="header-stack">
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
-                <div id="count-out" class="card-val">0</div>
-            </div>
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
-                <div id="m-rem" class="card-val">0</div>
-            </div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div><div id="count-out" class="card-val">0</div></div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></div><div id="m-rem" class="card-val">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
         <div class="header-stack">
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-                <div id="count-time" class="card-val">0</div>
-            </div>
-            <div class="styled-card">
-                <div class="card-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
-                <div id="admin-time-val" class="card-val">0</div>
-            </div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div><div id="count-time" class="card-val">0</div></div>
+            <div class="styled-card"><div class="card-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div><div id="admin-time-val" class="card-val">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
@@ -183,14 +166,13 @@
             document.getElementById('count-fly').innerText = counts.fly;
             document.getElementById('count-out').innerText = counts.out;
             document.getElementById('count-time').innerText = counts.time;
-            
-            // Setting admin time from config if available or just the time count
             document.getElementById('admin-time-val').innerText = counts.time;
 
             ['fly','out','time'].forEach(id => {
                 const list = document.getElementById(`list-${id}`);
                 list.innerHTML = htmls[id] + htmls[id];
-                list.style.animationDuration = Math.max(counts[id] * 3, 12) + "s";
+                // Speed increased: 2 seconds per item (min 8s)
+                list.style.animationDuration = Math.max(counts[id] * 2, 8) + "s";
             });
         });
     }
