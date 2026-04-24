@@ -8,6 +8,13 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* --- Language Flash Animation --- */
+        @keyframes langFlash {
+            0%, 45% { content: attr(data-pa); }
+            50%, 95% { content: attr(data-en); }
+        }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
+
         /* Summary Section */
         .summary-wrapper { position: absolute; bottom: 365px; left: 10px; display: flex; gap: 12px; z-index: 1000; }
         .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 250px; height: 75px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
@@ -22,10 +29,10 @@
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- Updated Yellow Header (Wider & Larger Text) --- */
+        /* --- Header Styling --- */
         .box-header { 
-            height: 85px; /* Size Vadha ditta */
-            width: 130px; /* Width Vadha ditti */
+            height: 100px; /* Size for larger labels */
+            width: 160px; 
             background: #ff9933; 
             color: black; 
             display: flex; 
@@ -41,13 +48,25 @@
             line-height: 1.1;
         }
 
-        /* Yellow box labels like scrolling list size */
-        .header-label { font-size: 20px; font-weight: 900; margin-bottom: 2px; }
-        .count-tag { font-size: 40px; font-weight: 1000; }
+        /* Label size matched to list items (40px) */
+        .header-label { font-size: 32px; font-weight: 950; margin-bottom: -5px; }
+        .count-tag { font-size: 45px; font-weight: 1000; }
+
+        /* Top Admin Time Info */
+        .admin-time-top {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px black;
+            z-index: 5;
+        }
 
         /* Scrolling List Area */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 20px; } 
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 40px; } 
         .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
@@ -59,10 +78,8 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- Date/Time Flash Back --- */
         @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
         @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
-
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 230px; border-left: 4px solid #000; position: relative; overflow: hidden; }
         #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
         #date-val { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
@@ -72,11 +89,11 @@
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
-        <div class="sum-label-area">TOTAL PIGEONS</div>
+        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div>
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area" style="color:#ffcc00">REMAINING</div>
+        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
 </div>
@@ -84,15 +101,16 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="box-header">
-            <span class="header-label">ਉੱਡ ਰਹੇ</span>
+            <span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span>
             <span id="count-fly" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-time" class="box">
+        <span class="admin-time-top" id="top-time-info"></span>
         <div class="box-header">
-            <span class="header-label" id="time-head-txt">ਸਮਾਂ</span>
+            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
             <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -100,7 +118,7 @@
 
     <div id="box-out" class="box">
         <div class="box-header">
-            <span class="header-label">ਕੱਟੇ ਗਏ</span>
+            <span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span>
             <span id="count-out" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
@@ -134,39 +152,3 @@
             const data = snap.val(); if(!data) return;
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
-            
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
-            
-            const adminTime = conf.boxTime || conf.timeRange || "ਸਮਾਂ"; 
-            document.getElementById('time-head-txt').innerText = adminTime;
-
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-                else if (p.status === 'time') { counts.time++; htmls.time += row; }
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
-            });
-            
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-
-            ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`);
-                const listArea = document.getElementById(`list-${id}`);
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    el.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    let gap = '<div style="height:100px;"></div>';
-                    listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
-                    listArea.style.animationDuration = (counts[id] * 3) + "s";
-                } else { el.style.display = "none"; }
-            });
-        });
-    }
-</script>
-</body>
-</html>
