@@ -6,32 +6,32 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           MASTER CONTROLS (ਸਾਰੀ ਸੈਟਿੰਗ ਇੱਥੋਂ ਹੋਵੇਗੀ)
+           MASTER CONTROLS (ਸਾਈਜ਼ ਅਤੇ ਪੁਜੀਸ਼ਨ ਪਹਿਲਾਂ ਵਾਲੀ ਹੀ ਹੈ)
            ====================================================== */
         :root {
-            /* 1. SUMMARY & HEADER DIMENSIONS (ਦੋਵੇਂ ਬਰਾਬਰ) */
-            --box-w: 240px;          /* ਚੌੜਾਈ */
-            --box-h: 65px;           /* ਉਚਾਈ */
-            --font-label: 28px;      /* ਲੇਬਲ ਦਾ ਸਾਈਜ਼ (TOTAL/FLYING) */
-            --font-count: 35px;      /* ਨੰਬਰਾਂ ਦਾ ਸਾਈਜ਼ (10, 20 etc) */
+            /* 1. DIMENSIONS */
+            --box-w: 240px;          
+            --box-h: 65px;           
+            --font-label: 24px;      
+            --font-count: 35px;      
 
-            /* 2. SUMMARY POSITIONS (TOTAL & REMAIN) */
+            /* 2. POSITIONS */
             --sum-bottom: 280px;    
             --total-left: 400px;    
             --rem-left: 1040px;     
 
-            /* 3. MAIN LIST BOXES (Flying, Out, Time) */
+            /* 3. MAIN LIST BOXES */
             --list-bottom: 70px;    
             --list-h: 280px;        
             --list-gap: 15px;       
             --list-side-margin: 10px; 
 
-            /* 4. ADMIN TIME/DATE FLASH BOX (TIME ਹੈਡਰ ਦੇ ਹੇਠਾਂ) */
-            --admin-time-w: 240px;    /* ਚੌੜਾਈ */
-            --admin-time-h: 65px;     /* ਉਚਾਈ */
-            --admin-time-top: 95px;   /* ਹੈਡਰ ਤੋਂ ਕਿੰਨੀ ਦੂਰੀ (ਹੇਠਾਂ) */
-            --admin-time-right: 5px;  /* ਸੱਜੇ ਤੋਂ ਦੂਰੀ */
-            --admin-time-font: 28px;  /* ਅੱਖਰਾਂ ਦਾ ਸਾਈਜ਼ */
+            /* 4. ADMIN TIME FLASH BOX */
+            --admin-time-w: 240px;    
+            --admin-time-h: 65px;     
+            --admin-time-top: 95px;   
+            --admin-time-right: 5px;  
+            --admin-time-font: 28px;  
 
             /* 5. LIST ITEMS */
             --name-size: 40px;      
@@ -39,30 +39,39 @@
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
+        body { background: transparent; font-family: 'Arial Black', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Animation for Flashing Labels & Admin Time */
+        /* Animation for Flashing Labels */
         @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
         @keyframes timeDateFlash { 0%, 45% { content: attr(data-time); } 50%, 95% { content: attr(data-date); } }
         .flash-admin-time::after { content: attr(data-time); animation: timeDateFlash 10s infinite; }
 
-        /* --- Summary Section --- */
-        .summary-wrapper { 
-            position: absolute; width: 100%; height: 0; bottom: var(--sum-bottom); left: 0;
-            display: none; z-index: 1000; 
-        }
+        /* --- Updated Summary Design (Photo Style) --- */
         .sum-card { 
-            position: absolute; display: flex; border: 3px solid white; 
-            border-radius: 8px; overflow: hidden; width: var(--box-w); height: var(--box-h); 
-            background: #000;
+            position: absolute; display: flex; 
+            border: 3px solid white; 
+            border-radius: 8px; overflow: hidden; 
+            width: var(--box-w); height: var(--box-h); 
+            background: #e0e4f0; /* Light Grey/Blue background */
         }
         #total-card { left: var(--total-left); }
         #rem-card { left: var(--rem-left); }
 
-        .label-area { background: #000; width: 65%; font-size: var(--font-label); font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; color: white; }
-        .val-area { background: #000; color: white; width: 35%; font-size: var(--font-count); font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+        .label-area { 
+            background: #0d1b3e; /* Dark Blue from Image */
+            width: 65%; font-size: var(--font-label); font-weight: 900; 
+            display: flex; align-items: center; justify-content: center; 
+            border-right: 2px solid white; color: white; 
+            text-align: center;
+        }
+        .val-area { 
+            background: #e0e4f0; 
+            color: #000; /* Black text for numbers as per image */
+            width: 35%; font-size: var(--font-count); font-weight: 1000; 
+            display: flex; align-items: center; justify-content: center; 
+        }
 
         /* --- Main Box Container --- */
         .main-container { 
@@ -81,49 +90,38 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- Header Inside Box --- */
+        /* --- Header Design (Matching Photo Style) --- */
         .box-header-new { 
             position: absolute; top: 0; right: 0; 
             width: var(--box-w); height: var(--box-h); 
             display: flex; border-left: 3px solid white; border-bottom: 3px solid white; 
-            z-index: 100; background: #000;
+            z-index: 100; background: #e0e4f0;
         }
         .hdr-label { 
-            background: #000; color: #fff; width: 65%; 
+            background: #0d1b3e; color: #fff; width: 65%; 
             font-size: var(--font-label); font-weight: 900; 
             display: flex; align-items: center; justify-content: center; 
             border-right: 2px solid white; 
         }
         .hdr-val { 
-            background: #000; color: #fff; width: 35%; 
+            background: #e0e4f0; color: #000; width: 35%; 
             font-size: var(--font-count); font-weight: 1000; 
             display: flex; align-items: center; justify-content: center; 
         }
 
         /* Admin Time Flash Box */
         .admin-time-box {
-            position: absolute;
-            top: var(--admin-time-top);
-            right: var(--admin-time-right);
-            width: var(--admin-time-w);
-            height: var(--admin-time-h);
-            background: #000;
-            border: 2px solid white;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--admin-time-font);
-            font-weight: 900;
-            color: #fff;
-            z-index: 99;
+            position: absolute; top: var(--admin-time-top); right: var(--admin-time-right);
+            width: var(--admin-time-w); height: var(--admin-time-h);
+            background: #000; border: 2px solid white; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: var(--admin-time-font); font-weight: 900; color: #fff; z-index: 99;
         }
 
-        /* Smooth Scroll Area */
+        /* Scrolling names */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 20px; } 
         .item { padding: 6px 15px; font-size: var(--name-size); font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
-        
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* Footer Ticker */
@@ -204,7 +202,6 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Set Admin Time and Current Date for Flash Effect
             const adminBox = document.getElementById('admin-time-display');
             const today = new Date();
             const dateStr = today.getDate() + "-" + (today.getMonth() + 1);
