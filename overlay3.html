@@ -8,7 +8,7 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- ਹੈਡਰ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
+        /* --- ਲੇਬਲ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
@@ -29,10 +29,10 @@
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- Updated Yellow Header (Showing Time) --- */
+        /* --- Yellow Header (With Flash Label & Count) --- */
         .box-header { 
-            height: 95px; 
-            width: 160px; /* Slightly wider for time string */
+            height: 90px; 
+            width: 140px; 
             background: #ff9933; 
             color: black; 
             display: flex; 
@@ -46,12 +46,10 @@
             border-bottom: 3px solid white; 
             z-index: 10; 
             line-height: 1.1;
-            padding: 5px;
         }
 
-        .header-label { font-size: 18px; font-weight: 900; }
-        .count-tag { font-size: 38px; font-weight: 1000; }
-        .time-tag { font-size: 24px; font-weight: 1000; text-align: center; }
+        .header-label { font-size: 22px; font-weight: 900; }
+        .count-tag { font-size: 42px; font-weight: 1000; }
 
         /* Scrolling List Area */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
@@ -67,7 +65,7 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Date/Time Footer Flash */
+        /* Current Date/Time Display (Bottom Right) */
         @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
         @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; position: relative; overflow: hidden; }
@@ -100,7 +98,7 @@
     <div id="box-time" class="box">
         <div class="box-header">
             <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
-            <span id="admin-time-val" class="time-tag">--:--</span>
+            <span id="count-time" class="count-tag">0</span>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
@@ -146,9 +144,6 @@
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
-            
-            // Set Time String in the Yellow Header
-            document.getElementById('admin-time-val').innerText = conf.boxTime || conf.timeRange || "--:--";
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
             pigeons.forEach((p, idx) => {
@@ -166,9 +161,11 @@
                 const listArea = document.getElementById(`list-${id}`);
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     el.style.display = "block";
-                    if(id !== 'time') document.getElementById(`count-${id}`).innerText = counts[id];
+                    document.getElementById(`count-${id}`).innerText = counts[id];
                     
-                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
+                    // List Scrolling Logic
+                    let gap = '<div style="height:100px;"></div>';
+                    listArea.innerHTML = htmls[id] + gap + htmls[id];
                     listArea.style.animationDuration = Math.max(counts[id] * 3, 5) + "s";
                 } else { el.style.display = "none"; }
             });
