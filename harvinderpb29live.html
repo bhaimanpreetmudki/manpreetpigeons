@@ -8,64 +8,69 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* --- Shared Card Style --- */
+        /* --- Language Flash Animation --- */
+        @keyframes langFlash {
+            0%, 45% { content: attr(data-pa); }
+            50%, 95% { content: attr(data-en); }
+        }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 6s infinite; }
+
+        /* --- Styled Card Design --- */
         .styled-card { 
-            display: flex; border: 2px solid white; border-radius: 8px; 
-            overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-            background: #fff; margin-bottom: 5px;
+            display: flex; border: 3px solid white; border-radius: 10px; 
+            overflow: hidden; box-shadow: 0px 5px 15px rgba(0,0,0,0.8);
+            background: #fff; margin-bottom: 8px;
         }
         .card-label { 
             background: #000; color: white; padding: 0 10px; 
-            font-size: 18px; font-weight: 900; display: flex; 
-            align-items: center; justify-content: center; border-right: 2px solid white;
-            min-width: 110px;
+            font-size: 20px; font-weight: 900; display: flex; 
+            align-items: center; justify-content: center; border-right: 3px solid white;
+            min-width: 130px;
         }
         .card-val { 
             background: #fff; color: #000; flex: 1; 
-            font-size: 28px; font-weight: 1000; display: flex; 
+            font-size: 35px; font-weight: 1000; display: flex; 
             align-items: center; justify-content: center;
-            min-width: 50px;
+            min-width: 60px;
         }
 
         /* --- Main Layout --- */
         .main-container { 
             position: absolute; left: 10px; right: 10px; bottom: 85px; 
-            height: 350px; display: flex; flex-direction: row; gap: 15px; 
+            height: 420px; /* ਬਾਕਸ ਪਹਿਲਾਂ ਨਾਲੋਂ ਵੱਡੇ ਕਰ ਦਿੱਤੇ */
+            display: flex; flex-direction: row; gap: 20px; 
         }
-        .box { flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
+        .box { flex: 1; height: 100%; position: relative; border: 4px solid white; border-radius: 15px; overflow: hidden; }
         
         #box-fly { background: #000000; }
         #box-out { background: #001a66; }
         #box-time { background: #cc0000; }
 
-        /* --- Header & Summary Container (Inside Box) --- */
+        /* --- Header Stack Inside Box --- */
         .header-stack {
-            position: absolute; 
-            right: 10px; 
-            top: 10px; 
-            z-index: 10; 
-            display: flex;
-            flex-direction: column;
-            width: 170px;
+            position: absolute; right: 10px; top: 10px; z-index: 10; 
+            display: flex; flex-direction: column; width: 200px;
         }
 
-        /* --- List Area --- */
+        /* --- Scrolling List --- */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 130px; } 
-        .item { padding: 6px 20px; font-size: 42px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 6px black; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 150px; } 
+        .item { padding: 8px 25px; font-size: 48px; /* ਅੱਖਰ ਵੱਡੇ ਕਰ ਦਿੱਤੇ */
+            font-weight: 950; color: #ffcc00; text-shadow: 4px 4px 8px black; 
+        }
 
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Footer Ticker & Date/Time --- */
-        .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; }
-        .live-tag { background: #ff0000; color: white; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 950; font-style: italic; }
+        /* --- Footer --- */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: white; display: flex; align-items: center; border-top: 6px solid #ff0000; }
+        .live-tag { background: #ff0000; color: white; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 40px; font-weight: 950; font-style: italic; }
         .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 34px; font-weight: 900; color: black; padding-left: 100%; white-space: nowrap; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 260px; border-left: 4px solid #000; }
-        #cur-date { font-size: 16px; font-weight: 800; }
-        #cur-time { font-size: 30px; font-weight: 950; }
+        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 280px; border-left: 5px solid #000; }
+        #cur-date { font-size: 18px; font-weight: 800; }
+        #cur-time { font-size: 34px; font-weight: 950; }
     </style>
 </head>
 <body>
@@ -73,13 +78,13 @@
 <div class="main-container">
     <div id="box-fly" class="box">
         <div class="header-stack">
-            <div class="styled-card" style="height: 45px;">
-                <div class="card-label">ਉੱਡ ਰਹੇ</div>
+            <div class="styled-card" style="height: 55px;">
+                <div class="card-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></div>
                 <div id="count-fly" class="card-val">0</div>
             </div>
-            <div class="styled-card" style="height: 45px; border-color: #ff9933;">
-                <div class="card-label" style="font-size: 14px; background: #222;">ਕੁੱਲ ਕਬੂਤਰ</div>
-                <div id="m-total" class="card-val" style="font-size: 24px;">0</div>
+            <div class="styled-card" style="height: 55px;">
+                <div class="card-label flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
+                <div id="m-total" class="card-val">0</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
@@ -87,13 +92,13 @@
 
     <div id="box-out" class="box">
         <div class="header-stack">
-            <div class="styled-card" style="height: 45px;">
-                <div class="card-label">ਕੱਟੇ ਗਏ</div>
+            <div class="styled-card" style="height: 55px;">
+                <div class="card-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></div>
                 <div id="count-out" class="card-val">0</div>
             </div>
-            <div class="styled-card" style="height: 45px; border-color: #ffcc00;">
-                <div class="card-label" style="font-size: 14px; background: #222; color: #ffcc00;">ਬਾਕੀ</div>
-                <div id="m-rem" class="card-val" style="font-size: 24px;">0</div>
+            <div class="styled-card" style="height: 55px;">
+                <div class="card-label flash-text" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
+                <div id="m-rem" class="card-val">0</div>
             </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
@@ -101,8 +106,8 @@
 
     <div id="box-time" class="box">
         <div class="header-stack">
-            <div class="styled-card" style="height: 45px;">
-                <div class="card-label">ਸਮਾਂ</div>
+            <div class="styled-card" style="height: 55px;">
+                <div class="card-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></div>
                 <div id="count-time" class="card-val">0</div>
             </div>
         </div>
@@ -112,7 +117,7 @@
 
 <div class="footer">
     <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME TO THE TOURNAMENT</div></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
     <div class="dt-box">
         <div id="cur-date">-- --- ----</div>
         <div id="cur-time">00:00:00 AM</div>
@@ -158,7 +163,7 @@
             ['fly','out','time'].forEach(id => {
                 const list = document.getElementById(`list-${id}`);
                 list.innerHTML = htmls[id] + htmls[id];
-                list.style.animationDuration = Math.max(counts[id] * 3, 10) + "s";
+                list.style.animationDuration = Math.max(counts[id] * 3, 12) + "s";
             });
         });
     }
