@@ -15,6 +15,21 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
+        /* Admin Time (Box ton bahr uprle corner te) */
+        .admin-time-badge {
+            position: absolute;
+            right: 20px;
+            bottom: 355px; /* Box ਦੇ ਉੱਪਰ */
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            font-size: 28px;
+            font-weight: 1000;
+            color: #ffcc00;
+            z-index: 2000;
+        }
+
         /* Summary Section */
         .summary-wrapper { position: absolute; bottom: 365px; left: 10px; display: flex; gap: 12px; z-index: 1000; }
         .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 250px; height: 75px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
@@ -29,7 +44,7 @@
         #box-time { background: #001a66; }
         #box-out { background: #660000; }
 
-        /* --- Yellow Header (With Flash Label & Count) --- */
+        /* --- Yellow Header --- */
         .box-header { 
             height: 90px; 
             width: 140px; 
@@ -45,7 +60,6 @@
             border-left: 3px solid white; 
             border-bottom: 3px solid white; 
             z-index: 10; 
-            line-height: 1.1;
         }
 
         .header-label { font-size: 22px; font-weight: 900; }
@@ -58,22 +72,23 @@
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Footer Ticker */
+        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Current Date/Time Display (Bottom Right) */
-        @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
-        @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; position: relative; overflow: hidden; }
         #cur-time { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
         #cur-date { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
+        @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
     </style>
 </head>
 <body>
+
+<div id="admin-time-display" class="admin-time-badge">--:--</div>
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
@@ -144,6 +159,9 @@
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
+            
+            // Admin Time Display (Outside the box)
+            document.getElementById('admin-time-display').innerText = conf.boxTime || conf.timeRange || "";
 
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
             pigeons.forEach((p, idx) => {
@@ -162,10 +180,7 @@
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
-                    
-                    // List Scrolling Logic
-                    let gap = '<div style="height:100px;"></div>';
-                    listArea.innerHTML = htmls[id] + gap + htmls[id];
+                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
                     listArea.style.animationDuration = Math.max(counts[id] * 3, 5) + "s";
                 } else { el.style.display = "none"; }
             });
