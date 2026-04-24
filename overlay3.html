@@ -8,82 +8,94 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Animations */
-        @keyframes langFlashThree {
-            0%, 30% { content: attr(data-pa); }
-            33%, 63% { content: attr(data-en); }
-            66%, 96% { content: attr(data-val); }
-        }
-        .flash-time::after { content: attr(data-pa); animation: langFlashThree 12s infinite; }
-
-        @keyframes langFlashTwo {
+        /* --- ਹੈਡਰ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ --- */
+        @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
         }
-        .flash-text::after { content: attr(data-pa); animation: langFlashTwo 10s infinite; }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Layout */
+        /* Summary Section */
+        .summary-wrapper { position: absolute; bottom: 365px; left: 10px; display: flex; gap: 12px; z-index: 1000; }
+        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 250px; height: 75px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
+        .sum-label-area { background: #000; width: 65%; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
+        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
+
+        /* Main Container */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
-        
         .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
 
         #box-fly { background: #000000; }
-        #box-time { background: #001a66; overflow: visible; } /* Keep visible for outside label */
-        #box-out { background: #660000; }
+        #box-time { background: #660000; } /* Red background for time box */
+        #box-out { background: #001a66; }
 
-        /* Yellow Header */
+        /* --- Yellow Header (Labels) --- */
         .box-header { 
-            height: 90px; width: 140px; background: #ff9933; color: black; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: absolute; right: 0; top: 0; border-left: 3px solid white; border-bottom: 3px solid white; 
+            height: 80px; 
+            width: 140px; 
+            background: #ff9933; 
+            color: black; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            position: absolute; 
+            right: 0; 
+            top: 0; 
+            border-left: 3px solid white; 
+            border-bottom: 3px solid white; 
             z-index: 10; 
-        }
-        .header-label { font-size: 20px; font-weight: 900; }
-        .count-tag { font-size: 42px; font-weight: 1000; }
-
-        /* Labels Outside Only for Time Section */
-        .top-label-outside {
-            position: absolute; top: -45px; right: 5px;
-            font-size: 26px; font-weight: 1000; color: #ff9933;
-            text-shadow: 2px 2px 4px black; white-space: nowrap; z-index: 20;
+            line-height: 1.1;
         }
 
-        /* Scroll Area */
-        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; border-radius: 12px; z-index: 5; }
+        .header-label { font-size: 22px; font-weight: 900; }
+        .count-tag { font-size: 40px; font-weight: 1000; }
+
+        /* Scrolling List Area */
+        .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
         .item { padding: 4px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
+
+        /* --- Center Time Display --- */
+        .time-display-big {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+            font-weight: 1000;
+            color: #ffffff;
+            text-shadow: 4px 4px 6px black;
+            padding-right: 120px; /* Space for yellow box */
+        }
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Summary */
-        .summary-wrapper { position: absolute; bottom: 385px; left: 10px; display: flex; gap: 12px; }
-        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 230px; height: 65px; }
-        .sum-label-area { background: #000; width: 60%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
-        .sum-val-area { background: #fff; color: #000; width: 40%; font-size: 40px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
-
-        /* Footer */
+        /* Footer Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
-        .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; white-space: nowrap; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; align-items: center; min-width: 250px; border-left: 4px solid #000; position: relative; }
-        #time-val { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
-        #date-val { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
+        /* Current Date/Time Flash in Footer */
         @keyframes dtFlash { 0%, 45% { opacity: 1; } 50%, 100% { opacity: 0; } }
         @keyframes dtFlashRev { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+        .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; position: relative; overflow: hidden; }
+        #cur-time { font-size: 32px; font-weight: 950; animation: dtFlash 10s infinite; }
+        #cur-date { font-size: 28px; font-weight: 950; animation: dtFlashRev 10s infinite; position: absolute; }
     </style>
 </head>
 <body>
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
-        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div>
+        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
         <div id="m-total" class="sum-val-area">0</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAINING"></div>
+        <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
 </div>
@@ -98,11 +110,11 @@
     </div>
 
     <div id="box-time" class="box">
-        <div id="time-header-label" class="top-label-outside flash-time" data-pa="ਸਮਾਂ" data-en="TIME" data-val=""></div>
         <div class="box-header">
+            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
             <span id="count-time" class="count-tag">0</span>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+        <div class="time-display-big" id="admin-time-val">--:--</div>
     </div>
 
     <div id="box-out" class="box">
@@ -117,7 +129,10 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="time-val">00:00:00 AM</div><div id="date-val">24 APR 2026</div></div>
+    <div class="dt-box">
+        <div id="cur-time">00:00:00 AM</div>
+        <div id="cur-date">24 APR 2026</div>
+    </div>
 </div>
 
 <script>
@@ -127,10 +142,11 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
+    // Update Footer Clock
     setInterval(() => {
         const now = new Date();
-        document.getElementById('time-val').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
-        document.getElementById('date-val').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+        document.getElementById('cur-time').innerText = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}).toUpperCase();
+        document.getElementById('cur-date').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
     }, 1000);
 
     if(userID) {
@@ -144,32 +160,44 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            const adminTimeVal = conf.boxTime || conf.timeRange || ""; 
-            document.getElementById('time-header-label').setAttribute('data-val', adminTimeVal);
+            // Set Time from Admin Panel in Center
+            document.getElementById('admin-time-val').innerText = conf.boxTime || conf.timeRange || "--:--";
 
-            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
+            let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'' };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-                else if (p.status === 'time') { counts.time++; htmls.time += row; }
+                else if (p.status === 'time') { counts.time++; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
             });
             
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
-            ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`);
-                const listArea = document.getElementById(`list-${id}`);
-                const countTag = document.getElementById(`count-${id}`);
-                
-                if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
-                    el.style.display = "block";
-                    countTag.innerText = counts[id];
-                    listArea.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
-                    listArea.style.animationDuration = Math.max(counts[id] * 2.5, 5) + "s";
-                } else { el.style.display = "none"; }
-            });
+            // FLY BOX Display
+            const fBox = document.getElementById('box-fly');
+            if(pigeons.length > 0) {
+                fBox.style.display = "block";
+                document.getElementById('count-fly').innerText = counts.fly;
+                document.getElementById('list-fly').innerHTML = htmls.fly + '<div style="height:100px;"></div>' + htmls.fly;
+                document.getElementById('list-fly').style.animationDuration = Math.max(counts.fly * 3, 5) + "s";
+            }
+
+            // TIME BOX Display
+            const tBox = document.getElementById('box-time');
+            if(counts.time > 0) {
+                tBox.style.display = "block";
+                document.getElementById('count-time').innerText = counts.time;
+            } else { tBox.style.display = "none"; }
+
+            // OUT BOX Display
+            const oBox = document.getElementById('box-out');
+            if(counts.out > 0) {
+                oBox.style.display = "block";
+                document.getElementById('count-out').innerText = counts.out;
+                document.getElementById('list-out').innerHTML = htmls.out + '<div style="height:100px;"></div>' + htmls.out;
+                document.getElementById('list-out').style.animationDuration = Math.max(counts.out * 3, 5) + "s";
+            } else { oBox.style.display = "none"; }
         });
     }
 </script>
