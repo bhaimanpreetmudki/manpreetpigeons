@@ -14,25 +14,16 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Summary Section */
-        .summary-wrapper { 
-            position: absolute; bottom: 365px; left: 10px; 
-            display: none; gap: 12px; z-index: 1000; 
-        }
-        .sum-card { display: flex; border: 3px solid white; border-radius: 8px; overflow: hidden; min-width: 250px; height: 75px; }
-        .sum-label-area { background: #000; width: 65%; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
-        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
-
-        /* Fixed Box Container */
+        /* Main Container */
         .main-container { 
             position: absolute; left: 10px; right: 10px; bottom: 70px; 
             height: 280px; display: flex; flex-direction: row; gap: 15px; 
         }
+
         .box { 
-            width: calc(33.33% - 10px); /* ਸਾਈਜ਼ ਹਮੇਸ਼ਾ ਫਿਕਸ ਰਹੇਗਾ */
-            flex-shrink: 0; height: 100%; position: relative; 
+            width: calc(33.33% - 10px); flex-shrink: 0; height: 100%; position: relative; 
             border: 3px solid white; border-radius: 12px; overflow: hidden;
-            display: block; visibility: hidden; /* ਜਗ੍ਹਾ ਘੇਰ ਕੇ ਰੱਖੇਗਾ ਪਰ ਦਿਖੇਗਾ ਨਹੀਂ ਜੇ ਡਾਟਾ ਨਾ ਹੋਵੇ */
+            display: block; visibility: hidden; 
         }
         .has-data { visibility: visible; }
 
@@ -40,18 +31,30 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* Header Layout */
-        .box-header { 
-            height: 90px; width: 145px; background: #ff9933; color: black; 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: flex-start; padding-top: 10px;
-            position: absolute; right: 0; top: 0; 
-            border-left: 3px solid white; border-bottom: 3px solid white; z-index: 10; 
+        /* --- New Header & Summary Style (Like Remaining Box) --- */
+        .header-group {
+            position: absolute; right: 8px; top: 8px; 
+            display: flex; flex-direction: column; gap: 5px; z-index: 20;
         }
-        .header-label { font-size: 20px; font-weight: 900; line-height: 1.2; margin-bottom: 2px; }
-        .count-tag { font-size: 42px; font-weight: 1000; line-height: 1; }
 
-        /* Smooth Scroll */
+        /* Title Header Style */
+        .box-header { 
+            height: 45px; width: 140px; background: #ff9933; color: black; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 3px solid white; border-radius: 10px;
+        }
+        .header-label { font-size: 18px; font-weight: 900; }
+
+        /* Summary Box Style (Placed below header) */
+        .sub-sum-box {
+            height: 60px; width: 140px; background: #fff; color: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 3px solid white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .sub-sum-label { font-size: 12px; font-weight: 900; color: #555; margin-bottom: -2px; }
+        .sub-sum-val { font-size: 35px; font-weight: 1000; line-height: 1; }
+
+        /* Scroll Area */
         .scroll-window { position: absolute; top: 0; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; padding-top: 15px; } 
         .item { padding: 6px 15px; font-size: 40px; font-weight: 950; color: #ffcc00; text-shadow: 3px 3px 5px black; }
@@ -71,22 +74,37 @@
 </head>
 <body>
 
-<div class="summary-wrapper" id="summary-div">
-    <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div><div id="m-total" class="sum-val-area">0</div></div>
-    <div class="sum-card"><div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAIN"></div><div id="m-rem" class="sum-val-area">0</div></div>
-</div>
-
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span><span id="count-fly" class="count-tag">0</span></div>
+        <div class="header-group">
+            <div class="box-header"><span class="header-label flash-text" data-pa="ਉੱਡ ਰਹੇ" data-en="FLYING"></span></div>
+            <div class="sub-sum-box">
+                <span class="sub-sum-label">TOTAL</span>
+                <span id="m-total" class="sub-sum-val">0</span>
+            </div>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
+
     <div id="box-out" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span><span id="count-out" class="count-tag">0</span></div>
+        <div class="header-group">
+            <div class="box-header"><span class="header-label flash-text" data-pa="ਕੱਟੇ ਗਏ" data-en="OUT"></span></div>
+            <div class="sub-sum-box">
+                <span class="sub-sum-label">REMAIN</span>
+                <span id="m-rem" class="sub-sum-val">0</span>
+            </div>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
+
     <div id="box-time" class="box">
-        <div class="box-header"><span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span><span id="count-time" class="count-tag">0</span></div>
+        <div class="header-group">
+            <div class="box-header"><span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span></div>
+            <div class="sub-sum-box">
+                <span class="sub-sum-label">COUNT</span>
+                <span id="count-time" class="sub-sum-val">0</span>
+            </div>
+        </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
@@ -115,7 +133,6 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            document.getElementById('summary-div').style.display = (pigeons.length > 0 && conf.showScoreboard) ? "flex" : "none";
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
@@ -132,16 +149,15 @@
             
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+            document.getElementById('count-time').innerText = counts.time;
 
             ['fly','out','time'].forEach(id => {
                 const box = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
-                const count = document.getElementById(`count-${id}`);
                 
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.classList.add('has-data');
-                    count.innerText = counts[id];
-                    list.innerHTML = htmls[id] + htmls[id]; // Duplicate for smooth loop
+                    list.innerHTML = htmls[id] + htmls[id]; 
                     list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
                 } else {
                     box.classList.remove('has-data');
