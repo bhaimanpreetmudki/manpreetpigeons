@@ -6,26 +6,31 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         /* ======================================================
-           LAYOUT CONTROLS
+           MASTER CONTROLS (ਇੱਥੋਂ ਸਭ ਕੁਝ ਸੈੱਟ ਕਰੋ)
            ====================================================== */
         :root {
-            /* Summary Boxes (Total & Remain) - screen positions */
-            --sum-bottom: 280px;    
-            --total-left: 400px;    
-            --rem-left: 1040px;     
+            /* 1. SUMMARY BOXES (Total & Remain) */
+            --sum-bottom: 365px;    /* ਉੱਪਰ-ਥੱਲੇ (Bottom ਤੋਂ ਦੂਰੀ) */
+            --total-left: 400px;    /* TOTAL ਵਾਲਾ ਖੱਬੇ ਤੋਂ */
+            --rem-left: 1040px;     /* REMAIN ਵਾਲਾ ਖੱਬੇ ਤੋਂ */
+            --sum-w: 250px;         /* ਸਮਰੀ ਬਾਕਸ ਦੀ ਚੌੜਾਈ */
+            --sum-h: 75px;          /* ਸਮਰੀ ਬਾਕਸ ਦੀ ਉਚਾਈ */
 
-            /* Box Settings */
-            --list-bottom: 70px;    
-            --list-h: 280px;        /* ਲਿਸਟ ਬਾਕਸ ਦੀ ਪੁਰਾਣੀ ਹਾਈਟ */
-            
-            /* Inner Header Settings (Inside the list box) */
-            --hdr-w: 200px;         /* ਹੈਡਰ ਦੀ ਚੌੜਾਈ */
-            --hdr-h: 65px;          /* ਹੈਡਰ ਦੀ ਉਚਾਈ */
+            /* 2. MAIN LIST BOXES (Flying, Out, Time) */
+            --list-bottom: 70px;    /* ਟਿੱਕਰ ਦੇ ਬਿਲਕੁਲ ਉੱਪਰ (Bottom ਤੋਂ) */
+            --list-h: 280px;        /* ਤਿੰਨੋਂ ਬਕਸਿਆਂ ਦੀ ਉਚਾਈ */
+            --list-gap: 15px;       /* ਬਕਸਿਆਂ ਦੇ ਵਿਚਕਾਰ ਖਾਲੀ ਜਗ੍ਹਾ */
+            --list-side-margin: 10px; /* ਸਕ੍ਰੀਨ ਦੇ ਸਾਈਡਾਂ ਤੋਂ ਜਗ੍ਹਾ */
 
-            /* Colors & Fonts */
-            --name-size: 40px;      
-            --label-size: 18px; 
-            --count-size: 40px;
+            /* 3. INNER HEADERS (ਬਕਸੇ ਦੇ ਅੰਦਰ ਵਾਲੇ ਹੈਡਰ) */
+            --hdr-w: 200px;         /* ਅੰਦਰਲੇ ਹੈਡਰ ਦੀ ਚੌੜਾਈ */
+            --hdr-h: 65px;          /* ਅੰਦਰਲੇ ਹੈਡਰ ਦੀ ਉਚਾਈ */
+            --hdr-font-label: 18px; /* ਹੈਡਰ ਲਿਖਾਈ (FLYING ਆਦਿ) */
+            --hdr-font-count: 40px; /* ਹੈਡਰ ਨੰਬਰ (ਗਿਣਤੀ) */
+
+            /* 4. LIST ITEMS (ਕਬੂਤਰਾਂ ਦੇ ਨਾਮ) */
+            --name-size: 40px;      /* ਕਬੂਤਰ ਦੇ ਨਾਮ ਦਾ ਸਾਈਜ਼ */
+            --scroll-speed: 3s;     /* ਇੱਕ ਕਬੂਤਰ ਲਈ ਸਕ੍ਰੋਲ ਟਾਈਮ (ਜਿੰਨਾ ਘੱਟ, ਓਨਾ ਤੇਜ਼) */
         }
 
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
@@ -41,7 +46,7 @@
         }
         .sum-card { 
             position: absolute; display: flex; border: 3px solid white; 
-            border-radius: 8px; overflow: hidden; width: 250px; height: 75px; 
+            border-radius: 8px; overflow: hidden; width: var(--sum-w); height: var(--sum-h); 
             background: #000;
         }
         #total-card { left: var(--total-left); }
@@ -52,11 +57,12 @@
 
         /* --- Main Box Container --- */
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: var(--list-bottom); 
-            height: var(--list-h); display: flex; flex-direction: row; gap: 15px; 
+            position: absolute; left: var(--list-side-margin); right: var(--list-side-margin); 
+            bottom: var(--list-bottom); height: var(--list-h); 
+            display: flex; flex-direction: row; gap: var(--list-gap); 
         }
         .box { 
-            width: calc(33.33% - 10px); flex-shrink: 0; height: 100%; position: relative; 
+            flex: 1; height: 100%; position: relative; 
             border: 3px solid white; border-radius: 12px; overflow: hidden;
             display: block; visibility: hidden;
         }
@@ -66,7 +72,7 @@
         #box-out { background: #001a66; }
         #box-time { background: #660000; }
 
-        /* --- New Header Design Inside Box (Summary Style) --- */
+        /* --- Header Inside Box --- */
         .box-header-new { 
             position: absolute; top: 0; right: 0; 
             width: var(--hdr-w); height: var(--hdr-h); 
@@ -75,13 +81,13 @@
         }
         .hdr-label { 
             background: #000; color: #fff; width: 65%; 
-            font-size: var(--label-size); font-weight: 900; 
+            font-size: var(--hdr-font-label); font-weight: 900; 
             display: flex; align-items: center; justify-content: center; 
             border-right: 2px solid white; 
         }
         .hdr-val { 
             background: #fff; color: #000; width: 35%; 
-            font-size: var(--count-size); font-weight: 1000; 
+            font-size: var(--hdr-font-count); font-weight: 1000; 
             display: flex; align-items: center; justify-content: center; 
         }
 
@@ -182,16 +188,18 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
+            const speedBase = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scroll-speed'));
+
             ['fly','out','time'].forEach(id => {
                 const box = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
-                const count = document.getElementById(`count-${id}`);
+                const countVal = document.getElementById(`count-${id}`);
                 
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.classList.add('has-data');
-                    count.innerText = counts[id];
+                    countVal.innerText = counts[id];
                     list.innerHTML = htmls[id] + htmls[id]; 
-                    list.style.animationDuration = Math.max(counts[id] * 3, 8) + "s";
+                    list.style.animationDuration = Math.max(counts[id] * speedBase, 8) + "s";
                 } else {
                     box.classList.remove('has-data');
                 }
