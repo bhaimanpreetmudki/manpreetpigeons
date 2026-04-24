@@ -25,9 +25,24 @@
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
         .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
 
-        #box-fly { background: #000000; } /* Black for Flying */
-        #box-out { background: #001a66; } /* Blue for Out */
-        #box-time { background: #660000; } /* Red for Time */
+        #box-fly { background: #000000; } 
+        #box-out { background: #001a66; } 
+        #box-time { background: #660000; } 
+
+        /* Admin Time label above Time Box */
+        .admin-time-top {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            background: #ff9933;
+            color: black;
+            padding: 2px 15px;
+            font-size: 22px;
+            font-weight: 1000;
+            border: 3px solid white;
+            border-radius: 8px 8px 0 0;
+            white-space: nowrap;
+        }
 
         /* --- Yellow Header --- */
         .box-header { 
@@ -65,7 +80,6 @@
         .ticker-move { display: inline-block; animation: ticker 25s linear infinite; font-size: 32px; font-weight: 950; color: #000; padding-left: 100%; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Clock in Footer */
         .dt-box { background: #ff0000; color: white; height: 100%; padding: 0 20px; display: flex; justify-content: center; align-items: center; min-width: 250px; border-left: 4px solid #000; }
         #cur-time { font-size: 32px; font-weight: 950; }
     </style>
@@ -101,6 +115,7 @@
     </div>
 
     <div id="box-time" class="box">
+        <div class="admin-time-top" id="admin-time-display">--:--</div>
         <div class="box-header">
             <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
             <span id="count-time" class="count-tag">0</span>
@@ -112,9 +127,7 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box">
-        <div id="cur-time">00:00:00 AM</div>
-    </div>
+    <div class="dt-box"><div id="cur-time">00:00:00 AM</div></div>
 </div>
 
 <script>
@@ -139,6 +152,9 @@
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
+            
+            // Show Admin Time on Top Edge
+            document.getElementById('admin-time-display').innerText = conf.boxTime || conf.timeRange || "";
 
             let counts = { fly:0, out:0, time:0 }; 
             let htmls = { fly:'', out:'', time:'' };
@@ -146,8 +162,8 @@
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
                 if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-                else if (p.status === 'time') { counts.time++; htmls.time += row; }
                 else if (p.status === 'out') { counts.out++; htmls.out += row; }
+                else if (p.status === 'time') { counts.time++; htmls.time += row; }
             });
             
             document.getElementById('m-total').innerText = pigeons.length;
@@ -163,9 +179,7 @@
                     count.innerText = counts[id];
                     list.innerHTML = htmls[id] + '<div style="height:100px;"></div>' + htmls[id];
                     list.style.animationDuration = Math.max(counts[id] * 3, 5) + "s";
-                } else {
-                    box.style.display = "none";
-                }
+                } else { box.style.display = "none"; }
             });
         });
     }
