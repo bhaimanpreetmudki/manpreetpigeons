@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <title>PB29 Full Overlay 3</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mukta+Mahee:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 1920px; /* Standard Full HD */
+            height: 1080px;
+            overflow: hidden;
+            font-family: 'Mukta Mahee', sans-serif;
+            background: transparent; 
+        }
+
+        /* Bottom Section Container */
+        .bottom-overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            width: 95%;
+        }
+
+        /* Common Box Styling */
+        .overlay-box {
+            position: relative;
+            height: 120px;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 20px;
+        }
+
+        /* Header (Yellow Tags) */
+        .header-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #FFB400; /* Proper Golden Yellow */
+            color: #000;
+            font-weight: 800;
+            padding: 2px 12px;
+            border-radius: 3px;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        /* 1. Player List (Left - Black) */
+        .player-box {
+            background: rgba(15, 15, 15, 0.95);
+            flex: 1.5;
+            border-bottom: 6px solid #FFB400;
+        }
+
+        .player-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            color: #FFB400;
+            font-size: 22px;
+            margin-top: 15px;
+        }
+
+        /* 2. Status (Middle - Blue) */
+        .status-box {
+            background: rgba(0, 0, 128, 0.95);
+            flex: 1;
+            text-align: center;
+            border-bottom: 6px solid #FFB400;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        /* 3. Time (Right - Red) */
+        .time-box {
+            background: rgba(211, 47, 47, 0.95);
+            flex: 1;
+            text-align: center;
+            border-bottom: 6px solid #FFB400;
+            color: white;
+        }
+
+        .time-text {
+            font-size: 45px;
+            font-weight: 800;
+            margin-top: 10px;
+        }
+
+        /* PB29 Live Logo Top Left */
+        .logo-top {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .logo-text {
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        .live-dot {
+            color: red;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="logo-top">
+        <span class="logo-text">PB<span style="color:#FFB400">29</span> <span class="live-dot">●</span> LIVE</span>
+    </div>
+
+    <div class="bottom-overlay">
+        
+        <div class="overlay-box player-box">
+            <div class="header-tag">ਉਤਲੇ 10</div>
+            <div class="player-grid" id="playerList">
+                <div>1- ਮਨੀ ਗਰੇਵਾਲ</div>
+                <div>3- ਗੋਪੀ ਰੰਧਾਵਾ</div>
+                <div>2- ਦੀਪ ਬੈਂਸ</div>
+                <div>4- ਜਸਪ੍ਰੀਤ ਸੋਹੀ</div>
+            </div>
+        </div>
+
+        <div class="overlay-box status-box">
+            <div class="header-tag">ਬੰਦ ਹੈ</div>
+            <div id="statusContent">ਬੋਲੀ ਜਾਰੀ</div>
+        </div>
+
+        <div class="overlay-box time-box">
+            <div class="header-tag">ਟਾਈਮ</div>
+            <div class="time-text" id="liveTime">09:30 AM</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Time Update
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            document.getElementById('liveTime').innerText = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Admin Panel Integration Example
+        // Tusi Admin panel ton fetch karke eh values change kar sakde ho
+        function updateFromServer(data) {
+            if(data.status) document.getElementById('statusContent').innerText = data.status;
+            // More logic for admin panel...
+        }
+    </script>
+</body>
+</html>
