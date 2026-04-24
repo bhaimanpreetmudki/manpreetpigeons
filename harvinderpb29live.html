@@ -15,7 +15,7 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 10s infinite; }
 
-        /* Summary Section - ਸ਼ੁਰੂ ਵਿੱਚ ਛੁਪਿਆ ਹੋਇਆ */
+        /* Summary Section */
         .summary-wrapper { 
             position: absolute; 
             bottom: 365px; 
@@ -28,12 +28,32 @@
         .sum-label-area { background: #000; width: 65%; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; border-right: 2px solid white; }
         .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 45px; font-weight: 1000; display: flex; align-items: center; justify-content: center; }
 
-        /* Main Container */
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 70px; height: 280px; display: flex; flex-direction: row; gap: 15px; }
-        .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px; overflow: hidden; }
+        /* Main Container - ਹੁਣ ਬਾਕਸਾਂ ਦਾ ਸਾਈਜ਼ ਫਿਕਸ ਰਹੇਗਾ */
+        .main-container { 
+            position: absolute; 
+            left: 10px; 
+            right: 10px; 
+            bottom: 70px; 
+            height: 280px; 
+            display: flex; 
+            flex-direction: row; 
+            gap: 15px; 
+            justify-content: flex-start; /* ਬਾਕਸਾਂ ਨੂੰ ਖੱਬੇ ਪਾਸੇ ਰੱਖਣ ਲਈ */
+        }
+        .box { 
+            display: none; 
+            width: calc(33.33% - 10px); /* ਤਿੰਨ ਬਾਕਸਾਂ ਦੇ ਹਿਸਾਬ ਨਾਲ ਫਿਕਸ ਚੌੜਾਈ */
+            flex-shrink: 0; /* ਸਾਈਜ਼ ਨੂੰ ਘਟਣ ਤੋਂ ਰੋਕਣ ਲਈ */
+            height: 100%; 
+            position: relative; 
+            border: 3px solid white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+        }
 
         #box-fly { background: #000000; }
         #box-out { background: #001a66; }
+        #box-time { background: #660000; }
 
         .box-header { 
             height: 80px; 
@@ -61,7 +81,7 @@
         
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* Ticker */
+        /* Footer Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -101,6 +121,14 @@
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
+
+    <div id="box-time" class="box">
+        <div class="box-header">
+            <span class="header-label flash-text" data-pa="ਸਮਾਂ" data-en="TIME"></span>
+            <span id="count-time" class="count-tag">0</span>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div>
 </div>
 
 <div class="footer" id="ticker-div">
@@ -127,7 +155,6 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            // ਜੇਕਰ ਕੋਈ ਕਬੂਤਰ ਨਹੀਂ ਹੈ, ਤਾਂ Summary ਚੁਪਾ ਦਿਓ
             const summaryDiv = document.getElementById('summary-div');
             if (pigeons.length > 0 && conf.showScoreboard) {
                 summaryDiv.style.display = "flex";
@@ -139,13 +166,15 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
 
-            let counts = { fly:0, out:0 }; 
-            let htmls = { fly:'', out:'' };
+            let counts = { fly:0, out:0, time:0 }; 
+            let htmls = { fly:'', out:'', time:'' };
 
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name || '---'}</div>`;
-                if (p.status === 'fly' || p.status === 'time') { 
+                if (p.status === 'fly') { 
                     counts.fly++; htmls.fly += row; 
+                } else if (p.status === 'time') { 
+                    counts.time++; htmls.time += row;
                 } else if (p.status === 'out') { 
                     counts.out++; htmls.out += row; 
                 }
@@ -154,11 +183,12 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
-            ['fly','out'].forEach(id => {
+            ['fly','out','time'].forEach(id => {
                 const box = document.getElementById(`box-${id}`);
                 const list = document.getElementById(`list-${id}`);
                 const count = document.getElementById(`count-${id}`);
                 
+                // ਬਾਕਸ ਸਿਰਫ ਉਦੋਂ ਦਿਖੇਗਾ ਜਦੋਂ ਉਸ ਵਿੱਚ ਡਾਟਾ ਹੋਵੇਗਾ, ਪਰ ਸਾਈਜ਼ ਫਿਕਸ ਰਹੇਗਾ
                 if(counts[id] > 0 || (id === 'fly' && pigeons.length > 0)) {
                     box.style.display = "block";
                     count.innerText = counts[id];
