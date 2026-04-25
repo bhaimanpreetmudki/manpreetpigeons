@@ -12,9 +12,7 @@
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .help-box { background: white; color: black; padding: 6px 12px; border-radius: 6px; font-weight: 950; font-size: 14px; display: inline-block; cursor: pointer; text-decoration: none; }
         .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
-        
         .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
-        
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
@@ -22,22 +20,17 @@
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
-
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
-        
         textarea { width: 100%; height: 100px; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; outline: none; resize: none; box-sizing: border-box; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
-        
         .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 12px; border-radius: 8px; color: black; font-size: 16px; cursor: pointer; width: 100%; }
         .btn-update { width: 100%; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
         .btn-reset { width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; margin-bottom: 15px; }
-
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
-
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 55%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -139,22 +132,26 @@
                 const now = new Date();
                 if (now > expiryDate) {
                     isExpired = true;
+                    // ਕੰਟਰੋਲ ਲੁਕਾ ਦਿਓ ਪਰ ਲਿਸਟ ਚੱਲਦੀ ਰਹੇਗੀ
                     document.getElementById('controls-section').style.display = "none";
-                    document.getElementById('summary-section').style.display = "none";
                     document.querySelector('.btn-reset').style.display = "none";
                 }
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
                 document.getElementById('expDisp').innerText = expiryDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + (isExpired ? " (EXPIRED)" : "");
                 if(isExpired) document.getElementById('expDisp').style.color = "red";
-                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
+                
+                db.ref('users/' + userID).on('value', s => { 
+                    localData = s.val() || {pigeons:[], config:{}}; 
+                    render(); 
+                });
                 setupPlans();
             } else { alert("Incorrect Password!"); }
         });
     }
 
     function addP() {
-        if(isExpired) { alert("Plan Expired!"); return; }
+        if(isExpired) { alert("ਪਲਾਨ ਐਕਸਪਾਇਰ ਹੈ, ਕਿਰਪਾ ਕਰਕੇ ਰੀਚਾਰਜ ਕਰੋ।"); return; }
         const inputVal = document.getElementById('pName').value; 
         if(!inputVal.trim()) return;
         const names = inputVal.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -176,16 +173,17 @@
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
         let counts = { fly: 0, time: 0, out: 0 };
-        const list = document.getElementById('listArea'); list.innerHTML = "";
+        const list = document.getElementById('listArea'); 
+        list.innerHTML = "";
         const pigeonList = localData.pigeons || [];
         pigeonList.forEach((p, idx) => {
             if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
             list.innerHTML += `<div class="pigeon-row">
                 <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" ${isExpired?'disabled':''} onchange="editName(${p.id},this.value)"></div>
                 <div class="btn-part">
-                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="${isExpired?'':'setStatus('+p.id+',\'fly\')'}">F</button>
-                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="${isExpired?'':'setStatus('+p.id+',\'time\')'}">T</button>
-                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="${isExpired?'':'setStatus('+p.id+',\'out\')'}">O</button>
+                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="${isExpired?'alert(\'ਰੀਚਾਰਜ ਕਰੋ\')':'setStatus('+p.id+',\'fly\')'}">F</button>
+                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="${isExpired?'alert(\'ਰੀਚਾਰਜ ਕਰੋ\')':'setStatus('+p.id+',\'time\')'}">T</button>
+                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="${isExpired?'alert(\'ਰੀਚਾਰਜ ਕਰੋ\')':'setStatus('+p.id+',\'out\')'}">O</button>
                     ${!isExpired?`<button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>`:''}
                 </div>
             </div>`;
