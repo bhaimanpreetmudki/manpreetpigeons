@@ -14,15 +14,9 @@
         .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
         
-        /* Modal Style */
-        #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
-        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
-        
-        /* Control Section Updates */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
         
-        /* Big Textarea for Teams */
         textarea { width: 100%; height: 100px; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; outline: none; resize: none; box-sizing: border-box; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
         
@@ -64,17 +58,15 @@
         <div style="text-align: right;"><span style="font-size:10px; color:#888; font-weight:bold;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
-    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
-
     <div id="controls-section" class="controls-container">
         <div class="row">
-            <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਲਿਖੋ (ਜਿਵੇਂ: ਮਨਪ੍ਰੀਤ, ਜਸਪਾਲ, ਮੁਦਕੀ)"></textarea>
+            <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਕੋਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ... ਜਿਵੇਂ: Jaspal, Manpreet, Mudki"></textarea>
             <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
         </div>
         
         <div class="row">
-            <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ ਲਿਖੋ (ਜੇਕਰ ਲੋੜ ਹੋਵੇ)">
-            <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
+            <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ (ਖਾਲੀ ਛੱਡ ਸਕਦੇ ਹੋ)">
+            <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
             <button class="btn-update" onclick="save()">UPDATE SETTINGS</button>
         </div>
 
@@ -92,7 +84,6 @@
     </div>
 
     <button class="btn-reset" onclick="resetData()">🔄 RESET TOURNAMENT</button>
-
     <div id="listArea"></div>
 </div>
 
@@ -112,21 +103,36 @@
                 document.getElementById('main-content').style.display = "block";
                 const d = new Date(data.expiry);
                 document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                db.ref('users/' + userID).on('value', s => { localData = s.val() || {pigeons:[], config:{}}; render(); });
+                db.ref('users/' + userID).on('value', s => { 
+                    localData = s.val() || {pigeons:[], config:{}}; 
+                    if(!localData.pigeons) localData.pigeons = [];
+                    render(); 
+                });
             } else { alert("Incorrect Password!"); }
         });
     }
 
+    // --- ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ ਫੰਕਸ਼ਨ ---
     function addP() {
         const inputVal = document.getElementById('pName').value; 
         if(!inputVal.trim()) return;
-        const names = inputVal.split(/[,\n]/).map(name => name.trim()).filter(name => name !== "");
+
+        // ਕੋਮਾ (,) ਦੇ ਹਿਸਾਬ ਨਾਲ ਨਾਮ ਵੱਖ ਕਰਨੇ
+        const names = inputVal.split(',').map(n => n.trim()).filter(n => n !== "");
+
         if(!localData.pigeons) localData.pigeons = [];
+
+        // ਹਰ ਨਾਮ ਲਈ ਅਲੱਗ ਐਂਟਰੀ ਬਣਾਉਣੀ
         names.forEach(n => {
-            localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' });
+            localData.pigeons.push({ 
+                id: Date.now() + Math.random(), 
+                name: n, 
+                status: 'fly' 
+            });
         });
+
         document.getElementById('pName').value = ""; 
-        save();
+        save(); // ਡੇਟਾਬੇਸ ਵਿੱਚ ਸੇਵ ਕਰਨਾ
     }
 
     function save() {
@@ -138,7 +144,7 @@
             ticker: document.getElementById('inpTicker').value, 
             boxTime: timeVal || "" 
         };
-        db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
+        db.ref('users/' + userID).update({ pigeons: localData.pigeons, config: config });
     }
 
     function render() {
@@ -147,10 +153,17 @@
         document.getElementById('swTicker').checked = conf.showTicker;
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        
         let counts = { fly: 0, time: 0, out: 0 };
-        const list = document.getElementById('listArea'); list.innerHTML = "";
-        (localData.pigeons || []).forEach((p, idx) => {
-            if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
+        const list = document.getElementById('listArea'); 
+        list.innerHTML = "";
+
+        const pigeonList = localData.pigeons || [];
+        pigeonList.forEach((p, idx) => {
+            if(p.status === 'fly') counts.fly++; 
+            else if(p.status === 'time') counts.time++; 
+            else if(p.status === 'out') counts.out++;
+
             list.innerHTML += `<div class="pigeon-row">
                 <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id}, this.value)"></div>
                 <div class="btn-part">
@@ -161,17 +174,36 @@
                 </div>
             </div>`;
         });
-        document.getElementById('sum-total').innerText = (localData.pigeons || []).length;
+
+        document.getElementById('sum-total').innerText = pigeonList.length;
         document.getElementById('sum-fly').innerText = counts.fly;
         document.getElementById('sum-time').innerText = counts.time;
         document.getElementById('sum-out').innerText = counts.out;
     }
 
-    function editName(id, newName) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p); save(); }
-    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
-    function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
-    function resetData() { if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) { localData.pigeons = []; save(); } }
-    function toggleRecharge(show) { document.getElementById('recharge-modal').style.display = show ? 'block' : 'none'; }
+    function editName(id, newName) { 
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p); 
+        save(); 
+    }
+
+    function setStatus(id, s) { 
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
+        save(); 
+    }
+
+    function delP(id) { 
+        if(confirm("Delete Party?")) { 
+            localData.pigeons = localData.pigeons.filter(p => p.id !== id); 
+            save(); 
+        } 
+    }
+
+    function resetData() { 
+        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) { 
+            localData.pigeons = []; 
+            save(); 
+        } 
+    }
 </script>
 </body>
 </html>
