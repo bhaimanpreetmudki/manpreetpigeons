@@ -12,8 +12,17 @@
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .help-box { background: white; color: black; padding: 4px 10px; border-radius: 6px; font-weight: 950; font-size: 16px; display: inline-block; margin-top: 4px; cursor: pointer; }
         .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
+        
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
         
+        #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
+        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
+        .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
+        .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
+        .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
+        .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
+
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
         
@@ -21,7 +30,7 @@
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
         
         .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 12px; border-radius: 8px; color: black; font-size: 16px; cursor: pointer; width: 100%; }
-        .btn-update { width: 100%; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; }
+        .btn-update { width: 100%; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
         .btn-reset { width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; margin-bottom: 15px; }
 
         .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
@@ -58,16 +67,18 @@
         <div style="text-align: right;"><span style="font-size:10px; color:#888; font-weight:bold;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
+    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLANS</button>
+
     <div id="controls-section" class="controls-container">
         <div class="row">
-            <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਕੋਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ... ਜਿਵੇਂ: Jaspal, Manpreet, Mudki"></textarea>
+            <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਕੋਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
             <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
         </div>
         
         <div class="row">
             <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ (ਖਾਲੀ ਛੱਡ ਸਕਦੇ ਹੋ)">
             <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
-            <button class="btn-update" onclick="save()">UPDATE SETTINGS</button>
+            <button class="btn-update" onclick="save()">TICKER UPDATE</button>
         </div>
 
         <div class="sw-grid">
@@ -85,6 +96,14 @@
 
     <button class="btn-reset" onclick="resetData()">🔄 RESET TOURNAMENT</button>
     <div id="listArea"></div>
+
+    <div id="recharge-modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; color:#f39c12; margin-bottom:20px;">CHOOSE RECHARGE PLAN</h3>
+            <div id="plans-container"></div>
+            <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:15px; background:#444; color:white; border:none; border-radius:10px; font-weight:bold;">CLOSE</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -94,6 +113,31 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
     let localData = { pigeons: [], config: {} };
+
+    const plans = [
+        { name: "1 DAY PLAN", price: 200, id: "1Day" },
+        { name: "2 DAY PLAN", price: 300, id: "2Day" },
+        { name: "10 DAY PLAN", price: 1000, id: "10Day" },
+        { name: "1 MONTH PLAN", price: 2000, id: "1Month" }
+    ];
+
+    function setupPlans() {
+        const container = document.getElementById('plans-container');
+        container.innerHTML = "";
+        plans.forEach(p => {
+            const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
+            container.innerHTML += `
+                <div class="plan-card">
+                    <h2>${p.name}</h2>
+                    <b>₹${p.price}</b>
+                    <div class="pay-grid">
+                        <a href="upi://pay?${commonURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
+                        <a href="upi://pay?${commonURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
+                        <a href="upi://pay?${commonURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
+                    </div>
+                </div>`;
+        });
+    }
 
     function checkLogin() {
         db.ref('users/' + userID).once('value', snap => {
@@ -105,34 +149,23 @@
                 document.getElementById('expDisp').innerText = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
                 db.ref('users/' + userID).on('value', s => { 
                     localData = s.val() || {pigeons:[], config:{}}; 
-                    if(!localData.pigeons) localData.pigeons = [];
                     render(); 
                 });
+                setupPlans();
             } else { alert("Incorrect Password!"); }
         });
     }
 
-    // --- ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ ਫੰਕਸ਼ਨ ---
     function addP() {
         const inputVal = document.getElementById('pName').value; 
         if(!inputVal.trim()) return;
-
-        // ਕੋਮਾ (,) ਦੇ ਹਿਸਾਬ ਨਾਲ ਨਾਮ ਵੱਖ ਕਰਨੇ
         const names = inputVal.split(',').map(n => n.trim()).filter(n => n !== "");
-
         if(!localData.pigeons) localData.pigeons = [];
-
-        // ਹਰ ਨਾਮ ਲਈ ਅਲੱਗ ਐਂਟਰੀ ਬਣਾਉਣੀ
         names.forEach(n => {
-            localData.pigeons.push({ 
-                id: Date.now() + Math.random(), 
-                name: n, 
-                status: 'fly' 
-            });
+            localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' });
         });
-
         document.getElementById('pName').value = ""; 
-        save(); // ਡੇਟਾਬੇਸ ਵਿੱਚ ਸੇਵ ਕਰਨਾ
+        save();
     }
 
     function save() {
@@ -144,7 +177,7 @@
             ticker: document.getElementById('inpTicker').value, 
             boxTime: timeVal || "" 
         };
-        db.ref('users/' + userID).update({ pigeons: localData.pigeons, config: config });
+        db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: config });
     }
 
     function render() {
@@ -181,29 +214,11 @@
         document.getElementById('sum-out').innerText = counts.out;
     }
 
-    function editName(id, newName) { 
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p); 
-        save(); 
-    }
-
-    function setStatus(id, s) { 
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
-        save(); 
-    }
-
-    function delP(id) { 
-        if(confirm("Delete Party?")) { 
-            localData.pigeons = localData.pigeons.filter(p => p.id !== id); 
-            save(); 
-        } 
-    }
-
-    function resetData() { 
-        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) { 
-            localData.pigeons = []; 
-            save(); 
-        } 
-    }
+    function editName(id, newName) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName} : p); save(); }
+    function setStatus(id, s) { localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); save(); }
+    function delP(id) { if(confirm("Delete Party?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); save(); } }
+    function resetData() { if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) { localData.pigeons = []; save(); } }
+    function toggleRecharge(show) { document.getElementById('recharge-modal').style.display = show ? 'block' : 'none'; }
 </script>
 </body>
 </html>
