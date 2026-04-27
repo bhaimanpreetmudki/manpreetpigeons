@@ -11,10 +11,9 @@
         body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .help-box { background: white; color: black; padding: 6px 12px; border-radius: 6px; font-weight: 950; font-size: 14px; display: inline-block; cursor: pointer; text-decoration: none; }
-        .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
+        .status-val { font-size: 13px; font-weight: 900; color: #2ecc71; text-transform: uppercase; }
         .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
         
-        /* Overlay Links Styling */
         .overlay-links-box { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; border-top: 4px solid #007bff; }
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .link-btn { background: #333; color: #3498db; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 11px; font-weight: bold; border: 1px solid #444; text-transform: uppercase; }
@@ -81,7 +80,7 @@
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
             <div class="row">
-                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਅਪਡੇਟ ਕਰਨ ਲਈ ਇਸ ਤਰਾਂ (ਫ਼ਿਰੋਜ਼ਪੁਰ, ਫਰੀਦਕੋਟ, ਮੋਗਾ) ਟੀਮਾਂ ਦੇ ਨਾਮ ਨਾਲ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
+                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਅਪਡੇਟ ਕਰਨ ਲਈ..."></textarea>
                 <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
             </div>
             <div class="row">
@@ -111,7 +110,6 @@
     <div id="expire-msg" style="display:none; text-align:center; padding:40px 20px; background:#1a1d21; border-radius:12px; border:1px solid #dc3545; margin-top:20px;">
         <i class="fas fa-exclamation-triangle" style="font-size:40px; color:#dc3545; margin-bottom:15px;"></i>
         <h2 style="color:#dc3545; margin:0;">PLAN EXPIRED</h2>
-        <p style="color:#888;">ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਚੁੱਕਾ ਹੈ।</p>
     </div>
 
     <div id="recharge-modal">
@@ -124,18 +122,15 @@
 </div>
 
 <script>
-    // Database Config
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Get User ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
     let localData = { pigeons: [], config: {} };
     let isExpired = false;
 
-    // 1. Setup Client Name & Overlay Links Immediately
     if(userID) {
         document.getElementById('client-name-display').innerText = userID;
         document.getElementById('link-t1').href = `overlay.html?id=${userID}`;
@@ -170,7 +165,7 @@
     }
 
     function checkLogin() {
-        if(!userID) { alert("ID NOT FOUND IN URL!"); return; }
+        if(!userID) { alert("ID NOT FOUND!"); return; }
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password === document.getElementById('adminPass').value) {
@@ -186,7 +181,8 @@
                     document.getElementById('expDisp').style.color = "red";
                     document.getElementById('expDisp').innerText = "EXPIRED";
                 } else {
-                    document.getElementById('expDisp').innerText = expiryDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+                    const options = { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true };
+                    document.getElementById('expDisp').innerText = expiryDate.toLocaleString('en-GB', options);
                     db.ref('users/' + userID).on('value', s => { 
                         localData = s.val() || {pigeons:[], config:{}}; 
                         render(); 
@@ -234,16 +230,15 @@
         
         pigeonList.forEach((p, idx) => {
             if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
-            list.innerHTML += `
-                <div class="pigeon-row">
-                    <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
-                    <div class="btn-part">
-                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
-                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
-                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
-                        <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
-                    </div>
-                </div>`;
+            list.innerHTML += `<div class="pigeon-row">
+                <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
+                <div class="btn-part">
+                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
+                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
+                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
+                    <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
+                </div>
+            </div>`;
         });
         document.getElementById('sum-total').innerText = pigeonList.length;
         document.getElementById('sum-fly').innerText = counts.fly;
