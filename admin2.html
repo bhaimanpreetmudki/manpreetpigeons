@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin - Manpreet Mudki</title>
+    <title>Admin Panel - Manpreet Mudki</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -17,8 +17,8 @@
         /* Overlay Links Styling */
         .overlay-links-box { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; border-top: 4px solid #007bff; }
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .link-btn { background: #333; color: #007bff; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #444; overflow: hidden; text-overflow: ellipsis; }
-        .link-btn:hover { background: #444; color: white; }
+        .link-btn { background: #333; color: #3498db; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 11px; font-weight: bold; border: 1px solid #444; text-transform: uppercase; }
+        .link-btn:hover { background: #007bff; color: white; }
 
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
@@ -64,27 +64,29 @@
         <div style="text-align: right;"><span style="font-size:10px; color:#888; font-weight:bold;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
-    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
-
     <div class="overlay-links-box">
-        <span style="font-size: 12px; font-weight: bold; color: #888;"><i class="fas fa-link"></i> LIVE OVERLAY LINKS (Copy for OBS)</span>
+        <span style="font-size: 12px; font-weight: bold; color: #888;">
+            <i class="fas fa-link"></i> LIVE LINKS FOR: <b id="client-name-display" style="color:#f39c12; text-transform:uppercase;">--</b>
+        </span>
         <div class="link-grid">
-            <a href="#" id="link-t1" target="_blank" class="link-btn">THEME 1</a>
-            <a href="#" id="link-t2" target="_blank" class="link-btn">THEME 2</a>
-            <a href="#" id="link-t3" target="_blank" class="link-btn">THEME 3</a>
-            <a href="#" id="link-t4" target="_blank" class="link-btn">THEME 4</a>
+            <a href="#" id="link-t1" target="_blank" class="link-btn">Overlay 1</a>
+            <a href="#" id="link-t2" target="_blank" class="link-btn">Overlay 2</a>
+            <a href="#" id="link-t3" target="_blank" class="link-btn">Overlay 3</a>
+            <a href="#" id="link-t4" target="_blank" class="link-btn">Overlay 4</a>
         </div>
     </div>
+
+    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
 
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
             <div class="row">
-                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ..."></textarea>
+                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ... (ਕਾਮੇ ਲਗਾ ਕੇ ਲਿਖੋ)"></textarea>
                 <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
             </div>
             <div class="row">
-                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ">
-                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ">
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
                 <select id="inpTheme" style="padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; margin-top: 5px; outline: none;">
                     <option value="theme1">THEME 1 (Right Side)</option>
                     <option value="theme2">THEME 2 (Left Side)</option>
@@ -122,20 +124,24 @@
 </div>
 
 <script>
+    // Database Config
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    // Get User ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
     let localData = { pigeons: [], config: {} };
     let isExpired = false;
 
-    // Set Overlay Links
+    // 1. Setup Client Name & Overlay Links Immediately
     if(userID) {
-        document.getElementById('link-t1').href = `index.html?id=${userID}&theme=theme1`;
-        document.getElementById('link-t2').href = `index.html?id=${userID}&theme=theme2`;
-        document.getElementById('link-t3').href = `index.html?id=${userID}&theme=theme3`;
-        document.getElementById('link-t4').href = `index.html?id=${userID}&theme=theme4`;
+        document.getElementById('client-name-display').innerText = userID;
+        document.getElementById('link-t1').href = `overlay.html?id=${userID}`;
+        document.getElementById('link-t2').href = `overlay2.html?id=${userID}`;
+        document.getElementById('link-t3').href = `overlay3.html?id=${userID}`;
+        document.getElementById('link-t4').href = `overlay4.html?id=${userID}`;
     }
 
     const plans = [
@@ -164,6 +170,7 @@
     }
 
     function checkLogin() {
+        if(!userID) { alert("ID NOT FOUND IN URL!"); return; }
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password === document.getElementById('adminPass').value) {
@@ -171,6 +178,7 @@
                 const now = new Date();
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
+                
                 if (now > expiryDate) {
                     isExpired = true;
                     document.getElementById('admin-controls-wrapper').style.display = "none";
@@ -202,12 +210,10 @@
 
     function save() {
         if(isExpired) return;
-        const timeVal = document.getElementById('inpBoxTime').value.trim();
-        const selectedTheme = document.getElementById('inpTheme').value;
         const config = { 
             ticker: document.getElementById('inpTicker').value, 
-            boxTime: timeVal || "",
-            activeTheme: selectedTheme 
+            boxTime: document.getElementById('inpBoxTime').value.trim() || "",
+            activeTheme: document.getElementById('inpTheme').value 
         };
         db.ref('users/' + userID).update({ 
             pigeons: localData.pigeons || [], 
@@ -220,22 +226,24 @@
         const conf = localData.config || {};
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
-        if(conf.activeTheme) { document.getElementById('inpTheme').value = conf.activeTheme; }
+        if(conf.activeTheme) document.getElementById('inpTheme').value = conf.activeTheme;
         
         let counts = { fly: 0, time: 0, out: 0 };
         const list = document.getElementById('listArea'); list.innerHTML = "";
         const pigeonList = localData.pigeons || [];
+        
         pigeonList.forEach((p, idx) => {
             if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
-            list.innerHTML += `<div class="pigeon-row">
-                <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
-                <div class="btn-part">
-                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
-                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
-                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
-                    <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
-                </div>
-            </div>`;
+            list.innerHTML += `
+                <div class="pigeon-row">
+                    <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
+                    <div class="btn-part">
+                        <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
+                        <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
+                        <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
+                        <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
+                    </div>
+                </div>`;
         });
         document.getElementById('sum-total').innerText = pigeonList.length;
         document.getElementById('sum-fly').innerText = counts.fly;
