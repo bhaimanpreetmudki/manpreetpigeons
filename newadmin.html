@@ -12,9 +12,7 @@
         .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
         .help-box { background: white; color: black; padding: 6px 12px; border-radius: 6px; font-weight: 950; font-size: 14px; display: inline-block; cursor: pointer; text-decoration: none; }
         .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
-        
         .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
-        
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
@@ -22,22 +20,17 @@
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
         .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
-
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
-        
         textarea { width: 100%; height: 100px; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; outline: none; resize: none; box-sizing: border-box; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
-        
         .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 12px; border-radius: 8px; color: black; font-size: 16px; cursor: pointer; width: 100%; }
         .btn-update { width: 100%; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
         .btn-reset { width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; margin-bottom: 15px; }
-
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
         .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
-
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 55%; display: flex; align-items: center; gap: 8px; }
         .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
@@ -45,8 +38,7 @@
         .btn-part { width: 45%; display: flex; justify-content: flex-end; gap: 5px; }
         .st-btn { border: none; padding: 10px 0; border-radius: 5px; font-weight: 900; font-size: 14px; opacity: 0.2; color: white; width: 38px; text-align: center; }
         .st-btn.active { opacity: 1; border: 1.5px solid white; }
-        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; } 
-        
+        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
     </style>
 </head>
 <body>
@@ -69,24 +61,22 @@
 
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
-    <div class="row">
-        <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ..."></textarea>
-        <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
-    </div>
-    <div class="row">
-        <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ">
-        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
-        
-        <select id="inpTheme" style="padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; margin-top: 5px; outline: none;">
-            <option value="theme1">THEME 1 (BLUE CLASSIC)</option>
-            <option value="theme2">THEME 2 (DARK MODERN)</option>
-            <option value="theme3">THEME 3 (GOLDEN SPECIAL)</option>
-            <option value="theme4">THEME 4 (NEWS STYLE)</option>
-        </select>
-
-        <button class="btn-update" onclick="save()">TICKER UPDATE</button>
-    </div>
-</div>
+            <div class="row">
+                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ..."></textarea>
+                <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
+            </div>
+            <div class="row">
+                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ">
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+                <select id="inpTheme" style="padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; margin-top: 5px; outline: none;">
+                    <option value="theme1">THEME 1 (BLUE CLASSIC)</option>
+                    <option value="theme2">THEME 2 (DARK MODERN)</option>
+                    <option value="theme3">THEME 3 (GOLDEN SPECIAL)</option>
+                    <option value="theme4">THEME 4 (NEWS STYLE)</option>
+                </select>
+                <button class="btn-update" onclick="save()">TICKER UPDATE</button>
+            </div>
+        </div>
 
         <div id="summary-section" class="admin-sum-grid">
             <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
@@ -102,7 +92,7 @@
     <div id="expire-msg" style="display:none; text-align:center; padding:40px 20px; background:#1a1d21; border-radius:12px; border:1px solid #dc3545; margin-top:20px;">
         <i class="fas fa-exclamation-triangle" style="font-size:40px; color:#dc3545; margin-bottom:15px;"></i>
         <h2 style="color:#dc3545; margin:0;">PLAN EXPIRED</h2>
-        <p style="color:#888;">ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਚੁੱਕਾ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਉੱਪਰ ਦਿੱਤੇ ਬਟਨ ਤੋਂ ਰੀਚਾਰਜ ਕਰੋ ਜਾਂ ਹੈਲਪਲਾਈਨ 'ਤੇ ਸੰਪਰਕ ਕਰੋ।</p>
+        <p style="color:#888;">ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਚੁੱਕਾ ਹੈ।</p>
     </div>
 
     <div id="recharge-modal">
@@ -154,13 +144,10 @@
             if(data && data.password === document.getElementById('adminPass').value) {
                 const expiryDate = new Date(data.expiry);
                 const now = new Date();
-                
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
-                
                 if (now > expiryDate) {
                     isExpired = true;
-                    // ਕੰਟਰੋਲ ਵਾਲਾ ਹਿੱਸਾ ਹਟਾ ਦਿਓ
                     document.getElementById('admin-controls-wrapper').style.display = "none";
                     document.getElementById('expire-msg').style.display = "block";
                     document.getElementById('expDisp').style.color = "red";
@@ -185,33 +172,22 @@
         if(!localData.pigeons) localData.pigeons = [];
         names.forEach(n => { localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' }); });
         document.getElementById('pName').value = ""; 
-        function save() {
-    if(isExpired) return;
-    const timeVal = document.getElementById('inpBoxTime').value.trim();
-    const selectedTheme = document.getElementById('inpTheme').value; // ਨਵੀਂ ਲਾਈਨ
-
-    const config = { 
-        ticker: document.getElementById('inpTicker').value, 
-        boxTime: timeVal || "",
-        activeTheme: selectedTheme // ਨਵੀਂ ਲਾਈਨ
-    };
-    
-    db.ref('users/' + userID).update({ 
-        pigeons: localData.pigeons || [], 
-        config: {...localData.config, ...config} 
-    });
-}
-
-// --- ਇਸ ਤੋਂ ਹੇਠਾਂ render() ਫੰਕਸ਼ਨ ਹੋਵੇਗਾ ---
-function render() {
-    // ...
-}
+        save();
+    }
 
     function save() {
         if(isExpired) return;
         const timeVal = document.getElementById('inpBoxTime').value.trim();
-        const config = { ticker: document.getElementById('inpTicker').value, boxTime: timeVal || "" };
-        db.ref('users/' + userID).update({ pigeons: localData.pigeons || [], config: {...localData.config, ...config} });
+        const selectedTheme = document.getElementById('inpTheme').value;
+        const config = { 
+            ticker: document.getElementById('inpTicker').value, 
+            boxTime: timeVal || "",
+            activeTheme: selectedTheme 
+        };
+        db.ref('users/' + userID).update({ 
+            pigeons: localData.pigeons || [], 
+            config: {...localData.config, ...config} 
+        });
     }
 
     function render() {
@@ -219,10 +195,8 @@ function render() {
         const conf = localData.config || {};
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
-        // ਇਹ ਲਾਈਨ ਜੋੜੋ
-    if(conf.activeTheme) {
-        document.getElementById('inpTheme').value = conf.activeTheme;
-    }
+        if(conf.activeTheme) { document.getElementById('inpTheme').value = conf.activeTheme; }
+        
         let counts = { fly: 0, time: 0, out: 0 };
         const list = document.getElementById('listArea'); list.innerHTML = "";
         const pigeonList = localData.pigeons || [];
