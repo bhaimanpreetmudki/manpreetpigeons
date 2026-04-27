@@ -58,7 +58,13 @@
         .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
         .item { padding: 3px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
-        .item-num { color: #f39c12; min-width: 50px; }
+        .item-num { color: #f39c12; min-width: 50px; } 
+        #box-time-val {
+    /* ਪਹਿਲਾਂ ਇਹ 22px ਸੀ, ਹੁਣ ਇਸ ਨੂੰ 35px ਜਾਂ ਆਪਣੀ ਮਰਜ਼ੀ ਅਨੁਸਾਰ ਵਧਾ ਲਓ */
+    font-size: 35px !important; 
+    font-weight: 950;
+    margin-left: 10px; /* ਥੋੜੀ ਜਗ੍ਹਾ ਛੱਡਣ ਲਈ */
+}
         #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
 
         @keyframes constantScroll { 
