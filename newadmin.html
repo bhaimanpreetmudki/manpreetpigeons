@@ -45,7 +45,8 @@
         .btn-part { width: 45%; display: flex; justify-content: flex-end; gap: 5px; }
         .st-btn { border: none; padding: 10px 0; border-radius: 5px; font-weight: 900; font-size: 14px; opacity: 0.2; color: white; width: 38px; text-align: center; }
         .st-btn.active { opacity: 1; border: 1.5px solid white; }
-        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
+        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; } 
+        
     </style>
 </head>
 <body>
@@ -68,16 +69,24 @@
 
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
-            <div class="row">
-                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਕੋਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
-                <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
-            </div>
-            <div class="row">
-                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ">
-                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
-                <button class="btn-update" onclick="save()">TICKER UPDATE</button>
-            </div>
-        </div>
+    <div class="row">
+        <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ..."></textarea>
+        <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
+    </div>
+    <div class="row">
+        <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ">
+        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+        
+        <select id="inpTheme" style="padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; margin-top: 5px; outline: none;">
+            <option value="theme1">THEME 1 (BLUE CLASSIC)</option>
+            <option value="theme2">THEME 2 (DARK MODERN)</option>
+            <option value="theme3">THEME 3 (GOLDEN SPECIAL)</option>
+            <option value="theme4">THEME 4 (NEWS STYLE)</option>
+        </select>
+
+        <button class="btn-update" onclick="save()">TICKER UPDATE</button>
+    </div>
+</div>
 
         <div id="summary-section" class="admin-sum-grid">
             <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
@@ -176,8 +185,27 @@
         if(!localData.pigeons) localData.pigeons = [];
         names.forEach(n => { localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' }); });
         document.getElementById('pName').value = ""; 
-        save();
-    }
+        function save() {
+    if(isExpired) return;
+    const timeVal = document.getElementById('inpBoxTime').value.trim();
+    const selectedTheme = document.getElementById('inpTheme').value; // ਨਵੀਂ ਲਾਈਨ
+
+    const config = { 
+        ticker: document.getElementById('inpTicker').value, 
+        boxTime: timeVal || "",
+        activeTheme: selectedTheme // ਨਵੀਂ ਲਾਈਨ
+    };
+    
+    db.ref('users/' + userID).update({ 
+        pigeons: localData.pigeons || [], 
+        config: {...localData.config, ...config} 
+    });
+}
+
+// --- ਇਸ ਤੋਂ ਹੇਠਾਂ render() ਫੰਕਸ਼ਨ ਹੋਵੇਗਾ ---
+function render() {
+    // ...
+}
 
     function save() {
         if(isExpired) return;
@@ -191,6 +219,10 @@
         const conf = localData.config || {};
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        // ਇਹ ਲਾਈਨ ਜੋੜੋ
+    if(conf.activeTheme) {
+        document.getElementById('inpTheme').value = conf.activeTheme;
+    }
         let counts = { fly: 0, time: 0, out: 0 };
         const list = document.getElementById('listArea'); list.innerHTML = "";
         const pigeonList = localData.pigeons || [];
