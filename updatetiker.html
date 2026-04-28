@@ -234,8 +234,8 @@
                 currentTickerText = newTicker;
                 tickerEl.innerText = currentTickerText;
                 
-                // ਸਪੀਡ ਫਿਕਸ: ਅੱਖਰਾਂ ਦੇ ਹਿਸਾਬ ਨਾਲ ਟਾਈਮ (0.5 ਨਾਲ ਗੁਣਾ ਕਰਨ ਤੇ ਸਪੀਡ ਸਹੀ ਰਹੇਗੀ)
-                const duration = Math.max(15, currentTickerText.length * 0.5); 
+                // ਸਪੀਡ ਫਿਕਸ: ਅੱਖਰਾਂ ਦੇ ਹਿਸਾਬ ਨਾਲ ਟਾਈਮ (0.3 ਨਾਲ ਗੁਣਾ ਕਰਨ ਤੇ ਸਪੀਡ ਸਹੀ ਰਹੇਗੀ)
+                const duration = Math.max(15, currentTickerText.length * 0.3); 
                 
                 tickerEl.style.animation = 'none'; 
                 tickerEl.offsetHeight; // ਫਲੱਸ਼
