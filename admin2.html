@@ -18,17 +18,14 @@
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .link-btn { background: #333; color: #3498db; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 11px; font-weight: bold; border: 1px solid #444; text-transform: uppercase; }
 
-        /* --- ਨਵੇਂ ਬਟਨਾਂ ਲਈ ਸਟਾਈਲ --- */
-        .display-controls { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; display: flex; gap: 10px; justify-content: center; }
-        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; transition: 0.3s; }
+        /* --- ਨਵੇਂ ਬਟਨਾਂ ਦਾ ਡਿਜ਼ਾਈਨ --- */
+        .display-controls-box { background: #1a1d21; padding: 15px; border-radius: 12px; border: 2px solid #444; margin-bottom: 15px; display: flex; gap: 10px; }
+        .toggle-btn { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; transition: 0.3s; }
 
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
-        .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
-        .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
         
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
@@ -41,12 +38,10 @@
         
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
         .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
-        .sum-item div { font-size: 10px; color: #888; }
         .sum-item b { font-size: 18px; color: #f39c12; }
 
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { width: 55%; display: flex; align-items: center; gap: 8px; }
-        .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
         .pigeon-name-input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 900; width: 100%; outline: none; }
         .btn-part { width: 45%; display: flex; justify-content: flex-end; gap: 5px; }
         .st-btn { border: none; padding: 10px 0; border-radius: 5px; font-weight: 900; font-size: 14px; opacity: 0.2; color: white; width: 38px; text-align: center; }
@@ -84,25 +79,25 @@
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
 
-    <div class="display-controls">
+    <div class="display-controls-box">
         <button id="scoreBtn" onclick="toggleControl('showScoreboard')" class="toggle-btn">LOADING...</button>
         <button id="tickerBtn" onclick="toggleControl('showTicker')" class="toggle-btn">LOADING...</button>
     </div>
 
     <div id="admin-controls-wrapper">
-        <div id="controls-section" class="controls-container">
+        <div class="controls-container">
             <div class="row">
-                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਅਪਡੇਟ ਕਰਨ ਲਈ ਇਸ ਤਰਾਂ (ਫ਼ਿਰੋਜ਼ਪੁਰ, ਫਰੀਦਕੋਟ, ਮੋਗਾ) ਟੀਮਾਂ ਦੇ ਨਾਮ ਨਾਲ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
+                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
                 <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
             </div>
             <div class="row">
-                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ">
+                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲਾ ਟਾਈਮ (ਜਿਵੇਂ: 10:30 AM)">
                 <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
                 <button class="btn-update" onclick="save()">TICKER UPDATE</button>
             </div>
         </div>
 
-        <div id="summary-section" class="admin-sum-grid">
+        <div class="admin-sum-grid">
             <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
             <div class="sum-item"><div>FLY</div><b id="sum-fly" style="color:#007bff;">0</b></div>
             <div class="sum-item"><div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
@@ -145,31 +140,6 @@
         document.getElementById('link-t4').href = `overlay4.html?id=${userID}`;
     }
 
-    const plans = [
-        { name: "1 DAY PLAN", price: 200, id: "1Day" },
-        { name: "2 DAY PLAN", price: 300, id: "2Day" },
-        { name: "10 DAY PLAN", price: 1000, id: "10Day" },
-        { name: "1 MONTH PLAN", price: 2000, id: "1Month" }
-    ];
-
-    function setupPlans() {
-        const container = document.getElementById('plans-container');
-        container.innerHTML = "";
-        plans.forEach(p => {
-            const commonURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
-            container.innerHTML += `
-                <div class="plan-card">
-                    <h2>${p.name}</h2>
-                    <b>₹${p.price}</b>
-                    <div class="pay-grid">
-                        <a href="upi://pay?${commonURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
-                        <a href="upi://pay?${commonURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
-                        <a href="upi://pay?${commonURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
-                    </div>
-                </div>`;
-        });
-    }
-
     function checkLogin() {
         if(!userID) { alert("ID NOT FOUND!"); return; }
         db.ref('users/' + userID).once('value', snap => {
@@ -184,22 +154,19 @@
                     isExpired = true;
                     document.getElementById('admin-controls-wrapper').style.display = "none";
                     document.getElementById('expire-msg').style.display = "block";
-                    document.getElementById('expDisp').style.color = "red";
                     document.getElementById('expDisp').innerText = "EXPIRED";
                 } else {
-                    const options = { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true };
-                    document.getElementById('expDisp').innerText = expiryDate.toLocaleString('en-GB', options);
+                    document.getElementById('expDisp').innerText = expiryDate.toLocaleString('en-GB');
                     db.ref('users/' + userID).on('value', s => { 
                         localData = s.val() || {pigeons:[], config:{}}; 
                         render(); 
                     });
                 }
-                setupPlans();
             } else { alert("Incorrect Password!"); }
         });
     }
 
-    // --- ਨਵਾਂ TOGGLE ਫੰਕਸ਼ਨ ---
+    // --- Hide/Show Control ---
     function toggleControl(key) {
         if(isExpired) return;
         const newValue = !localData.config[key];
@@ -235,14 +202,19 @@
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
         
-        // ਬਟਨਾਂ ਦਾ ਸਟੇਟਸ ਅਪਡੇਟ ਕਰੋ
+        // ਬਟਨਾਂ ਦੀ ਲਿਖਤ ਅਤੇ ਰੰਗ (ਸਕੋਰਬੋਰਡ)
         const sBtn = document.getElementById('scoreBtn');
-        sBtn.innerText = conf.showScoreboard ? "HIDE SCOREBOARD" : "SHOW SCOREBOARD";
-        sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
+        if(sBtn) {
+            sBtn.innerText = conf.showScoreboard ? "HIDE SCOREBOARD" : "SHOW SCOREBOARD";
+            sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
+        }
 
+        // ਬਟਨਾਂ ਦੀ ਲਿਖਤ ਅਤੇ ਰੰਗ (ਟਿੱਕਰ)
         const tBtn = document.getElementById('tickerBtn');
-        tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
-        tBtn.style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        if(tBtn) {
+            tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
+            tBtn.style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        }
 
         let counts = { fly: 0, time: 0, out: 0 };
         const list = document.getElementById('listArea'); list.innerHTML = "";
@@ -251,12 +223,12 @@
         pigeonList.forEach((p, idx) => {
             if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
             list.innerHTML += `<div class="pigeon-row">
-                <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
+                <div class="name-part"><span style="color:#f39c12;font-weight:900;margin-right:8px;">${idx+1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
                 <div class="btn-part">
                     <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
                     <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
                     <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
-                    <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
+                    <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;">×</button>
                 </div>
             </div>`;
         });
