@@ -17,7 +17,10 @@
         .overlay-links-box { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; border-top: 4px solid #007bff; }
         .link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .link-btn { background: #333; color: #3498db; padding: 10px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 11px; font-weight: bold; border: 1px solid #444; text-transform: uppercase; }
-        .link-btn:hover { background: #007bff; color: white; }
+
+        /* --- ਨਵੇਂ ਬਟਨਾਂ ਲਈ ਸਟਾਈਲ --- */
+        .display-controls { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; display: flex; gap: 10px; justify-content: center; }
+        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; transition: 0.3s; }
 
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
@@ -80,12 +83,12 @@
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
- 
-    <div style="margin: 20px 0; padding: 15px; background: #222; border-radius: 8px;">
-    <button id="scoreBtn" onclick="toggleControl('showScoreboard')" style="padding: 10px 20px; cursor: pointer;">LOADING...</button>
-    <button id="tickerBtn" onclick="toggleControl('showTicker')" style="padding: 10px 20px; cursor: pointer;">LOADING...</button>
-</div> 
-    
+
+    <div class="display-controls">
+        <button id="scoreBtn" onclick="toggleControl('showScoreboard')" class="toggle-btn">LOADING...</button>
+        <button id="tickerBtn" onclick="toggleControl('showTicker')" class="toggle-btn">LOADING...</button>
+    </div>
+
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
             <div class="row">
@@ -196,6 +199,13 @@
         });
     }
 
+    // --- ਨਵਾਂ TOGGLE ਫੰਕਸ਼ਨ ---
+    function toggleControl(key) {
+        if(isExpired) return;
+        const newValue = !localData.config[key];
+        db.ref('users/' + userID + '/config/' + key).set(newValue);
+    }
+
     function addP() {
         if(isExpired) return;
         const inputVal = document.getElementById('pName').value; 
@@ -209,13 +219,13 @@
 
     function save() {
         if(isExpired) return;
-        const config = { 
+        const configUpdates = { 
             ticker: document.getElementById('inpTicker').value, 
             boxTime: document.getElementById('inpBoxTime').value.trim() || ""
         };
         db.ref('users/' + userID).update({ 
             pigeons: localData.pigeons || [], 
-            config: {...localData.config, ...config} 
+            config: {...localData.config, ...configUpdates} 
         });
     }
 
@@ -225,6 +235,15 @@
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
         
+        // ਬਟਨਾਂ ਦਾ ਸਟੇਟਸ ਅਪਡੇਟ ਕਰੋ
+        const sBtn = document.getElementById('scoreBtn');
+        sBtn.innerText = conf.showScoreboard ? "HIDE SCOREBOARD" : "SHOW SCOREBOARD";
+        sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
+
+        const tBtn = document.getElementById('tickerBtn');
+        tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
+        tBtn.style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+
         let counts = { fly: 0, time: 0, out: 0 };
         const list = document.getElementById('listArea'); list.innerHTML = "";
         const pigeonList = localData.pigeons || [];
