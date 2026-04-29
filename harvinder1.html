@@ -12,12 +12,18 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* ਇੱਕ ਪਾਸੇ ਤੋਂ ਦੂਜੇ ਪਾਸੇ ਲਾਈਟ ਫਲੈਸ਼ ਕਰਨ ਵਾਲੀ ਐਨੀਮੇਸ਼ਨ */
+        /* Slow Flash Light Animation (8 Seconds) */
         @keyframes flashLight {
-            0% { left: -100%; opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { left: 100%; opacity: 0; }
+            0% { left: -120%; opacity: 0; }
+            10% { opacity: 0.5; }
+            30% { left: 120%; opacity: 0; }
+            100% { left: 120%; opacity: 0; } /* ਥੋੜੀ ਦੇਰ ਰੁਕ ਕੇ ਦੁਬਾਰਾ ਆਵੇਗੀ */
+        }
+
+        /* Outer Stroke Glowing Animation */
+        @keyframes strokeGlow {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+            50% { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
         }
 
         .main-container { 
@@ -28,22 +34,23 @@
         .box { 
             display: none; width: 32.5%; height: 100%; position: relative; 
             border-radius: 25px; overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            border: 2px solid rgba(255,255,255,0.2); /* ਹਲਕਾ ਜਿਹਾ ਸਥਿਰ ਬਾਰਡਰ */
+            /* Outer Glowing Stroke */
+            border: 4px solid #fff; 
+            animation: strokeGlow 3s infinite ease-in-out;
         }
 
-        /* ਚਮਕਦਾਰ ਲਾਈਟ ਵਾਲੀ ਲੇਅਰ (ਬੈਕਗ੍ਰਾਊਂਡ ਦੇ ਉੱਪਰ) */
+        /* ਚਮਕਦਾਰ ਲਾਈਟ (Slow Flash) */
         .box-flash {
             content: ""; position: absolute; top: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(0, 255, 255, 0.4), transparent);
-            animation: flashLight 4s ease-in-out infinite; /* ਹਰ 4 ਸੈਕਿੰਡ ਬਾਅਦ ਫਲੈਸ਼ */
-            z-index: 2; /* ਅੱਖਰਾਂ (z-index 3) ਦੇ ਥੱਲੇ, ਬੈਕਗ੍ਰਾਊਂਡ ਦੇ ਉੱਪਰ */
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: flashLight 8s ease-in-out infinite; 
+            z-index: 2;
         }
 
-        /* --- 80% Solid Background Colors (Clean) --- */
-        #box-fly { background: rgba(0, 191, 255, 0.80) !important; } /* Sky Blue */
-        #box-out { background: rgba(255, 0, 0, 0.80) !important; } /* Red */
-        #box-time { background: rgba(255, 255, 0, 0.80) !important; } /* Yellow */
+        /* --- 80% Solid Background Colors --- */
+        #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
+        #box-out { background: rgba(255, 0, 0, 0.85) !important; }
+        #box-time { background: rgba(255, 255, 0, 0.85) !important; }
 
         .box-inner { width: 100%; height: 100%; border-radius: 20px; position: relative; overflow: hidden; z-index: 1; }
 
@@ -55,7 +62,6 @@
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        /* Language Flash Text */
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 35px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 40px; }
         .count-tag { background: #fff; color: #000; }
@@ -64,9 +70,8 @@
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
         
-        /* List Item Text Colors - made bold and dark for 80% background */
         .item { padding: 5px 20px; font-size: 34px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
-        #box-out .item { color: #fff; } /* Red box text white */
+        #box-out .item { color: #fff; }
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; 
@@ -85,7 +90,8 @@
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
-        <div class="box-flash"></div> <div class="box-inner">
+        <div class="box-flash"></div> 
+        <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
                 <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
@@ -95,7 +101,8 @@
     </div>
 
     <div id="box-out" class="box">
-        <div class="box-flash"></div> <div class="box-inner">
+        <div class="box-flash"></div> 
+        <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
                 <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
@@ -105,7 +112,8 @@
     </div>
 
     <div id="box-time" class="box">
-        <div class="box-flash"></div> <div class="box-inner">
+        <div class="box-flash"></div> 
+        <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
                 <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
@@ -131,7 +139,6 @@
     let listPos = { fly: 0, time: 0, out: 0 };
     let tickerPos = 0;
 
-    // English/Punjabi Flash Logic (every 3 seconds)
     setInterval(() => {
         langFlash = !langFlash;
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
@@ -141,7 +148,6 @@
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
     }, 3000);
 
-    // Clock
     setInterval(() => {
         document.getElementById('clock-box').innerText = new Date().toLocaleTimeString('en-US', { hour12: true });
     }, 1000);
