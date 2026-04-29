@@ -8,7 +8,6 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Ghaint Animated Border Keyframes */
         @keyframes borderGlow {
             0%, 100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
             25% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
@@ -16,79 +15,59 @@
             75% { border-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
         }
 
-        /* Language Flash Animation */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        /* Main Scoreboard Containers */
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; justify-content: center; }
+        /* Main Container: Boxes will align automatically */
+        .main-container { 
+            position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; 
+            display: flex; gap: 15px; justify-content: flex-start; 
+        }
         
-        /* FIX: Fixed Box Size & Animated Borders */
         .box { 
             display: none; 
-            width: 32.5%; 
+            width: 32.5%; /* Fixed width as requested */
             height: 100%; 
             position: relative; 
-            border: 5px solid white; /* Thicker for animation */
+            border: 5px solid white; 
             border-radius: 15px 15px 0 0; 
             overflow: hidden; 
-            /* Ghaint Animation Applied Here */
             animation: borderGlow 6s linear infinite; 
-            background-clip: padding-box; /* Smooth look */
         }
 
-        #box-fly { background: rgba(0, 0, 0, 0.9); }
-        #box-out { background: rgba(102, 0, 0, 0.9); } 
-        #box-time { background: rgba(0, 26, 102, 0.9); }
+        /* Logic: Box Colors */
+        #box-fly { background: rgba(0, 0, 0, 0.9); order: 1; }  /* Hamesha Pehla */
+        #box-out { background: rgba(102, 0, 0, 0.9); order: 2; } /* Out Box Vichkar */
+        #box-time { background: rgba(0, 26, 102, 0.9); order: 3; } /* Time Box Last ch */
 
-        /* Header Area within Boxes */
         .header-wrapper { position: absolute; top: 0; right: 0; width: 55%; z-index: 10; }
-        
-        /* Headers with Animated Borders too */
         .box-header, .sum-card { 
-            display: flex; 
-            align-items: center; 
-            width: 100%; 
-            border-left: 5px solid white; 
-            border-bottom: 5px solid white; 
-            background: #000; 
-            animation: borderGlow 6s linear infinite; /* Animation applied */
+            display: flex; align-items: center; width: 100%; border-left: 5px solid white; 
+            border-bottom: 5px solid white; background: #000; animation: borderGlow 6s linear infinite; 
         }
         .box-header { height: 75px; border-radius: 0 15px 0 15px; }
         .sum-card { height: 70px; border-radius: 0 0 0 15px; }
 
-        .header-title, .sum-label-area { flex: 1; padding-left: 8px; display: flex; align-items: center; border-right: 5px solid white; height: 100%; font-weight: 900; font-size: 22px; color: white; animation: borderGlow 6s linear infinite; }
+        .header-title, .sum-label-area { flex: 1; padding-left: 8px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 22px; color: white; animation: borderGlow 6s linear infinite; }
         .count-tag { background: #fff; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
         .sum-val-area { background: #ffcc00; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 35px; text-align: center; }
 
-        /* Scrolling List Area */
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; will-change: transform; }
         .item { padding: 10px 15px; font-size: 35px; font-weight: 950; color: #ffcc00; border-bottom: 2px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
         .loop-spacer { height: 100px; width: 100%; }
 
-        /* Footer (Ticker) Area */
         .footer { 
-            position: absolute; 
-            bottom: 0; 
-            width: 100%; 
-            height: 75px; 
-            background: #fff; 
-            display: flex; 
-            align-items: center; 
-            border-top: 7px solid red; 
-            /* Ghaint Animation on Footer Border too */
+            position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; 
+            display: flex; align-items: center; border-top: 7px solid red; 
             animation: borderGlow 6s linear infinite; 
-            box-shadow: 0 -5px 15px rgba(255,255,255,0.5); /* extra glow upward */
         }
         .live-tag { background: #ff0000; color: #fff; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 1000; font-style: italic; border-right: 5px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
-        
-        /* Date/Time Area */
         .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 25px; display: flex; align-items: center; justify-content: center; min-width: 250px; border-left: 5px solid #000; position: relative; }
         
         @keyframes dtFlash {
@@ -110,20 +89,20 @@
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
-    <div id="box-time" class="box">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 32px;">--</div></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-    </div>
-
     <div id="box-out" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title flash-text" data-pa="❌ ਕੱਟੇ" data-en="❌ OUT"></span><span id="count-out" class="count-tag">0</span></div>
             <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਬਾਕੀ" data-en="REM."></div><div id="m-rem" class="sum-val-area">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div>
+
+    <div id="box-time" class="box">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 32px;">--</div></div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
 
@@ -134,15 +113,11 @@
 </div>
 
 <script>
-    // Firebase and JS Logic (Uhi rahega, bas minor display checks add kite ne smooth rendering layi)
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-
-    const LIST_SPEED = 1.8; 
-    const TICKER_SPEED = 2.8;
 
     let listPositions = { fly: 0, time: 0, out: 0 };
     let tickerPos = window.innerWidth;
@@ -150,13 +125,10 @@
     function updateClock() {
         const now = new Date();
         const flashVal = document.getElementById('flash-val');
-        const timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
-        const dateStr = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-        flashVal.setAttribute('data-time', timeStr);
-        flashVal.setAttribute('data-date', dateStr);
+        flashVal.setAttribute('data-time', now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true}));
+        flashVal.setAttribute('data-date', now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}));
     }
     setInterval(updateClock, 1000);
-    updateClock();
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -178,22 +150,19 @@
                 else if (p.status === 'time') { counts.time++; htmlContent.time += row; }
                 else if (p.status === 'out') { counts.out++; htmlContent.out += row; }
             });
-            
+
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
             ['fly','time','out'].forEach(id => {
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
-                
                 if(counts[id] > 0) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
                     let fullSet = htmlContent[id] + '<div class="loop-spacer"></div>';
                     listArea.innerHTML = fullSet + fullSet;
-                } else { 
-                    el.style.display = "none"; 
-                }
+                } else { el.style.display = "none"; }
             });
         });
     }
@@ -202,20 +171,16 @@
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
             const parentBox = document.getElementById(`box-${id}`);
-            // Smooth display check before animating
             if (listArea && parentBox && getComputedStyle(parentBox).display !== "none") {
-                listPositions[id] -= LIST_SPEED;
+                listPositions[id] -= 1.8;
                 let halfHeight = listArea.offsetHeight / 2; 
                 if (halfHeight > 0 && Math.abs(listPositions[id]) >= halfHeight) { listPositions[id] = 0; }
                 listArea.style.transform = `translateY(${listPositions[id]}px)`;
             }
         });
-
         const tickerMove = document.getElementById('ticker-text');
-        const tickerDiv = document.getElementById('ticker-div');
-        // Smooth display check for ticker
-        if (tickerDiv && getComputedStyle(tickerDiv).display !== "none") {
-            tickerPos -= TICKER_SPEED;
+        if (getComputedStyle(document.getElementById('ticker-div')).display !== "none") {
+            tickerPos -= 2.8;
             if (tickerPos < -tickerMove.offsetWidth) { tickerPos = window.innerWidth; }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
         }
