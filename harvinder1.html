@@ -12,16 +12,17 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* ਬਕਸਿਆਂ ਲਈ ਚਮਕਦਾਰ ਬਾਰਡਰ ਐਨੀਮੇਸ਼ਨ */
+        /* ਬਕਸਿਆਂ ਲਈ ਸਲੋ ਗਲੋ */
         @keyframes strokeGlow {
             0%, 100% { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
             50% { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
         }
 
-        /* ਸਿਰਫ ਅੱਖਰਾਂ (Text) ਨੂੰ ਫਲੈਸ਼ ਕਰਨ ਲਈ ਐਨੀਮੇਸ਼ਨ */
-        @keyframes textFlash {
-            0%, 100% { opacity: 1; transform: scale(1) skewX(20deg); }
-            50% { opacity: 0.2; transform: scale(0.95) skewX(20deg); }
+        /* ਬਦਲਣ ਵੇਲੇ ਤੇਜ਼ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ */
+        @keyframes transitionFlash {
+            0% { opacity: 1; filter: brightness(1); }
+            50% { opacity: 0; filter: brightness(5); }
+            100% { opacity: 1; filter: brightness(1); }
         }
 
         .main-container { 
@@ -36,7 +37,6 @@
             animation: strokeGlow 3s infinite ease-in-out;
         }
 
-        /* ਬੈਕਗ੍ਰਾਊਂਡ ਕਲਰ */
         #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
         #box-out { background: rgba(255, 0, 0, 0.85) !important; }
         #box-time { background: rgba(255, 255, 0, 0.85) !important; }
@@ -62,43 +62,43 @@
         .item { padding: 5px 20px; font-size: 45px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
         #box-out .item { color: #fff; }
 
-        /* --- Footer Styles --- */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: #fff; display: flex; align-items: center; 
             border-top: 4px solid #000; z-index: 20; overflow: hidden;
         }
 
-        /* LIVE Label (ਟੇਢੀ ਬੈਕਗ੍ਰਾਊਂਡ) */
         .live-tag { 
             background: #ff0000; color: #fff; padding: 0 45px; height: 100%; 
             display: flex; align-items: center; font-size: 40px; font-weight: 1000; 
-            transform: skewX(-20deg); margin-left: -25px;
+            transform: skewX(-25deg); margin-left: -25px;
             border-right: 5px solid #fff;
             z-index: 25;
         }
-        .live-tag span { transform: skewX(20deg); } 
+        .live-tag span { transform: skewX(25deg); } 
 
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 38px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 800px; } 
 
-        /* Date/Time Box - ਹੋਰ ਜ਼ਿਆਦਾ ਟੇਢੀ (Skewed) */
         .dt-box-wrap { 
-            height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; 
+            height: 100%; min-width: 380px; display: flex; align-items: center; justify-content: center; 
             background: #ff0000; color: #fff; 
-            transform: skewX(-20deg); margin-right: -25px; /* ਹੋਰ ਜ਼ਿਆਦਾ ਟੇਢਾ ਕੀਤਾ */
+            transform: skewX(-25deg); margin-right: -25px;
             border-left: 6px solid #fff;
             z-index: 25;
         }
         
-        /* ਸਿਰਫ ਟੈਕਸਟ ਫਲੈਸ਼ ਹੋਵੇਗਾ */
         #clock-box { 
-            animation: textFlash 1.2s infinite ease-in-out; 
             font-size: 32px; font-weight: 1000; 
             letter-spacing: 1px;
-            /* ਟੈਕਸਟ ਨੂੰ ਵਾਪਸ ਸਿੱਧਾ ਦਿਖਾਉਣ ਲਈ ਪਰ ਬਾਕਸ ਟੇਢਾ ਰਹੇਗਾ */
-            transform: skewX(20deg); 
+            transform: skewX(25deg); 
+            text-align: center;
+        }
+
+        /* ਜਦੋਂ ਕਲਾਸ ਲੱਗੇਗੀ ਤਾਂ ਫਲੈਸ਼ ਹੋਵੇਗਾ */
+        .do-flash {
+            animation: transitionFlash 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -145,6 +145,7 @@
     const userID = new URLSearchParams(window.location.search).get('id');
 
     let langFlash = false;
+    let showDate = false; 
     let listPos = { fly: 0, time: 0, out: 0 };
     let tickerPos = 0;
 
@@ -157,8 +158,27 @@
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
     }, 3000);
 
+    // Toggle Date/Time every 10 seconds with Flash
     setInterval(() => {
-        document.getElementById('clock-box').innerText = new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const clockElem = document.getElementById('clock-box');
+        clockElem.classList.add('do-flash'); // ਫਲੈਸ਼ ਸ਼ੁਰੂ
+        
+        setTimeout(() => {
+            showDate = !showDate; // ਵਿਚਕਾਰ ਜਿਹੇ ਟੈਕਸਟ ਬਦਲੋ
+        }, 250);
+
+        setTimeout(() => {
+            clockElem.classList.remove('do-flash'); // ਫਲੈਸ਼ ਖਤਮ
+        }, 500);
+    }, 10000);
+
+    setInterval(() => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+        
+        // ਸਿਰਫ ਉਦੋਂ ਅਪਡੇਟ ਕਰੋ ਜਦੋਂ ਫਲੈਸ਼ ਨਾ ਹੋ ਰਿਹਾ ਹੋਵੇ ਜਾਂ ਟੈਕਸਟ ਬਦਲਣਾ ਹੋਵੇ
+        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
     }, 1000);
 
     if(userID) {
