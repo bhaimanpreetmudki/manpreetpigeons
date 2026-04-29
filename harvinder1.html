@@ -6,52 +6,69 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
+        body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        .main-container { 
-            position: absolute; 
-            left: 10px; right: 10px; bottom: 70px; 
-            height: 280px; display: flex; gap: 15px; 
+        /* Language Flash Animation */
+        @keyframes langFlash {
+            0%, 45% { content: attr(data-pa); }
+            50%, 95% { content: attr(data-en); }
         }
-        .box { display: none; flex: 1; height: 100%; position: relative; border: 3px solid white; border-radius: 12px 12px 0 0; overflow: hidden; }
+        .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        #box-fly { background: #000; }
-        #box-out { background: #660000; } 
-        #box-time { background: #001a66; }
+        /* Main Container */
+        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; }
+        .box { display: none; flex: 1; height: 100%; position: relative; border: 4px solid white; border-radius: 15px 15px 0 0; overflow: hidden; }
 
-        .header-wrapper { position: absolute; top: 0; right: 0; width: 45%; z-index: 10; }
-        .box-header, .sum-card { display: flex; align-items: center; width: 100%; border-left: 3px solid white; border-bottom: 3px solid white; background: #000; }
-        .box-header { height: 75px; border-radius: 0 12px 0 12px; }
-        .sum-card { height: 60px; border-radius: 0 0 0 12px; }
+        #box-fly { background: rgba(0, 0, 0, 0.9); }
+        #box-out { background: rgba(102, 0, 0, 0.9); } 
+        #box-time { background: rgba(0, 26, 102, 0.9); }
 
-        .header-title { flex: 1; padding-left: 12px; font-weight: 950; font-size: 18px; }
-        .count-tag { background: #fff; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 40px; }
-        .sum-val-area { background: #ffcc00; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 36px; }
+        /* Headers */
+        .header-wrapper { position: absolute; top: 0; right: 0; width: 48%; z-index: 10; }
+        .box-header, .sum-card { display: flex; align-items: center; width: 100%; border-left: 4px solid white; border-bottom: 4px solid white; background: #000; }
+        .box-header { height: 75px; border-radius: 0 15px 0 15px; }
+        .sum-card { height: 60px; border-radius: 0 0 0 15px; }
+
+        .header-title, .sum-label-area { flex: 1; padding-left: 12px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 19px; color: white; }
+        .count-tag { background: #fff; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 42px; }
+        .sum-val-area { background: #ffcc00; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
 
         /* Scroll Window */
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
+        .list-area { position: absolute; width: 100%; will-change: transform; }
         
-        /* List Area - Initial Position Fix */
-        .list-area { 
-            position: absolute; 
-            width: 100%; 
-            top: 0;
-            will-change: transform; 
-        }
-        
+        /* TEAM GAP FIX: ਟੀਮਾਂ ਦੇ ਵਿਚਕਾਰ ਗੈਪ ਘਟਾਇਆ (18px -> 10px) */
         .item { 
-            padding: 15px 15px; 
+            padding: 10px 15px; 
             font-size: 38px; 
             font-weight: 950; 
             color: #ffcc00; 
-            border-bottom: 2px solid rgba(255,255,255,0.1); 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
+            border-bottom: 2px solid rgba(255,255,255,0.2); 
+            text-shadow: 2px 2px 4px rgba(0,0,0,1); 
         }
 
-        .loop-spacer { height: 280px; width: 100%; } /* ਬਾਕਸ ਜਿੰਨੀ ਖਾਲੀ ਜਗ੍ਹਾ */
+        /* LOOP GAP FIX: ਲੂਪ ਦੇ ਵਿਚਕਾਰ ਗੈਪ ਘਟਾਇਆ (250px -> 100px) */
+        .loop-spacer {
+            height: 100px; 
+            width: 100%;
+        }
 
-        .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
-        .ticker-move { display: inline-block; font-size: 32px; font-weight: 950; color: #000; }
+        /* Footer & Ticker */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; display: flex; align-items: center; border-top: 6px solid #ff0000; }
+        .live-tag { background: #ff0000; color: #fff; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 1000; font-style: italic; border-right: 5px solid #000; }
+        
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
+        .ticker-move { display: inline-block; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
+        
+        /* Date Time Flash */
+        .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 25px; display: flex; align-items: center; justify-content: center; min-width: 250px; border-left: 5px solid #000; position: relative; }
+        
+        @keyframes dtFlash {
+            0%, 45% { content: attr(data-time); }
+            50%, 95% { content: attr(data-date); }
+        }
+        #flash-val { font-size: 32px; font-weight: 1000; text-transform: uppercase; }
+        #flash-val::after { content: attr(data-time); animation: dtFlash 8s infinite; }
     </style>
 </head>
 <body>
@@ -59,31 +76,33 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">🕊️ FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-            <div class="sum-card"><div class="sum-label-area" style="flex:1; padding-left:12px; font-weight:950;">TOTAL</div><div id="m-total" class="sum-val-area">0</div></div>
+            <div class="box-header"><span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span><span id="count-fly" class="count-tag">0</span></div>
+            <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਕੁੱਲ" data-en="TOTAL"></div><div id="m-total" class="sum-val-area">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">❌ OUT</span><span id="count-out" class="count-tag">0</span></div>
-            <div class="sum-card"><div class="sum-label-area" style="flex:1; padding-left:12px; font-weight:950;">REM.</div><div id="m-rem" class="sum-val-area">0</div></div>
+            <div class="box-header"><span class="header-title flash-text" data-pa="❌ ਕੱਟੇ" data-en="❌ OUT"></span><span id="count-out" class="count-tag">0</span></div>
+            <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਬਾਕੀ" data-en="REM."></div><div id="m-rem" class="sum-val-area">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">⏰ TIME</span><span id="count-time" class="count-tag">0</span></div>
+            <div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span><span id="count-time" class="count-tag">0</span></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
 
 <div class="footer" id="ticker-div">
-    <div style="background:#ff0000; color:#fff; padding:0 25px; height:100%; display:flex; align-items:center; font-size:32px; font-weight:950;">LIVE</div>
-    <div style="flex:1; overflow:hidden; white-space:nowrap;"><div id="ticker-text" class="ticker-move"></div></div>
+    <div class="live-tag">LIVE</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
+    
+    <div class="dt-box"><div id="flash-val"></div></div>
 </div>
 
 <script>
@@ -93,18 +112,39 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    const LIST_SPEED = 1.0;
-    // ਸਟਾਰਟਿੰਗ ਪੁਜੀਸ਼ਨ ਬਾਕਸ ਦੇ ਹੇਠਾਂ (280px) ਰੱਖੀ ਹੈ
-    let listPositions = { fly: 280, time: 280, out: 280 }; 
+    // --- SPEED CONFIG ---
+    // SCROLL SPEED FIX: ਸਪੀਡ ਤੇਜ਼ ਕੀਤੀ (1.0 -> 1.8)
+    const LIST_SPEED = 1.8; 
+    const TICKER_SPEED = 2.8;
+
+    let listPositions = { fly: 0, time: 0, out: 0 };
     let tickerPos = window.innerWidth;
+
+    // Date/Time Flash Update Logic
+    function updateClock() {
+        const now = new Date();
+        const flashVal = document.getElementById('flash-val');
+        
+        // Time Format: 10:30:05 AM
+        const timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+        
+        // Date Format: 25 OCT 2023
+        const dateStr = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+
+        flashVal.setAttribute('data-time', timeStr);
+        flashVal.setAttribute('data-date', dateStr);
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial Call
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
+            const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
-            const conf = data.config || {};
             
             document.getElementById('scoreboard-div').style.display = (conf.showScore !== false) ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
             let counts = { fly:0, out:0, time:0 }; 
@@ -116,42 +156,52 @@
                 else if (p.status === 'time') { counts.time++; htmlContent.time += row; }
                 else if (p.status === 'out') { counts.out++; htmlContent.out += row; }
             });
-
-            ['fly','time','out'].forEach(id => {
-                const area = document.getElementById(`list-${id}`);
-                if(counts[id] > 0) {
-                    document.getElementById(`box-${id}`).style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    // ਟੀਮਾਂ + ਖਾਲੀ ਸਪੇਸ (ਬਾਕਸ ਦੇ ਹੇਠਾਂ ਤੋਂ ਆਉਣ ਲਈ)
-                    area.innerHTML = htmlContent[id] + '<div class="loop-spacer"></div>';
-                } else {
-                    document.getElementById(`box-${id}`).style.display = "none";
-                }
-            });
+            
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+
+            ['fly','time','out'].forEach(id => {
+                const el = document.getElementById(`box-${id}`);
+                const listArea = document.getElementById(`list-${id}`);
+                
+                if(counts[id] > 0) {
+                    el.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    
+                    // Teams + Small Gap + Teams
+                    let fullSet = htmlContent[id] + '<div class="loop-spacer"></div>';
+                    listArea.innerHTML = fullSet + fullSet;
+                } else { 
+                    el.style.display = "none"; 
+                }
+            });
         });
     }
 
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
-            if (listArea && document.getElementById(`box-${id}`).style.display !== "none") {
+            const parentBox = document.getElementById(`box-${id}`);
+            
+            if (listArea && parentBox.style.display !== "none") {
                 listPositions[id] -= LIST_SPEED;
                 
-                // ਜਦੋਂ ਪੂਰੀ ਲਿਸਟ (ਟੀਮਾਂ + ਖਾਲੀ ਗੈਪ) ਉੱਪਰ ਨਿਕਲ ਜਾਵੇ
-                if (Math.abs(listPositions[id]) >= listArea.offsetHeight) {
-                    listPositions[id] = 280; // ਵਾਪਸ ਬਾਕਸ ਦੇ ਬਿਲਕੁਲ ਹੇਠਾਂ ਭੇਜ ਦਿਓ
+                let halfHeight = listArea.offsetHeight / 2; 
+                if (Math.abs(listPositions[id]) >= halfHeight) {
+                    listPositions[id] = 0;
                 }
                 listArea.style.transform = `translateY(${listPositions[id]}px)`;
             }
         });
 
-        tickerPos -= 2.2;
-        const tText = document.getElementById('ticker-text');
-        if(tickerPos < -tText.offsetWidth) tickerPos = window.innerWidth;
-        tText.style.transform = `translateX(${tickerPos}px)`;
-
+        const tickerMove = document.getElementById('ticker-text');
+        if (document.getElementById('ticker-div').style.display !== "none") {
+            tickerPos -= TICKER_SPEED;
+            if (tickerPos < -tickerMove.offsetWidth) {
+                tickerPos = window.innerWidth;
+            }
+            tickerMove.style.transform = `translateX(${tickerPos}px)`;
+        }
         requestAnimationFrame(animate);
     }
     animate();
