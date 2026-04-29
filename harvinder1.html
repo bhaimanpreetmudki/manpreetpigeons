@@ -8,43 +8,87 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* Ghaint Animated Border Keyframes */
+        @keyframes borderGlow {
+            0%, 100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+            25% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
+            50% { border-color: #0000ff; box-shadow: 0 0 20px #0000ff; }
+            75% { border-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
+        }
+
+        /* Language Flash Animation */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
+        /* Main Scoreboard Containers */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; justify-content: center; }
         
-        /* FIX: Box size fixed to 32% so they don't grow/shrink */
-        .box { display: none; width: 32.5%; height: 100%; position: relative; border: 4px solid white; border-radius: 15px 15px 0 0; overflow: hidden; }
+        /* FIX: Fixed Box Size & Animated Borders */
+        .box { 
+            display: none; 
+            width: 32.5%; 
+            height: 100%; 
+            position: relative; 
+            border: 5px solid white; /* Thicker for animation */
+            border-radius: 15px 15px 0 0; 
+            overflow: hidden; 
+            /* Ghaint Animation Applied Here */
+            animation: borderGlow 6s linear infinite; 
+            background-clip: padding-box; /* Smooth look */
+        }
 
         #box-fly { background: rgba(0, 0, 0, 0.9); }
         #box-out { background: rgba(102, 0, 0, 0.9); } 
         #box-time { background: rgba(0, 26, 102, 0.9); }
 
+        /* Header Area within Boxes */
         .header-wrapper { position: absolute; top: 0; right: 0; width: 55%; z-index: 10; }
-        .box-header, .sum-card { display: flex; align-items: center; width: 100%; border-left: 4px solid white; border-bottom: 4px solid white; background: #000; }
+        
+        /* Headers with Animated Borders too */
+        .box-header, .sum-card { 
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+            border-left: 5px solid white; 
+            border-bottom: 5px solid white; 
+            background: #000; 
+            animation: borderGlow 6s linear infinite; /* Animation applied */
+        }
         .box-header { height: 75px; border-radius: 0 15px 0 15px; }
         .sum-card { height: 70px; border-radius: 0 0 0 15px; }
 
-        .header-title, .sum-label-area { flex: 1; padding-left: 8px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 22px; color: white; }
+        .header-title, .sum-label-area { flex: 1; padding-left: 8px; display: flex; align-items: center; border-right: 5px solid white; height: 100%; font-weight: 900; font-size: 22px; color: white; animation: borderGlow 6s linear infinite; }
         .count-tag { background: #fff; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
         .sum-val-area { background: #ffcc00; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 35px; text-align: center; }
 
+        /* Scrolling List Area */
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; will-change: transform; }
-        
         .item { padding: 10px 15px; font-size: 35px; font-weight: 950; color: #ffcc00; border-bottom: 2px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
-
         .loop-spacer { height: 100px; width: 100%; }
 
-        .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; display: flex; align-items: center; border-top: 6px solid #ff0000; }
+        /* Footer (Ticker) Area */
+        .footer { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            height: 75px; 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            border-top: 7px solid red; 
+            /* Ghaint Animation on Footer Border too */
+            animation: borderGlow 6s linear infinite; 
+            box-shadow: 0 -5px 15px rgba(255,255,255,0.5); /* extra glow upward */
+        }
         .live-tag { background: #ff0000; color: #fff; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 1000; font-style: italic; border-right: 5px solid #000; }
-        
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
         
+        /* Date/Time Area */
         .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 25px; display: flex; align-items: center; justify-content: center; min-width: 250px; border-left: 5px solid #000; position: relative; }
         
         @keyframes dtFlash {
@@ -90,6 +134,7 @@
 </div>
 
 <script>
+    // Firebase and JS Logic (Uhi rahega, bas minor display checks add kite ne smooth rendering layi)
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -141,7 +186,6 @@
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
                 
-                // Box content update but size remains fixed in CSS
                 if(counts[id] > 0) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
@@ -158,7 +202,8 @@
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
             const parentBox = document.getElementById(`box-${id}`);
-            if (listArea && parentBox && parentBox.style.display !== "none") {
+            // Smooth display check before animating
+            if (listArea && parentBox && getComputedStyle(parentBox).display !== "none") {
                 listPositions[id] -= LIST_SPEED;
                 let halfHeight = listArea.offsetHeight / 2; 
                 if (halfHeight > 0 && Math.abs(listPositions[id]) >= halfHeight) { listPositions[id] = 0; }
@@ -167,7 +212,9 @@
         });
 
         const tickerMove = document.getElementById('ticker-text');
-        if (document.getElementById('ticker-div').style.display !== "none") {
+        const tickerDiv = document.getElementById('ticker-div');
+        // Smooth display check for ticker
+        if (tickerDiv && getComputedStyle(tickerDiv).display !== "none") {
             tickerPos -= TICKER_SPEED;
             if (tickerPos < -tickerMove.offsetWidth) { tickerPos = window.innerWidth; }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
