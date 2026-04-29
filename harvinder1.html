@@ -8,60 +8,74 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Snake Border ਐਨੀਮੇਸ਼ਨ */
         @keyframes snakeBorder {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* ਧੜਕਣ ਵਾਲੀ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ */
-        @keyframes heartbeat {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.98); }
-        }
-
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 75px; height: 260px; 
-            display: flex; gap: 15px; justify-content: flex-start; 
+            position: absolute; left: 15px; right: 15px; bottom: 90px; height: 260px; 
+            display: flex; gap: 20px; justify-content: flex-start; 
         }
         
-        /* ਸਾਰੇ ਬਾਕਸਾਂ ਲਈ ਸਾਂਝੀ Snake Border ਕਲਾਸ */
-        .box-style {
-            padding: 4px; 
-            background: linear-gradient(90deg, #ff0000, #fbff00, #00ff08, #0011ff, #ff0000);
+        /* ਸਾਂਝੀ ਸੈਟਿੰਗ */
+        .box { display: none; width: 32.5%; height: 100%; position: relative; padding: 4px; border-radius: 20px; overflow: hidden; }
+
+        /* 1. FLYING ਬਾਕਸ ਦਾ ਰੰਗ (ਨੀਲਾ ਸ਼ੇਡ) */
+        #box-fly {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #ffffff, #00d2ff);
             background-size: 300% 300%;
             animation: snakeBorder 4s linear infinite;
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex; /* ਅੰਦਰਲੇ ਹਿੱਸੇ ਨੂੰ ਫਿਕਸ ਕਰਨ ਲਈ */
         }
 
-        /* ਬਾਕਸ ਦੇ ਅੰਦਰਲਾ ਕਾਲਾ ਹਿੱਸਾ */
-        .box-inner { background: rgba(0, 0, 0, 0.95); width: 100%; height: 100%; border-radius: 8px; position: relative; overflow: hidden; }
+        /* 2. OUT ਬਾਕਸ ਦਾ ਰੰਗ (ਲਾਲ ਸ਼ੇਡ) */
+        #box-out {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b, #ffffff, #ff416c);
+            background-size: 300% 300%;
+            animation: snakeBorder 3s linear infinite;
+        }
 
-        .box { display: none; width: 32.5%; height: 100%; position: relative; }
-        
-        /* ਲਿਸਟ ਬਾਕਸਾਂ ਦੇ ਉੱਪਰਲੇ ਕਿਨਾਰੇ ਗੋਲ, ਹੇਠਲੇ ਸਿੱਧੇ */
-        .list-box-style { border-radius: 12px 12px 0 0; }
-        .list-box-style .box-inner { border-radius: 8px 8px 0 0; }
+        /* 3. TIME ਬਾਕਸ ਦਾ ਰੰਗ (ਗੋਲਡਨ/ਪੀਲਾ ਸ਼ੇਡ) */
+        #box-time {
+            background: linear-gradient(90deg, #ffd700, #ff8c00, #ffffff, #ffd700);
+            background-size: 300% 300%;
+            animation: snakeBorder 5s linear infinite;
+        }
+
+        .box-inner { 
+            background: rgba(0, 0, 0, 0.9); 
+            width: 100%; height: 100%; 
+            border-radius: 16px; 
+            position: relative; 
+            overflow: hidden; 
+        }
 
         .header-wrapper { 
-            position: absolute; top: 0; right: 0; width: 50%; z-index: 10; 
+            position: absolute; top: 0; right: 0; width: 55%; z-index: 10; 
             background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
-            border-radius: 0 10px 0 10px; 
+            border-radius: 0 15px 0 15px; 
         }
-        .box-header, .sum-card { height: 70px; display: flex; align-items: center; }
+        .box-header, .sum-card { height: 65px; display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
+        .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 35px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 150px; }
-        .item { padding: 6px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; }
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 140px; }
+        
+        .item { 
+            padding: 2px 20px; 
+            font-size: 32px; 
+            font-weight: 950; 
+            color: #ffcc00; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-shadow: 2px 2px 3px #000;
+            line-height: 1.1; 
+        }
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; 
@@ -69,34 +83,25 @@
             border-top: 6px solid red; overflow: hidden;
         }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 15px; } /* Increased doori slightly */
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 15px; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; }
-        .ticker-content { display: inline-block; padding-right: 700px; } 
+        .ticker-content { display: inline-block; padding-right: 800px; } 
 
-        /* --- ਡੇਟ-ਟਾਈਮ Snake Border ਬਾਕਸ --- */
-        .dt-box-wrap {
-            height: 100%; min-width: 260px; /* Width fixed */
-            border-left: 5px solid #000; z-index: 10;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Snake border for DT box with rounded corners */
-        .dt-box-snake {
-            height: 85%; width: 90%; /* Slight padding inside footer */
-            border-radius: 10px;
-            animation: snakeBorder 4s linear infinite, heartbeat 2s infinite; /* Snake + Flash animation */
-        }
-
-        .clock-content {
-            font-size: 28px; font-weight: 1000; color: white;
-            text-align: center;
+        .dt-box-wrap { height: 100%; min-width: 260px; display: flex; align-items: center; justify-content: center; border-left: 5px solid #000; }
+        
+        /* ਡੇਟ-ਟਾਈਮ ਲਈ ਵੀ ਵੱਖਰਾ ਰੰਗ */
+        .dt-box-snake { 
+            height: 85%; width: 92%; border-radius: 12px; padding: 3px;
+            background: linear-gradient(90deg, #00ff00, #ffffff, #00ff00);
+            background-size: 300% 300%;
+            animation: snakeBorder 3s linear infinite;
         }
     </style>
 </head>
 <body>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box box-style list-box-style">
+    <div id="box-fly" class="box">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
@@ -106,7 +111,7 @@
         </div>
     </div>
 
-    <div id="box-out" class="box box-style list-box-style">
+    <div id="box-out" class="box">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div>
@@ -116,7 +121,7 @@
         </div>
     </div>
 
-    <div id="box-time" class="box box-style list-box-style">
+    <div id="box-time" class="box">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div>
@@ -130,11 +135,10 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    
     <div class="dt-box-wrap">
-        <div class="box-style dt-box-snake">
+        <div class="dt-box-snake">
             <div class="box-inner" style="display:flex; align-items:center; justify-content:center;">
-                <div id="clock-box" class="clock-content">--:--:--</div>
+                <div id="clock-box" style="font-size:28px; font-weight:1000; color:white;">--:--:--</div>
             </div>
         </div>
     </div>
@@ -160,10 +164,7 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
 
-            document.getElementById('scoreboard-div').style.display = (conf.showScoreboard !== false) ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
-            
             const tickerElem = document.getElementById('ticker-text');
             tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
 
@@ -178,8 +179,6 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
-            const loopGap = '<div style="height:350px"></div>'; 
-
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const count = htmlArr[id].length;
@@ -187,7 +186,7 @@
                     document.getElementById(`box-${id}`).style.display = "block";
                     document.getElementById(`count-${id}`).innerText = count;
                     const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="content-block">${content}</div>${loopGap}<div class="content-block">${content}</div>${loopGap}`;
+                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
                 } else { document.getElementById(`box-${id}`).style.display = "none"; }
             });
         });
@@ -196,8 +195,7 @@
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            if (area && box.style.display !== "none" && area.children.length > 0) {
+            if (area && area.children.length > 0 && document.getElementById(`box-${id}`).style.display !== "none") {
                 listPos[id] -= 1.1; 
                 let firstBlock = area.querySelector('.content-block');
                 if(firstBlock) {
@@ -207,9 +205,8 @@
                 }
             }
         });
-
         const tMove = document.getElementById('ticker-text');
-        if (tMove && tMove.scrollWidth > 0) {
+        if (tMove) {
             tickerPos -= 2.0;
             if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
             tMove.style.transform = `translateX(${tickerPos}px)`;
