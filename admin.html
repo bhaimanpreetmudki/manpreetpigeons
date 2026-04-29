@@ -10,41 +10,39 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; }
         
-        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; }
-        .sum-item { text-align: center; font-size: 11px; text-transform: uppercase; color: #aaa; }
-        .sum-item b { font-size: 22px; color: #f39c12; display: block; }
+        /* Header Info Section */
+        .top-info-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .mini-box { background: #1a1d21; padding: 8px; border-radius: 8px; border: 1px solid #333; text-align: center; font-size: 12px; }
+        .mini-box small { color: #888; display: block; font-size: 9px; margin-bottom: 2px; }
+        .mini-box b { color: #2ecc71; }
+        .btn-helpline-top { background: #2980b9; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: bold; border: 1px solid #3498db; }
 
-        .info-container { display: block; margin-bottom: 15px; }
-        .info-box { background: #1a1d21; padding: 12px; border-radius: 10px; border: 1px solid #333; text-align: center; }
-        .info-box small { color: #888; font-size: 10px; display: block; margin-bottom: 4px; }
-        .info-box b { font-size: 16px; color: #2ecc71; }
-
-        .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
-        .btn-helpline { background: #2980b9; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 15px; border: 1px solid #3498db; }
+        .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; margin-bottom: 15px; cursor: pointer; }
 
         .display-controls-box { background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; display: flex; gap: 10px; }
-        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; }
+        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer; text-transform: uppercase; color: white; }
 
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .input-label { color: #f39c12; font-size: 11px; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
         
-        textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 15px; outline: none; box-sizing: border-box; }
+        textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; }
         .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; }
-        .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 12px; margin-bottom: 20px; }
+        .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 11px; margin-bottom: 15px; }
 
-        .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
-        .name-part { flex-grow: 1; font-weight: bold; }
-        .btn-part { display: flex; gap: 5px; align-items: center; }
-        .st-btn { border: none; padding: 8px; border-radius: 5px; font-weight: 900; width: 35px; color: white; opacity: 0.3; }
-        .st-btn.active { opacity: 1; border: 2px solid white; }
+        /* Summary Box Section */
+        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; background: #1a1d21; padding: 12px; border-radius: 10px; border: 1px solid #333; }
+        .sum-item { text-align: center; font-size: 10px; color: #aaa; }
+        .sum-item b { font-size: 18px; color: #f39c12; display: block; }
+
+        .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 6px; display: flex; align-items: center; border: 1px solid #30363d; }
+        .name-part { flex-grow: 1; font-weight: bold; font-size: 14px; }
+        .btn-part { display: flex; gap: 4px; align-items: center; }
+        .st-btn { border: none; padding: 8px; border-radius: 5px; font-weight: 900; width: 32px; color: white; opacity: 0.3; }
+        .st-btn.active { opacity: 1; border: 1.5px solid white; }
 
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
-        .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
-        .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
-        .gp { background: #4285F4; } .pp { background: #5f259f; } .pt { background: #00baf2; }
     </style>
 </head>
 <body>
@@ -57,25 +55,17 @@
 
 <div id="main-content" style="display:none;">
     
-    <div class="admin-sum-grid">
-        <div class="sum-item">TOTAL<b id="sum-total">0</b></div>
-        <div class="sum-item">FLY<b id="sum-fly" style="color:#3498db;">0</b></div>
-        <div class="sum-item">TIME<b id="sum-time" style="color:#f1c40f;">0</b></div>
-        <div class="sum-item">OUT<b id="sum-out" style="color:#e74c3c;">0</b></div>
-    </div>
-
-    <div class="info-container">
-        <div class="info-box">
-            <small>EXPIRY DATE</small>
+    <div class="top-info-bar">
+        <a href="tel:8699640061" class="btn-helpline-top">
+            <i class="fas fa-phone-alt"></i> HELPLINE
+        </a>
+        <div class="mini-box">
+            <small>PLAN EXPIRY</small>
             <b id="expDisp">--</b>
         </div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
-
-    <a href="tel:8699640061" class="btn-helpline">
-        <i class="fas fa-phone-alt"></i> CALL HELPLINE: 8699640061
-    </a>
 
     <div id="admin-controls-wrapper">
         <div class="display-controls-box">
@@ -85,19 +75,32 @@
 
         <div class="controls-container">
             <div class="row">
-                <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ (ਨਾਮ, ਨਾਮ, ਨਾਮ)"></textarea>
+                <span class="input-label">TICKER MESSAGE:</span>
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="save()">
+            </div>
+
+            <div class="row">
+                <span class="input-label">ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਅਪਡੇਟ ਕਰਨ ਲਈ ਇਸ ਤਰਾਂ (ਫ਼ਿਰੋਜ਼ਪੁਰ, ਫਰੀਦਕੋਟ, ਮੋਗਾ) ਟੀਮਾਂ ਦੇ ਨਾਮ ਨਾਲ ਕੌਮਾ (,) ਪਾਓ:</span>
+                <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਭਰੋ..."></textarea>
                 <button class="btn-add" onclick="addP()">ADD NEW TEAMS</button>
             </div>
 
             <div class="row">
+                <span class="input-label">ਸਮੇਂ ਵਾਲੀਆਂ ਟੀਮਾਂ ਲਈ ਸਮਾਂ ਲਿਖੋ:</span>
                 <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ (e.g. 10:30 AM)" oninput="save()">
-                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="save()">
             </div>
         </div>
 
-        <div id="listArea"></div>
-        
         <button class="btn-reset" onclick="resetData()">🔄 RESET EVERYTHING</button>
+
+        <div class="admin-sum-grid">
+            <div class="sum-item">TOTAL<b id="sum-total">0</b></div>
+            <div class="sum-item">FLY<b id="sum-fly" style="color:#3498db;">0</b></div>
+            <div class="sum-item">TIME<b id="sum-time" style="color:#f1c40f;">0</b></div>
+            <div class="sum-item">OUT<b id="sum-out" style="color:#e74c3c;">0</b></div>
+        </div>
+
+        <div id="listArea"></div>
     </div>
 
     <div id="expire-msg" style="display:none; text-align:center; padding:40px 20px; background:#1a1d21; border-radius:12px; border:1px solid #e74c3c; margin-bottom:20px;">
@@ -116,6 +119,7 @@
 </div>
 
 <script>
+    // Firebase Logic remains the same as previous version
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -125,13 +129,6 @@
     let localData = { pigeons: [], config: { showScoreboard: false, showTicker: false } };
     let isExpired = false;
 
-    const plans = [
-        { name: "1 DAY PLAN", price: 200, id: "1Day" },
-        { name: "2 DAY PLAN", price: 300, id: "2Day" },
-        { name: "10 DAY PLAN", price: 1000, id: "10Day" },
-        { name: "1 MONTH PLAN", price: 2000, id: "1Month" }
-    ];
-
     function checkLogin() {
         if(!userID) { alert("ID NOT FOUND!"); return; }
         db.ref('users/' + userID).once('value', snap => {
@@ -139,7 +136,6 @@
             if(data && data.password === document.getElementById('adminPass').value) {
                 const expiryDate = new Date(data.expiry || "2026-12-31T12:00:00");
                 const now = new Date();
-                
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
 
@@ -148,7 +144,6 @@
                     document.getElementById('admin-controls-wrapper').style.display = "none";
                     document.getElementById('expire-msg').style.display = "block";
                     document.getElementById('expDisp').innerText = "EXPIRED";
-                    document.getElementById('expDisp').style.color = "#e74c3c";
                     toggleRecharge(true);
                 } else {
                     document.getElementById('expDisp').innerText = data.expiry ? new Date(data.expiry).toLocaleDateString('en-GB') : "31/12/2026";
@@ -156,40 +151,11 @@
 
                 db.ref('users/' + userID).on('value', s => { 
                     const val = s.val();
-                    if(val) {
-                        localData = val;
-                        render();
-                    }
+                    if(val) { localData = val; render(); }
                 });
                 setupPlans();
             } else { alert("Wrong Password!"); }
         });
-    }
-
-    function setupPlans() {
-        const container = document.getElementById('plans-container');
-        container.innerHTML = "";
-        plans.forEach(p => {
-            const upiURL = `pa=4kjunctionofficial@okhdfcbank&pn=Manpreet&am=${p.price}&cu=INR&tn=Plan_${p.id}_ID_${userID}`;
-            container.innerHTML += `
-                <div class="plan-card">
-                    <h2>${p.name}</h2>
-                    <b>₹${p.price}</b>
-                    <div class="pay-grid">
-                        <a href="upi://pay?${upiURL}" class="pay-btn gp">GPAY</a>
-                        <a href="upi://pay?${upiURL}" class="pay-btn pp">PHONEPE</a>
-                        <a href="upi://pay?${upiURL}" class="pay-btn pt">PAYTM</a>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function toggleRecharge(s) { document.getElementById('recharge-modal').style.display = s ? 'block' : 'none'; }
-
-    function toggleDisplay(field) {
-        if(isExpired) return;
-        const currentStatus = localData.config[field] || false;
-        db.ref('users/' + userID + '/config/' + field).set(!currentStatus);
     }
 
     function render() {
@@ -198,16 +164,11 @@
         
         document.getElementById('scoreBtn').innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
         document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
-
         document.getElementById('tickerBtn').innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
         document.getElementById('tickerBtn').style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
 
-        if(document.activeElement !== document.getElementById('inpTicker')) {
-            document.getElementById('inpTicker').value = conf.ticker || "";
-        }
-        if(document.activeElement !== document.getElementById('inpBoxTime')) {
-            document.getElementById('inpBoxTime').value = conf.boxTime || "";
-        }
+        if(document.activeElement !== document.getElementById('inpTicker')) document.getElementById('inpTicker').value = conf.ticker || "";
+        if(document.activeElement !== document.getElementById('inpBoxTime')) document.getElementById('inpBoxTime').value = conf.boxTime || "";
 
         const list = document.getElementById('listArea');
         list.innerHTML = "";
@@ -234,47 +195,11 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
+    function toggleDisplay(field) {
+        if(isExpired) return;
+        const currentStatus = localData.config[field] || false;
+        db.ref('users/' + userID + '/config/' + field).set(!currentStatus);
+    }
+
     function addP() {
         if(isExpired) return;
-        const names = document.getElementById('pName').value.split(',').map(n => n.trim()).filter(n => n !== "");
-        if(!localData.pigeons) localData.pigeons = [];
-        names.forEach(n => localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' }));
-        document.getElementById('pName').value = "";
-        save();
-    }
-
-    function setStatus(id, s) {
-        if(isExpired) return;
-        localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, status: s} : p);
-        save();
-    }
-
-    function delP(id) {
-        if(isExpired) return;
-        if(confirm("Delete Team?")) {
-            localData.pigeons = localData.pigeons.filter(p => p.id != id);
-            save();
-        }
-    }
-
-    function save() {
-        if(isExpired) return;
-        db.ref('users/' + userID).update({
-            pigeons: localData.pigeons || [],
-            config: {
-                ...localData.config,
-                ticker: document.getElementById('inpTicker').value,
-                boxTime: document.getElementById('inpBoxTime').value
-            }
-        });
-    }
-
-    function resetData() {
-        if(isExpired) return;
-        if(confirm("Reset Everything?")) {
-            db.ref('users/' + userID + '/pigeons').set([]);
-        }
-    }
-</script>
-</body>
-</html>
