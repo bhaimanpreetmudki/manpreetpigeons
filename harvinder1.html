@@ -8,11 +8,17 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* ਚਾਰੇ ਪਾਸੇ ਘੁੰਮਣ ਵਾਲੀ ਬਾਰਡਰ ਐਨੀਮੇਸ਼ਨ */
+        /* ਬਾਰਡਰ ਸੱਪ ਵਾਂਗ ਚੱਲਣ ਵਾਲੀ ਐਨੀਮੇਸ਼ਨ */
         @keyframes snakeBorder {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* ਡੇਟ-ਟਾਈਮ ਫਲੈਸ਼ */
+        @keyframes flashEffect {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .main-container { 
@@ -22,25 +28,15 @@
         
         .box { 
             display: none; width: 32.5%; height: 100%; position: relative; 
-            background: rgba(0, 0, 0, 0.95);
-            border-radius: 12px 12px 0 0;
-            overflow: hidden;
-            /* ਘੈਂਟ ਬਾਰਡਰ ਇਫੈਕਟ */
             padding: 4px; 
-            background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000);
+            background: linear-gradient(90deg, #ff0000, #fbff00, #00ff08, #0011ff, #ff0000);
             background-size: 300% 300%;
             animation: snakeBorder 4s linear infinite;
-        }
-
-        /* ਬਾਕਸ ਦੇ ਅੰਦਰਲਾ ਕਾਲਾ ਹਿੱਸਾ */
-        .box-inner {
-            background: black;
-            width: 100%;
-            height: 100%;
-            border-radius: 8px 8px 0 0;
-            position: relative;
+            border-radius: 12px 12px 0 0;
             overflow: hidden;
         }
+
+        .box-inner { background: black; width: 100%; height: 100%; border-radius: 8px 8px 0 0; position: relative; overflow: hidden; }
 
         .header-wrapper { 
             position: absolute; top: 0; right: 0; width: 50%; z-index: 10; 
@@ -50,39 +46,26 @@
         .box-header, .sum-card { height: 70px; display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        .header-title { 
-            flex: 1; padding-left: 15px; font-weight: 900; font-size: 30px; 
-            border-right: 2px solid white; height: 100%; display: flex; align-items: center; 
-        }
-        .count-tag, .sum-val-area { 
-            width: 35%; height: 100%; display: flex; align-items: center; 
-            justify-content: center; font-weight: 1000; font-size: 38px; 
-        }
+        .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         
-        /* ਝਟਕਾ ਰੋਕਣ ਲਈ list-area ਸੈਟਿੰਗ */
+        /* ਲਿਸਟ ਐਨੀਮੇਸ਼ਨ ਲਈ */
         .list-area { 
             position: absolute; width: 100%; will-change: transform; 
             display: flex; flex-direction: column; padding-top: 150px; 
         }
-        .item { 
-            padding: 6px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000;
-        }
+        .item { padding: 6px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; }
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; 
             background: #fff; display: flex; align-items: center; 
             border-top: 6px solid red; overflow: hidden;
         }
-        .live-tag { 
-            background: #ff0000; color: #fff; padding: 0 25px; height: 100%; 
-            display: flex; align-items: center; font-size: 30px; font-weight: 1000; 
-            z-index: 10; border-right: 5px solid #000; 
-        }
+        .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 10px; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 700px; } 
@@ -91,6 +74,7 @@
             background: #ff0000; color: #fff; height: 100%; padding: 0 20px; 
             display: flex; align-items: center; justify-content: center; min-width: 250px; 
             border-left: 5px solid #000; z-index: 10; font-size: 28px; font-weight: 1000;
+            animation: flashEffect 1.5s infinite; /* ਫਲੈਸ਼ ਇਫੈਕਟ */
         }
     </style>
 </head>
@@ -176,7 +160,7 @@
                     document.getElementById(`box-${id}`).style.display = "block";
                     document.getElementById(`count-${id}`).innerText = count;
                     const content = htmlArr[id].join('');
-                    // Seamless Loop Content
+                    // Seamless loop build
                     area.innerHTML = `<div>${content}</div><div style="height:350px"></div><div>${content}</div><div style="height:350px"></div>`;
                 } else { document.getElementById(`box-${id}`).style.display = "none"; }
             });
@@ -186,11 +170,17 @@
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
-            if (area && document.getElementById(`box-${id}`).style.display !== "none") {
+            const box = document.getElementById(`box-${id}`);
+            if (area && box.style.display !== "none") {
                 listPos[id] -= 1.1; 
-                // ਝਟਕਾ ਰੋਕਣ ਲਈ: ਜਦੋਂ ਪਹਿਲਾ ਅੱਧਾ ਹਿੱਸਾ ਖਤਮ ਹੁੰਦਾ ਹੈ ਤਾਂ ਹੀ ਰੀਸੈੱਟ ਕਰੋ
-                let halfHeight = area.scrollHeight / 2;
-                if (Math.abs(listPos[id]) >= halfHeight) {
+                
+                // CRITICAL FIX: Get actual height of the first block + gap
+                // content div is first child, gap div is second child
+                let contentHeight = area.children[0].offsetHeight;
+                let gapHeight = 350;
+                let resetPoint = contentHeight + gapHeight;
+
+                if (Math.abs(listPos[id]) >= resetPoint) {
                     listPos[id] = 0;
                 }
                 area.style.transform = `translateY(${listPos[id]}px)`;
