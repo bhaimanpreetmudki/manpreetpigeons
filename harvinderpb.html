@@ -46,44 +46,57 @@
         #box-out { background: #660000; } 
         #box-time { background: #001a66; }
 
-        /* --- ਹੈਡਰ ਸੈਟਿੰਗ --- */
+        /* --- ਹੈਡਰ ਸੈਟਿੰਗ (Summary Box Style Count) --- */
         .box-header { 
             height: 75px; 
             width: 42%; 
             display: flex; 
             align-items: center; 
-            padding: 0 12px; 
             position: absolute; 
             right: 0; 
             top: 0; 
             z-index: 10; 
-            margin-left: auto; 
-            border-bottom: 3px solid rgba(255,255,255,0.4); 
+            border-bottom: 3px solid white; 
             border-left: 3px solid white; 
             border-radius: 0 12px 0 0;
+            overflow: hidden; /* ਬਾਰਡਰ ਦੇ ਅੰਦਰ ਰੱਖਣ ਲਈ */
         }
-        #box-fly .box-header { background: #1a1a1a; }
-        #box-out .box-header { background: #b30000; }
-        #box-time .box-header { background: #002db3; }
-
+        
+        /* ਹੈਡਰ ਦਾ ਟੈਕਸਟ ਏਰੀਆ */
         .header-title { 
-            font-size: 30px; 
+            background: rgba(0,0,0,0.9); /* ਕਾਲਾ ਬੈਕਗਰਾਊਂਡ */
+            height: 100%;
+            width: 65%; /* Summary Box ਵਾਂਗ 65% */
+            font-size: 24px; 
             font-weight: 950; 
-            flex: 1; 
-            text-align: left; 
-            letter-spacing: 0.5px; 
             display: flex; 
             align-items: center;
+            justify-content: center;
             white-space: nowrap;
+            border-right: 2px solid white;
         }
 
-        /* --- ਸਿਰਫ਼ TIME ਦੀ ਸੈਟਿੰਗ: ਹੈਡਰ ਦੇ ਹੇਠਾਂ ਦਿਖਾਉਣ ਲਈ --- */
+        /* ਹੈਡਰ ਦਾ ਕਾਊਂਟ ਏਰੀਆ (White Summary Style) */
+        .count-tag { 
+            background: #ffffff; /* ਚਿੱਟਾ ਬੈਕਗਰਾਊਂਡ */
+            color: #000000; /* ਕਾਲਾ ਅੱਖਰ */
+            height: 100%;
+            width: 35%; /* Summary Box ਵਾਂਗ 35% */
+            font-size: 45px; 
+            font-weight: 1000; 
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            text-align: center; 
+        }
+
+        /* --- ਸਿਰਫ਼ TIME ਦੀ ਸੈਟਿੰਗ --- */
         .header-time-info { 
-            display: none; /* JS ਰਾਹੀਂ ਦਿਖਾਇਆ ਜਾਵੇਗਾ */
+            display: none; 
             position: absolute;
-            top: 75px; /* ਹੈਡਰ ਦੀ height ਦੇ ਬਰਾਬਰ */
+            top: 75px; 
             right: 0;
-            width: 42%; /* ਹੈਡਰ ਜਿੰਨੀ ਹੀ ਚੌੜਾਈ */
+            width: 42%; 
             background: rgba(0,0,0,0.8); 
             color: #ffcc00; 
             font-size: 26px; 
@@ -93,29 +106,10 @@
             border-left: 3px solid white;
             border-bottom: 2px solid white;
             z-index: 11;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .count-tag { 
-            background: #ffcc00; 
-            color: black; 
-            padding: 2px 10px; 
-            border-radius: 5px; 
-            font-size: 45px; 
-            font-weight: 1000; 
-            border: 2px solid white; 
-            min-width: 60px; 
-            text-align: center; 
         }
 
         /* --- ਲਿਸਟ ਏਰੀਆ --- */
-        .scroll-window { 
-            position: relative; 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden; 
-            z-index: 1; 
-        }
+        .scroll-window { position: relative; height: 100%; width: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         .item { padding: 5px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 5px rgba(0,0,0,1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
@@ -150,27 +144,26 @@
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span>
-            <span id="count-fly" class="count-tag">0</span>
+            <div class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></div>
+            <div id="count-fly" class="count-tag">0</div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
     <div id="box-out" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="❌ ਕੱਟੇ" data-en="❌ OUT"></span>
-            <span id="count-out" class="count-tag">0</span>
+            <div class="header-title flash-text" data-pa="❌ ਕੱਟੇ" data-en="❌ OUT"></div>
+            <div id="count-out" class="count-tag">0</div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div>
 
     <div id="box-time" class="box">
         <div class="box-header">
-            <span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span>
-            <span id="count-time" class="count-tag">0</span>
+            <div class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></div>
+            <div id="count-time" class="count-tag">0</div>
         </div>
         <div id="header-time-info" class="header-time-info"></div>
-        
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
@@ -208,7 +201,6 @@
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
             
-            // Time Sync Setting
             const timeInfoEl = document.getElementById('header-time-info');
             const adminTime = conf.boxTime || conf.timeRange || ""; 
             if(adminTime) {
