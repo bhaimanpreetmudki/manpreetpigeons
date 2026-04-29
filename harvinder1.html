@@ -8,17 +8,15 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* ਬਾਰਡਰ ਸੱਪ ਵਾਂਗ ਚੱਲਣ ਵਾਲੀ ਐਨੀਮੇਸ਼ਨ */
         @keyframes snakeBorder {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* ਡੇਟ-ਟਾਈਮ ਫਲੈਸ਼ */
         @keyframes flashEffect {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.6; }
         }
 
         .main-container { 
@@ -53,7 +51,6 @@
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         
-        /* ਲਿਸਟ ਐਨੀਮੇਸ਼ਨ ਲਈ */
         .list-area { 
             position: absolute; width: 100%; will-change: transform; 
             display: flex; flex-direction: column; padding-top: 150px; 
@@ -74,7 +71,7 @@
             background: #ff0000; color: #fff; height: 100%; padding: 0 20px; 
             display: flex; align-items: center; justify-content: center; min-width: 250px; 
             border-left: 5px solid #000; z-index: 10; font-size: 28px; font-weight: 1000;
-            animation: flashEffect 1.5s infinite; /* ਫਲੈਸ਼ ਇਫੈਕਟ */
+            animation: flashEffect 1.5s infinite;
         }
     </style>
 </head>
@@ -160,8 +157,8 @@
                     document.getElementById(`box-${id}`).style.display = "block";
                     document.getElementById(`count-${id}`).innerText = count;
                     const content = htmlArr[id].join('');
-                    // Seamless loop build
-                    area.innerHTML = `<div>${content}</div><div style="height:350px"></div><div>${content}</div><div style="height:350px"></div>`;
+                    // Seamless loop with consistent gap
+                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
                 } else { document.getElementById(`box-${id}`).style.display = "none"; }
             });
         });
@@ -171,24 +168,25 @@
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
             const box = document.getElementById(`box-${id}`);
-            if (area && box.style.display !== "none") {
+            
+            // Check if area and box are active
+            if (area && box.style.display !== "none" && area.children.length > 0) {
                 listPos[id] -= 1.1; 
                 
-                // CRITICAL FIX: Get actual height of the first block + gap
-                // content div is first child, gap div is second child
-                let contentHeight = area.children[0].offsetHeight;
-                let gapHeight = 350;
-                let resetPoint = contentHeight + gapHeight;
-
-                if (Math.abs(listPos[id]) >= resetPoint) {
-                    listPos[id] = 0;
+                // Safe height calculation
+                let firstBlock = area.querySelector('.content-block');
+                if(firstBlock) {
+                    let resetPoint = firstBlock.offsetHeight + 350;
+                    if (Math.abs(listPos[id]) >= resetPoint) {
+                        listPos[id] = 0;
+                    }
+                    area.style.transform = `translateY(${listPos[id]}px)`;
                 }
-                area.style.transform = `translateY(${listPos[id]}px)`;
             }
         });
 
         const tMove = document.getElementById('ticker-text');
-        if (tMove) {
+        if (tMove && tMove.scrollWidth > 0) {
             tickerPos -= 2.0;
             if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
             tMove.style.transform = `translateX(${tickerPos}px)`;
