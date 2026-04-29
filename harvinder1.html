@@ -5,13 +5,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        /* --- ਹੈਡਰ ਦੀ ਹਾਈਟ ਇੱਥੋਂ ਬਦਲੋ (ਵੱਡਾ/ਛੋਟਾ ਕਰਨ ਲਈ) --- */
-        :root {
-            --header-h: 70px; 
-        }
-
+        :root { --header-h: 70px; }
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
+        body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
 
         @keyframes snakeBorder {
             0% { background-position: 0% 50%; }
@@ -26,40 +22,30 @@
         
         .box { display: none; width: 32.5%; height: 100%; position: relative; padding: 4px; border-radius: 20px; overflow: hidden; }
 
-        /* --- 1. FLYING: Sky Blue Border & White Text --- */
-        #box-fly { 
-            background: linear-gradient(90deg, #00BFFF, #ffffff, #00BFFF) !important; 
-            background-size: 300% 300%; 
-            animation: snakeBorder 4s linear infinite; 
-        }
-        #box-fly .item { color: #ffffff !important; }
+        /* --- 1. FLYING: Sky Blue Background --- */
+        #box-fly { background: #fff; animation: snakeBorder 4s linear infinite; } /* ਬਾਰਡਰ ਚਿੱਟਾ */
+        #box-fly .box-inner { background: #00BFFF !important; } /* ਅੰਦਰਲਾ ਰੰਗ Sky Blue */
+        #box-fly .item { color: #000 !important; border-bottom: 1px solid rgba(0,0,0,0.1); text-shadow: none; }
 
-        /* --- 2. OUT: Red Border & White Text --- */
-        #box-out { 
-            background: linear-gradient(90deg, #FF0000, #ffffff, #FF0000) !important; 
-            background-size: 300% 300%; 
-            animation: snakeBorder 3s linear infinite; 
-        }
-        #box-out .item { color: #ffffff !important; }
+        /* --- 2. OUT: Red Background --- */
+        #box-out { background: #fff; animation: snakeBorder 3s linear infinite; }
+        #box-out .box-inner { background: #FF0000 !important; } /* ਅੰਦਰਲਾ ਰੰਗ Red */
+        #box-out .item { color: #fff !important; border-bottom: 1px solid rgba(255,255,255,0.2); }
 
-        /* --- 3. TIME: Yellow Border & Black Text --- */
-        #box-time { 
-            background: linear-gradient(90deg, #FFFF00, #ffffff, #FFFF00) !important; 
-            background-size: 300% 300%; 
-            animation: snakeBorder 5s linear infinite; 
-        }
-        #box-time .item { color: #000000 !important; font-weight: 1000; text-shadow: none !important; }
+        /* --- 3. TIME: Yellow Background --- */
+        #box-time { background: #000; animation: snakeBorder 5s linear infinite; }
+        #box-time .box-inner { background: #FFFF00 !important; } /* ਅੰਦਰਲਾ ਰੰਗ Yellow */
+        #box-time .item { color: #000 !important; border-bottom: 1px solid rgba(0,0,0,0.1); text-shadow: none; }
 
-        .box-inner { background: rgba(0, 0, 0, 0.95); width: 100%; height: 100%; border-radius: 16px; position: relative; overflow: hidden; }
+        .box-inner { width: 100%; height: 100%; border-radius: 16px; position: relative; overflow: hidden; }
 
         .header-wrapper { 
             position: absolute; top: 0; right: 0; width: 55%; z-index: 10; 
             background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
-            border-radius: 0 15px 0 15px; 
+            border-radius: 0 15px 0 15px; color: white;
         }
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
-        
         .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 25px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 32px; }
         .count-tag { background: #fff; color: #000; }
@@ -67,8 +53,7 @@
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
-        
-        .item { padding: 3px 20px; font-size: 32px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; line-height: 1.0; }
+        .item { padding: 3px 20px; font-size: 32px; font-weight: 950; line-height: 1.0; }
 
         .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; display: flex; align-items: center; border-top: 6px solid red; overflow: hidden; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
@@ -77,7 +62,8 @@
         .ticker-content { display: inline-block; padding-right: 800px; } 
 
         .dt-box-wrap { height: 100%; min-width: 260px; display: flex; align-items: center; justify-content: center; border-left: 5px solid #000; }
-        .dt-box-snake { height: 85%; width: 92%; border-radius: 12px; padding: 3px; background: linear-gradient(90deg, #00ff00, #ffffff, #00ff00); background-size: 300% 300%; animation: snakeBorder 3s linear infinite; }
+        .dt-box-snake { height: 85%; width: 92%; border-radius: 12px; padding: 3px; background: #000; }
+        .dt-box-snake .box-inner { background: #000; color: white; display:flex; align-items:center; justify-content:center; }
     </style>
 </head>
 <body>
@@ -117,13 +103,7 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box-wrap">
-        <div class="dt-box-snake">
-            <div class="box-inner" style="display:flex; align-items:center; justify-content:center;">
-                <div id="clock-box" style="font-size:26px; font-weight:1000; color:white;">--:--:--</div>
-            </div>
-        </div>
-    </div>
+    <div class="dt-box-wrap"><div class="dt-box-snake"><div class="box-inner"><div id="clock-box" style="font-size:26px; font-weight:1000;">--:--:--</div></div></div></div>
 </div>
 
 <script>
@@ -140,7 +120,6 @@
     function updateClock() {
         const now = new Date();
         const clockBox = document.getElementById('clock-box');
-        if(!clockBox) return;
         toggleCounter++;
         if (toggleCounter >= 10) { showDate = !showDate; toggleCounter = 0; }
         if (showDate) {
@@ -156,10 +135,9 @@
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
-
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             const tickerElem = document.getElementById('ticker-text');
-            if(tickerElem) { tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`; }
+            if(tickerElem) tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
 
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
