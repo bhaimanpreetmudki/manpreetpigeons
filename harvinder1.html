@@ -73,17 +73,17 @@
     </div>
 
     <div id="box-time" class="box">
-    <div class="header-wrapper">
-        <div class="box-header">
-            <span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span>
-            <span id="count-time" class="count-tag">0</span>
+        <div class="header-wrapper">
+            <div class="box-header">
+                <span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span>
+                <span id="count-time" class="count-tag">0</span>
+            </div>
+            <div class="sum-card">
+                <div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 35px;">--</div>
+            </div>
         </div>
-        <div class="sum-card">
-            <div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 35px;">--</div>
-        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
-    <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-</div>
 </div>
 
 <div class="footer" id="ticker-div">
@@ -122,11 +122,10 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            document.getElementById('scoreboard-div').style.display = (conf.showScore !== false) ? "flex" : "none";
+            // Fix: Admin de 'showScoreboard' naal match kita
+            document.getElementById('scoreboard-div').style.display = (conf.showScoreboard !== false) ? "flex" : "none";
             document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
-            
-            // ADMIN TIME SET FIX: ਇੱਥੇ ਵੈਲਿਊ ਅਪਡੇਟ ਹੋਵੇਗੀ
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             
             let counts = { fly:0, out:0, time:0 }; 
@@ -162,16 +161,17 @@
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
             const parentBox = document.getElementById(`box-${id}`);
-            if (listArea && parentBox.style.display !== "none") {
+            if (listArea && parentBox && parentBox.style.display !== "none") {
                 listPositions[id] -= LIST_SPEED;
                 let halfHeight = listArea.offsetHeight / 2; 
-                if (Math.abs(listPositions[id]) >= halfHeight) { listPositions[id] = 0; }
+                if (halfHeight > 0 && Math.abs(listPositions[id]) >= halfHeight) { listPositions[id] = 0; }
                 listArea.style.transform = `translateY(${listPositions[id]}px)`;
             }
         });
 
         const tickerMove = document.getElementById('ticker-text');
-        if (document.getElementById('ticker-div').style.display !== "none") {
+        const tickerDiv = document.getElementById('ticker-div');
+        if (tickerDiv && tickerDiv.style.display !== "none") {
             tickerPos -= TICKER_SPEED;
             if (tickerPos < -tickerMove.offsetWidth) { tickerPos = window.innerWidth; }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
