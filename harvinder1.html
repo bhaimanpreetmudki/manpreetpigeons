@@ -12,24 +12,16 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* Animation for Slow Flash inside boxes */
-        @keyframes flashLight {
-            0% { left: -120%; opacity: 0; }
-            10% { opacity: 0.5; }
-            30% { left: 120%; opacity: 0; }
-            100% { left: 120%; opacity: 0; }
-        }
-
-        /* Animation for Glowing Border */
+        /* ਬਕਸਿਆਂ ਲਈ ਚਮਕਦਾਰ ਬਾਰਡਰ ਐਨੀਮੇਸ਼ਨ */
         @keyframes strokeGlow {
             0%, 100% { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
             50% { border-color: rgba(255, 255, 255, 1); box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
         }
 
-        /* Flash for Date/Time */
-        @keyframes timeFlash {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        /* ਸਿਰਫ ਅੱਖਰਾਂ (Text) ਨੂੰ ਫਲੈਸ਼ ਕਰਨ ਲਈ ਐਨੀਮੇਸ਼ਨ */
+        @keyframes textFlash {
+            0%, 100% { opacity: 1; transform: scale(1) skewX(20deg); }
+            50% { opacity: 0.2; transform: scale(0.95) skewX(20deg); }
         }
 
         .main-container { 
@@ -44,13 +36,7 @@
             animation: strokeGlow 3s infinite ease-in-out;
         }
 
-        .box-flash {
-            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: flashLight 8s ease-in-out infinite; 
-            z-index: 2;
-        }
-
+        /* ਬੈਕਗ੍ਰਾਊਂਡ ਕਲਰ */
         #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
         #box-out { background: rgba(255, 0, 0, 0.85) !important; }
         #box-time { background: rgba(255, 255, 0, 0.85) !important; }
@@ -73,7 +59,7 @@
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
         
-        .item { padding: 5px 20px; font-size: 40px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
+        .item { padding: 5px 20px; font-size: 45px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
         #box-out .item { color: #fff; }
 
         /* --- Footer Styles --- */
@@ -83,74 +69,73 @@
             border-top: 4px solid #000; z-index: 20; overflow: hidden;
         }
 
-        /* LIVE Label with Slanted Background */
+        /* LIVE Label (ਟੇਢੀ ਬੈਕਗ੍ਰਾਊਂਡ) */
         .live-tag { 
-            background: #ff0000; color: #fff; padding: 0 40px; height: 100%; 
+            background: #ff0000; color: #fff; padding: 0 45px; height: 100%; 
             display: flex; align-items: center; font-size: 40px; font-weight: 1000; 
-            transform: skewX(-15deg); margin-left: -15px; /* Slanted look */
+            transform: skewX(-20deg); margin-left: -25px;
             border-right: 5px solid #fff;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
             z-index: 25;
         }
-        .live-tag span { transform: skewX(15deg); } /* Fix text tilt */
+        .live-tag span { transform: skewX(20deg); } 
 
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; padding-left: 20px; }
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 38px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 800px; } 
 
-        /* Date/Time Box with Slanted Red Background & Flash */
+        /* Date/Time Box - ਹੋਰ ਜ਼ਿਆਦਾ ਟੇਢੀ (Skewed) */
         .dt-box-wrap { 
-            height: 100%; min-width: 320px; display: flex; align-items: center; justify-content: center; 
+            height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; 
             background: #ff0000; color: #fff; 
-            transform: skewX(-15deg); margin-right: -15px; /* Slanted look */
-            border-left: 5px solid #fff;
-            animation: timeFlash 1.5s infinite; /* Flash effect */
+            transform: skewX(-20deg); margin-right: -25px; /* ਹੋਰ ਜ਼ਿਆਦਾ ਟੇਢਾ ਕੀਤਾ */
+            border-left: 6px solid #fff;
             z-index: 25;
         }
-        .dt-box-wrap div { transform: skewX(15deg); font-size: 32px; font-weight: 1000; letter-spacing: 1px; }
+        
+        /* ਸਿਰਫ ਟੈਕਸਟ ਫਲੈਸ਼ ਹੋਵੇਗਾ */
+        #clock-box { 
+            animation: textFlash 1.2s infinite ease-in-out; 
+            font-size: 32px; font-weight: 1000; 
+            letter-spacing: 1px;
+            /* ਟੈਕਸਟ ਨੂੰ ਵਾਪਸ ਸਿੱਧਾ ਦਿਖਾਉਣ ਲਈ ਪਰ ਬਾਕਸ ਟੇਢਾ ਰਹੇਗਾ */
+            transform: skewX(20deg); 
+        }
     </style>
 </head>
 <body>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box">
-        <div class="box-flash"></div> 
-        <div class="box-inner">
-            <div class="header-wrapper">
-                <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-                <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
-            </div>
-            <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    <div id="box-fly" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
         </div>
-    </div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    </div></div>
 
-    <div id="box-out" class="box">
-        <div class="box-flash"></div> 
-        <div class="box-inner">
-            <div class="header-wrapper">
-                <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
-                <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
-            </div>
-            <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    <div id="box-out" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
         </div>
-    </div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div></div>
 
-    <div id="box-time" class="box">
-        <div class="box-flash"></div> 
-        <div class="box-inner">
-            <div class="header-wrapper">
-                <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
-                <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
-            </div>
-            <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    <div id="box-time" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
         </div>
-    </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div></div>
 </div>
 
 <div class="footer">
     <div class="live-tag"><span>LIVE</span></div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box-wrap"><div id="clock-box">--:--:--</div></div>
+    <div class="dt-box-wrap">
+        <div id="clock-box">--:--:--</div>
+    </div>
 </div>
 
 <script>
@@ -173,7 +158,6 @@
     }, 3000);
 
     setInterval(() => {
-        // Updated Clock to show Time clearly
         document.getElementById('clock-box').innerText = new Date().toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }, 1000);
 
