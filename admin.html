@@ -18,7 +18,7 @@
         .btn-recharge-main { width: 100%; padding: 12px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; margin-bottom: 15px; cursor: pointer; }
 
         .display-controls-box { background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; display: flex; gap: 10px; }
-        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
+        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; text-transform: uppercase; }
 
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
@@ -109,7 +109,6 @@
 </div>
 
 <script>
-    // Config - Make sure this URL is correct
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
@@ -121,16 +120,12 @@
 
     function checkLogin() {
         if(!userID) { alert("ID (URL) missing!"); return; }
-        
         db.ref('users/' + userID).once('value').then(snap => {
             const data = snap.val();
             const enteredPass = document.getElementById('adminPass').value;
-            
             if(data && (data.password == enteredPass)) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
-                
-                // Expiry Check
                 const exp = new Date(data.expiry || "2026-12-31");
                 if (new Date() > exp) {
                     isExpired = true;
@@ -138,16 +133,12 @@
                     document.getElementById('expire-msg').style.display = "block";
                 }
                 document.getElementById('expDisp').innerText = data.expiry || "31-12-2026";
-
-                // Live Sync
                 db.ref('users/' + userID).on('value', s => { 
                     localData = s.val() || { pigeons: [], config: {} };
                     render(); 
                 });
                 setupPlans();
-            } else {
-                alert("Wrong Password!");
-            }
+            } else { alert("Wrong Password!"); }
         }).catch(err => alert("Error: " + err.message));
     }
 
@@ -155,17 +146,19 @@
         const conf = localData.config || {};
         const pList = localData.pigeons || [];
 
-        // Update Buttons
-        document.getElementById('scoreBtn').innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
-        document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
-        document.getElementById('tickerBtn').innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
-        document.getElementById('tickerBtn').style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        // SCOREBOARD BUTTON (Green/Red)
+        const sBtn = document.getElementById('scoreBtn');
+        sBtn.innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
+        sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
 
-        // Update Text Inputs (only if not typing)
+        // TICKER BUTTON (Blue)
+        const tBtn = document.getElementById('tickerBtn');
+        tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
+        tBtn.style.backgroundColor = conf.showTicker ? "#2980b9" : "#3498db";
+
         if(document.activeElement.id !== 'inpTicker') document.getElementById('inpTicker').value = conf.ticker || "";
         if(document.activeElement.id !== 'inpBoxTime') document.getElementById('inpBoxTime').value = conf.boxTime || "";
 
-        // Render List
         const listArea = document.getElementById('listArea');
         listArea.innerHTML = "";
         let c = { fly:0, time:0, out:0 };
@@ -190,6 +183,12 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
+    function toggleDisplay(field) {
+        if(isExpired) return;
+        const current = (localData.config && localData.config[field]) ? localData.config[field] : false;
+        db.ref('users/' + userID + '/config/' + field).set(!current);
+    }
+
     function setStatus(id, s) {
         const newList = localData.pigeons.map(p => p.id == id ? {...p, status: s} : p);
         db.ref('users/' + userID + '/pigeons').set(newList);
@@ -208,11 +207,6 @@
             ticker: document.getElementById('inpTicker').value,
             boxTime: document.getElementById('inpBoxTime').value
         });
-    }
-
-    function toggleDisplay(field) {
-        const current = localData.config[field] || false;
-        db.ref('users/' + userID + '/config/' + field).set(!current);
     }
 
     function delP(id) {
