@@ -10,40 +10,41 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; }
         
-        /* Scoreboard at Top */
+        /* Summary Grid */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; }
         .sum-item { text-align: center; font-size: 11px; text-transform: uppercase; color: #aaa; }
         .sum-item b { font-size: 22px; color: #f39c12; display: block; }
 
-        /* Status & Info Boxes */
-        .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .info-box { background: #1a1d21; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center; }
-        .info-box small { color: #888; font-size: 10px; display: block; margin-bottom: 4px; }
-        .info-box b { font-size: 14px; color: #2ecc71; }
+        /* Expiry Box */
+        .info-container { margin-bottom: 15px; }
+        .info-box { background: #1a1d21; padding: 12px; border-radius: 10px; border: 1px solid #333; text-align: center; border-left: 5px solid #2ecc71; }
+        .info-box small { color: #888; font-size: 10px; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        .info-box b { font-size: 16px; color: #fff; }
 
-        /* Login Help Buttons */
+        /* Help Buttons */
         .login-help { display: flex; gap: 10px; margin-top: 15px; }
         .btn-wa { background: #25D366; color: white; flex: 1; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-call { background: #3498db; color: white; flex: 1; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-        /* Show/Hide Controls */
+        /* Display Toggles */
         .display-controls-box { background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; display: flex; gap: 10px; }
-        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; transition: 0.3s; }
+        .toggle-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; color: white; }
 
+        /* Inputs */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        
-        textarea, input, select { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 15px; outline: none; box-sizing: border-box; }
+        textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 15px; outline: none; box-sizing: border-box; }
         
         .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; }
         .btn-update { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; }
         .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 12px; margin-bottom: 20px; }
 
+        /* Pigeon Row */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
-        .name-part { flex-grow: 1; font-weight: bold; }
+        .name-part { flex-grow: 1; font-weight: bold; font-size: 14px; }
         .btn-part { display: flex; gap: 5px; align-items: center; }
-        .st-btn { border: none; padding: 8px; border-radius: 5px; font-weight: 900; width: 35px; color: white; opacity: 0.3; }
-        .st-btn.active { opacity: 1; border: 2px solid white; }
+        .st-btn { border: none; padding: 8px; border-radius: 5px; font-weight: 900; width: 38px; color: white; opacity: 0.25; font-size: 12px; cursor: pointer; }
+        .st-btn.active { opacity: 1; border: 2px solid white; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
@@ -73,10 +74,6 @@
             <small>EXPIRY DATE & TIME</small>
             <b id="expDisp">--</b>
         </div>
-        <div class="info-box">
-            <small>ROUND STATUS</small>
-            <b id="roundDisp">ROUND 1</b>
-        </div>
     </div>
 
     <div class="display-controls-box">
@@ -86,20 +83,12 @@
 
     <div class="controls-container">
         <div class="row">
-            <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ (ਨਾਮ, ਨਾਮ, ਨਾਮ)"></textarea>
-            <button class="btn-add" onclick="addP()">ADD TEAMS (ROUND 1)</button>
-        </div>
-        
-        <div class="row">
-            <div style="color: #f39c12; font-size: 12px; font-weight: bold; margin-bottom: 5px;">NEXT ROUND UPDATE:</div>
-            <select id="teamSelect">
-                <option value="">ਟੀਮ ਸਲੈਕਟ ਕਰੋ...</option>
-            </select>
-            <button class="btn-update" onclick="promoteTeam()">MOVE TO NEXT ROUND</button>
+            <textarea id="pName" placeholder="ਕਬੂਤਰਾਂ ਦੇ ਨਾਮ (ਨਾਮ, ਨਾਮ, ਨਾਮ)"></textarea>
+            <button class="btn-add" onclick="addP()">ADD LIST (ਕਬੂਤਰਾਂ ਦੀ ਲਿਸਟ)</button>
         </div>
 
         <div class="row">
-            <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ (e.g. 10:30 AM)">
+            <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ (e.g. 10:30 AM)">
             <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
             <button class="btn-update" onclick="save()">UPDATE TICKER & TIME</button>
         </div>
@@ -107,7 +96,7 @@
 
     <div id="listArea"></div>
     
-    <button class="btn-reset" onclick="resetData()">🔄 RESET TOURNAMENT</button>
+    <button class="btn-reset" onclick="resetData()">🔄 RESET FULL DATA</button>
 </div>
 
 <script>
@@ -120,7 +109,7 @@
     let localData = { pigeons: [], config: { showScoreboard: false, showTicker: false } };
 
     function checkLogin() {
-        if(!userID) { alert("ID NOT FOUND!"); return; }
+        if(!userID) { alert("ID MISSING!"); return; }
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password.toString() === document.getElementById('adminPass').value) {
@@ -132,7 +121,7 @@
                     const val = s.val();
                     if(val) { localData = val; render(); }
                 });
-            } else { alert("Wrong Password!"); }
+            } else { alert("ਗਲਤ ਪਾਸਵਰਡ!"); }
         });
     }
 
@@ -144,12 +133,10 @@
     function render() {
         const conf = localData.config || {};
         
-        // Update Score Button
         const sBtn = document.getElementById('scoreBtn');
         sBtn.innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
         sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
 
-        // Update Ticker Button
         const tBtn = document.getElementById('tickerBtn');
         tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
         tBtn.style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
@@ -158,9 +145,7 @@
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
 
         const list = document.getElementById('listArea');
-        const teamSelect = document.getElementById('teamSelect');
         list.innerHTML = "";
-        teamSelect.innerHTML = '<option value="">ਟੀਮ ਸਲੈਕਟ ਕਰੋ...</option>';
 
         let c = { fly:0, time:0, out:0 };
         const pList = localData.pigeons || [];
@@ -168,19 +153,14 @@
         pList.forEach((p, idx) => {
             if(p.status === 'fly') c.fly++; else if(p.status === 'time') c.time++; else c.out++;
             
-            let opt = document.createElement("option");
-            opt.value = p.id;
-            opt.text = p.name;
-            teamSelect.add(opt);
-
             list.innerHTML += `
                 <div class="pigeon-row">
                     <div class="name-part"> ${idx+1}. ${p.name}</div>
                     <div class="btn-part">
-                        <button class="st-btn ${p.status=='fly'?'active':''}" style="background:#3498db" onclick="setStatus(${p.id},'fly')">F</button>
-                        <button class="st-btn ${p.status=='time'?'active':''}" style="background:#f1c40f" onclick="setStatus(${p.id},'time')">T</button>
-                        <button class="st-btn ${p.status=='out'?'active':''}" style="background:#e74c3c" onclick="setStatus(${p.id},'out')">O</button>
-                        <button onclick="delP(${p.id})" style="background:none; border:none; color:red; font-size:18px;">×</button>
+                        <button class="st-btn ${p.status=='fly'?'active':''}" style="background:#3498db" onclick="setStatus(${p.id},'fly')">FLY</button>
+                        <button class="st-btn ${p.status=='time'?'active':''}" style="background:#f1c40f" onclick="setStatus(${p.id},'time')">TIME</button>
+                        <button class="st-btn ${p.status=='out'?'active':''}" style="background:#e74c3c" onclick="setStatus(${p.id},'out')">OUT</button>
+                        <button onclick="delP(${p.id})" style="background:none; border:none; color:red; font-size:18px; margin-left:10px;">×</button>
                     </div>
                 </div>`;
         });
@@ -216,14 +196,14 @@
     }
 
     function delP(id) {
-        if(confirm("Delete Team?")) {
+        if(confirm("Delete this name?")) {
             localData.pigeons = localData.pigeons.filter(p => p.id != id);
             save();
         }
     }
 
     function resetData() {
-        if(confirm("Reset Everything?")) {
+        if(confirm("ਸਾਰਾ ਡਾਟਾ ਖਾਲੀ ਕਰੀਏ?")) {
             db.ref('users/' + userID + '/pigeons').set([]);
         }
     }
