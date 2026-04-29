@@ -8,15 +8,17 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* Snake Border ਐਨੀਮੇਸ਼ਨ */
         @keyframes snakeBorder {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        @keyframes flashEffect {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+        /* ਧੜਕਣ ਵਾਲੀ ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ */
+        @keyframes heartbeat {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
         }
 
         .main-container { 
@@ -24,17 +26,25 @@
             display: flex; gap: 15px; justify-content: flex-start; 
         }
         
-        .box { 
-            display: none; width: 32.5%; height: 100%; position: relative; 
+        /* ਸਾਰੇ ਬਾਕਸਾਂ ਲਈ ਸਾਂਝੀ Snake Border ਕਲਾਸ */
+        .box-style {
             padding: 4px; 
             background: linear-gradient(90deg, #ff0000, #fbff00, #00ff08, #0011ff, #ff0000);
             background-size: 300% 300%;
             animation: snakeBorder 4s linear infinite;
-            border-radius: 12px 12px 0 0;
+            border-radius: 12px;
             overflow: hidden;
+            display: flex; /* ਅੰਦਰਲੇ ਹਿੱਸੇ ਨੂੰ ਫਿਕਸ ਕਰਨ ਲਈ */
         }
 
-        .box-inner { background: black; width: 100%; height: 100%; border-radius: 8px 8px 0 0; position: relative; overflow: hidden; }
+        /* ਬਾਕਸ ਦੇ ਅੰਦਰਲਾ ਕਾਲਾ ਹਿੱਸਾ */
+        .box-inner { background: rgba(0, 0, 0, 0.95); width: 100%; height: 100%; border-radius: 8px; position: relative; overflow: hidden; }
+
+        .box { display: none; width: 32.5%; height: 100%; position: relative; }
+        
+        /* ਲਿਸਟ ਬਾਕਸਾਂ ਦੇ ਉੱਪਰਲੇ ਕਿਨਾਰੇ ਗੋਲ, ਹੇਠਲੇ ਸਿੱਧੇ */
+        .list-box-style { border-radius: 12px 12px 0 0; }
+        .list-box-style .box-inner { border-radius: 8px 8px 0 0; }
 
         .header-wrapper { 
             position: absolute; top: 0; right: 0; width: 50%; z-index: 10; 
@@ -50,11 +60,7 @@
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        
-        .list-area { 
-            position: absolute; width: 100%; will-change: transform; 
-            display: flex; flex-direction: column; padding-top: 150px; 
-        }
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 150px; }
         .item { padding: 6px 15px; font-size: 32px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; }
 
         .footer { 
@@ -63,22 +69,34 @@
             border-top: 6px solid red; overflow: hidden;
         }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 10px; }
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 15px; } /* Increased doori slightly */
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 700px; } 
 
-        .dt-box { 
-            background: #ff0000; color: #fff; height: 100%; padding: 0 20px; 
-            display: flex; align-items: center; justify-content: center; min-width: 250px; 
-            border-left: 5px solid #000; z-index: 10; font-size: 28px; font-weight: 1000;
-            animation: flashEffect 1.5s infinite;
+        /* --- ਡੇਟ-ਟਾਈਮ Snake Border ਬਾਕਸ --- */
+        .dt-box-wrap {
+            height: 100%; min-width: 260px; /* Width fixed */
+            border-left: 5px solid #000; z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Snake border for DT box with rounded corners */
+        .dt-box-snake {
+            height: 85%; width: 90%; /* Slight padding inside footer */
+            border-radius: 10px;
+            animation: snakeBorder 4s linear infinite, heartbeat 2s infinite; /* Snake + Flash animation */
+        }
+
+        .clock-content {
+            font-size: 28px; font-weight: 1000; color: white;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box">
+    <div id="box-fly" class="box box-style list-box-style">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
@@ -88,7 +106,7 @@
         </div>
     </div>
 
-    <div id="box-out" class="box">
+    <div id="box-out" class="box box-style list-box-style">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div>
@@ -98,7 +116,7 @@
         </div>
     </div>
 
-    <div id="box-time" class="box">
+    <div id="box-time" class="box box-style list-box-style">
         <div class="box-inner">
             <div class="header-wrapper">
                 <div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div>
@@ -112,7 +130,14 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box" id="clock-box">--:--:--</div>
+    
+    <div class="dt-box-wrap">
+        <div class="box-style dt-box-snake">
+            <div class="box-inner" style="display:flex; align-items:center; justify-content:center;">
+                <div id="clock-box" class="clock-content">--:--:--</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -135,7 +160,10 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
 
+            document.getElementById('scoreboard-div').style.display = (conf.showScoreboard !== false) ? "flex" : "none";
+            document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
+            
             const tickerElem = document.getElementById('ticker-text');
             tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
 
@@ -150,6 +178,8 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
+            const loopGap = '<div style="height:350px"></div>'; 
+
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const count = htmlArr[id].length;
@@ -157,8 +187,7 @@
                     document.getElementById(`box-${id}`).style.display = "block";
                     document.getElementById(`count-${id}`).innerText = count;
                     const content = htmlArr[id].join('');
-                    // Seamless loop with consistent gap
-                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
+                    area.innerHTML = `<div class="content-block">${content}</div>${loopGap}<div class="content-block">${content}</div>${loopGap}`;
                 } else { document.getElementById(`box-${id}`).style.display = "none"; }
             });
         });
@@ -168,18 +197,12 @@
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
             const box = document.getElementById(`box-${id}`);
-            
-            // Check if area and box are active
             if (area && box.style.display !== "none" && area.children.length > 0) {
                 listPos[id] -= 1.1; 
-                
-                // Safe height calculation
                 let firstBlock = area.querySelector('.content-block');
                 if(firstBlock) {
                     let resetPoint = firstBlock.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) {
-                        listPos[id] = 0;
-                    }
+                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
                     area.style.transform = `translateY(${listPos[id]}px)`;
                 }
             }
