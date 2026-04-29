@@ -10,20 +10,16 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; }
         
-        /* Scoreboard at Top */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; }
         .sum-item { text-align: center; font-size: 11px; text-transform: uppercase; color: #aaa; }
         .sum-item b { font-size: 22px; color: #f39c12; display: block; }
 
-        /* Status & Info Boxes */
-        .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .info-box { background: #1a1d21; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center; }
+        .info-container { display: block; margin-bottom: 15px; }
+        .info-box { background: #1a1d21; padding: 12px; border-radius: 10px; border: 1px solid #333; text-align: center; }
         .info-box small { color: #888; font-size: 10px; display: block; margin-bottom: 4px; }
-        .info-box b { font-size: 14px; color: #2ecc71; }
+        .info-box b { font-size: 16px; color: #2ecc71; }
 
         .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
-
-        /* Helpline Button */
         .btn-helpline { background: #2980b9; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 15px; border: 1px solid #3498db; }
 
         .display-controls-box { background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #444; margin-bottom: 15px; display: flex; gap: 10px; }
@@ -32,24 +28,19 @@
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         .row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         
-        textarea, input, select { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 15px; outline: none; box-sizing: border-box; }
-        
+        textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 15px; outline: none; box-sizing: border-box; }
         .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; }
-        .btn-update { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; }
         .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 12px; margin-bottom: 20px; }
 
-        /* Pigeons List */
         .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { flex-grow: 1; font-weight: bold; }
         .btn-part { display: flex; gap: 5px; align-items: center; }
         .st-btn { border: none; padding: 8px; border-radius: 5px; font-weight: 900; width: 35px; color: white; opacity: 0.3; }
         .st-btn.active { opacity: 1; border: 2px solid white; }
 
-        /* Recharge Modal Styles */
         #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
         .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
         .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-        .plan-card h2 { font-size: 18px; color: white; margin: 0 0 10px 0; }
         .plan-card b { font-size: 30px; color: #2ecc71; display: block; margin-bottom: 15px; }
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .pay-btn { padding: 12px 5px; border-radius: 8px; border: none; color: white; text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; }
@@ -78,10 +69,6 @@
             <small>EXPIRY DATE</small>
             <b id="expDisp">--</b>
         </div>
-        <div class="info-box">
-            <small>ROUND STATUS</small>
-            <b id="roundDisp">ROUND 1</b>
-        </div>
     </div>
 
     <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
@@ -99,33 +86,24 @@
         <div class="controls-container">
             <div class="row">
                 <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ (ਨਾਮ, ਨਾਮ, ਨਾਮ)"></textarea>
-                <button class="btn-add" onclick="addP()">ADD TEAMS (ROUND 1)</button>
-            </div>
-            
-            <div class="row">
-                <div style="color: #f39c12; font-size: 12px; font-weight: bold; margin-bottom: 5px;">NEXT ROUND UPDATE:</div>
-                <select id="teamSelect">
-                    <option value="">ਟੀਮ ਸਲੈਕਟ ਕਰੋ...</option>
-                </select>
-                <button class="btn-update" onclick="promoteTeam()">MOVE TO NEXT ROUND</button>
+                <button class="btn-add" onclick="addP()">ADD NEW TEAMS</button>
             </div>
 
             <div class="row">
-                <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ (e.g. 10:30 AM)">
-                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ...">
-                <button class="btn-update" onclick="save()">UPDATE TICKER & TIME</button>
+                <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ (e.g. 10:30 AM)" oninput="save()">
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ ਲਿਖੋ..." oninput="save()">
             </div>
         </div>
 
         <div id="listArea"></div>
         
-        <button class="btn-reset" onclick="resetData()">🔄 RESET TOURNAMENT</button>
+        <button class="btn-reset" onclick="resetData()">🔄 RESET EVERYTHING</button>
     </div>
 
     <div id="expire-msg" style="display:none; text-align:center; padding:40px 20px; background:#1a1d21; border-radius:12px; border:1px solid #e74c3c; margin-bottom:20px;">
         <i class="fas fa-clock" style="font-size:40px; color:#e74c3c; margin-bottom:15px;"></i>
         <h2 style="color:#e74c3c; margin:0;">PLAN EXPIRED</h2>
-        <p style="color:#888;">ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਚੁੱਕਾ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਰੀਚਾਰਜ ਕਰੋ।</p>
+        <p style="color:#888;">ਕਿਰਪਾ ਕਰਕੇ ਪਲਾਨ ਰੀਚਾਰਜ ਕਰੋ।</p>
     </div>
 </div>
 
@@ -159,7 +137,6 @@
         db.ref('users/' + userID).once('value', snap => {
             const data = snap.val();
             if(data && data.password === document.getElementById('adminPass').value) {
-                // Handle Expiry
                 const expiryDate = new Date(data.expiry || "2026-12-31T12:00:00");
                 const now = new Date();
                 
@@ -199,9 +176,9 @@
                     <h2>${p.name}</h2>
                     <b>₹${p.price}</b>
                     <div class="pay-grid">
-                        <a href="upi://pay?${upiURL}" class="pay-btn gp"><i class="fab fa-google-pay"></i>GPAY</a>
-                        <a href="upi://pay?${upiURL}" class="pay-btn pp"><i class="fas fa-mobile-alt"></i>PHONEPE</a>
-                        <a href="upi://pay?${upiURL}" class="pay-btn pt"><i class="fas fa-wallet"></i>PAYTM</a>
+                        <a href="upi://pay?${upiURL}" class="pay-btn gp">GPAY</a>
+                        <a href="upi://pay?${upiURL}" class="pay-btn pp">PHONEPE</a>
+                        <a href="upi://pay?${upiURL}" class="pay-btn pt">PAYTM</a>
                     </div>
                 </div>`;
         });
@@ -218,30 +195,27 @@
     function render() {
         if(isExpired) return;
         const conf = localData.config || {};
-        const sBtn = document.getElementById('scoreBtn');
-        sBtn.innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
-        sBtn.style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
+        
+        document.getElementById('scoreBtn').innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
+        document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
 
-        const tBtn = document.getElementById('tickerBtn');
-        tBtn.innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
-        tBtn.style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        document.getElementById('tickerBtn').innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
+        document.getElementById('tickerBtn').style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
 
-        document.getElementById('inpTicker').value = conf.ticker || "";
-        document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        if(document.activeElement !== document.getElementById('inpTicker')) {
+            document.getElementById('inpTicker').value = conf.ticker || "";
+        }
+        if(document.activeElement !== document.getElementById('inpBoxTime')) {
+            document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        }
 
         const list = document.getElementById('listArea');
-        const teamSelect = document.getElementById('teamSelect');
         list.innerHTML = "";
-        teamSelect.innerHTML = '<option value="">ਟੀਮ ਸਲੈਕਟ ਕਰੋ...</option>';
-
         let c = { fly:0, time:0, out:0 };
         const pList = localData.pigeons || [];
 
         pList.forEach((p, idx) => {
             if(p.status === 'fly') c.fly++; else if(p.status === 'time') c.time++; else c.out++;
-            let opt = document.createElement("option");
-            opt.value = p.id; opt.text = p.name; teamSelect.add(opt);
-
             list.innerHTML += `
                 <div class="pigeon-row">
                     <div class="name-part"> ${idx+1}. ${p.name}</div>
