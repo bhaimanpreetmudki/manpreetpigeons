@@ -15,12 +15,12 @@
         
         .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 10px; cursor: pointer; text-transform: uppercase; }
         
-        .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
-        
         .toggle-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-toggle { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 14px; text-transform: uppercase; }
 
+        .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
+        
         textarea { width: 100%; height: 80px; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; outline: none; resize: none; box-sizing: border-box; }
         input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
         
@@ -71,8 +71,8 @@
     <div id="admin-controls-wrapper">
         <div id="controls-section" class="controls-container">
             <div class="row">
-                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ (ਲਿਖੋ, ਆਪੇ ਸੇਵ ਹੋਵੇਗਾ)..." oninput="autoSave()">
-                <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ ਲਿਖੋ (ਆਪੇ ਸੇਵ ਹੋਵੇਗਾ)..." oninput="autoSave()">
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ..." oninput="autoSave()">
+                <input type="text" id="inpBoxTime" placeholder="ਸਮਾਂ ਲਿਖੋ..." oninput="autoSave()">
             </div>
             
             <div class="row" style="margin-top:5px;">
@@ -84,7 +84,7 @@
         <div id="summary-section" class="admin-sum-grid">
             <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
             <div class="sum-item"><div>FLY</div><b id="sum-fly" style="color:#007bff;">0</b></div>
-            <div class="sum-item"><div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
+            <div class="sum-item)<div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
             <div class="sum-item"><div>OUT</div><b id="sum-out" style="color:#dc3545;">0</b></div>
         </div>
 
@@ -138,9 +138,20 @@
     function toggleVisibility(type) {
         if(isExpired) return;
         if(!localData.config) localData.config = {};
-        if(type === 'ticker') localData.config.showTicker = !(localData.config.showTicker !== false);
-        else localData.config.showScore = !(localData.config.showScore !== false);
-        save();
+        
+        if(type === 'ticker') {
+            localData.config.showTicker = !(localData.config.showTicker !== false);
+        } else {
+            localData.config.showScore = !(localData.config.showScore !== false);
+        }
+        
+        // ਸਿੱਧਾ config ਅੱਪਡੇਟ ਕਰੋ ਤਾਂ ਜੋ ਬਟਨ ਸਹੀ ਤਰੀਕੇ ਨਾਲ ON/OFF ਹੋਣ
+        db.ref('users/' + userID + '/config').update({
+            showTicker: localData.config.showTicker ?? true,
+            showScore: localData.config.showScore ?? true,
+            ticker: document.getElementById('inpTicker').value,
+            boxTime: document.getElementById('inpBoxTime').value
+        });
     }
 
     function autoSave() {
