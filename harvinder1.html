@@ -19,10 +19,10 @@
             100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
         }
 
-        /* ਬਹੁਤ ਹੀ ਸਲੋ ਅਤੇ ਘੈਂਟ ਲਾਈਟ (20 ਸੈਕਿੰਡ ਦਾ ਚੱਕਰ) */
+        /* ਸਲੋ ਘੈਂਟ ਲਾਈਟ ਐਨੀਮੇਸ਼ਨ (ਸਾਰੇ ਬਾਕਸਾਂ ਲਈ) */
         @keyframes slowGhaintLight {
             0% { left: -150%; }
-            20% { left: 150%; } /* ਲਾਈਟ ਨੂੰ ਲੰਘਣ ਵਿੱਚ ਸਮਾਂ ਲੱਗੇਗਾ */
+            30% { left: 150%; } /* ਲਾਈਟ ਲੰਘਣ ਦਾ ਸਮਾਂ */
             100% { left: 150%; } 
         }
 
@@ -35,6 +35,17 @@
             display: none; width: 32.5%; height: 100%; position: relative; 
             border-radius: 25px; overflow: hidden; border: 4px solid #fff; 
             box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        /* ਬਾਕਸਾਂ ਦੇ ਅੰਦਰ ਲਾਈਟ ਇਫੈਕਟ */
+        .box::after {
+            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
+            background: linear-gradient(120deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                transparent);
+            animation: slowGhaintLight 15s infinite ease-in-out; /* ਬਾਕਸਾਂ ਲਈ 15 ਸੈਕਿੰਡ */
+            z-index: 5; pointer-events: none;
         }
 
         #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
@@ -69,18 +80,15 @@
             border-top: 5px solid #000; z-index: 20; overflow: hidden;
         }
 
-        /* ਏਥੇ ਹੈ ਸਲੋ ਘੈਂਟ ਲਾਈਟ */
+        /* ਫੁੱਟਰ ਦੀ ਸਲੋ ਲਾਈਟ */
         .footer::before {
             content: ""; position: absolute; top: 0; width: 500px; height: 100%;
             background: linear-gradient(120deg, 
                 transparent, 
-                rgba(255, 255, 255, 0) 10%, 
                 rgba(255, 255, 255, 0.7) 50%, 
-                rgba(255, 255, 255, 0) 90%, 
                 transparent);
-            animation: slowGhaintLight 20s infinite ease-in-out;
-            z-index: 35;
-            pointer-events: none;
+            animation: slowGhaintLight 20s infinite ease-in-out; /* ਫੁੱਟਰ ਲਈ 20 ਸੈਕਿੰਡ */
+            z-index: 35; pointer-events: none;
         }
 
         .live-tag { 
@@ -152,7 +160,6 @@
     let listPos = { fly: 0, time: 0, out: 0 };
     let tickerPos = 0;
 
-    // Toggle English/Punjabi titles
     setInterval(() => {
         langFlash = !langFlash;
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
@@ -162,7 +169,6 @@
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
     }, 3000);
 
-    // 15 Sec Toggle with Sharp Flash
     setInterval(() => {
         const clockElem = document.getElementById('clock-box');
         clockElem.classList.add('jhmaka-effect');
