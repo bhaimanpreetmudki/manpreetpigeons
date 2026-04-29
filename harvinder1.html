@@ -12,7 +12,11 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        @keyframes rotateRound { 100% { transform: rotate(360deg); } }
+        /* Round Glow Animation */
+        @keyframes rotateRound {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         .main-container { 
             position: absolute; left: 15px; right: 15px; bottom: 75px; 
@@ -22,48 +26,53 @@
         .box { 
             display: none; width: 32.5%; height: 100%; position: relative; padding: 6px; 
             border-radius: 25px; overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
 
         /* Round Glowing Border */
         .box::before {
             content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent, transparent, transparent, #ffffff);
-            animation: rotateRound 3s linear infinite;
+            background: conic-gradient(transparent, transparent, #ffffff, transparent, #ffffff);
+            animation: rotateRound 2.5s linear infinite;
             z-index: 0;
         }
 
-        /* --- 25% Visibility Backgrounds --- */
-        #box-fly .box-inner { background: rgba(0, 191, 255, 0.25) !important; border: 1px solid rgba(0, 191, 255, 0.4); }
-        #box-out .box-inner { background: rgba(255, 0, 0, 0.25) !important; border: 1px solid rgba(255, 0, 0, 0.4); }
-        #box-time .box-inner { background: rgba(255, 255, 0, 0.25) !important; border: 1px solid rgba(255, 255, 0, 0.4); }
+        /* --- 80% Visibility Backgrounds --- */
+        #box-fly .box-inner { background: rgba(0, 191, 255, 0.80) !important; border: 2px solid rgba(255,255,255,0.3); }
+        #box-out .box-inner { background: rgba(255, 0, 0, 0.80) !important; border: 2px solid rgba(255,255,255,0.3); }
+        #box-time .box-inner { background: rgba(255, 255, 0, 0.80) !important; border: 2px solid rgba(255,255,255,0.3); }
 
         .box-inner { 
             width: 100%; height: 100%; border-radius: 20px; position: relative; 
-            overflow: hidden; z-index: 1; backdrop-filter: blur(5px); /* Glass effect */
+            overflow: hidden; z-index: 1; box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
         }
 
         .header-wrapper { 
             position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; 
-            background: rgba(0, 0, 0, 0.85); border-bottom: 2px solid white; border-left: 2px solid white; 
+            background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
             border-radius: 0 20px 0 20px; color: white;
         }
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 40px; }
+        .header-title { 
+            flex: 1; padding-left: 12px; font-weight: 900; font-size: 24px; 
+            border-right: 2px solid white; height: 100%; display: flex; align-items: center; 
+        }
+
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 30px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
         
-        .item { padding: 5px 20px; font-size: 34px; font-weight: 1000; line-height: 1.1; color: #fff; text-shadow: 2px 2px 4px #000; }
+        .item { padding: 5px 20px; font-size: 34px; font-weight: 1000; line-height: 1.1; color: #000; }
+        #box-out .item { color: #fff; } /* Red box text white */
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; 
-            background: rgba(255, 255, 255, 0.95); display: flex; align-items: center; 
+            background: #fff; display: flex; align-items: center; 
             border-top: 5px solid red; z-index: 20;
         }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; border-right: 5px solid #000; }
@@ -118,6 +127,7 @@
     let listPos = { fly: 0, time: 0, out: 0 };
     let tickerPos = 0;
 
+    // Flash Every 3 Seconds
     setInterval(() => {
         langFlash = !langFlash;
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡਦੇ" : "FLYING";
