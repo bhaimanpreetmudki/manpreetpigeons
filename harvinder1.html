@@ -8,14 +8,12 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Language Flash Animation */
         @keyframes langFlash {
             0%, 45% { content: attr(data-pa); }
             50%, 95% { content: attr(data-en); }
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        /* Main Container */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; }
         .box { display: none; flex: 1; height: 100%; position: relative; border: 4px solid white; border-radius: 15px 15px 0 0; overflow: hidden; }
 
@@ -23,7 +21,6 @@
         #box-out { background: rgba(102, 0, 0, 0.9); } 
         #box-time { background: rgba(0, 26, 102, 0.9); }
 
-        /* Headers */
         .header-wrapper { position: absolute; top: 0; right: 0; width: 48%; z-index: 10; }
         .box-header, .sum-card { display: flex; align-items: center; width: 100%; border-left: 4px solid white; border-bottom: 4px solid white; background: #000; }
         .box-header { height: 75px; border-radius: 0 15px 0 15px; }
@@ -31,36 +28,21 @@
 
         .header-title, .sum-label-area { flex: 1; padding-left: 12px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 19px; color: white; }
         .count-tag { background: #fff; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 42px; }
-        .sum-val-area { background: #ffcc00; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
+        .sum-val-area { background: #ffcc00; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 30px; text-align: center; line-height: 1; }
 
-        /* Scroll Window */
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; will-change: transform; }
         
-        /* TEAM GAP FIX: ਟੀਮਾਂ ਦੇ ਵਿਚਕਾਰ ਗੈਪ ਘਟਾਇਆ (18px -> 10px) */
-        .item { 
-            padding: 10px 15px; 
-            font-size: 38px; 
-            font-weight: 950; 
-            color: #ffcc00; 
-            border-bottom: 2px solid rgba(255,255,255,0.2); 
-            text-shadow: 2px 2px 4px rgba(0,0,0,1); 
-        }
+        .item { padding: 10px 15px; font-size: 38px; font-weight: 950; color: #ffcc00; border-bottom: 2px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
 
-        /* LOOP GAP FIX: ਲੂਪ ਦੇ ਵਿਚਕਾਰ ਗੈਪ ਘਟਾਇਆ (250px -> 100px) */
-        .loop-spacer {
-            height: 100px; 
-            width: 100%;
-        }
+        .loop-spacer { height: 100px; width: 100%; }
 
-        /* Footer & Ticker */
         .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; display: flex; align-items: center; border-top: 6px solid #ff0000; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 30px; height: 100%; display: flex; align-items: center; font-size: 35px; font-weight: 1000; font-style: italic; border-right: 5px solid #000; }
         
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
         .ticker-move { display: inline-block; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
         
-        /* Date Time Flash */
         .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 25px; display: flex; align-items: center; justify-content: center; min-width: 250px; border-left: 5px solid #000; position: relative; }
         
         @keyframes dtFlash {
@@ -93,6 +75,10 @@
     <div id="box-time" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card">
+                <div class="sum-label-area flash-text" data-pa="ਟਾਈਮ" data-en="TIME"></div>
+                <div id="m-time-val" class="sum-val-area">--</div>
+            </div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
@@ -101,7 +87,6 @@
 <div class="footer" id="ticker-div">
     <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    
     <div class="dt-box"><div id="flash-val"></div></div>
 </div>
 
@@ -112,30 +97,22 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
-    // --- SPEED CONFIG ---
-    // SCROLL SPEED FIX: ਸਪੀਡ ਤੇਜ਼ ਕੀਤੀ (1.0 -> 1.8)
     const LIST_SPEED = 1.8; 
     const TICKER_SPEED = 2.8;
 
     let listPositions = { fly: 0, time: 0, out: 0 };
     let tickerPos = window.innerWidth;
 
-    // Date/Time Flash Update Logic
     function updateClock() {
         const now = new Date();
         const flashVal = document.getElementById('flash-val');
-        
-        // Time Format: 10:30:05 AM
         const timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
-        
-        // Date Format: 25 OCT 2023
         const dateStr = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-
         flashVal.setAttribute('data-time', timeStr);
         flashVal.setAttribute('data-date', dateStr);
     }
     setInterval(updateClock, 1000);
-    updateClock(); // Initial Call
+    updateClock();
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
@@ -146,6 +123,9 @@
             document.getElementById('scoreboard-div').style.display = (conf.showScore !== false) ? "flex" : "none";
             document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
+            
+            // ADMIN TIME SET FIX: ਇੱਥੇ ਵੈਲਿਊ ਅਪਡੇਟ ਹੋਵੇਗੀ
+            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             
             let counts = { fly:0, out:0, time:0 }; 
             let htmlContent = { fly:'', out:'', time:'' };
@@ -167,8 +147,6 @@
                 if(counts[id] > 0) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
-                    
-                    // Teams + Small Gap + Teams
                     let fullSet = htmlContent[id] + '<div class="loop-spacer"></div>';
                     listArea.innerHTML = fullSet + fullSet;
                 } else { 
@@ -182,14 +160,10 @@
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
             const parentBox = document.getElementById(`box-${id}`);
-            
             if (listArea && parentBox.style.display !== "none") {
                 listPositions[id] -= LIST_SPEED;
-                
                 let halfHeight = listArea.offsetHeight / 2; 
-                if (Math.abs(listPositions[id]) >= halfHeight) {
-                    listPositions[id] = 0;
-                }
+                if (Math.abs(listPositions[id]) >= halfHeight) { listPositions[id] = 0; }
                 listArea.style.transform = `translateY(${listPositions[id]}px)`;
             }
         });
@@ -197,9 +171,7 @@
         const tickerMove = document.getElementById('ticker-text');
         if (document.getElementById('ticker-div').style.display !== "none") {
             tickerPos -= TICKER_SPEED;
-            if (tickerPos < -tickerMove.offsetWidth) {
-                tickerPos = window.innerWidth;
-            }
+            if (tickerPos < -tickerMove.offsetWidth) { tickerPos = window.innerWidth; }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
         }
         requestAnimationFrame(animate);
