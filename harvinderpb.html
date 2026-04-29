@@ -15,22 +15,22 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        /* Summary Section - ਹੁਣ ਇਹ ਹੈਡਰ ਵਾਂਗ ਕਿਨਾਰਿਆਂ ਤੇ ਫਿੱਟ ਰਹੇਗਾ */
+        /* --- Summary Section (Auto Adjusting with Frame) --- */
         .summary-wrapper { 
             position: absolute; 
-            bottom: 200px; 
-            left: 10px; /* ਹੈਡਰ ਵਾਂਗ ਖੱਬਾ ਕਿਨਾਰਾ */
-            right: 10px; /* ਹੈਡਰ ਵਾਂਗ ਸੱਜਾ ਕਿਨਾਰਾ */
+            bottom: 360px; /* ਸਕੋਰਬੋਰਡ ਦੇ ਉੱਪਰ ਰੱਖਣ ਲਈ */
+            left: 10px; 
+            right: 10px; 
             display: flex; 
-            justify-content: space-between; /* ਦੋਵਾਂ ਬਾਕਸਾਂ ਨੂੰ ਕੋਨਿਆਂ ਤੇ ਰੱਖਣ ਲਈ */
+            justify-content: space-between; /* ਕਿਨਾਰਿਆਂ ਤੇ ਚਿਪਕਾਉਣ ਲਈ */
             z-index: 1000; 
         }
         .sum-card { 
             display: flex; 
             border: 3px solid white; 
-            border-radius: 12px; /* ਗੋਲ ਕੋਨੇ */
+            border-radius: 12px; /* ਸਮਰੀ ਬਾਕਸ ਗੋਲ */
             overflow: hidden; 
-            min-width: 280px; 
+            min-width: 250px; 
             height: 65px; 
             box-shadow: 0px 4px 15px rgba(0,0,0,0.5); 
         }
@@ -54,7 +54,7 @@
         #box-out { background: #660000; } 
         #box-time { background: #001a66; }
 
-        /* --- ਹੈਡਰ ਸੈਟਿੰਗ (ਹੁਣ ਦੋਵੇਂ ਪਾਸਿਓਂ Round ਅਤੇ Summary Style) --- */
+        /* --- Header Setting (Rounded & Summary Style) --- */
         .box-header { 
             height: 75px; 
             width: 45%; 
@@ -66,14 +66,14 @@
             z-index: 10; 
             border-bottom: 3px solid white; 
             border-left: 3px solid white; 
-            border-radius: 0 12px 0 12px; /* ਸੱਜਾ ਉੱਪਰਲਾ ਅਤੇ ਖੱਬਾ ਹੇਠਲਾ ਕੋਨਾ ਗੋਲ */
-            overflow: hidden;
+            border-radius: 0 12px 0 12px; /* ਖੱਬਾ ਹੇਠਲਾ ਕੋਨਾ ਗੋਲ */
+            overflow: hidden; 
         }
         
         .header-title { 
-            background: #000; 
+            background: rgba(0,0,0,0.9);
             height: 100%;
-            width: 65%; 
+            flex: 1;
             font-size: 24px; 
             font-weight: 950; 
             display: flex; 
@@ -83,8 +83,8 @@
         }
 
         .count-tag { 
-            background: #ffffff; 
-            color: #000000; 
+            background: #ffffff; /* ਚਿੱਟਾ ਬੈਕਗਰਾਊਂਡ */
+            color: #000000; /* ਕਾਲਾ ਨੰਬਰ */
             height: 100%;
             width: 35%; 
             font-size: 45px; 
@@ -94,7 +94,6 @@
             justify-content: center;
         }
 
-        /* Time Range Info */
         .header-time-info { 
             display: none; 
             position: absolute;
@@ -113,10 +112,10 @@
             z-index: 11;
         }
 
-        /* --- ਲਿਸਟ ਏਰੀਆ --- */
+        /* --- List Area --- */
         .scroll-window { position: relative; height: 100%; width: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
-        .item { padding: 8px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 5px rgba(0,0,0,1); }
+        .item { padding: 5px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 5px rgba(0,0,0,1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* --- Footer --- */
@@ -136,11 +135,11 @@
 <body>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card" id="card-total">
+    <div class="sum-card">
         <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
         <div id="m-total" class="sum-val-area">0</div>
     </div>
-    <div class="sum-card" id="card-rem">
+    <div class="sum-card">
         <div class="sum-label-area flash-text" style="color:#ffcc00" data-pa="ਬਾਕੀ" data-en="REMAINING"></div>
         <div id="m-rem" class="sum-val-area">0</div>
     </div>
