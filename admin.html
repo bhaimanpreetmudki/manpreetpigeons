@@ -2,89 +2,218 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - Pigeons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin - Manpreet Mudki</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
-        .summary-container { display: flex; gap: 15px; margin-bottom: 20px; }
-        .sum-box { flex: 1; padding: 20px; border-radius: 10px; text-align: center; color: white; font-weight: bold; border: 3px solid #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .bg-total { background: #333; }
-        .bg-fly { background: #000; color: #ffcc00; border-color: #ffcc00; }
-        .bg-out { background: #660000; }
-        .bg-time { background: #001a66; }
+        body { font-family: sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; -webkit-text-size-adjust: 100%; }
+        .status-bar { background: #1a1d21; border: 1px solid #333; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; margin-bottom: 10px; border-left: 5px solid #f39c12; align-items: center; }
+        .help-box { background: white; color: black; padding: 6px 12px; border-radius: 6px; font-weight: 950; font-size: 14px; display: inline-block; cursor: pointer; text-decoration: none; }
+        .status-val { font-size: 14px; font-weight: 900; color: #2ecc71; }
         
-        .controls { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, select, button { padding: 10px; margin: 5px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
-        button { background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background: #218838; }
+        .btn-recharge-main { width: 100%; padding: 14px; background: #f39c12; color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 16px; margin-bottom: 15px; cursor: pointer; text-transform: uppercase; }
+        
+        /* New Toggle Switches Style */
+        .toggle-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .toggle-btn { padding: 12px; border-radius: 8px; border: none; font-weight: 900; font-size: 13px; cursor: pointer; text-align: center; color: white; transition: 0.3s; }
+        .btn-on { background: #238636; border: 2px solid #2ecc71; }
+        .btn-off { background: #661010; border: 2px solid #ff4444; opacity: 0.7; }
+
+        .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; flex-direction: column; }
+        
+        textarea { width: 100%; height: 80px; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; outline: none; resize: none; box-sizing: border-box; }
+        input { padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 16px; width: 100%; outline: none; box-sizing: border-box; }
+        
+        .btn-add { background: #f39c12; border: none; font-weight: 900; padding: 12px; border-radius: 8px; color: black; font-size: 16px; cursor: pointer; width: 100%; }
+        .btn-update { width: 100%; padding: 12px; background: #238636; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
+        .btn-reset { width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; margin-bottom: 15px; }
+
+        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .sum-item { background: #1a1d21; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #333; }
+        .sum-item div { font-size: 10px; color: #888; }
+        .sum-item b { font-size: 18px; color: #f39c12; }
+
+        .pigeon-row { background: #21262d; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
+        .name-part { width: 55%; display: flex; align-items: center; gap: 8px; }
+        .serial-num { color: #f39c12; font-weight: 900; min-width: 25px; }
+        .pigeon-name-input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 900; width: 100%; outline: none; }
+        .btn-part { width: 45%; display: flex; justify-content: flex-end; gap: 5px; }
+        .st-btn { border: none; padding: 10px 0; border-radius: 5px; font-weight: 900; font-size: 14px; opacity: 0.2; color: white; width: 38px; text-align: center; }
+        .st-btn.active { opacity: 1; border: 1.5px solid white; }
+        .st-fly { background: #007bff; } .st-time { background: #ffc107; color: black; } .st-out { background: #dc3545; }
+        
+        #recharge-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 15px; overflow-y: auto; }
+        .modal-content { background: #1a1d21; padding: 20px; border-radius: 15px; border: 2px solid #f39c12; max-width: 400px; margin: 10px auto; }
+        .plan-card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="summary-container">
-        <div class="sum-box bg-total"><h3>TOTAL</h3><h1 id="sum-total">0</h1></div>
-        <div class="sum-box bg-fly"><h3>FLYING</h3><h1 id="sum-fly">0</h1></div>
-        <div class="sum-box bg-out"><h3>OUT</h3><h1 id="sum-out">0</h1></div>
-        <div class="sum-box bg-time"><h3>ON TIME</h3><h1 id="sum-time">0</h1></div>
+<div id="login-box" style="max-width:400px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333;">
+    <h2 style="color:#f39c12; font-weight:900;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ..." style="margin-bottom:10px;">
+    <button onclick="checkLogin()" class="btn-recharge-main">ENTER CONTROL</button>
+</div>
+
+<div id="main-content" style="display:none;">
+    <div class="status-bar">
+        <div><span style="font-size:10px; color:#888; font-weight:bold;">HELPLINE:</span><br>
+            <a href="tel:+918699640061" class="help-box">📞 CALL HELP</a>
+        </div>
+        <div style="text-align: right;"><span style="font-size:10px; color:#888; font-weight:bold;">EXPIRY:</span><br><div id="expDisp" class="status-val">--</div></div>
     </div>
 
-    <div class="controls">
-        <input type="text" id="p-name" placeholder="Pigeon Name/Number">
-        <select id="p-status">
-            <option value="fly">FLYING</option>
-            <option value="time">ON TIME</option>
-            <option value="out">OUT</option>
-        </select>
-        <button onclick="addPigeon()">ADD PIGEON</button>
-        <hr style="margin: 20px 0;">
-        <input type="text" id="ticker-input" placeholder="Enter Ticker News" style="width: 70%;">
-        <button onclick="updateTicker()" style="background: #007bff;">UPDATE TICKER</button>
+    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE / EXTEND PLAN</button>
+
+    <div id="admin-controls-wrapper">
+        <div class="toggle-section">
+            <button id="toggleTicker" class="toggle-btn" onclick="toggleVisibility('showTicker')">
+                <i class="fas fa-closed-captioning"></i> TICKER: LOADING...
+            </button>
+            <button id="toggleScore" class="toggle-btn" onclick="toggleVisibility('showScore')">
+                <i class="fas fa-chart-bar"></i> SCORE: LOADING...
+            </button>
+        </div>
+
+        <div id="controls-section" class="controls-container">
+            <div class="row">
+                <textarea id="pName" placeholder="ਪਾਰਟੀਆਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਪਾਉਣ ਲਈ ਕੌਮਾ (,) ਵਰਤੋ..."></textarea>
+                <button class="btn-add" onclick="addP()">ADD ALL TEAMS</button>
+            </div>
+            <div class="row">
+                <input type="text" id="inpBoxTime" placeholder="ਸਮੇਂ ਵਾਲੇ ਕਬੂਤਰਾਂ ਲਈ ਸਮਾਂ">
+                <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+                <button class="btn-update" onclick="save()">UPDATE SETTINGS</button>
+            </div>
+        </div>
+
+        <div id="summary-section" class="admin-sum-grid">
+            <div class="sum-item"><div>TOT</div><b id="sum-total">0</b></div>
+            <div class="sum-item"><div>FLY</div><b id="sum-fly" style="color:#007bff;">0</b></div>
+            <div class="sum-item"><div>TIME</div><b id="sum-time" style="color:#ffc107;">0</b></div>
+            <div class="sum-item"><div>OUT</div><b id="sum-out" style="color:#dc3545;">0</b></div>
+        </div>
+
+        <button class="btn-reset" onclick="resetData()">🔄 RESET TOURNAMENT</button>
+        <div id="listArea"></div>
     </div>
+
+    <div id="expire-msg" style="display:none; text-align:center; padding:40px 20px; background:#1a1d21; border-radius:12px; border:1px solid #dc3545; margin-top:20px;">
+        <i class="fas fa-exclamation-triangle" style="font-size:40px; color:#dc3545; margin-bottom:15px;"></i>
+        <h2 style="color:#dc3545; margin:0;">PLAN EXPIRED</h2>
+    </div>
+
+    <div id="recharge-modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; color:#f39c12; margin-bottom:20px;">CHOOSE RECHARGE PLAN</h3>
+            <div id="plans-container"></div>
+            <button onclick="toggleRecharge(false)" style="width:100%; margin-top:10px; padding:15px; background:#444; color:white; border:none; border-radius:10px; font-weight:bold;">CLOSE</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const userID = "YOUR_USER_ID"; // ਆਪਣੀ ID ਇੱਥੇ ਭਰੋ
+    const urlParams = new URLSearchParams(window.location.search);
+    const userID = urlParams.get('id');
+    let localData = { pigeons: [], config: { showTicker: true, showScore: true } };
+    let isExpired = false;
 
-    // Real-time Update Summary Boxes
-    db.ref('users/' + userID).on('value', snap => {
-        const data = snap.val();
-        if (!data) return;
-        const pigeons = data.pigeons || [];
+    // Login logic (Keep as is)
+    function checkLogin() {
+        db.ref('users/' + userID).once('value', snap => {
+            const data = snap.val();
+            if(data && data.password === document.getElementById('adminPass').value) {
+                const expiryDate = new Date(data.expiry);
+                const now = new Date();
+                document.getElementById('login-box').style.display = "none";
+                document.getElementById('main-content').style.display = "block";
+                if (now > expiryDate) {
+                    isExpired = true;
+                    document.getElementById('admin-controls-wrapper').style.display = "none";
+                    document.getElementById('expire-msg').style.display = "block";
+                    document.getElementById('expDisp').innerText = "EXPIRED";
+                } else {
+                    document.getElementById('expDisp').innerText = expiryDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+                    db.ref('users/' + userID).on('value', s => { 
+                        localData = s.val() || {pigeons:[], config:{ showTicker: true, showScore: true }}; 
+                        render(); 
+                    });
+                }
+                setupPlans();
+            } else { alert("Incorrect Password!"); }
+        });
+    }
+
+    // Toggle Visibility Function
+    function toggleVisibility(key) {
+        if(isExpired) return;
+        const currentStatus = localData.config[key] !== false;
+        const newStatus = !currentStatus;
+        db.ref('users/' + userID + '/config/' + key).set(newStatus);
+    }
+
+    function save() {
+        if(isExpired) return;
+        const config = { 
+            ticker: document.getElementById('inpTicker').value, 
+            boxTime: document.getElementById('inpBoxTime').value.trim() 
+        };
+        db.ref('users/' + userID + '/config').update(config);
+    }
+
+    function render() {
+        if(isExpired) return;
+        const conf = localData.config || {};
         
-        let counts = { total: pigeons.length, fly: 0, out: 0, time: 0 };
-        pigeons.forEach(p => {
-            if (p.status === 'fly') counts.fly++;
-            else if (p.status === 'out') counts.out++;
-            else if (p.status === 'time') counts.time++;
-        });
+        // Update Toggle Buttons UI
+        const tTicker = document.getElementById('toggleTicker');
+        const isTickerOn = conf.showTicker !== false;
+        tTicker.className = `toggle-btn ${isTickerOn ? 'btn-on' : 'btn-off'}`;
+        tTicker.innerHTML = `<i class="fas fa-closed-captioning"></i> TICKER: ${isTickerOn ? 'SHOW' : 'HIDE'}`;
 
-        document.getElementById('sum-total').innerText = counts.total;
+        const tScore = document.getElementById('toggleScore');
+        const isScoreOn = conf.showScore !== false;
+        tScore.className = `toggle-btn ${isScoreOn ? 'btn-on' : 'btn-off'}`;
+        tScore.innerHTML = `<i class="fas fa-chart-bar"></i> SCORE: ${isScoreOn ? 'SHOW' : 'HIDE'}`;
+
+        document.getElementById('inpTicker').value = conf.ticker || "";
+        document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        
+        let counts = { fly: 0, time: 0, out: 0 };
+        const list = document.getElementById('listArea'); list.innerHTML = "";
+        const pigeonList = localData.pigeons || [];
+        pigeonList.forEach((p, idx) => {
+            if(p.status === 'fly') counts.fly++; else if(p.status === 'time') counts.time++; else if(p.status === 'out') counts.out++;
+            list.innerHTML += `<div class="pigeon-row">
+                <div class="name-part"><span class="serial-num">${idx + 1}</span><input type="text" class="pigeon-name-input" value="${p.name}" onchange="editName(${p.id},this.value)"></div>
+                <div class="btn-part">
+                    <button class="st-btn st-fly ${p.status=='fly'?'active':''}" onclick="setStatus(${p.id},'fly')">F</button>
+                    <button class="st-btn st-time ${p.status=='time'?'active':''}" onclick="setStatus(${p.id},'time')">T</button>
+                    <button class="st-btn st-out ${p.status=='out'?'active':''}" onclick="setStatus(${p.id},'out')">O</button>
+                    <button onclick="delP(${p.id})" style="background:none;border:none;color:#ff4444;font-size:24px;padding-left:8px;">×</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('sum-total').innerText = pigeonList.length;
         document.getElementById('sum-fly').innerText = counts.fly;
-        document.getElementById('sum-out').innerText = counts.out;
         document.getElementById('sum-time').innerText = counts.time;
-    });
-
-    function addPigeon() {
-        const name = document.getElementById('p-name').value;
-        const status = document.getElementById('p-status').value;
-        if (!name) return alert("Pigeon Name fill karo!");
-
-        db.ref('users/' + userID + '/pigeons').once('value', snap => {
-            let list = snap.val() || [];
-            list.push({ name: name, status: status });
-            db.ref('users/' + userID + '/pigeons').set(list);
-            document.getElementById('p-name').value = "";
-        });
+        document.getElementById('sum-out').innerText = counts.out;
     }
 
-    function updateTicker() {
-        const text = document.getElementById('ticker-input').value;
-        db.ref('users/' + userID + '/config/ticker').set(text);
-        alert("Ticker Updated!");
-    }
+    // Existing functions (Keep as is)
+    function addP() { if(isExpired) return; const inputVal = document.getElementById('pName').value; if(!inputVal.trim()) return; const names = inputVal.split(',').map(n => n.trim()).filter(n => n !== ""); if(!localData.pigeons) localData.pigeons = []; names.forEach(n => { localData.pigeons.push({ id: Date.now() + Math.random(), name: n, status: 'fly' }); }); document.getElementById('pName').value = ""; db.ref('users/' + userID + '/pigeons').set(localData.pigeons); }
+    function editName(id, n) { if(isExpired) return; localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: n} : p); db.ref('users/' + userID + '/pigeons').set(localData.pigeons); }
+    function setStatus(id, s) { if(isExpired) return; localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); db.ref('users/' + userID + '/pigeons').set(localData.pigeons); }
+    function delP(id) { if(isExpired) return; if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id !== id); db.ref('users/' + userID + '/pigeons').set(localData.pigeons); } }
+    function resetData() { if(isExpired) return; if(confirm("Reset Tournament?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
+    function toggleRecharge(s) { document.getElementById('recharge-modal').style.display = s ? 'block' : 'none'; }
+    function setupPlans() { /* Keep your existing setupPlans code */ }
 </script>
 </body>
 </html>
