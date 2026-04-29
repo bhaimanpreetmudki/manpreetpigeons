@@ -7,7 +7,7 @@
     <style>
         :root { 
             --header-h: 65px; 
-            --header-w: 48%; 
+            --header-w: 40%; 
         }
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
@@ -134,11 +134,11 @@
     // English/Punjabi Flash Logic (every 3 seconds)
     setInterval(() => {
         langFlash = !langFlash;
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡਦੇ" : "FLYING";
+        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
         document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਬਾਹਰ" : "OUT";
+        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ" : "OUT";
         document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮਾਂ" : "TIME";
+        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
     }, 3000);
 
     // Clock
