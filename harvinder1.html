@@ -16,7 +16,7 @@
         }
 
         .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 75px; height: 260px; 
+            position: absolute; left: 10px; right: 10px; bottom: 75px; height: 210px; 
             display: flex; gap: 15px; justify-content: flex-start; 
         }
         
@@ -27,19 +27,19 @@
         }
 
         .header-wrapper { position: absolute; top: 0; right: 0; width: 58%; z-index: 10; background: #000; border-bottom: 4px solid white; border-left: 4px solid white; border-radius: 0 10px 0 10px; }
-        .box-header { height: 70px; display: flex; align-items: center; border-bottom: 2px solid white; }
-        .sum-card { height: 70px; display: flex; align-items: center; }
-        .header-title { flex: 1; padding-left: 8px; font-weight: 900; font-size: 26px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; background: #fff; color: #000; }
+        .box-header { height: 50px; display: flex; align-items: center; border-bottom: 2px solid white; }
+        .sum-card { height: 45px; display: flex; align-items: center; }
+        .header-title { flex: 1; padding-left: 8px; font-weight: 900; font-size: 16px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 28px; background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 26px; }
 
+        /* ਉੱਪਰਲੀ ਬਲੈਕ ਸ਼ੈਡੋ ਹਟਾ ਦਿੱਤੀ ਹੈ */
         .scroll-window { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
         
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; }
-        .item { padding: 10px 15px; font-size: 34px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; min-height: 55px; }
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 100px; }
+        .item { padding: 8px 15px; font-size: 34px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; min-height: 50px; }
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; 
@@ -49,7 +49,9 @@
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
-        .ticker-content { display: inline-block; padding-right: 150px; } /* 150px gap between loop points */
+        
+        /* ਟਿੱਕਰ ਦਾ ਗੈਪ ਵਧਾ ਕੇ 400px ਕਰ ਦਿੱਤਾ ਹੈ */
+        .ticker-content { display: inline-block; padding-right: 400px; } 
 
         .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: center; min-width: 240px; border-left: 5px solid #000; z-index: 10; font-size: 28px; font-weight: 1000; }
     </style>
@@ -94,7 +96,6 @@
             document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             
-            // Ticker setup (Smooth Point-to-Point)
             const tickerMsg = conf.ticker || "";
             const tickerElem = document.getElementById('ticker-text');
             tickerElem.innerHTML = `<div class="ticker-content">${tickerMsg}</div><div class="ticker-content">${tickerMsg}</div>`;
@@ -112,8 +113,8 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
-            // 4-item gap (approx 220px)
-            const gap = '<div style="height:220px"></div>';
+            // ਟੀਮਾਂ ਵਿਚਾਲੇ ਗੈਪ ਘਟਾ ਕੇ 80px ਕੀਤਾ ਹੈ
+            const gap = '<div style="height:80px"></div>';
 
             ['fly','time','out'].forEach(id => {
                 const el = document.getElementById(`box-${id}`);
@@ -128,26 +129,24 @@
     }
 
     function animate() {
-        // Vertical List (Point to Point)
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
             if (listArea && getComputedStyle(document.getElementById(`box-${id}`)).display !== "none") {
                 listPos[id] -= 1.2;
                 let halfHeight = listArea.scrollHeight / 2;
                 if (Math.abs(listPos[id]) >= halfHeight) {
-                    listPos[id] = 0; // Seamless reset
+                    listPos[id] = 0;
                 }
                 listArea.style.transform = `translateY(${listPos[id]}px)`;
             }
         });
 
-        // Horizontal Ticker (Point to Point)
         const tickerMove = document.getElementById('ticker-text');
         if (tickerMove && getComputedStyle(document.getElementById('ticker-div')).display !== "none") {
             tickerPos -= 2.0;
             let halfWidth = tickerMove.scrollWidth / 2;
             if (Math.abs(tickerPos) >= halfWidth) {
-                tickerPos = 0; // Seamless reset
+                tickerPos = 0;
             }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
         }
