@@ -5,6 +5,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
+        /* --- ਮੇਨ ਸੈਟਿੰਗ: ਇੱਥੋਂ ਹੈਡਰ ਦੀ ਹਾਈਟ ਬਦਲੋ --- */
+        :root {
+            --header-h: 70px; /* ਇਸ ਨੂੰ 60, 80 ਜਾਂ 100 ਆਪਣੀ ਮਰਜ਼ੀ ਨਾਲ ਕਰੋ */
+        }
+
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; color: white; }
 
@@ -19,83 +24,50 @@
             display: flex; gap: 20px; justify-content: flex-start; 
         }
         
-        /* ਸਾਂਝੀ ਸੈਟਿੰਗ */
         .box { display: none; width: 32.5%; height: 100%; position: relative; padding: 4px; border-radius: 20px; overflow: hidden; }
 
-        /* 1. FLYING ਬਾਕਸ - Sky Blue */
-        #box-fly {
-            background: linear-gradient(90deg, #00BFFF, #87CEEB, #ffffff, #00BFFF);
-            background-size: 300% 300%;
-            animation: snakeBorder 4s linear infinite;
-        }
+        /* 1. FLYING: Sky Blue Border & White Text */
+        #box-fly { background: linear-gradient(90deg, #00BFFF, #ffffff, #00BFFF); background-size: 300% 300%; animation: snakeBorder 4s linear infinite; }
+        #box-fly .item { color: white; }
 
-        /* 2. OUT ਬਾਕਸ - Red */
-        #box-out {
-            background: linear-gradient(90deg, #FF0000, #B22222, #ffffff, #FF0000);
-            background-size: 300% 300%;
-            animation: snakeBorder 3s linear infinite;
-        }
+        /* 2. OUT: Red Border & White Text */
+        #box-out { background: linear-gradient(90deg, #FF0000, #ffffff, #FF0000); background-size: 300% 300%; animation: snakeBorder 3s linear infinite; }
+        #box-out .item { color: white; }
 
-        /* 3. TIME ਬਾਕਸ - Yellow */
-        #box-time {
-            background: linear-gradient(90deg, #FFFF00, #FFD700, #ffffff, #FFFF00);
-            background-size: 300% 300%;
-            animation: snakeBorder 5s linear infinite;
-        }
+        /* 3. TIME: Yellow Border & Black Text */
+        #box-time { background: linear-gradient(90deg, #FFFF00, #ffffff, #FFFF00); background-size: 300% 300%; animation: snakeBorder 5s linear infinite; }
+        #box-time .item { color: #000; font-weight: 1000; text-shadow: none; }
 
-        .box-inner { 
-            background: rgba(0, 0, 0, 0.9); 
-            width: 100%; height: 100%; 
-            border-radius: 16px; 
-            position: relative; 
-            overflow: hidden; 
-        }
+        .box-inner { background: rgba(0, 0, 0, 0.95); width: 100%; height: 100%; border-radius: 16px; position: relative; overflow: hidden; }
 
+        /* ਹੈਡਰ ਦਾ ਸਾਈਜ਼ ਕੰਟਰੋਲ */
         .header-wrapper { 
             position: absolute; top: 0; right: 0; width: 55%; z-index: 10; 
             background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
             border-radius: 0 15px 0 15px; 
         }
-        .box-header, .sum-card { height: 65px; display: flex; align-items: center; }
+        .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 35px; }
+        .header-title { flex: 1; padding-left: 15px; font-weight: 900; font-size: 25px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 32px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 140px; }
+        /* ਪੈਡਿੰਗ ਹੈਡਰ ਦੇ ਹਿਸਾਬ ਨਾਲ ਆਪਣੇ ਆਪ ਵਧੇਗੀ */
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.2); }
         
-        .item { 
-            padding: 2px 20px; 
-            font-size: 32px; 
-            font-weight: 950; 
-            color: #ffcc00; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            text-shadow: 2px 2px 3px #000;
-            line-height: 1.1; 
-        }
+        .item { padding: 2px 20px; font-size: 32px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; line-height: 1.1; }
 
-        .footer { 
-            position: absolute; bottom: 0; width: 100%; height: 75px; 
-            background: #fff; display: flex; align-items: center; 
-            border-top: 6px solid red; overflow: hidden;
-        }
+        .footer { position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; display: flex; align-items: center; border-top: 6px solid red; overflow: hidden; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; z-index: 10; border-right: 5px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; margin-right: 15px; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 800px; } 
 
         .dt-box-wrap { height: 100%; min-width: 260px; display: flex; align-items: center; justify-content: center; border-left: 5px solid #000; }
-        
-        /* ਡੇਟ-ਟਾਈਮ ਬਾਕਸ ਦਾ ਰੰਗ ਵੀ ਚੇਂਜ ਕੀਤਾ (ਮਲਟੀ-ਕਲਰ) */
-        .dt-box-snake { 
-            height: 85%; width: 92%; border-radius: 12px; padding: 3px;
-            background: linear-gradient(90deg, #00ff00, #ffffff, #00ff00);
-            background-size: 300% 300%;
-            animation: snakeBorder 3s linear infinite;
-        }
+        .dt-box-snake { height: 85%; width: 92%; border-radius: 12px; padding: 3px; background: linear-gradient(90deg, #00ff00, #ffffff, #00ff00); background-size: 300% 300%; animation: snakeBorder 3s linear infinite; }
     </style>
 </head>
 <body>
@@ -159,18 +131,12 @@
         const now = new Date();
         const clockBox = document.getElementById('clock-box');
         toggleCounter++;
-        if (toggleCounter >= 10) {
-            showDate = !showDate;
-            toggleCounter = 0;
-        }
+        if (toggleCounter >= 10) { showDate = !showDate; toggleCounter = 0; }
         if (showDate) {
             const d = String(now.getDate()).padStart(2, '0');
             const m = String(now.getMonth() + 1).padStart(2, '0');
-            const y = now.getFullYear();
-            clockBox.innerText = `${d}/${m}/${y}`;
-        } else {
-            clockBox.innerText = now.toLocaleTimeString('en-US', { hour12: true });
-        }
+            clockBox.innerText = `${d}/${m}/${now.getFullYear()}`;
+        } else { clockBox.innerText = now.toLocaleTimeString('en-US', { hour12: true }); }
     }
     setInterval(updateClock, 1000);
 
