@@ -29,7 +29,7 @@
         .box { 
             display: none; width: 32.5%; height: 100%; position: relative; 
             border: 4px solid white; border-radius: 12px 12px 0 0; 
-            overflow: hidden; animation: borderGlow 6s linear infinite; background: rgba(0, 0, 0, 0.9);
+            overflow: hidden; animation: borderGlow 6s linear infinite; background: rgba(0, 0, 0, 0.95);
         }
 
         .header-wrapper { position: absolute; top: 0; right: 0; width: 58%; z-index: 10; background: #000; border-bottom: 4px solid white; border-left: 4px solid white; border-radius: 0 10px 0 10px; }
@@ -42,9 +42,8 @@
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         
-        /* ਟੀਮਾਂ ਦਾ ਗੈਪ ਘਟਾਉਣ ਲਈ padding ਘਟਾਈ ਹੈ */
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 100px; }
-        .item { padding: 4px 15px; font-size: 34px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; min-height: 48px; }
+        .item { padding: 2px 15px; font-size: 34px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 3px #000; min-height: 45px; }
 
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 75px; background: #fff; 
@@ -55,8 +54,8 @@
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 35px; font-weight: 1000; color: #000; will-change: transform; }
         
-        /* ਟਿੱਕਰ ਦਾ ਗੈਪ ਹੋਰ ਵਧਾ ਦਿੱਤਾ ਹੈ */
-        .ticker-content { display: inline-block; padding-right: 500px; } 
+        /* ਟਿੱਕਰ ਦਾ ਗੈਪ ਵਧਾ ਕੇ 650px ਕਰ ਦਿੱਤਾ ਹੈ */
+        .ticker-content { display: inline-block; padding-right: 650px; } 
 
         .dt-box { background: #ff0000; color: #fff; height: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: center; min-width: 240px; border-left: 5px solid #000; z-index: 10; font-size: 28px; font-weight: 1000; }
     </style>
@@ -123,32 +122,33 @@
             
             const tickerMsg = conf.ticker || "";
             const tickerElem = document.getElementById('ticker-text');
-            tickerElem.innerHTML = `<div class="ticker-content">${tickerMsg}</div><div class="ticker-content">${tickerMsg}</div>`;
+            // Only update innerHTML if message changed to prevent flicker
+            const newTickerHtml = `<div class="ticker-content">${tickerMsg}</div><div class="ticker-content">${tickerMsg}</div>`;
+            if(tickerElem.innerHTML !== newTickerHtml) tickerElem.innerHTML = newTickerHtml;
 
-            let html = { fly:'', out:'', time:'' };
-            let counts = { fly:0, out:0, time:0 };
-
+            let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
-                if (p.status === 'fly') { counts.fly++; html.fly += row; }
-                else if (p.status === 'time') { counts.time++; html.time += row; }
-                else if (p.status === 'out') { counts.out++; html.out += row; }
+                if (p.status === 'fly') htmlArr.fly.push(row);
+                else if (p.status === 'time') htmlArr.time.push(row);
+                else if (p.status === 'out') htmlArr.out.push(row);
             });
 
             document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
+            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
-            // ਲੂਪ ਵਿਚਕਾਰ ਗੈਪ ਵਧਾ ਕੇ 250px ਕਰ ਦਿੱਤਾ ਹੈ
-            const loopGap = '<div style="height:250px"></div>';
+            const loopGap = '<div style="height:350px"></div>'; // Increased gap to 350px
 
             ['fly','time','out'].forEach(id => {
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
-                if(counts[id] > 0) {
+                const count = htmlArr[id].length;
+                if(count > 0) {
                     el.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    // Double content for point-to-point loop
-                    listArea.innerHTML = `<div>${html[id]}</div>${loopGap}<div>${html[id]}</div>${loopGap}`;
+                    document.getElementById(`count-${id}`).innerText = count;
+                    const combined = htmlArr[id].join('');
+                    const newHtml = `<div>${combined}</div>${loopGap}<div>${combined}</div>${loopGap}`;
+                    if(listArea.innerHTML !== newHtml) listArea.innerHTML = newHtml;
                 } else { el.style.display = "none"; }
             });
         });
@@ -157,23 +157,20 @@
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const listArea = document.getElementById(`list-${id}`);
-            if (listArea && getComputedStyle(document.getElementById(`box-${id}`)).display !== "none") {
-                listPos[id] -= 1.1; // Smooth Speed
-                let totalH = listArea.scrollHeight / 2;
-                if (Math.abs(listPos[id]) >= totalH) {
-                    listPos[id] = 0; // Seamless reset
-                }
+            const box = document.getElementById(`box-${id}`);
+            if (listArea && box.style.display !== "none") {
+                listPos[id] -= 1.15; // Speed
+                let limit = listArea.scrollHeight / 2;
+                if (Math.abs(listPos[id]) >= limit) listPos[id] = 0;
                 listArea.style.transform = `translateY(${listPos[id]}px)`;
             }
         });
 
         const tickerMove = document.getElementById('ticker-text');
-        if (tickerMove && getComputedStyle(document.getElementById('ticker-div')).display !== "none") {
-            tickerPos -= 2.0;
-            let totalW = tickerMove.scrollWidth / 2;
-            if (Math.abs(tickerPos) >= totalW) {
-                tickerPos = 0;
-            }
+        if (tickerMove && document.getElementById('ticker-div').style.display !== "none") {
+            tickerPos -= 2.1;
+            let limitT = tickerMove.scrollWidth / 2;
+            if (Math.abs(tickerPos) >= limitT) tickerPos = 0;
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
         }
         requestAnimationFrame(animate);
