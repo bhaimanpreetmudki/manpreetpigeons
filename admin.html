@@ -23,24 +23,23 @@
         .login-box h2 { color: #f39c12; margin-bottom: 20px; font-size: 22px; }
         input[type="password"], input[type="text"] { 
             width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; 
-            border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; font-size: 16px; 
+            border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; font-size: 16px; outline: none;
         }
         .primary-btn { 
             width: 100%; padding: 15px; background: #f39c12; border: none; 
             color: #000; font-weight: 900; border-radius: 10px; cursor: pointer; font-size: 14px;
         }
 
-        /* Help Buttons on Login */
         .help-flex { display: flex; gap: 10px; margin-top: 15px; }
         .help-btn { 
             flex: 1; padding: 10px; border-radius: 8px; text-decoration: none; 
             font-size: 11px; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- MAIN CONTENT (Initially Hidden) --- */
+        /* --- MAIN CONTENT (Hidden Initially) --- */
         #main-content { display: none; max-width: 500px; margin: 0 auto; }
 
-        /* --- TOP BAR (3 Buttons) --- */
+        /* --- TOP BAR --- */
         .top-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
         .top-btn { 
             height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; 
@@ -55,10 +54,7 @@
         .card-title { color: #f39c12; font-size: 11px; margin-bottom: 10px; font-weight: bold; }
         
         .flex-buttons { display: flex; gap: 10px; }
-        .toggle-btn { 
-            flex: 1; padding: 12px; border-radius: 8px; border: none; 
-            font-weight: 1000; cursor: pointer;
-        }
+        .toggle-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: 1000; cursor: pointer; }
         .btn-on { background: #2ecc71; color: white; }
         .btn-off { background: #30363d; color: #888; }
 
@@ -68,10 +64,7 @@
         }
 
         /* --- EXPIRY SCREEN --- */
-        #expiry-section { 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            height: 90vh; text-align: center; 
-        }
+        #expiry-section { display: none; flex-direction: column; align-items: center; justify-content: center; height: 90vh; text-align: center; }
     </style>
 </head>
 <body>
@@ -80,7 +73,7 @@
         <div class="login-box">
             <h2>ADMIN LOGIN</h2>
             <input type="password" id="passInput" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
-            <button class="primary-btn" onclick="checkLogin()">ENTER CONTROL</button>
+            <button id="loginBtn" class="primary-btn" onclick="checkLogin()">ENTER CONTROL</button>
             
             <div class="help-flex">
                 <a href="https://wa.me/918699640061" target="_blank" class="help-btn" style="background: #25D366;">
@@ -102,7 +95,6 @@
     </div>
 
     <div id="main-content">
-        
         <div class="top-bar">
             <a href="https://wa.me/918699640061" target="_blank" class="top-btn" style="background: #25D366;">
                 <i class="fab fa-whatsapp" style="margin-right:4px;"></i> WHATSAPP
@@ -155,23 +147,43 @@
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
 
+    // --- NEW DYNAMIC LOGIN LOGIC ---
     function checkLogin() {
-        const p = document.getElementById('passInput').value;
-        if(p === "1234") { 
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            startApp();
-        } else { alert("ਗਲਤ ਪਾਸਵਰਡ!"); }
+        const pInput = document.getElementById('passInput').value;
+        const btn = document.getElementById('loginBtn');
+
+        if(!userID) { alert("ID NOT FOUND! ਲਿੰਕ ਚੈੱਕ ਕਰੋ।"); return; }
+
+        btn.innerText = "CHECKING...";
+        btn.disabled = true;
+
+        // Firebase ton password chkkna
+        db.ref('users/' + userID + '/password').once('value').then(snap => {
+            const correctPass = snap.val();
+
+            if(correctPass && pInput === correctPass.toString()) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                startApp();
+            } else {
+                alert("ਗਲਤ ਪਾਸਵਰਡ! ਮਾਸਟਰ ਪੈਨਲ ਵਾਲਾ ਪਾਸਵਰਡ ਭਰੋ।");
+                btn.innerText = "ENTER CONTROL";
+                btn.disabled = false;
+            }
+        }).catch(err => {
+            alert("Error: " + err.message);
+            btn.innerText = "ENTER CONTROL";
+            btn.disabled = false;
+        });
     }
 
     function startApp() {
-        if(!userID) return;
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const conf = data.config || {};
             const pigeons = data.pigeons || [];
 
-            // Expiry Logic
+            // Expiry Check
             const today = new Date();
             const expDate = new Date(data.expiry_date || "2026-12-31");
             document.getElementById('expDisp').innerText = data.expiry_date || "N/A";
@@ -209,7 +221,7 @@
     }
 
     function resetEverything() {
-        if(confirm("ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਡਾਟਾ ਡਿਲੀਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?")) {
+        if(confirm("ਸਾਰਾ ਡਾਟਾ ਡਿਲੀਟ ਕਰੀਏ?")) {
             db.ref('users/' + userID + '/pigeons').set([]);
         }
     }
