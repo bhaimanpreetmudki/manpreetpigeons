@@ -51,18 +51,30 @@
 </div>
 
 <div id="main-content" style="display:none;">
-    <div class="top-info-bar">
-        <a href="tel:8699640061" class="btn-helpline-top"><i class="fas fa-phone-alt"></i> HELPLINE</a>
-        <div class="mini-box"><small>EXPIRY</small><b id="expDisp">--</b></div>
-    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 5px; margin-bottom: 15px;">
+        <a href="tel:8699640061" style="background: #2980b9; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 10px; font-weight: bold; height: 35px;">
+            <i class="fas fa-phone-alt" style="margin-right:3px;"></i> HELP
+        </a>
+        
+        <div style="background: #1a1d21; border: 1px solid #333; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 35px;">
+            <span style="font-size: 7px; color: #888; text-transform: uppercase;">Expiry</span>
+            <b id="expDisp" style="font-size: 10px; color: #2ecc71;">--</b>
+        </div>
 
-    <button class="btn-recharge-main" onclick="toggleRecharge(true)">💳 RECHARGE PLAN</button>
+        <button onclick="toggleRecharge(true)" style="background: #f39c12; color: black; border: none; border-radius: 6px; font-weight: 900; font-size: 10px; height: 35px; cursor: pointer;">
+            💳 RECHARGE
+        </button>
+    </div>
 
     <div id="admin-controls-wrapper">
         <div class="display-controls-box">
             <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SCOREBOARD</button>
             <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">TICKER</button>
         </div>
+        
+        </div>
+</div>
 
         <div class="controls-container">
             <div class="row">
