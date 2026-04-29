@@ -14,26 +14,28 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; }
-        .box { display: none; flex: 1; height: 100%; position: relative; border: 4px solid white; border-radius: 15px 15px 0 0; overflow: hidden; }
+        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 280px; display: flex; gap: 15px; justify-content: center; }
+        
+        /* FIX: Box size fixed to 32% so they don't grow/shrink */
+        .box { display: none; width: 32.5%; height: 100%; position: relative; border: 4px solid white; border-radius: 15px 15px 0 0; overflow: hidden; }
 
         #box-fly { background: rgba(0, 0, 0, 0.9); }
         #box-out { background: rgba(102, 0, 0, 0.9); } 
         #box-time { background: rgba(0, 26, 102, 0.9); }
 
-        .header-wrapper { position: absolute; top: 0; right: 0; width: 48%; z-index: 10; }
+        .header-wrapper { position: absolute; top: 0; right: 0; width: 55%; z-index: 10; }
         .box-header, .sum-card { display: flex; align-items: center; width: 100%; border-left: 4px solid white; border-bottom: 4px solid white; background: #000; }
         .box-header { height: 75px; border-radius: 0 15px 0 15px; }
         .sum-card { height: 70px; border-radius: 0 0 0 15px; }
 
-        .header-title, .sum-label-area { flex: 1; padding-left: 12px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 26px; color: white; }
-        .count-tag { background: #fff; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 42px; }
-        .sum-val-area { background: #ffcc00; color: #000; width: 40%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 40px; text-align: center; line-height: 1; }
+        .header-title, .sum-label-area { flex: 1; padding-left: 8px; display: flex; align-items: center; border-right: 4px solid white; height: 100%; font-weight: 900; font-size: 22px; color: white; }
+        .count-tag { background: #fff; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
+        .sum-val-area { background: #ffcc00; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 35px; text-align: center; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; will-change: transform; }
         
-        .item { padding: 10px 15px; font-size: 38px; font-weight: 950; color: #ffcc00; border-bottom: 2px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
+        .item { padding: 10px 15px; font-size: 35px; font-weight: 950; color: #ffcc00; border-bottom: 2px solid rgba(255,255,255,0.2); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
 
         .loop-spacer { height: 100px; width: 100%; }
 
@@ -64,25 +66,20 @@
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div>
 
+    <div id="box-time" class="box">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 32px;">--</div></div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div>
+
     <div id="box-out" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title flash-text" data-pa="❌ ਕੱਟੇ" data-en="❌ OUT"></span><span id="count-out" class="count-tag">0</span></div>
             <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਬਾਕੀ" data-en="REM."></div><div id="m-rem" class="sum-val-area">0</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div>
-
-    <div id="box-time" class="box">
-        <div class="header-wrapper">
-            <div class="box-header">
-                <span class="header-title flash-text" data-pa="⏰ ਸਮਾਂ" data-en="⏰ TIME"></span>
-                <span id="count-time" class="count-tag">0</span>
-            </div>
-            <div class="sum-card">
-                <div id="m-time-val" class="sum-val-area" style="width: 100%; font-size: 35px;">--</div>
-            </div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div>
 </div>
 
@@ -122,7 +119,6 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
-            // Fix: Admin de 'showScoreboard' naal match kita
             document.getElementById('scoreboard-div').style.display = (conf.showScoreboard !== false) ? "flex" : "none";
             document.getElementById('ticker-div').style.display = (conf.showTicker !== false) ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
@@ -145,6 +141,7 @@
                 const el = document.getElementById(`box-${id}`);
                 const listArea = document.getElementById(`list-${id}`);
                 
+                // Box content update but size remains fixed in CSS
                 if(counts[id] > 0) {
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
@@ -170,8 +167,7 @@
         });
 
         const tickerMove = document.getElementById('ticker-text');
-        const tickerDiv = document.getElementById('ticker-div');
-        if (tickerDiv && tickerDiv.style.display !== "none") {
+        if (document.getElementById('ticker-div').style.display !== "none") {
             tickerPos -= TICKER_SPEED;
             if (tickerPos < -tickerMove.offsetWidth) { tickerPos = window.innerWidth; }
             tickerMove.style.transform = `translateX(${tickerPos}px)`;
