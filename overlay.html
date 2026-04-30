@@ -33,7 +33,7 @@
             margin-left: 5px;
         } 
         
-        /* Expiry Lock Screen - Updated to Yellow/Black */
+        /* Expiry Lock Screen */
         #expiry-lock {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.95); z-index: 9999;
@@ -76,7 +76,6 @@
         .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
         
-        /* Adjusted padding for gap */
         .item { padding: 8px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
         .item-num { color: #FFD700; min-width: 50px; } 
         #box-time-val { font-size: 35px !important; font-weight: 950; margin-left: 10px; }
@@ -87,7 +86,7 @@
             100% { transform: translateY(-50%); } 
         }
 
-        /* Ticker Styling - Matched with Logo Yellow */
+        /* Ticker - Updated for Smooth Movement */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: #000; display: flex; align-items: center; 
@@ -96,20 +95,28 @@
         .live-tag { 
             background: #FFD700; color: #000; padding: 0 40px; height: 100%; 
             display: flex; align-items: center; font-size: 55px; 
-            font-weight: 950; font-style: italic; 
+            font-weight: 950; font-style: italic; z-index: 2;
         }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; }
-        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 30s linear infinite; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; position: relative; }
+        
+        /* Reduced speed and added smoother transform */
+        .ticker-move { 
+            display: inline-block; 
+            white-space: nowrap; 
+            padding-left: 100%; 
+            animation: ticker 45s linear infinite; 
+            will-change: transform; /* Removes jitter/shaking */
+        }
 
         @keyframes ticker { 
-            0% { transform: translateX(0); } 
-            100% { transform: translateX(-100%); } 
+            0% { transform: translate3d(0, 0, 0); } 
+            100% { transform: translate3d(-100%, 0, 0); } 
         }
 
         .dt-box { 
             background: #FFD700; height: 100%; padding: 0 40px; 
             display: flex; justify-content: center; align-items: center; 
-            border-left: 4px solid rgba(0,0,0,0.2); width: 300px; min-width: 300px; 
+            border-left: 4px solid rgba(0,0,0,0.2); width: 300px; min-width: 300px; z-index: 2;
         }
         #dt-flash { font-size: 35px; font-weight: 950; color: #000; font-style: italic; text-align: center; width: 100%; font-variant-numeric: tabular-nums; display: inline-block; }
     </style>
@@ -255,15 +262,12 @@
                     el.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = counts[id];
                     
-                    // Gap setting (300px for a clean loop)
                     let gap = '<div style="height:300px;"></div>';
                     listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
                     
-                    // FIXED SPEED CALCULATION (Pixels per second)
-                    // No matter how many pigeons, the speed will remain constant.
-                    let speedPixelsPerSecond = 55; // Change this number to adjust overall speed
+                    let speedPixelsPerSecond = 45; 
                     let totalHeight = listArea.scrollHeight / 2;
-                    listArea.style.animationDuration = (totalHeight / speedPixelsPerSecond) + "5s";
+                    listArea.style.animationDuration = (totalHeight / speedPixelsPerSecond) + "s";
                 } else { 
                     el.style.display = "none"; 
                 }
