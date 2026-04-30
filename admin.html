@@ -23,8 +23,8 @@
 
         /* Show/Hide & Reset Group */
         .display-controls-box { background: #1a1d21; padding: 10px; border-radius: 10px; border: 1px solid #444; margin-bottom: 15px; }
-        .btn-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .toggle-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
+        .btn-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .toggle-btn { flex: 1; min-width: 100px; padding: 10px; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
         .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
         /* Summary Box */
@@ -40,6 +40,7 @@
         .st-btn.active { opacity: 1; border: 1px solid white; }
 
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
+        #locStatus { font-size: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -49,13 +50,12 @@
     <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
     <button onclick="checkLogin()" class="btn-add">ENTER CONTROL</button>
     <div style="display:flex; gap:10px; margin-top:10px;">
-        <a href="https://wa.me/918699640061" style="background:#25D366; color:white; flex:1; padding:10px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold;"><i class="fab fa-whatsapp"></i> WA</a>
-        <a href="tel:+918699640061" style="background:#3498db; color:white; flex:1; padding:10px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold;"><i class="fas fa-phone-alt"></i> CALL</a>
+        <a href="https://wa.me/918699640061" style="background:#25D366; color:white; flex:1; padding:10px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold; text-align:center;"><i class="fab fa-whatsapp"></i> WA</a>
+        <a href="tel:+918699640061" style="background:#3498db; color:white; flex:1; padding:10px; border-radius:6px; text-decoration:none; font-size:11px; font-weight:bold; text-align:center;"><i class="fas fa-phone-alt"></i> CALL</a>
     </div>
 </div>
 
 <div id="main-content" style="display:none;">
-    
     <div class="top-mini-bar">
         <span><i class="fas fa-phone-alt"></i> HELP: <b>+91 8699640061</b></span>
         <span><i class="fas fa-calendar-alt"></i> EXPIRY: <b id="expDisp">--</b></span>
@@ -64,15 +64,29 @@
     <div class="controls-container">
         <textarea id="pName" placeholder="ਕਬੂਤਰ ਪਾਰਟੀਆਂ / ਟੀਮਾਂ ਦੇ ਨਾਮ ਇਕੱਠੇ ਅਪਡੇਟ ਕਰਨ ਲਈ ਇਸ ਤਰਾਂ (ਫ਼ਿਰੋਜ਼ਪੁਰ, ਫਰੀਦਕੋਟ, ਮੋਗਾ) ਟੀਮਾਂ ਦੇ ਨਾਮ ਨਾਲ ਕੌਮਾ (,) ਪਾਓ"></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
+        
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ (e.g. 10:30 AM)">
         <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
-        <button class="btn-update" onclick="save()">UPDATE TICKER & TIME</button>
+        
+        <!-- Weather Search Section -->
+        <p style="font-size: 11px; color: #f39c12; margin-bottom: 5px;">WEATHER SETTINGS (ਮੌਸਮ ਲਈ ਪਿੰਡ ਲੱਭੋ):</p>
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ (e.g. Mudki, Punjab)" style="margin-bottom:0;">
+            <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div id="locStatus"></div>
+        <input type="hidden" id="inpLat"><input type="hidden" id="inpLon">
+
+        <button class="btn-update" onclick="save()">UPDATE ALL DATA</button>
     </div>
 
     <div class="display-controls-box">
         <div class="btn-row">
             <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SHOW SCORE</button>
             <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">SHOW TICKER</button>
+            <button id="weatherBtn" onclick="toggleDisplay('showWeather')" class="toggle-btn">SHOW WEATHER</button>
         </div>
         <button class="btn-reset" onclick="resetData()">🔄 RESET FULL TOURNAMENT</button>
     </div>
@@ -108,6 +122,26 @@
         });
     }
 
+    // ਆਟੋ ਲੋਕੇਸ਼ਨ ਲੱਭਣ ਲਈ ਫੰਕਸ਼ਨ
+    async function findLocation() {
+        const pind = document.getElementById('inpPind').value;
+        const status = document.getElementById('locStatus');
+        if (!pind) { alert("ਪਹਿਲਾਂ ਪਿੰਡ ਦਾ ਨਾਮ ਭਰੋ!"); return; }
+        status.innerText = "ਲੱਭ ਰਿਹਾ ਹੈ..."; status.style.color = "#f39c12";
+
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${pind}`);
+            const data = await res.json();
+            if (data.length > 0) {
+                document.getElementById('inpLat').value = data[0].lat;
+                document.getElementById('inpLon').value = data[0].lon;
+                status.innerText = "ਲੋਕੇਸ਼ਨ ਮਿਲ ਗਈ ਹੈ!"; status.style.color = "#2ecc71";
+            } else {
+                status.innerText = "ਲੋਕੇਸ਼ਨ ਨਹੀਂ ਮਿਲੀ।"; status.style.color = "#e74c3c";
+            }
+        } catch (e) { alert("Error finding location"); }
+    }
+
     function toggleDisplay(field) {
         const currentStatus = localData.config[field] || false;
         db.ref('users/' + userID + '/config/' + field).set(!currentStatus);
@@ -119,8 +153,14 @@
         document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
         document.getElementById('tickerBtn').innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
         document.getElementById('tickerBtn').style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        document.getElementById('weatherBtn').innerText = conf.showWeather ? "HIDE WEATHER" : "SHOW WEATHER";
+        document.getElementById('weatherBtn').style.backgroundColor = conf.showWeather ? "#dc3545" : "#238636";
+
         document.getElementById('inpTicker').value = conf.ticker || "";
         document.getElementById('inpBoxTime').value = conf.boxTime || "";
+        document.getElementById('inpPind').value = conf.pindName || "";
+        document.getElementById('inpLat').value = conf.lat || "";
+        document.getElementById('inpLon').value = conf.lon || "";
 
         const list = document.getElementById('listArea');
         list.innerHTML = "";
@@ -160,8 +200,16 @@
     function save() {
         db.ref('users/' + userID).update({
             pigeons: localData.pigeons || [],
-            config: { ...localData.config, ticker: document.getElementById('inpTicker').value, boxTime: document.getElementById('inpBoxTime').value }
+            config: { 
+                ...localData.config, 
+                ticker: document.getElementById('inpTicker').value, 
+                boxTime: document.getElementById('inpBoxTime').value,
+                pindName: document.getElementById('inpPind').value,
+                lat: document.getElementById('inpLat').value,
+                lon: document.getElementById('inpLon').value
+            }
         });
+        alert("ਸਾਰਾ ਡਾਟਾ ਸੇਵ ਹੋ ਗਿਆ!");
     }
 
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); save(); } }
