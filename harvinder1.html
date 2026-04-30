@@ -12,28 +12,33 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-/* --- ਵਾਧੂ ਬਾਰਡਰ ਅਤੇ ਬੈਕਗਰਾਊਂਡ ਹਟਾ ਦਿੱਤੀ ਗਈ ਹੈ --- */
 #weather-box {
     position: absolute;
-    top: 20px; /* ਬਾਕਸਾਂ ਦੇ ਹਿਸਾਬ ਨਾਲ ਸੈੱਟ ਕੀਤਾ */
+    top: 20px; 
     left: 10px;
-    width: 650px;  
-    height: 150px;  
+    width: 650px;  /* ਡੱਬੇ ਦਾ ਸਾਈਜ਼ ਉਹੀ ਰੱਖਿਆ ਹੈ */
+    height: 150px; 
     display: none;
     overflow: hidden;
-    background: transparent; /* ਪਿਛਲਾ ਕਾਲਾ ਰੰਗ ਹਟਾ ਦਿੱਤਾ */
-    border: none;           /* ਬਾਹਰਲਾ ਚਿੱਟਾ/ਕਾਲਾ ਬਾਰਡਰ ਹਟਾ ਦਿੱਤਾ */
-    box-shadow: none;       /* ਪਰਛਾਵਾਂ ਵੀ ਹਟਾ ਦਿੱਤਾ */
+    background: transparent; 
+    border: none;           
     z-index: 1001;
 }
 
 #weather-frame { 
-    width: 100%; 
-    height: 100%; 
+    width: 650px; 
+    height: 150px; 
     border: none; 
     pointer-events: none;
+    
+    /* ਨਾਮ ਨੂੰ ਹੋਰ ਵੱਡਾ ਕਰਨ ਲਈ scale 2.8 ਕਰ ਦਿੱਤਾ ਹੈ */
+    transform: scale(2.8); 
+    transform-origin: top left; 
+    
+    /* ਨਾਮ ਨੂੰ ਡੱਬੇ ਦੇ ਸਹੀ ਸੈਂਟਰ ਵਿੱਚ ਲਿਆਉਣ ਲਈ margin ਸੈੱਟ ਕੀਤਾ ਹੈ */
+    margin-top: -10px; 
+    margin-left: 5px;
 }
-
         /* ਤੇਜ਼ ਝਮਾਕਾ ਜਦੋਂ ਟਾਈਮ/ਡੇਟ ਬਦਲੇ */
         @keyframes sharpFlash {
             0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
