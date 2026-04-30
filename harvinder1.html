@@ -12,22 +12,27 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Weather Box Style --- */
-        #weather-box {
-            position: absolute;
-            bottom: 395px; /* ਬਾਕਸਾਂ ਦੇ ਉੱਪਰ */
-            left: 10px;
-            width: 350px;
-            height: 105px;
-            display: none;
-            overflow: hidden;
-            border-radius: 15px;
-            border: 4px solid white;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 1001;
-        }
-        #weather-frame { width: 100%; height: 100%; border: none; pointer-events: none; }
+/* --- ਵਾਧੂ ਬਾਰਡਰ ਅਤੇ ਬੈਕਗਰਾਊਂਡ ਹਟਾ ਦਿੱਤੀ ਗਈ ਹੈ --- */
+#weather-box {
+    position: absolute;
+    top: 20px; /* ਬਾਕਸਾਂ ਦੇ ਹਿਸਾਬ ਨਾਲ ਸੈੱਟ ਕੀਤਾ */
+    left: 10px;
+    width: 250px;  
+    height: 75px;  
+    display: none;
+    overflow: hidden;
+    background: transparent; /* ਪਿਛਲਾ ਕਾਲਾ ਰੰਗ ਹਟਾ ਦਿੱਤਾ */
+    border: none;           /* ਬਾਹਰਲਾ ਚਿੱਟਾ/ਕਾਲਾ ਬਾਰਡਰ ਹਟਾ ਦਿੱਤਾ */
+    box-shadow: none;       /* ਪਰਛਾਵਾਂ ਵੀ ਹਟਾ ਦਿੱਤਾ */
+    z-index: 1001;
+}
+
+#weather-frame { 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    pointer-events: none;
+}
 
         /* ਤੇਜ਼ ਝਮਾਕਾ ਜਦੋਂ ਟਾਈਮ/ਡੇਟ ਬਦਲੇ */
         @keyframes sharpFlash {
