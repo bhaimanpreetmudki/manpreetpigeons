@@ -15,20 +15,37 @@
         }
         .flash-text::after { content: attr(data-pa); animation: langFlash 9s infinite; }
 
-        /* --- Summary Section (Auto Adjusting with Frame) --- */
+        /* --- Weather Overlay --- */
+        #weather-box {
+            position: absolute;
+            bottom: 435px; /* ਸਕੋਰਬੋਰਡ ਅਤੇ ਸਮਰੀ ਤੋਂ ਉੱਪਰ */
+            left: 10px;
+            width: 350px;
+            height: 105px;
+            display: none;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 3px solid white;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
+            z-index: 1001;
+        }
+        #weather-frame { width: 100%; height: 100%; border: none; pointer-events: none; }
+
+        /* --- Summary Section --- */
         .summary-wrapper { 
             position: absolute; 
-            bottom: 360px; /* ਸਕੋਰਬੋਰਡ ਦੇ ਉੱਪਰ ਰੱਖਣ ਲਈ */
+            bottom: 360px; 
             left: 10px; 
             right: 10px; 
             display: flex; 
-            justify-content: space-between; /* ਕਿਨਾਰਿਆਂ ਤੇ ਚਿਪਕਾਉਣ ਲਈ */
+            justify-content: space-between; 
             z-index: 1000; 
         }
         .sum-card { 
             display: flex; 
             border: 3px solid white; 
-            border-radius: 12px; /* ਸਮਰੀ ਬਾਕਸ ਗੋਲ */
+            border-radius: 12px; 
             overflow: hidden; 
             min-width: 250px; 
             height: 65px; 
@@ -54,7 +71,6 @@
         #box-out { background: #660000; } 
         #box-time { background: #001a66; }
 
-        /* --- Header Setting (Rounded & Summary Style) --- */
         .box-header { 
             height: 75px; 
             width: 45%; 
@@ -66,7 +82,7 @@
             z-index: 10; 
             border-bottom: 3px solid white; 
             border-left: 3px solid white; 
-            border-radius: 0 12px 0 12px; /* ਖੱਬਾ ਹੇਠਲਾ ਕੋਨਾ ਗੋਲ */
+            border-radius: 0 12px 0 12px; 
             overflow: hidden; 
         }
         
@@ -83,8 +99,8 @@
         }
 
         .count-tag { 
-            background: #ffffff; /* ਚਿੱਟਾ ਬੈਕਗਰਾਊਂਡ */
-            color: #000000; /* ਕਾਲਾ ਨੰਬਰ */
+            background: #ffffff; 
+            color: #000000; 
             height: 100%;
             width: 35%; 
             font-size: 45px; 
@@ -112,13 +128,11 @@
             z-index: 11;
         }
 
-        /* --- List Area --- */
         .scroll-window { position: relative; height: 100%; width: 100%; overflow: hidden; z-index: 1; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; }
         .item { padding: 5px 20px; font-size: 40px; font-weight: 950; color: #ffcc00; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 3px 3px 5px rgba(0,0,0,1); }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-        /* --- Footer --- */
         .footer { position: absolute; bottom: 0; width: 100%; height: 70px; background: #ffffff; display: flex; align-items: center; border-top: 5px solid #ff0000; }
         .live-tag { background: #ff0000; color: white; padding: 0 25px; height: 100%; display: flex; align-items: center; font-size: 32px; font-weight: 950; font-style: italic; border-right: 4px solid #000; }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; }
@@ -133,6 +147,10 @@
     </style>
 </head>
 <body>
+
+<div id="weather-box">
+    <iframe id="weather-frame" src=""></iframe>
+</div>
 
 <div class="summary-wrapper" id="summary-div">
     <div class="sum-card">
@@ -200,13 +218,29 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
             
+            // --- UI Visibility ---
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('ticker-text').innerText = conf.ticker || "";
+
+            // --- Weather Sync ---
+            const wBox = document.getElementById('weather-box');
+            const wFrame = document.getElementById('weather-frame');
+            if(conf.showWeather === true) {
+                wBox.style.display = "block";
+                let lat = conf.lat || "30.5980";
+                let lon = conf.lon || "74.7380";
+                let p_name = conf.pindName || "";
+                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
+                if(wFrame.src !== wUrl) wFrame.src = wUrl;
+            } else {
+                wBox.style.display = "none";
+            }
             
+            // --- Time Info ---
             const timeInfoEl = document.getElementById('header-time-info');
-            const adminTime = conf.boxTime || conf.timeRange || ""; 
+            const adminTime = conf.boxTime || ""; 
             if(adminTime) {
                 timeInfoEl.innerText = adminTime;
                 timeInfoEl.style.display = "block";
@@ -214,6 +248,7 @@
                 timeInfoEl.style.display = "none";
             }
 
+            // --- Pigeons Logic ---
             let counts = { fly:0, out:0, time:0 }; let htmls = { fly:'', out:'', time:'' };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}-${p.name}</div>`;
