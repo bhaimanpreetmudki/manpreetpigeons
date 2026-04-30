@@ -1,537 +1,209 @@
 <!DOCTYPE html>
 <html lang="pa">
 <head>
-    <meta charset="UTF-8">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        :root { 
-            --header-h: 65px; 
-            --header-w: 40%; 
-        }
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
+    <meta charset="UTF-8">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
+        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-#weather-box {
-    position: absolute;
-    top: 20px; 
-    left: 10px;
-    width: 550px;  /* ਡੱਬੇ ਦਾ ਸਾਈਜ਼ ਉਹੀ ਰੱਖਿਆ ਹੈ */
-    height: 120px; 
-    display: none;
-    overflow: hidden;
-    background: transparent; 
-    border: none;           
-    z-index: 1001;
-}
+        /* Weather Box */
+        #weather-box {
+            position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
+            display: none; overflow: hidden; z-index: 1001;
+        }
+        #weather-frame { 
+            width: 550px; height: 120px; border: none; pointer-events: none;
+            transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
+        }
 
-#weather-frame { 
-    width: 550px; 
-    height: 120px; 
-    border: none; 
-    pointer-events: none;
-    
-    /* ਨਾਮ ਨੂੰ ਹੋਰ ਵੱਡਾ ਕਰਨ ਲਈ scale 2.8 ਕਰ ਦਿੱਤਾ ਹੈ */
-    transform: scale(1.5); 
-    transform-origin: top left; 
-    
-    /* ਨਾਮ ਨੂੰ ਡੱਬੇ ਦੇ ਸਹੀ ਸੈਂਟਰ ਵਿੱਚ ਲਿਆਉਣ ਲਈ margin ਸੈੱਟ ਕੀਤਾ ਹੈ */
-    margin-top: -10px; 
-    margin-left: 5px;
-}
-        /* ਤੇਜ਼ ਝਮਾਕਾ ਜਦੋਂ ਟਾਈਮ/ਡੇਟ ਬਦਲੇ */
-        @keyframes sharpFlash {
-            0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
-            50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
-            100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
-        }
+        /* Expiry Lock */
+        #expiry-lock {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); z-index: 9999;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+        .lock-msg { background: #f39c12; color: #000; padding: 20px 40px; border-radius: 15px; border: 4px solid white; }
 
-        /* ਸਲੋ ਘੈਂਟ ਲਾਈਟ ਐਨੀਮੇਸ਼ਨ */
-        @keyframes slowGhaintLight {
-            0% { left: -150%; }
-            30% { left: 150%; }
-            100% { left: 150%; } 
-        }
+        /* Summary (Bottom Left) */
+        .summary-wrapper { position: absolute; bottom: 95px; left: 15px; display: flex; gap: 15px; z-index: 1000; }
+        .sum-card { display: flex; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255,255,255,0.4); min-width: 240px; height: 70px; }
+        .sum-label-area { background: rgba(0, 0, 0, 0.9); width: 65%; font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 35px; font-weight: 950; display: flex; align-items: center; justify-content: center; }
 
-        .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 105px; 
-            height: 280px; display: flex; gap: 15px; justify-content: flex-start; 
-        }
-        
-        .box { 
-            display: none; width: 32.5%; height: 100%; position: relative; 
-            border-radius: 25px; overflow: hidden; border: 4px solid #fff; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        /* Right Side Main Containers */
+        .main-container { 
+            position: absolute; top: 10px; right: 20px; bottom: 90px; 
+            width: 580px; /* ਸੱਜੇ ਪਾਸੇ ਵਾਲੇ ਡੱਬੇ ਦੀ ਚੌੜਾਈ */
+            display: flex; flex-direction: column; gap: 12px; 
+        }
+        .box { 
+            display: none; flex: 1; overflow: hidden; position: relative; 
+            border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 10px; backdrop-filter: blur(5px);
+        }
 
-        .box::after {
-            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3) 50%, transparent);
-            animation: slowGhaintLight 15s infinite ease-in-out;
-            z-index: 5; pointer-events: none;
-        }
+        .box-header { height: 55px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(255,255,255,0.2); }
+        #box-fly .box-header { background: #0000FF; } 
+        #box-fly { background: rgba(0, 0, 100, 0.8); }
+        #box-time .box-header { background: #FFD700; color: black; } 
+        #box-time { background: rgba(180, 150, 0, 0.8); color: black !important; }
+        #box-out .box-header { background: #000000; } 
+        #box-out { background: rgba(0, 0, 0, 0.8); }
 
-        #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
-        #box-out { background: rgba(255, 0, 0, 0.85) !important; }
-        #box-time { background: rgba(255, 255, 0, 0.85) !important; }
+        .header-title { font-size: 26px; font-weight: 950; }
+        .count-tag { background: white; color: black; padding: 0 15px; border-radius: 5px; font-size: 30px; font-weight: 950; height: 35px; display: flex; align-items: center; }
 
-        .box-inner { width: 100%; height: 100%; border-radius: 20px; position: relative; overflow: hidden; z-index: 1; }
+        /* Scrolling Logic */
+        .scroll-window { position: absolute; top: 55px; bottom: 0; width: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
+        .item { padding: 8px 25px; display: flex; align-items: center; gap: 15px; font-size: 38px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .item-num { color: #f39c12; min-width: 55px; }
+        #box-time .item, #box-time .item-num { color: black; }
 
-        .header-wrapper { 
-            position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; 
-            background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
-            border-radius: 0 20px 0 20px; color: white;
-        }
-        .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .box-header { border-bottom: 2px solid white; }
-        
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
-        .count-tag { background: #fff; color: #000; }
-        .sum-val-area { background: #ffcc00; color: #000; }
+        @keyframes constantScroll { 
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-50%); } 
+        }
 
-        .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
-        
-        .item { padding: 5px 20px; font-size: 42px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
-        #box-out .item { color: #fff; }
+        /* Footer */
+        .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; }
+        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 50px; font-weight: 950; font-style: italic; }
+        .ticker-wrap { flex: 1; overflow: hidden; }
+        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; font-size: 35px; font-weight: 950; color: #fff; }
 
-        .footer { 
-            position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); height: 85px; 
-            background: #fff; display: flex; align-items: center; 
-            border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
-        }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        .footer::before {
-            content: ""; position: absolute; top: 0; width: 500px; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7) 50%, transparent);
-            animation: slowGhaintLight 20s infinite ease-in-out;
-            z-index: 35; pointer-events: none;
-        }
+        .dt-box { background: #ff0000; height: 100%; width: 320px; display: flex; justify-content: center; align-items: center; border-left: 4px solid white; }
+        #dt-flash { font-size: 32px; font-weight: 950; color: white; }
 
-        .live-tag { 
-            background: #ff0000; color: #fff; padding: 0 45px; height: 100%; 
-            display: flex; align-items: center; font-size: 40px; font-weight: 1000; 
-            transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; z-index: 25;
-        }
-        .live-tag span { transform: skewX(25deg); } 
-
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 38px; font-weight: 1000; color: #000; }
-        .ticker-content { display: inline-block; padding-right: 800px; } 
-
-        .dt-box-wrap { 
-            height: 100%; min-width: 400px; display: flex; align-items: center; justify-content: center; 
-            background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px;
-            border-left: 6px solid #fff; z-index: 25;
-        }
-        
-        #clock-box { font-size: 34px; font-weight: 1000; transform: skewX(25deg); }
-
-        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
-    </style>
+        /* Language Switching Effect */
+        .flash-text::after { content: attr(data-pa); animation: langFlash 4s infinite; }
+        @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
+    </style>
 </head>
 <body>
 
-<div id="weather-box">
-    <iframe id="weather-frame" src=""></iframe>
-</div>
+<div id="weather-box"><iframe id="weather-frame" src=""></iframe></div>
 
-<div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-    </div></div>
-
-    <div id="box-out" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div></div>
-
-    <div id="box-time" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-    </div></div>
-</div>
-
-<div class="footer">
-    <div class="live-tag"><span>LIVE</span></div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box-wrap">
-        <div id="clock-box">--:--:--</div>
-    </div>
-</div>
-
-<script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const userID = new URLSearchParams(window.location.search).get('id');
-
-    let langFlash = false;
-    let showDate = false;
-    let listPos = { fly: 0, time: 0, out: 0 };
-    let tickerPos = 0;
-
-    setInterval(() => {
-        langFlash = !langFlash;
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-    }, 3000);
-
-    setInterval(() => {
-        const clockElem = document.getElementById('clock-box');
-        clockElem.classList.add('jhmaka-effect');
-        setTimeout(() => { showDate = !showDate; }, 250);
-        setTimeout(() => { clockElem.classList.remove('jhmaka-effect'); }, 600);
-    }, 15000);
-
-    setInterval(() => {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
-        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
-    }, 1000);
-
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const pigeons = data.pigeons || [];
-            const conf = data.config || {};
-            
-            // --- UI Setup ---
-            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
-            const tickerElem = document.getElementById('ticker-text');
-            if(tickerElem) tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
-
-            // --- Weather Sync ---
-            const wBox = document.getElementById('weather-box');
-            const wFrame = document.getElementById('weather-frame');
-            if(conf.showWeather === true) {
-                wBox.style.display = "block";
-                let lat = conf.lat || "30.5980";
-                let lon = conf.lon || "74.7380";
-                let p_name = conf.pindName || "";
-                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
-                if(wFrame.src !== wUrl) wFrame.src = wUrl;
-            } else {
-                wBox.style.display = "none";
-            }
-
-            let htmlArr = { fly:[], out:[], time:[] };
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
-                if (p.status === 'fly') htmlArr.fly.push(row);
-                else if (p.status === 'time') htmlArr.time.push(row);
-                else if (p.status === 'out') htmlArr.out.push(row);
-            });
-
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
-
-            ['fly','time','out'].forEach(id => {
-                const area = document.getElementById(`list-${id}`);
-                const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0) {
-                    box.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
-                    const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
-                } else { box.style.display = "none"; }
-            });
-        });
-    }
-
-    function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                listPos[id] -= 1.2; 
-                let firstBlock = area.querySelector('.content-block');
-                if(firstBlock) {
-                    let resetPoint = firstBlock.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                    area.style.transform = `translateY(${listPos[id]}px)`;
-                }
-            }
-        });
-        const tMove = document.getElementById('ticker-text');
-        if (tMove && tMove.scrollWidth > 0) {
-            tickerPos -= 2.0;
-            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
-            tMove.style.transform = `translateX(${tickerPos}px)`;
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
-</script>
-</body>
-</html> waan esdi krde jo right side box aa <!DOCTYPE html>
-<html lang="pa">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
-
-        /* Weather Box Styling */
-        #weather-box {
-            position: absolute;
-            top: 20px; 
-            left: 10px;
-            width: 550px; 
-            height: 120px; 
-            display: none; 
-            overflow: hidden;
-            background: transparent; 
-            border: none;            
-            z-index: 1001;
-        }
-
-        #weather-frame { 
-            width: 550px; 
-            height: 120px; 
-            border: none; 
-            pointer-events: none;
-            transform: scale(1.5); 
-            transform-origin: top left; 
-            margin-top: -10px; 
-            margin-left: 5px;
-        } 
-        
-        /* Expiry Lock Screen */
-        #expiry-lock {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); z-index: 9999;
-            flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        }
-        .lock-msg { background: #f39c12; color: #000; padding: 20px 40px; border-radius: 15px; border: 4px solid white; box-shadow: 0 0 30px rgba(243, 156, 18, 0.5); }
-        .lock-msg h1 { font-size: 45px; font-weight: 950; margin-bottom: 10px; }
-        .lock-msg h2 { font-size: 30px; font-weight: 800; }
-        .lock-msg p { font-size: 22px; margin-top: 15px; font-weight: bold; border-top: 2px solid rgba(0,0,0,0.2); padding-top: 10px; }
-
-        /* Summary Section */
-        .summary-wrapper { position: absolute; bottom: 95px; left: 15px; display: flex; gap: 15px; z-index: 1000; }
-        .sum-card { display: flex; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 10px 25px rgba(0,0,0,0.8); min-width: 260px; height: 75px; }
-        .sum-label-area { background: rgba(0, 0, 0, 0.95); width: 65%; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 40px; font-weight: 950; display: flex; align-items: center; justify-content: center; }
-
-        .flash-text::after { content: attr(data-pa); animation: langFlash 4s infinite; }
-        @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
-
-        /* Main Containers */
-        .main-container { position: absolute; top: 10px; right: 20px; bottom: 85px; width: 600px; display: flex; flex-direction: column; gap: 10px; }
-        .box { 
-            display: none; flex: 1; overflow: hidden; position: relative; 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); 
-            backdrop-filter: blur(5px); border-radius: 5px; 
-        }
-
-        .box-header { height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(255,255,255,0.2); }
-        #box-fly .box-header { background: #0000FF; } 
-        #box-fly { background: rgba(0, 0, 100, 0.8); }
-        #box-time .box-header { background: #FFD700; color: black; } 
-        #box-time { background: rgba(180, 150, 0, 0.8); color: black !important; }
-        #box-out .box-header { background: #000000; } 
-        #box-out { background: rgba(0, 0, 0, 0.8); }
-
-        .header-title { font-size: 30px; font-weight: 950; }
-        .count-tag { background: white; color: black; padding: 0 12px; border-radius: 4px; font-size: 30px; font-weight: 950; height: 32px; display: flex; align-items: center; }
-
-        .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
-        .item { padding: 3px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
-        .item-num { color: #f39c12; min-width: 50px; } 
-        #box-time-val { font-size: 35px !important; font-weight: 950; margin-left: 10px; }
-        #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
-
-        @keyframes constantScroll { 
-            0% { transform: translateY(0); } 
-            100% { transform: translateY(-50%); } 
-        }
-
-        .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #f39c12; }
-        .live-tag { background: #ff0000; color: white; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 55px; font-weight: 950; font-style: italic; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; }
-        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
-
-        @keyframes ticker { 
-            0% { transform: translateX(0); } 
-            100% { transform: translateX(-100%); } 
-        }
-
-        .dt-box { background: #ff0000; height: 100%; padding: 0 40px; display: flex; justify-content: center; align-items: center; border-left: 4px solid rgba(255,255,255,0.3); width: 300px; min-width: 300px; }
-        #dt-flash { font-size: 35px; font-weight: 950; color: white; font-style: italic; text-align: center; width: 100%; font-variant-numeric: tabular-nums; display: inline-block; }
-    </style>
-</head>
-<body>
-
-<div id="weather-box">
-    <iframe id="weather-frame" src=""></iframe>
-</div>
-    
 <div id="expiry-lock">
-    <div class="lock-msg">
-        <h1>PLAN EXPIRED</h1>
-        <h2>ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਗਿਆ ਹੈ</h2>
-        <p>RECHARGE ਲਈ ਸੰਪਰਕ ਕਰੋ:<br>MANPREET SINGH MUDKI<br>📞 86996-40061</p>
-    </div>
+    <div class="lock-msg">
+        <h1>PLAN EXPIRED</h1>
+        <p>RECHARGE: MANPREET MUDKI 86996-40061</p>
+    </div>
 </div>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card">
-        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div>
-        <div id="m-total" class="sum-val-area">0</div>
-    </div>
-    <div class="sum-card">
-        <div class="sum-label-area flash-text" style="border-left: 6px solid #0000FF;" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
-        <div id="m-rem" class="sum-val-area">0</div>
-    </div>
-    <div class="sum-card">
-        <div class="sum-label-area flash-text" style="border-left: 6px solid #FFD700;" data-pa="ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="TIME PIGEONS"></div>
-        <div id="m-time" class="sum-val-area">0</div>
-    </div>
+    <div class="sum-card">
+        <div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL"></div>
+        <div id="m-total" class="sum-val-area">0</div>
+    </div>
+    <div class="sum-card">
+        <div class="sum-label-area flash-text" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div>
+        <div id="m-rem" class="sum-val-area">0</div>
+    </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box">
-        <div class="box-header">
-            <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span>
-            <span id="count-fly" class="count-tag">0</span>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-    </div>
-    <div id="box-time" class="box">
-        <div class="box-header">
-            <span class="header-title flash-text" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span>
-            <span id="box-time-val"></span>
-            <span id="count-time" class="count-tag">0</span>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-    </div>
-    <div id="box-out" class="box">
-        <div class="box-header">
-            <span class="header-title flash-text" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span>
-            <span id="count-out" class="count-tag">0</span>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div>
+    <div id="box-fly" class="box">
+        <div class="box-header">
+            <span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ" data-en="🕊️ FLYING"></span>
+            <span id="count-fly" class="count-tag">0</span>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    </div>
+    <div id="box-time" class="box">
+        <div class="box-header">
+            <span class="header-title flash-text" data-pa="⏰ ਸਮੇਂ ਚ" data-en="⏰ TIME"></span>
+            <span id="count-time" class="count-tag">0</span>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div>
+    <div id="box-out" class="box">
+        <div class="box-header">
+            <span class="header-title flash-text" data-pa="❌ ਕੱਟੇ ਗਏ" data-en="❌ OUT"></span>
+            <span id="count-out" class="count-tag">0</span>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div>
 </div>
 
 <div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box">
-        <div id="dt-flash">00:00:00 AM</div>
-    </div>
+    <div class="live-tag">LIVE</div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
+    <div class="dt-box"><div id="dt-flash">--:--:--</div></div>
 </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userID = urlParams.get('id');
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const userID = new URLSearchParams(window.location.search).get('id');
 
-    let showTime = true;
-    function updateClock() {
-        const now = new Date();
-        const el = document.getElementById('dt-flash');
-        if(!el) return;
-        if(showTime) {
-            el.innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).toUpperCase();
-        } else {
-            el.innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-        }
-    }
-    setInterval(() => { if(showTime) updateClock(); }, 1000);
-    setInterval(() => { showTime = !showTime; updateClock(); }, 10000);
-    updateClock();
+    // Clock
+    let showTime = true;
+    setInterval(() => {
+        const now = new Date();
+        const el = document.getElementById('dt-flash');
+        if(showTime) {
+            el.innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        } else {
+            el.innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        }
+    }, 1000);
+    setInterval(() => { showTime = !showTime; }, 10000);
 
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); 
-            if(!data) return;
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const conf = data.config || {};
+            const pigeons = data.pigeons || [];
 
-            const conf = data.config || {}; 
-            const pigeons = data.pigeons || [];
+            // Expiry
+            if (new Date().getTime() > new Date(data.expiry).getTime()) {
+                document.getElementById('expiry-lock').style.display = 'flex';
+                return;
+            } else { document.getElementById('expiry-lock').style.display = 'none'; }
 
-            // --- Weather Logic (Corrected Position) ---
-            const wBox = document.getElementById('weather-box');
-            const wFrame = document.getElementById('weather-frame');
-            if(conf.showWeather === true) {
-                wBox.style.display = "block";
-                let lat = conf.lat || "30.5980";
-                let lon = conf.lon || "74.7380";
-                let p_name = conf.pindName || "";
-                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
-                if(wFrame.src !== wUrl) wFrame.src = wUrl;
-            } else {
-                wBox.style.display = "none";
-            } 
-            
-            // Expiry Check
-            const expiryTime = new Date(data.expiry).getTime();
-            const currentTime = new Date().getTime();
-            if (currentTime > expiryTime) {
-                document.getElementById('expiry-lock').style.display = 'flex';
-                return;
-            } else {
-                document.getElementById('expiry-lock').style.display = 'none';
-            }
+            // Visibility
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
+            document.getElementById('ticker-text').innerText = conf.ticker || "WELCOME";
 
-            // UI Visibility
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('ticker-text').innerText = conf.ticker || "";
-            document.getElementById('box-time-val').innerText = conf.boxTime || "";
+            // Weather
+            const wBox = document.getElementById('weather-box');
+            if(conf.showWeather) {
+                wBox.style.display = "block";
+                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${conf.lat || "30.5980"}&lon=${conf.lon || "74.7380"}&name=${encodeURIComponent(conf.pindName || "")}`;
+                document.getElementById('weather-frame').src = wUrl;
+            } else { wBox.style.display = "none"; }
 
-            let counts = { fly:0, out:0, time:0 }; 
-            let htmls = { fly:'', out:'', time:'' };
+            // Data Processing
+            let counts = { fly:0, time:0, out:0 };
+            let htmls = { fly:'', time:'', out:'' };
 
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
-                if (p.status === 'fly') { counts.fly++; htmls.fly += row; }
-                else if (p.status === 'time') { counts.time++; htmls.time += row; }
-                else if (p.status === 'out') { counts.out++; htmls.out += row; }
-            });
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item"><span class="item-num">${idx + 1}.</span><span>${p.name}</span></div>`;
+                if(p.status === 'fly') { counts.fly++; htmls.fly += row; }
+                else if(p.status === 'time') { counts.time++; htmls.time += row; }
+                else if(p.status === 'out') { counts.out++; htmls.out += row; }
+            });
 
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
-            document.getElementById('m-time').innerText = counts.time;
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - counts.out;
 
-            ['fly','time','out'].forEach(id => {
-                const el = document.getElementById(`box-${id}`);
-                const listArea = document.getElementById(`list-${id}`);
-                if(counts[id] > 0) {
-                    el.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = counts[id];
-                    let gap = '<div style="height:120px;"></div>';
-                    listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
-                    listArea.style.animationDuration = (counts[id] * 1.5) + "s";
-                } else { 
-                    el.style.display = "none"; 
-                }
-            });
-        });
-    }
+            ['fly','time','out'].forEach(id => {
+                const box = document.getElementById(`box-${id}`);
+                const list = document.getElementById(`list-${id}`);
+                if(counts[id] > 0) {
+                    box.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = counts[id];
+                    list.innerHTML = htmls[id] + htmls[id]; // Seamless Loop
+                    list.style.animationDuration = (counts[id] * 2 + 5) + "s";
+                } else { box.style.display = "none"; }
+            });
+        });
+    }
 </script>
 </body>
 </html>
