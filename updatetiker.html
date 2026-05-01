@@ -47,8 +47,12 @@
     </div>
 
     <div class="controls-container">
-        <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
-        <button class="btn-add" onclick="addP()">ADD LIST</button>
+        <textarea id="pName" placeholder="ਟੀਮ ਦਾ ਨਾਮ ਲਿਖੋ..."></textarea>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="pPos" placeholder="ਨੰਬਰ (ਖਾਲੀ ਛੱਡੋ ਜੇ ਲਾਸਟ 'ਚ ਪਾਉਣਾ)" style="flex: 2;">
+            <button class="btn-add" onclick="addP()" style="flex: 1;">ADD</button>
+        </div>
+        
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
         <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
@@ -136,7 +140,6 @@
         document.getElementById('weatherBtn').innerText = conf.showWeather ? "HIDE WEATHER" : "SHOW WEATHER";
         document.getElementById('weatherBtn').style.backgroundColor = conf.showWeather ? "#dc3545" : "#238636";
 
-        // Only fill inputs on first load to prevent clearing while typing
         if (firstLoad) {
             document.getElementById('inpTicker').value = conf.ticker || "";
             document.getElementById('inpBoxTime').value = conf.boxTime || "";
@@ -175,12 +178,10 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
-    // This updates the pigeons list only
     function syncPigeons() {
         db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []);
     }
 
-    // This updates manual inputs like Ticker and Weather
     function manualUpdate() {
         db.ref('users/' + userID + '/config').update({
             ticker: document.getElementById('inpTicker').value,
@@ -197,10 +198,24 @@
     }
 
     function addP() {
-        const names = document.getElementById('pName').value.split(',').map(n => n.trim()).filter(n => n !== "");
+        const name = document.getElementById('pName').value.trim();
+        const pos = parseInt(document.getElementById('pPos').value);
+        if(!name) return;
+
         if(!localData.pigeons) localData.pigeons = [];
-        names.forEach(n => localData.pigeons.push({ id: "id_" + Date.now() + Math.random(), name: n, status: 'fly' }));
+        
+        let newP = { id: "id_" + Date.now() + Math.random(), name: name, status: 'fly' };
+
+        // ਜੇ ਨੰਬਰ ਭਰਿਆ ਹੈ, ਤਾਂ ਉਸ ਜਗ੍ਹਾ 'ਤੇ ਪਾਓ (Splice ਦੀ ਵਰਤੋਂ ਕਰਕੇ)
+        if (!isNaN(pos) && pos > 0 && pos <= localData.pigeons.length) {
+            localData.pigeons.splice(pos - 1, 0, newP);
+        } else {
+            // ਨਹੀਂ ਤਾਂ ਲਾਸਟ 'ਚ ਪਾਓ
+            localData.pigeons.push(newP);
+        }
+
         document.getElementById('pName').value = ""; 
+        document.getElementById('pPos').value = ""; 
         syncPigeons();
     }
 
