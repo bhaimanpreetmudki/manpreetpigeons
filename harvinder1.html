@@ -12,41 +12,22 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-#weather-box {
-    position: absolute;
-    top: 20px; 
-    left: 10px;
-    width: 550px;  /* ਡੱਬੇ ਦਾ ਸਾਈਜ਼ ਉਹੀ ਰੱਖਿਆ ਹੈ */
-    height: 120px; 
-    display: none;
-    overflow: hidden;
-    background: transparent; 
-    border: none;           
-    z-index: 1001;
-}
+        #weather-box {
+            position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
+            display: none; overflow: hidden; background: transparent; border: none; z-index: 1001;
+        }
 
-#weather-frame { 
-    width: 550px; 
-    height: 120px; 
-    border: none; 
-    pointer-events: none;
-    
-    /* ਨਾਮ ਨੂੰ ਹੋਰ ਵੱਡਾ ਕਰਨ ਲਈ scale 2.8 ਕਰ ਦਿੱਤਾ ਹੈ */
-    transform: scale(1.5); 
-    transform-origin: top left; 
-    
-    /* ਨਾਮ ਨੂੰ ਡੱਬੇ ਦੇ ਸਹੀ ਸੈਂਟਰ ਵਿੱਚ ਲਿਆਉਣ ਲਈ margin ਸੈੱਟ ਕੀਤਾ ਹੈ */
-    margin-top: -10px; 
-    margin-left: 5px;
-}
-        /* ਤੇਜ਼ ਝਮਾਕਾ ਜਦੋਂ ਟਾਈਮ/ਡੇਟ ਬਦਲੇ */
+        #weather-frame { 
+            width: 550px; height: 120px; border: none; pointer-events: none;
+            transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
+        }
+
         @keyframes sharpFlash {
             0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
             50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
             100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
         }
 
-        /* ਸਲੋ ਘੈਂਟ ਲਾਈਟ ਐਨੀਮੇਸ਼ਨ */
         @keyframes slowGhaintLight {
             0% { left: -150%; }
             30% { left: 150%; }
@@ -88,7 +69,14 @@
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
         .count-tag { background: #fff; color: #000; }
-        .sum-val-area { background: #ffcc00; color: #000; }
+        
+        /* TIME BOX ਨੂੰ ਸਮਰੀ ਬਾਕਸ ਵਾਂਗ ਗੋਲ ਕਿਨਾਰੇ ਦੇਣ ਲਈ */
+        .sum-val-area { 
+            background: #ffcc00; 
+            color: #000; 
+            /* ਜੇਕਰ ਤੁਸੀਂ ਟਾਈਮ ਬਾਕਸ ਦੇ ਇਕੱਲੇ ਕਿਨਾਰੇ ਗੋਲ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ ਇੱਥੇ ਬਦਲਾਅ ਕੀਤਾ ਹੈ */
+            border-bottom-right-radius: 15px; 
+        }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
@@ -127,7 +115,6 @@
         }
         
         #clock-box { font-size: 34px; font-weight: 1000; transform: skewX(25deg); }
-
         .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
     </style>
 </head>
@@ -157,7 +144,7 @@
     <div id="box-time" class="box"><div class="box-inner">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
     </div></div>
@@ -211,12 +198,10 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
             
-            // --- UI Setup ---
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             const tickerElem = document.getElementById('ticker-text');
             if(tickerElem) tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
 
-            // --- Weather Sync ---
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
             if(conf.showWeather === true) {
@@ -226,9 +211,7 @@
                 let p_name = conf.pindName || "";
                 const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
-            } else {
-                wBox.style.display = "none";
-            }
+            } else { wBox.style.display = "none"; }
 
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
