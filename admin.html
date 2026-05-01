@@ -24,12 +24,13 @@
         .sum-item b { font-size: 20px; color: #f39c12; display: block; }
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { flex-grow: 1; display: flex; align-items: center; }
-        .edit-name-box { background: transparent; border: 1px solid #444; color: #f39c12; padding: 5px; border-radius: 6px; font-size: 13px; font-weight: bold; width: 90%; margin-left: 5px; outline: none; }
+        .edit-name-box { background: transparent; border: 1px solid #444; color: #f39c12; padding: 5px; border-radius: 6px; font-size: 13px; font-weight: bold; width: 85%; margin-left: 5px; outline: none; }
         .btn-part { display: flex; gap: 4px; }
         .st-btn { border: none; padding: 7px; border-radius: 4px; font-weight: 900; width: 40px; color: white; opacity: 0.25; font-size: 10px; cursor: pointer; }
         .st-btn.active { opacity: 1; border: 1px solid white; }
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
         #locStatus { font-size: 10px; margin-bottom: 10px; }
+        .pos-input { width: 35px; background: #0d1117; border: 1px solid #444; color: #f39c12; font-size: 11px; text-align: center; border-radius: 4px; padding: 4px; outline: none; }
     </style>
 </head>
 <body>
@@ -136,7 +137,6 @@
         document.getElementById('weatherBtn').innerText = conf.showWeather ? "HIDE WEATHER" : "SHOW WEATHER";
         document.getElementById('weatherBtn').style.backgroundColor = conf.showWeather ? "#dc3545" : "#238636";
 
-        // Only fill inputs on first load to prevent clearing while typing
         if (firstLoad) {
             document.getElementById('inpTicker').value = conf.ticker || "";
             document.getElementById('inpBoxTime').value = conf.boxTime || "";
@@ -156,7 +156,8 @@
             list.innerHTML += `
                 <div class="pigeon-row">
                     <div class="name-part"> 
-                        <span style="font-size:10px; color:#666;">${idx+1}</span>
+                        <input type="number" class="pos-input" value="${idx+1}" 
+                            onkeydown="if(event.key==='Enter') movePosition('${p.id}', this.value)">
                         <input type="text" class="edit-name-box" value="${p.name}" 
                             onblur="updateName('${p.id}', this.value)" 
                             onkeydown="if(event.key==='Enter') this.blur()">
@@ -175,12 +176,45 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
-    // This updates the pigeons list only
+  function movePosition(id, newPos) {
+    newPos = parseInt(newPos);
+    
+    // 1. ਚੈੱਕ ਕਰੋ ਕਿ ਲਿਸਟ ਮੌਜੂਦ ਹੈ
+    if (!localData.pigeons) return;
+    
+    let pList = [...localData.pigeons]; // ਪੁਰਾਣੀ ਲਿਸਟ ਦੀ ਕਾਪੀ
+
+    // 2. ਚੈੱਕ ਕਰੋ ਕਿ ਭਰਿਆ ਗਿਆ ਨੰਬਰ ਸਹੀ ਹੈ
+    if (isNaN(newPos) || newPos < 1 || newPos > pList.length) {
+        alert("ਗਲਤ ਨੰਬਰ ਭਰਿਆ ਹੈ!");
+        render();
+        return;
+    }
+
+    // 3. ਉਹ ਟੀਮ ਲੱਭੋ ਜਿਸਦਾ ਨੰਬਰ ਬਦਲਣਾ ਹੈ
+    const oldIndex = pList.findIndex(p => p.id === id);
+    
+    if (oldIndex !== -1) {
+        // 4. ਟੀਮ ਨੂੰ ਪੁਰਾਣੀ ਜਗ੍ਹਾ ਤੋਂ ਕੱਢ ਲਵੋ
+        const [movedItem] = pList.splice(oldIndex, 1);
+        
+        // 5. ਟੀਮ ਨੂੰ ਨਵੀਂ ਜਗ੍ਹਾ (newPos - 1) 'ਤੇ ਫਿੱਟ ਕਰ ਦਿਓ
+        pList.splice(newPos - 1, 0, movedItem);
+        
+        // 6. ਹੁਣ ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ: ਪੂਰੀ ਲਿਸਟ ਨੂੰ ਫਾਇਰਬੇਸ 'ਤੇ "Set" ਕਰੋ
+        // ਇੱਥੇ 'set' ਵਰਤਣ ਨਾਲ ਓਵਰਲੇਅ ਨੂੰ ਵੀ ਨਵੀਂ ਲਿਸਟ ਮਿਲੇਗੀ
+        db.ref('users/' + userID + '/pigeons').set(pList).then(() => {
+            console.log("Position updated to " + newPos);
+            // ਕੋਈ ਹੋਰ ਰੀਫ੍ਰੈਸ਼ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ, ਫਾਇਰਬੇਸ ਆਪਣੇ ਆਪ render() ਚਲਾ ਦੇਵੇਗਾ
+        }).catch((error) => {
+            alert("Error: " + error.message);
+        });
+    }
+}
     function syncPigeons() {
         db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []);
     }
 
-    // This updates manual inputs like Ticker and Weather
     function manualUpdate() {
         db.ref('users/' + userID + '/config').update({
             ticker: document.getElementById('inpTicker').value,
