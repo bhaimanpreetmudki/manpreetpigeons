@@ -9,26 +9,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0f1113; color: white; margin: 0; padding: 10px; }
+        
+        /* Top Header Mini Bar */
         .top-mini-bar { display: flex; justify-content: space-between; align-items: center; background: #1a1d21; padding: 8px 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; font-size: 11px; }
         .top-mini-bar b { color: #f39c12; }
+
+        /* Controls Area */
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; margin-bottom: 10px; }
         
-        /* Edit Box Style */
-        .edit-name-input { background: #0d1117; border: 1px solid #444; color: #f39c12; padding: 5px 8px; border-radius: 5px; font-size: 14px; font-weight: bold; width: 100%; margin-left: 5px; }
-        .edit-name-input:focus { border-color: #f39c12; }
-
         .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 10px; }
         .btn-update { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; }
-        .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
-        .name-part { flex-grow: 1; display: flex; align-items: center; }
-        .btn-part { display: flex; gap: 4px; }
-        .st-btn { border: none; padding: 7px; border-radius: 4px; font-weight: 900; width: 45px; color: white; opacity: 0.25; font-size: 10px; cursor: pointer; }
-        .st-btn.active { opacity: 1; border: 1px solid white; }
+
+        /* Show/Hide & Reset Group */
+        .display-controls-box { background: #1a1d21; padding: 10px; border-radius: 10px; border: 1px solid #444; margin-bottom: 15px; }
+        .btn-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .toggle-btn { flex: 1; min-width: 100px; padding: 10px; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
+        .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        /* Summary Box */
         .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #333; border-bottom: 3px solid #f39c12; }
         .sum-item { text-align: center; font-size: 10px; text-transform: uppercase; color: #aaa; }
         .sum-item b { font-size: 20px; color: #f39c12; display: block; }
+
+        /* Pigeon Row */
+        .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
+        .name-part { flex-grow: 1; display: flex; align-items: center; }
+        
+        /* Edit Name Input Box */
+        .edit-name-box { background: transparent; border: 1px solid #444; color: #f39c12; padding: 5px; border-radius: 6px; font-size: 13px; font-weight: bold; width: 90%; margin-left: 5px; outline: none; }
+        .edit-name-box:focus { border-color: #f39c12; background: #0d1117; }
+
+        .btn-part { display: flex; gap: 4px; }
+        .st-btn { border: none; padding: 7px; border-radius: 4px; font-weight: 900; width: 40px; color: white; opacity: 0.25; font-size: 10px; cursor: pointer; }
+        .st-btn.active { opacity: 1; border: 1px solid white; }
+
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
+        #locStatus { font-size: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -41,16 +58,33 @@
 
 <div id="main-content" style="display:none;">
     <div class="top-mini-bar">
-        <span>HELP: <b>+91 8699640061</b></span>
-        <span>EXPIRY: <b id="expDisp">--</b></span>
+        <span><i class="fas fa-phone-alt"></i> HELP: <b>+91 8699640061</b></span>
+        <span><i class="fas fa-calendar-alt"></i> EXPIRY: <b id="expDisp">--</b></span>
     </div>
 
     <div class="controls-container">
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ">
+        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
+            <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div id="locStatus"></div>
+        <input type="hidden" id="inpLat"><input type="hidden" id="inpLon">
         <button class="btn-update" onclick="save()">UPDATE ALL DATA</button>
+    </div>
+
+    <div class="display-controls-box">
+        <div class="btn-row">
+            <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SHOW SCORE</button>
+            <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">SHOW TICKER</button>
+            <button id="weatherBtn" onclick="toggleDisplay('showWeather')" class="toggle-btn">SHOW WEATHER</button>
+        </div>
+        <button class="btn-reset" onclick="resetData()">🔄 RESET FULL TOURNAMENT</button>
     </div>
 
     <div class="admin-sum-grid">
@@ -78,12 +112,37 @@
             if(data && data.password.toString() === document.getElementById('adminPass').value) {
                 document.getElementById('login-box').style.display = "none";
                 document.getElementById('main-content').style.display = "block";
+                document.getElementById('expDisp').innerText = data.expiry || "31-12-2026";
                 db.ref('users/' + userID).on('value', s => { if(s.val()) { localData = s.val(); render(); } });
             } else { alert("ਗਲਤ ਪਾਸਵਰਡ!"); }
         });
     }
 
+    async function findLocation() {
+        const pind = document.getElementById('inpPind').value;
+        const status = document.getElementById('locStatus');
+        if (!pind) return;
+        status.innerText = "ਲੱਭ ਰਿਹਾ ਹੈ...";
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${pind}`);
+            const data = await res.json();
+            if (data.length > 0) {
+                document.getElementById('inpLat').value = data[0].lat;
+                document.getElementById('inpLon').value = data[0].lon;
+                status.innerText = "ਲੋਕੇਸ਼ਨ ਮਿਲ ਗਈ ਹੈ!";
+            }
+        } catch (e) { console.log(e); }
+    }
+
     function render() {
+        const conf = localData.config || {};
+        document.getElementById('scoreBtn').innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
+        document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
+        document.getElementById('tickerBtn').innerText = conf.showTicker ? "HIDE TICKER" : "SHOW TICKER";
+        document.getElementById('tickerBtn').style.backgroundColor = conf.showTicker ? "#dc3545" : "#238636";
+        document.getElementById('weatherBtn').innerText = conf.showWeather ? "HIDE WEATHER" : "SHOW WEATHER";
+        document.getElementById('weatherBtn').style.backgroundColor = conf.showWeather ? "#dc3545" : "#238636";
+
         const list = document.getElementById('listArea');
         list.innerHTML = "";
         let c = { fly:0, time:0, out:0 };
@@ -91,12 +150,11 @@
 
         pList.forEach((p, idx) => {
             if(p.status === 'fly') c.fly++; else if(p.status === 'time') c.time++; else c.out++;
-            
             list.innerHTML += `
                 <div class="pigeon-row">
                     <div class="name-part"> 
-                        <span style="font-size:12px; color:#888;">${idx+1}.</span>
-                        <input type="text" class="edit-name-input" value="${p.name}" 
+                        <span style="font-size:10px; color:#666;">${idx+1}</span>
+                        <input type="text" class="edit-name-box" value="${p.name}" 
                             onblur="updateName('${p.id}', this.value)" 
                             onkeydown="if(event.key==='Enter') this.blur()">
                     </div>
@@ -104,7 +162,7 @@
                         <button class="st-btn ${p.status=='fly'?'active':''}" style="background:#3498db" onclick="setStatus('${p.id}','fly')">FLY</button>
                         <button class="st-btn ${p.status=='time'?'active':''}" style="background:#f1c40f" onclick="setStatus('${p.id}','time')">TIME</button>
                         <button class="st-btn ${p.status=='out'?'active':''}" style="background:#e74c3c" onclick="setStatus('${p.id}','out')">OUT</button>
-                        <button onclick="delP('${p.id}')" style="background:none; border:none; color:red; font-size:16px; cursor:pointer; margin-left:5px;">×</button>
+                        <button onclick="delP('${p.id}')" style="background:none; border:none; color:red; font-size:16px; cursor:pointer;">×</button>
                     </div>
                 </div>`;
         });
@@ -114,27 +172,25 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
-    // ਨਾਮ ਨੂੰ ਡਾਇਰੈਕਟ ਬਾਕਸ ਰਾਹੀਂ ਅਪਡੇਟ ਕਰਨ ਲਈ
     function updateName(id, newName) {
-        if (newName.trim() !== "") {
-            localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName.trim()} : p);
-            save();
-        }
+        localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, name: newName} : p);
+        save();
     }
 
     function addP() {
         const names = document.getElementById('pName').value.split(',').map(n => n.trim()).filter(n => n !== "");
         if(!localData.pigeons) localData.pigeons = [];
-        names.forEach(n => {
-            const uniqueId = "id_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-            localData.pigeons.push({ id: uniqueId, name: n, status: 'fly' });
-        });
+        names.forEach(n => localData.pigeons.push({ id: "id_" + Date.now() + Math.random(), name: n, status: 'fly' }));
         document.getElementById('pName').value = ""; save();
     }
 
     function setStatus(id, s) {
-        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
-        save();
+        localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, status: s} : p); save();
+    }
+
+    function toggleDisplay(field) {
+        const currentStatus = localData.config[field] || false;
+        db.ref('users/' + userID + '/config/' + field).set(!currentStatus);
     }
 
     function save() {
@@ -143,17 +199,16 @@
             config: { 
                 ...localData.config, 
                 ticker: document.getElementById('inpTicker').value, 
-                boxTime: document.getElementById('inpBoxTime').value 
+                boxTime: document.getElementById('inpBoxTime').value,
+                pindName: document.getElementById('inpPind').value,
+                lat: document.getElementById('inpLat').value,
+                lon: document.getElementById('inpLon').value
             }
         });
     }
 
-    function delP(id) { 
-        if(confirm("Delete?")) { 
-            localData.pigeons = localData.pigeons.filter(p => p.id !== id); 
-            save(); 
-        } 
-    }
+    function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); save(); } }
+    function resetData() { if(confirm("ਸਭ ਕੁਝ ਰੀਸੈੱਟ ਕਰੀਏ?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
 </script>
 </body>
 </html>
