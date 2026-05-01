@@ -13,20 +13,21 @@
         .top-mini-bar b { color: #f39c12; }
         .controls-container { background: #1a1d21; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
         textarea, input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #444; color: white; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; margin-bottom: 10px; }
+        
+        /* Edit Box Style */
+        .edit-name-input { background: #0d1117; border: 1px solid #444; color: #f39c12; padding: 5px 8px; border-radius: 5px; font-size: 14px; font-weight: bold; width: 100%; margin-left: 5px; }
+        .edit-name-input:focus { border-color: #f39c12; }
+
         .btn-add { background: #f39c12; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; margin-bottom: 10px; }
         .btn-update { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; }
-        .display-controls-box { background: #1a1d21; padding: 10px; border-radius: 10px; border: 1px solid #444; margin-bottom: 15px; }
-        .btn-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-        .toggle-btn { flex: 1; min-width: 100px; padding: 10px; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
-        .btn-reset { width: 100%; padding: 10px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #333; border-bottom: 3px solid #f39c12; }
-        .sum-item { text-align: center; font-size: 10px; text-transform: uppercase; color: #aaa; }
-        .sum-item b { font-size: 20px; color: #f39c12; display: block; }
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
-        .name-part { flex-grow: 1; font-weight: bold; font-size: 13px; }
+        .name-part { flex-grow: 1; display: flex; align-items: center; }
         .btn-part { display: flex; gap: 4px; }
         .st-btn { border: none; padding: 7px; border-radius: 4px; font-weight: 900; width: 45px; color: white; opacity: 0.25; font-size: 10px; cursor: pointer; }
         .st-btn.active { opacity: 1; border: 1px solid white; }
+        .admin-sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; background: #1a1d21; padding: 12px; border-radius: 12px; border: 1px solid #333; border-bottom: 3px solid #f39c12; }
+        .sum-item { text-align: center; font-size: 10px; text-transform: uppercase; color: #aaa; }
+        .sum-item b { font-size: 20px; color: #f39c12; display: block; }
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
     </style>
 </head>
@@ -50,14 +51,6 @@
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
         <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ">
         <button class="btn-update" onclick="save()">UPDATE ALL DATA</button>
-    </div>
-
-    <div class="display-controls-box">
-        <div class="btn-row">
-            <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SHOW SCORE</button>
-            <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">SHOW TICKER</button>
-        </div>
-        <button class="btn-reset" onclick="resetData()">🔄 RESET FULL TOURNAMENT</button>
     </div>
 
     <div class="admin-sum-grid">
@@ -99,15 +92,19 @@
         pList.forEach((p, idx) => {
             if(p.status === 'fly') c.fly++; else if(p.status === 'time') c.time++; else c.out++;
             
-            // ਇੱਥੇ ID ਨੂੰ String ਵਿੱਚ ਪਾਸ ਕੀਤਾ ਗਿਆ ਹੈ ਤਾਂ ਜੋ ਕੋਈ ਗਲਤੀ ਨਾ ਰਹੇ
             list.innerHTML += `
                 <div class="pigeon-row">
-                    <div class="name-part">${idx+1}. ${p.name}</div>
+                    <div class="name-part"> 
+                        <span style="font-size:12px; color:#888;">${idx+1}.</span>
+                        <input type="text" class="edit-name-input" value="${p.name}" 
+                            onblur="updateName('${p.id}', this.value)" 
+                            onkeydown="if(event.key==='Enter') this.blur()">
+                    </div>
                     <div class="btn-part">
                         <button class="st-btn ${p.status=='fly'?'active':''}" style="background:#3498db" onclick="setStatus('${p.id}','fly')">FLY</button>
                         <button class="st-btn ${p.status=='time'?'active':''}" style="background:#f1c40f" onclick="setStatus('${p.id}','time')">TIME</button>
                         <button class="st-btn ${p.status=='out'?'active':''}" style="background:#e74c3c" onclick="setStatus('${p.id}','out')">OUT</button>
-                        <button onclick="delP('${p.id}')" style="background:none; border:none; color:red; font-size:16px;">×</button>
+                        <button onclick="delP('${p.id}')" style="background:none; border:none; color:red; font-size:16px; cursor:pointer; margin-left:5px;">×</button>
                     </div>
                 </div>`;
         });
@@ -117,28 +114,26 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
+    // ਨਾਮ ਨੂੰ ਡਾਇਰੈਕਟ ਬਾਕਸ ਰਾਹੀਂ ਅਪਡੇਟ ਕਰਨ ਲਈ
+    function updateName(id, newName) {
+        if (newName.trim() !== "") {
+            localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, name: newName.trim()} : p);
+            save();
+        }
+    }
+
     function addP() {
         const names = document.getElementById('pName').value.split(',').map(n => n.trim()).filter(n => n !== "");
         if(!localData.pigeons) localData.pigeons = [];
-        
         names.forEach(n => {
-            // ਬਿਲਕੁਲ Unique ID ਬਣਾਉਣ ਲਈ Random String + Date
-            const uniqueId = 'id' + Math.random().toString(36).substr(2, 9) + Date.now();
+            const uniqueId = "id_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
             localData.pigeons.push({ id: uniqueId, name: n, status: 'fly' });
         });
-        
-        document.getElementById('pName').value = ""; 
-        save();
+        document.getElementById('pName').value = ""; save();
     }
 
     function setStatus(id, s) {
-        // ID ਦੀ ਤੁਲਨਾ ਬਿਲਕੁਲ ਸਹੀ ਤਰ੍ਹਾਂ ਕਰਨ ਲਈ
-        localData.pigeons = localData.pigeons.map(p => {
-            if (String(p.id) === String(id)) {
-                return { ...p, status: s };
-            }
-            return p;
-        });
+        localData.pigeons = localData.pigeons.map(p => p.id === id ? {...p, status: s} : p); 
         save();
     }
 
@@ -155,20 +150,9 @@
 
     function delP(id) { 
         if(confirm("Delete?")) { 
-            localData.pigeons = localData.pigeons.filter(p => String(p.id) !== String(id)); 
+            localData.pigeons = localData.pigeons.filter(p => p.id !== id); 
             save(); 
         } 
-    }
-
-    function resetData() { 
-        if(confirm("ਸਭ ਕੁਝ ਰੀਸੈੱਟ ਕਰੀਏ?")) { 
-            db.ref('users/' + userID + '/pigeons').set([]); 
-        } 
-    }
-    
-    function toggleDisplay(field) {
-        const currentStatus = localData.config[field] || false;
-        db.ref('users/' + userID + '/config/' + field).set(!currentStatus);
     }
 </script>
 </body>
