@@ -198,10 +198,28 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
             
+            // --- 1. ਟਿੱਕਰ (Ticker) ਨੂੰ ਲੁਕਾਉਣ ਜਾਂ ਦਿਖਾਉਣ ਲਈ ---
+            const footerElem = document.querySelector('.footer');
+            if (conf.showTicker === false) {
+                footerElem.style.display = "none";
+            } else {
+                footerElem.style.display = "flex";
+            }
+
+            // --- 2. ਪੂਰੇ ਸਕੋਰਬੋਰਡ (Scoreboard) ਨੂੰ ਲੁਕਾਉਣ ਜਾਂ ਦਿਖਾਉਣ ਲਈ ---
+            const scoreboardElem = document.getElementById('scoreboard-div');
+            if (conf.showScoreboard === false) {
+                scoreboardElem.style.display = "none";
+            } else {
+                scoreboardElem.style.display = "flex";
+            }
+
+            // ਟਾਈਮ ਅਤੇ ਟਿੱਕਰ ਟੈਕਸਟ ਅਪਡੇਟ
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             const tickerElem = document.getElementById('ticker-text');
             if(tickerElem) tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
 
+            // ਮੌਸਮ (Weather) ਵਾਲਾ ਹਿੱਸਾ
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
             if(conf.showWeather === true) {
@@ -224,33 +242,23 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
+            // --- 3. ਹਰੇਕ ਬਾਕਸ (Fly, Time, Out) ਨੂੰ ਕੰਡੀਸ਼ਨ ਮੁਤਾਬਕ ਦਿਖਾਉਣਾ ---
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0) {
+                
+                // ਜੇਕਰ ਸਕੋਰਬੋਰਡ ਆਨ ਹੈ ਅਤੇ ਉਸ ਲਿਸਟ ਵਿੱਚ ਕਬੂਤਰ ਹਨ, ਤਾਂ ਹੀ ਦਿਖਾਓ
+                if(htmlArr[id].length > 0 && conf.showScoreboard !== false) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
                     area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
-                } else { box.style.display = "none"; }
+                } else { 
+                    box.style.display = "none"; 
+                }
             });
         });
     }
-
-    function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                listPos[id] -= 1.2; 
-                let firstBlock = area.querySelector('.content-block');
-                if(firstBlock) {
-                    let resetPoint = firstBlock.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                    area.style.transform = `translateY(${listPos[id]}px)`;
-                }
-            }
-        });
         const tMove = document.getElementById('ticker-text');
         if (tMove && tMove.scrollWidth > 0) {
             tickerPos -= 2.0;
