@@ -209,8 +209,7 @@
                 lon: document.getElementById('inpLon').value
             }
         });
-        alert("ਸਾਰਾ ਡਾਟਾ ਸੇਵ ਹੋ ਗਿਆ!");
-    }
+        
 
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); save(); } }
     function resetData() { if(confirm("ਸਭ ਕੁਝ ਰੀਸੈੱਟ ਕਰੀਏ?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
