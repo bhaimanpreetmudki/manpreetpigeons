@@ -66,26 +66,24 @@
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
         .box-header { border-bottom: 2px solid white; }
         
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 30px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 38px; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
         
-        /* TIME BOX ਨੂੰ ਸਮਰੀ ਬਾਕਸ ਵਾਂਗ ਗੋਲ ਕਿਨਾਰੇ ਦੇਣ ਲਈ */
         .sum-val-area { 
             background: #ffcc00; 
             color: #000; 
-            /* ਜੇਕਰ ਤੁਸੀਂ ਟਾਈਮ ਬਾਕਸ ਦੇ ਇਕੱਲੇ ਕਿਨਾਰੇ ਗੋਲ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ ਇੱਥੇ ਬਦਲਾਅ ਕੀਤਾ ਹੈ */
             border-bottom-right-radius: 15px; 
         }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
         
-        .item { padding: 5px 20px; font-size: 42px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
+        .item { padding: 5px 20px; font-size: 38px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
         #box-out .item { color: #fff; }
 
         .footer { 
-            position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 70px; 
+            position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 60px; 
             background: #fff; display: flex; align-items: center; 
             border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
         }
@@ -98,23 +96,23 @@
         }
 
         .live-tag { 
-            background: #ff0000; color: #fff; padding: 0 45px; height: 100%; 
-            display: flex; align-items: center; font-size: 40px; font-weight: 1000; 
+            background: #ff0000; color: #fff; padding: 0 35px; height: 100%; 
+            display: flex; align-items: center; font-size: 30px; font-weight: 1000; 
             transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; z-index: 25;
         }
         .live-tag span { transform: skewX(25deg); } 
 
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 30px; font-weight: 1000; color: #000; }
+        .ticker-move { display: flex; white-space: nowrap; font-size: 32px; font-weight: 1000; color: #000; }
         .ticker-content { display: inline-block; padding-right: 800px; } 
 
         .dt-box-wrap { 
-            height: 100%; min-width: 400px; display: flex; align-items: center; justify-content: center; 
+            height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; 
             background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px;
             border-left: 6px solid #fff; z-index: 25;
         }
         
-        #clock-box { font-size: 34px; font-weight: 1000; transform: skewX(25deg); }
+        #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
         .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
     </style>
 </head>
@@ -198,28 +196,23 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
             
-            // --- 1. ਟਿੱਕਰ (Ticker) ਨੂੰ ਲੁਕਾਉਣ ਜਾਂ ਦਿਖਾਉਣ ਲਈ ---
+            // 1. Ticker (Show/Hide) Control
             const footerElem = document.querySelector('.footer');
-            if (conf.showTicker === false) {
-                footerElem.style.display = "none";
-            } else {
-                footerElem.style.display = "flex";
-            }
+            if (conf.showTicker === false) { footerElem.style.display = "none"; } 
+            else { footerElem.style.display = "flex"; }
 
-            // --- 2. ਪੂਰੇ ਸਕੋਰਬੋਰਡ (Scoreboard) ਨੂੰ ਲੁਕਾਉਣ ਜਾਂ ਦਿਖਾਉਣ ਲਈ ---
+            // 2. Scoreboard (Show/Hide) Control
             const scoreboardElem = document.getElementById('scoreboard-div');
-            if (conf.showScoreboard === false) {
-                scoreboardElem.style.display = "none";
-            } else {
-                scoreboardElem.style.display = "flex";
-            }
+            if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
+            else { scoreboardElem.style.display = "flex"; }
 
-            // ਟਾਈਮ ਅਤੇ ਟਿੱਕਰ ਟੈਕਸਟ ਅਪਡੇਟ
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             const tickerElem = document.getElementById('ticker-text');
-            if(tickerElem) tickerElem.innerHTML = `<div class="ticker-content">${conf.ticker || ""}</div><div class="ticker-content">${conf.ticker || ""}</div>`;
+            if(tickerElem) {
+                const txt = conf.ticker || "";
+                tickerElem.innerHTML = `<div class="ticker-content">${txt}</div><div class="ticker-content">${txt}</div>`;
+            }
 
-            // ਮੌਸਮ (Weather) ਵਾਲਾ ਹਿੱਸਾ
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
             if(conf.showWeather === true) {
@@ -242,23 +235,34 @@
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
-            // --- 3. ਹਰੇਕ ਬਾਕਸ (Fly, Time, Out) ਨੂੰ ਕੰਡੀਸ਼ਨ ਮੁਤਾਬਕ ਦਿਖਾਉਣਾ ---
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                
-                // ਜੇਕਰ ਸਕੋਰਬੋਰਡ ਆਨ ਹੈ ਅਤੇ ਉਸ ਲਿਸਟ ਵਿੱਚ ਕਬੂਤਰ ਹਨ, ਤਾਂ ਹੀ ਦਿਖਾਓ
+                // Only show box if scoreboard is ON and there are items
                 if(htmlArr[id].length > 0 && conf.showScoreboard !== false) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
                     area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
-                } else { 
-                    box.style.display = "none"; 
-                }
+                } else { box.style.display = "none"; }
             });
         });
     }
+
+    function animate() {
+        ['fly', 'time', 'out'].forEach(id => {
+            const area = document.getElementById(`list-${id}`);
+            const box = document.getElementById(`box-${id}`);
+            if (area && box && box.style.display !== "none" && area.children.length > 0) {
+                listPos[id] -= 1.2; 
+                let firstBlock = area.querySelector('.content-block');
+                if(firstBlock) {
+                    let resetPoint = firstBlock.offsetHeight + 350;
+                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
+                    area.style.transform = `translateY(${listPos[id]}px)`;
+                }
+            }
+        });
         const tMove = document.getElementById('ticker-text');
         if (tMove && tMove.scrollWidth > 0) {
             tickerPos -= 2.0;
