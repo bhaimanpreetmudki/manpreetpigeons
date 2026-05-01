@@ -176,32 +176,38 @@
         document.getElementById('sum-out').innerText = c.out;
     }
 
-   function movePosition(id, newPos) {
+  function movePosition(id, newPos) {
     newPos = parseInt(newPos);
-    // ਚੈੱਕ ਕਰੋ ਕਿ ਨੰਬਰ ਸਹੀ ਹੈ ਜਾਂ ਨਹੀਂ
-    if (isNaN(newPos) || newPos < 1 || newPos > localData.pigeons.length) {
-        render(); 
+    
+    // 1. ਚੈੱਕ ਕਰੋ ਕਿ ਲਿਸਟ ਮੌਜੂਦ ਹੈ
+    if (!localData.pigeons) return;
+    
+    let pList = [...localData.pigeons]; // ਪੁਰਾਣੀ ਲਿਸਟ ਦੀ ਕਾਪੀ
+
+    // 2. ਚੈੱਕ ਕਰੋ ਕਿ ਭਰਿਆ ਗਿਆ ਨੰਬਰ ਸਹੀ ਹੈ
+    if (isNaN(newPos) || newPos < 1 || newPos > pList.length) {
+        alert("ਗਲਤ ਨੰਬਰ ਭਰਿਆ ਹੈ!");
+        render();
         return;
     }
 
-    const index = localData.pigeons.findIndex(p => p.id === id);
-    if (index !== -1) {
-        // 1. ਲਿਸਟ ਦੀ ਇੱਕ ਕਾਪੀ ਬਣਾਓ
-        let updatedList = [...localData.pigeons];
+    // 3. ਉਹ ਟੀਮ ਲੱਭੋ ਜਿਸਦਾ ਨੰਬਰ ਬਦਲਣਾ ਹੈ
+    const oldIndex = pList.findIndex(p => p.id === id);
+    
+    if (oldIndex !== -1) {
+        // 4. ਟੀਮ ਨੂੰ ਪੁਰਾਣੀ ਜਗ੍ਹਾ ਤੋਂ ਕੱਢ ਲਵੋ
+        const [movedItem] = pList.splice(oldIndex, 1);
         
-        // 2. ਟੀਮ ਨੂੰ ਪੁਰਾਣੀ ਜਗ੍ਹਾ ਤੋਂ ਕੱਢੋ
-        const [item] = updatedList.splice(index, 1);
+        // 5. ਟੀਮ ਨੂੰ ਨਵੀਂ ਜਗ੍ਹਾ (newPos - 1) 'ਤੇ ਫਿੱਟ ਕਰ ਦਿਓ
+        pList.splice(newPos - 1, 0, movedItem);
         
-        // 3. ਟੀਮ ਨੂੰ ਨਵੀਂ ਜਗ੍ਹਾ (newPos - 1) 'ਤੇ ਫਿੱਟ ਕਰੋ
-        updatedList.splice(newPos - 1, 0, item);
-        
-        // 4. ਲਿਸਟ ਨੂੰ ਅਪਡੇਟ ਕਰੋ
-        localData.pigeons = updatedList;
-        
-        // 5. ਫਾਇਰਬੇਸ 'ਤੇ ਸੇਵ ਕਰੋ
-        db.ref('users/' + userID + '/pigeons').set(localData.pigeons).then(() => {
-            console.log("Position Updated!");
-            render(); // ਦੁਬਾਰਾ ਦਿਖਾਓ
+        // 6. ਹੁਣ ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ: ਪੂਰੀ ਲਿਸਟ ਨੂੰ ਫਾਇਰਬੇਸ 'ਤੇ "Set" ਕਰੋ
+        // ਇੱਥੇ 'set' ਵਰਤਣ ਨਾਲ ਓਵਰਲੇਅ ਨੂੰ ਵੀ ਨਵੀਂ ਲਿਸਟ ਮਿਲੇਗੀ
+        db.ref('users/' + userID + '/pigeons').set(pList).then(() => {
+            console.log("Position updated to " + newPos);
+            // ਕੋਈ ਹੋਰ ਰੀਫ੍ਰੈਸ਼ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ, ਫਾਇਰਬੇਸ ਆਪਣੇ ਆਪ render() ਚਲਾ ਦੇਵੇਗਾ
+        }).catch((error) => {
+            alert("Error: " + error.message);
         });
     }
 }
