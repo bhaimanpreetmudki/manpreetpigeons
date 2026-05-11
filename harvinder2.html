@@ -12,16 +12,15 @@
         /* Result Overlay */
         #result-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 900px; background: rgba(0,0,0,0.95); border: 8px solid #f39c12;
+            width: 950px; background: rgba(0,0,0,0.98); border: 8px solid #f39c12;
             border-radius: 40px; display: none; z-index: 5000; padding: 40px; text-align: center;
             box-shadow: 0 0 70px rgba(243, 156, 18, 0.7);
         }
         .winner-title { color: #f39c12; font-size: 70px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
         
-        /* Scroll Container for Results */
-        #winner-list-area { max-height: 480px; overflow: hidden; position: relative; margin-top: 10px; }
+        #winner-list-area { max-height: 500px; overflow: hidden; position: relative; margin-top: 10px; }
         .res-scroll-container { display: flex; flex-direction: column; }
-        .winner-item { color: #fff; font-size: 55px; font-weight: 900; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .winner-item { color: #fff; font-size: 52px; font-weight: 900; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
         /* Out Animation Style */
         #cut-anim-box {
@@ -113,29 +112,28 @@
     let lastCutTime = 0;
     let currentResData = null; 
 
- // ਲੈਂਗੂਏਜ ਟੌਗਲ ਫੰਕਸ਼ਨ (ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ ਬਦਲੇਗਾ)
-setInterval(() => {
-    langFlash = !langFlash;
-    
-    // ਮੇਨ ਸਕੋਰਬੋਰਡ ਦੀਆਂ ਹੈਡਿੰਗਸ
-    document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-    document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-    document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-    document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-    document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-    
-    // ਰਿਜ਼ਲਟ ਓਵਰਲੇਅ ਦੀ ਹੈਡਿੰਗ (ਇੱਥੇ ਫਿਕਸ ਕੀਤਾ ਹੈ)
-    const winTitle = document.getElementById('win-title-lang');
-    if(currentResData && currentResData.active) {
-        if(currentResData.isShared === true) {
-            // ਜੇ ਬਾਜੀ ਸਾਂਝੀ ਹੈ ਤਾਂ ਇਹ ਦਿਖਾਓ
-            winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
-        } else {
-            // ਜੇ ਨਤੀਜਾ (Winner) ਹੈ ਤਾਂ ਇਹ ਦਿਖਾਓ
-            winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
+    const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
+    const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH", "9TH", "10TH"];
+
+    // ਲੈਂਗੂਏਜ ਟੌਗਲ
+    setInterval(() => {
+        langFlash = !langFlash;
+        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
+        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
+        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
+        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
+        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+        
+        const winTitle = document.getElementById('win-title-lang');
+        if(currentResData && currentResData.active) {
+            if(currentResData.isShared) {
+                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
+            } else {
+                winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
+            }
+            updateResultList(); // ਲੈਂਗੂਏਜ ਬਦਲਣ ਤੇ ਲਿਸਟ ਵੀ ਅਪਡੇਟ ਕਰੋ
         }
-    }
-}, 3000);
+    }, 3000);
 
     // ਕਲਾਕ
     setInterval(() => {
@@ -147,6 +145,34 @@ setInterval(() => {
 
     setInterval(() => { showDate = !showDate; }, 15000);
 
+    function updateResultList() {
+        if(!currentResData || !currentResData.active) return;
+        const resListArea = document.getElementById('winner-list-area');
+        
+        if(currentResData.isShared === true) {
+            resListArea.innerHTML = `<div class="winner-item" style="justify-content: center; font-size: 110px; color: #2ecc71; width: 100%; text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);">OK</div>`;
+            resResultPos = 0;
+        } else {
+            let winHtml = "";
+            const winnersNames = currentResData.names || [];
+            winnersNames.forEach((name, i) => {
+                let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
+                winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
+            });
+
+            if(winnersNames.length > 6) {
+                resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
+                    <div class="res-block">${winHtml}</div>
+                    <div style="height:100px"></div>
+                    <div class="res-block">${winHtml}</div>
+                </div>`;
+            } else {
+                resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
+                resResultPos = 0;
+            }
+        }
+    }
+
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
@@ -156,12 +182,15 @@ setInterval(() => {
             currentResData = resData; 
             
             const scoreDiv = document.getElementById('scoreboard-div');
+            const resBox = document.getElementById('result-overlay');
             
-            // ਸਕੋਰਬੋਰਡ ਹਾਈਡ ਲੋਜਿਕ (ਜਦੋਂ ਰਿਜ਼ਲਟ ਚੱਲੇ)
             if (resData.active) {
                 scoreDiv.style.display = "none";
+                resBox.style.display = "block";
+                updateResultList();
             } else {
                 scoreDiv.style.display = conf.showScoreboard !== false ? "flex" : "none";
+                resBox.style.display = "none";
             }
 
             document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
@@ -202,38 +231,10 @@ setInterval(() => {
                 animBox.style.animation = "sharpFlash 4s forwards";
                 setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
             }
-
-            // Result / Shared Logic
-            const resBox = document.getElementById('result-overlay');
-            const resListArea = document.getElementById('winner-list-area');
-            if(resData.active) {
-                resBox.style.display = "block";
-                if(resData.isShared === true) {
-                    resListArea.innerHTML = `<div class="winner-item" style="justify-content: center; font-size: 110px; color: #2ecc71; width: 100%; text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);">OK</div>`;
-                } else {
-                    let winHtml = "";
-                    (resData.names || []).forEach((name, i) => {
-                        winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
-                    });
-
-                    if((resData.names || []).length > 6) {
-                        resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
-                            <div class="res-block">${winHtml}</div>
-                            <div style="height:100px"></div>
-                            <div class="res-block">${winHtml}</div>
-                        </div>`;
-                    } else {
-                        resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
-                        resResultPos = 0;
-                    }
-                }
-            } else { resBox.style.display = "none"; }
         });
     }
 
-    // ਐਨੀਮੇਸ਼ਨ ਲੂਪ
     function animate() {
-        // Scoreboard Scroll
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
             if (area && area.parentElement.parentElement.style.display !== "none") {
@@ -247,7 +248,6 @@ setInterval(() => {
             }
         });
 
-        // Result Scroll
         const resMover = document.getElementById('res-mover');
         if (resMover && currentResData && currentResData.active && !currentResData.isShared) {
             const resBlock = resMover.querySelector('.res-block');
@@ -259,7 +259,6 @@ setInterval(() => {
             }
         }
 
-        // Ticker Scroll
         tickerPos -= 2.2;
         const tMove = document.getElementById('ticker-text');
         if(tMove && Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
