@@ -5,69 +5,38 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { 
-            --header-h: 65px; 
-            --header-w: 40%; 
-        }
+        :root { --header-h: 65px; --header-w: 40%; }
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- New Result Box Style --- */
-        #result-overlay-box {
+        /* --- Result Box Modern --- */
+        #res-box-modern {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 800px; background: rgba(0, 0, 0, 0.95); border: 8px solid #f39c12;
-            border-radius: 40px; color: white; display: none; z-index: 9999;
-            box-shadow: 0 0 50px rgba(243, 156, 18, 0.5); padding: 40px; text-align: center;
+            width: 700px; height: 500px; background: rgba(10, 10, 30, 0.95);
+            border: 10px solid #f39c12; border-radius: 20px; display: none; overflow: hidden; z-index: 9999;
         }
-        .res-head { font-size: 50px; color: #f39c12; font-weight: 900; border-bottom: 4px solid #fff; margin-bottom: 20px; padding-bottom: 10px; }
-        .res-list { list-style: none; font-size: 42px; font-weight: 800; line-height: 1.5; }
-        .res-list li { padding: 10px; border-bottom: 1px dashed #444; }
+        .res-header { background: #f39c12; color: #000; font-size: 40px; font-weight: 900; text-align: center; padding: 15px; }
+        .res-scroll-container { height: 380px; overflow: hidden; position: relative; }
+        .res-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; border-bottom: 2px solid #333; font-size: 35px; color: white; font-weight: 800; }
+        .res-rank { color: #f39c12; width: 250px; }
 
-        /* --- Cut Animation Flash --- */
-        #cut-anim {
-            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            background: red; color: white; padding: 20px 60px; font-size: 60px; font-weight: 900;
-            border: 10px solid white; border-radius: 20px; display: none; z-index: 10000;
-            animation: zoomInOut 0.5s infinite alternate;
+        /* --- IPL Out Animation --- */
+        #ipl-out-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.4); z-index: 10000;
         }
-        <!-- ਪਹਿਲਾਂ ਵਾਲੇ ਸਟਾਈਲ ਵਿੱਚ ਇਹ ਬਦਲਾਅ ਜੋੜੋ ਜਾਂ ਪੂਰਾ ਰਿਪਲੇਸ ਕਰੋ -->
-    /* IPL Out Animation Style */
-    #ipl-out-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        display: none; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.4); z-index: 10000;
-    }
-    .out-banner {
-        background: linear-gradient(90deg, transparent, #ff0000, #ff0000, transparent);
-        width: 100%; padding: 40px 0; text-align: center;
-        transform: scaleY(0); animation: bannerAnim 0.6s forwards ease-out;
-        border-top: 5px solid white; border-bottom: 5px solid white;
-    }
-    .out-text { color: white; font-size: 80px; font-weight: 900; text-shadow: 4px 4px #000; letter-spacing: 5px; }
-    @keyframes bannerAnim { to { transform: scaleY(1); } }
+        .out-banner {
+            background: linear-gradient(90deg, transparent, #ff0000, #ff0000, transparent);
+            width: 100%; padding: 40px 0; text-align: center;
+            transform: scaleY(0); animation: bannerAnim 0.6s forwards ease-out;
+            border-top: 5px solid white; border-bottom: 5px solid white;
+        }
+        .out-text { color: white; font-size: 80px; font-weight: 900; text-shadow: 4px 4px #000; letter-spacing: 5px; }
+        @keyframes bannerAnim { to { transform: scaleY(1); } }
 
-    /* Result Box with Scroll */
-    #res-box-modern {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        width: 700px; height: 500px; background: rgba(10, 10, 30, 0.95);
-        border: 10px solid #f39c12; border-radius: 20px; display: none; overflow: hidden;
-    }
-    .res-header { background: #f39c12; color: #000; font-size: 40px; font-weight: 900; text-align: center; padding: 15px; }
-    .res-scroll-container { height: 380px; overflow: hidden; position: relative; }
-    .res-item { 
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 15px 30px; border-bottom: 2px solid #333; font-size: 35px; color: white; font-weight: 800;
-    }
-    .res-rank { color: #f39c12; width: 150px; }
-    .flash-lang { animation: flashText 2s infinite; }
-    @keyframes flashText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        @keyframes zoomInOut { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.2); } }
-
-        /* Existing Styles ... */
-        #weather-box { position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; display: none; overflow: hidden; z-index: 1001; }
-        #weather-frame { width: 550px; height: 120px; border: none; transform: scale(1.5); transform-origin: top left; }
-        
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 80px; height: 320px; display: flex; gap: 10px; }
+        /* --- Main UI --- */
+        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 300px; display: flex; gap: 10px; }
         .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; overflow: hidden; border: 4px solid #fff; }
         #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
         #box-out { background: rgba(255, 0, 0, 0.85) !important; }
@@ -75,64 +44,54 @@
 
         .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; background: #000; border-bottom: 3px solid white; border-left: 3px solid white; border-radius: 0 20px 0 20px; color: white; }
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 26px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 32px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; }
 
         .list-area { position: absolute; width: 100%; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
-        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; line-height: 1.1; color: #000; }
+        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; color: #000; }
         #box-out .item { color: #fff; }
 
-        .footer { position: absolute; bottom: 5px; left: 10px; width: calc(100% - 20px); height: 65px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden; }
+        .footer { position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); height: 65px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; }
         .ticker-wrap { flex: 1; overflow: hidden; }
         .ticker-move { display: flex; white-space: nowrap; font-size: 34px; font-weight: 1000; color: #000; }
-        .dt-box-wrap { height: 100%; min-width: 380px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; }
-        #clock-box { font-size: 32px; font-weight: 1000; transform: skewX(25deg); }
+        .dt-box-wrap { height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; }
+        #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
     </style>
 </head>
 <body>
 
-<!-- Result Popup -->
-<div id="result-overlay-box">
-    <div id="res-title" class="res-head">RESULT</div>
-    <ul id="res-list-items" class="res-list"></ul>
-</div>
-
 <div id="ipl-out-overlay">
-    <div class="out-banner">
-        <div class="out-text">OUT: <span id="ipl-team-name">---</span></div>
-    </div>
+    <div class="out-banner"><div class="out-text">OUT: <span id="ipl-team-name">---</span></div></div>
 </div>
 
 <div id="res-box-modern">
     <div class="res-header">FINAL RESULT</div>
-    <div id="res-scroll-area" class="res-scroll-container">
-        <div id="res-list-content"></div>
-    </div>
+    <div class="res-scroll-container"><div id="res-list-content"></div></div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
+            <div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
     </div></div>
 
     <div id="box-out" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
+            <div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
     </div></div>
 
     <div id="box-time" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
+            <div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div>
             <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
         </div>
         <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
@@ -153,74 +112,52 @@
 
     let listPos = { fly: 0, time: 0, out: 0 };
     let tickerPos = 0;
+    let resPos = 0;
     let showDate = false;
 
     if(userID) {
-        // --- 1. Listen for Result Overlay ---
-       // Result Logic Update
-    db.ref('users/' + userID + '/resultOverlay').on('value', snap => {
-        const res = snap.val();
-        const box = document.getElementById('res-box-modern');
-        if(res && res.active) {
-            box.style.display = "block";
-            let html = "";
-            // Reverse list to show last out as 1st
-            const sortedNames = res.names.reverse(); 
-            sortedNames.forEach((n, i) => {
-                let rankText = (i+1) == 1 ? "1st / ਪਹਿਲਾ" : (i+1) == 2 ? "2nd / ਦੂਜਾ" : (i+1) == 3 ? "3rd / ਤੀਜਾ" : (i+1) + "th";
-                html += `<div class="res-item">
-                            <div class="res-rank flash-lang">${rankText}</div>
-                            <div class="res-team">${n}</div>
-                         </div>`;
-            });
-            const content = document.getElementById('res-list-content');
-            content.innerHTML = html;
-            
-            // Auto scroll if items > 6
-            if(sortedNames.length > 6) {
-                startResultScroll();
+        // 1. Result Overlay Listen
+        db.ref('users/' + userID + '/resultOverlay').on('value', snap => {
+            const res = snap.val();
+            const box = document.getElementById('res-box-modern');
+            if(res && res.active) {
+                box.style.display = "block";
+                let html = "";
+                // Reverse to show latest result on top
+                const names = [...res.names].reverse();
+                names.forEach((n, i) => {
+                    let rankText = (i+1) == 1 ? "1st / ਪਹਿਲਾ" : (i+1) == 2 ? "2nd / ਦੂਜਾ" : (i+1) == 3 ? "3rd / ਤੀਜਾ" : (i+1) + "th";
+                    html += `<div class="res-item"><div class="res-rank">${rankText}</div><div class="res-team">${n}</div></div>`;
+                });
+                document.getElementById('res-list-content').innerHTML = html;
+            } else { box.style.display = "none"; }
+        });
+
+        // 2. Cut Animation Listen
+        db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
+            const anim = snap.val();
+            if(anim && anim.name) {
+                const iplOverlay = document.getElementById('ipl-out-overlay');
+                document.getElementById('ipl-team-name').innerText = anim.name;
+                iplOverlay.style.display = "flex";
+                setTimeout(() => { iplOverlay.style.display = "none"; }, 5000);
             }
-        } else { box.style.display = "none"; }
-    });
+        });
 
-    db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
-        const anim = snap.val();
-        if(anim && anim.name) {
-            const iplOverlay = document.getElementById('ipl-out-overlay');
-            document.getElementById('ipl-team-name').innerText = anim.name;
-            iplOverlay.style.display = "flex";
-            setTimeout(() => { iplOverlay.style.display = "none"; }, 5000);
-        }
-    });
-
-    let resPos = 0;
-    function startResultScroll() {
-        const area = document.getElementById('res-list-content');
-        setInterval(() => {
-            resPos -= 1;
-            if(Math.abs(resPos) >= area.offsetHeight / 2) resPos = 0;
-            area.style.transform = `translateY(${resPos}px)`;
-        }, 30);
-    }
-</script>
-
-        // --- 3. Main Data Update ---
+        // 3. Main Data Update
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
 
-            // Scoreboard & Ticker Visibility
             document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
             document.querySelector('.footer').style.display = conf.showTicker ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
 
-            // Ticker Update
             const tickerElem = document.getElementById('ticker-text');
             const txt = conf.ticker || "";
             tickerElem.innerHTML = `<div class="ticker-content">${txt} &nbsp;&nbsp;&nbsp;</div><div class="ticker-content">${txt} &nbsp;&nbsp;&nbsp;</div>`;
 
-            // List Update
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
@@ -243,55 +180,50 @@
         });
     }
 
-    // Time & Date Logic
+    // Animation Loop
+    function animate() {
+        ['fly', 'time', 'out'].forEach(id => {
+            const area = document.getElementById(`list-${id}`);
+            const box = document.getElementById(`box-${id}`);
+            if (area && box && box.style.display !== "none" && area.children.length > 0) {
+                listPos[id] -= 1.0;
+                let firstBlock = area.querySelector('.content-block');
+                if(firstBlock) {
+                    let resetPoint = firstBlock.offsetHeight + 350;
+                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
+                    area.style.transform = `translate3d(0, ${listPos[id]}px, 0)`;
+                }
+            }
+        });
+
+        // Ticker
+        const tMove = document.getElementById('ticker-text');
+        if (tMove && tMove.scrollWidth > 0) {
+            tickerPos -= 1.5;
+            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
+            tMove.style.transform = `translate3d(${tickerPos}px, 0, 0)`;
+        }
+
+        // Result Scroll
+        const resArea = document.getElementById('res-list-content');
+        if(document.getElementById('res-box-modern').style.display === "block" && resArea.offsetHeight > 380) {
+            resPos -= 0.8;
+            if(Math.abs(resPos) >= resArea.offsetHeight / 2) resPos = 0;
+            resArea.style.transform = `translate3d(0, ${resPos}px, 0)`;
+        }
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Clock
     setInterval(() => {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
         const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
         document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
     }, 1000);
-
     setInterval(() => { showDate = !showDate; }, 10000);
-
-   // ... Firebase config ਅਤੇ ਬਾਕੀ variables ਉਹੀ ਰਹਿਣਗੇ ...
-
-    function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            
-            // ਜੇਕਰ box ਦਿਖਾਈ ਦੇ ਰਿਹਾ ਹੈ ਤਾਂ ਹੀ animation ਚਲਾਓ
-            if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                listPos[id] -= 1.0; // Speed 1.2 ਤੋਂ ਘਟਾ ਕੇ 1.0 ਕੀਤੀ (iPad ਲਈ smooth ਰਹੇਗੀ)
-                
-                let firstBlock = area.querySelector('.content-block');
-                if(firstBlock) {
-                    // Reset point logic: block height + spacing
-                    let blockHeight = firstBlock.offsetHeight;
-                    let resetPoint = blockHeight + 350; 
-                    
-                    if (Math.abs(listPos[id]) >= resetPoint) {
-                        listPos[id] = 0;
-                    }
-                    // translate3d ਵਰਤਣਾ iPad 'ਤੇ performance ਵਧਾਉਂਦਾ ਹੈ
-                    area.style.transform = `translate3d(0, ${listPos[id]}px, 0)`;
-                }
-            }
-        });
-
-        // Ticker Animation
-        const tMove = document.getElementById('ticker-text');
-        if (tMove && tMove.children.length > 0) {
-            tickerPos -= 1.5; // Ticker speed
-            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) {
-                tickerPos = 0;
-            }
-            tMove.style.transform = `translate3d(${tickerPos}px, 0, 0)`;
-        }
-        
-        requestAnimationFrame(animate);
-    }
-    animate();
 </script>
 </body>
 </html>
