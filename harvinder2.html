@@ -9,7 +9,6 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* Result Overlay */
         #result-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 950px; background: rgba(0,0,0,0.98); border: 8px solid #f39c12;
@@ -17,23 +16,9 @@
             box-shadow: 0 0 70px rgba(243, 156, 18, 0.7);
         }
         .winner-title { color: #f39c12; font-size: 70px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
-        
         #winner-list-area { max-height: 500px; overflow: hidden; position: relative; margin-top: 10px; }
         .res-scroll-container { display: flex; flex-direction: column; }
         .winner-item { color: #fff; font-size: 52px; font-weight: 900; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-
-        /* Out Animation Style */
-        #cut-anim-box {
-            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) skewX(-15deg);
-            background: #ff0000; color: #fff; padding: 25px 70px; font-size: 85px; font-weight: 1000;
-            border: 8px solid #fff; display: none; z-index: 9999; box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-
-        @keyframes sharpFlash {
-            0% { filter: brightness(1); transform: translate(-50%, -50%) scale(1) skewX(-15deg); opacity: 1; }
-            50% { filter: brightness(10); transform: translate(-50%, -50%) scale(1.15) skewX(-15deg); opacity: 1; }
-            100% { filter: brightness(1); transform: translate(-50%, -50%) scale(1) skewX(-15deg); opacity: 0; }
-        }
 
         .main-container { position: absolute; left: 15px; right: 15px; bottom: 85px; height: 280px; display: flex; gap: 12px; justify-content: flex-start; }
         .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; overflow: hidden; border: 4px solid #fff; }
@@ -61,8 +46,6 @@
 </head>
 <body>
 
-<div id="cut-anim-box">OUT: NAME</div>
-
 <div id="result-overlay">
     <div class="winner-title" id="win-title-lang">FINAL RESULT</div>
     <div id="winner-list-area"></div>
@@ -76,7 +59,6 @@
         </div>
         <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-fly"></div></div>
     </div>
-
     <div id="box-out" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
@@ -84,7 +66,6 @@
         </div>
         <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-out"></div></div>
     </div>
-
     <div id="box-time" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
@@ -106,35 +87,31 @@
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
 
-    let langFlash = false, showDate = false, tickerPos = 0;
+    let langFlash = false, showDate = false;
     let listPos = { fly: 0, time: 0, out: 0 };
-    let resResultPos = 0; 
-    let lastCutTime = 0;
+    let resResultPos = 0, tickerPos = 0;
     let currentResData = null; 
 
     const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
     const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH", "9TH", "10TH"];
 
-    // ਟਾਈਟਲ ਅਤੇ ਲਿਸਟ ਅਪਡੇਟ (ਲੈਂਗੂਏਜ ਟੌਗਲ)
     setInterval(() => {
         langFlash = !langFlash;
         
         // ਸਕੋਰਬੋਰਡ ਟਾਈਟਲਸ
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+        const tFly = document.getElementById('title-fly');
+        if(tFly) tFly.innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
         
-        // ਰਿਜ਼ਲਟ ਟਾਈਟਲ
+        // ਰਿਜ਼ਲਟ ਟਾਈਟਲ ਲੋਜਿਕ
         const winTitle = document.getElementById('win-title-lang');
         if(currentResData && currentResData.active) {
-            if(currentResData.isShared === true) {
+            // ਜੇਕਰ isShared true ਹੈ ਜਾਂ ਟਾਈਟਲ ਵਿੱਚ 'SHARED' ਲਿਖਿਆ ਹੈ
+            if(currentResData.isShared === true || (currentResData.title && currentResData.title.toUpperCase().includes('SHARED'))) {
                 winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
             } else {
                 winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
             }
-            updateResultList(); // ਨਾਮ ਦੇ ਨਾਲ ਪੁਜੀਸ਼ਨ ਵੀ ਫਲੈਸ਼ ਹੋਵੇਗੀ
+            updateResultList(); 
         }
     }, 3000);
 
@@ -144,19 +121,20 @@
         const winnersNames = currentResData.names || [];
         let winHtml = "";
 
+        // ਚੈੱਕ ਕਰੋ ਕਿ ਬਾਜੀ ਸਾਂਝੀ ਹੈ ਜਾਂ ਨਹੀਂ
+        const isActuallyShared = currentResData.isShared === true || (currentResData.title && currentResData.title.toUpperCase().includes('SHARED'));
+
         winnersNames.forEach((name, i) => {
-            // ਜੇਕਰ ਬਾਜੀ ਸਾਂਝੀ ਹੈ - ਸਿਰਫ ਨੰਬਰ ਅਤੇ 🤝 ਦਿਖਾਓ
-            if(currentResData.isShared === true) {
+            if(isActuallyShared) {
+                // ਸਾਂਝੀ ਬਾਜੀ ਵਿੱਚ ਸਿਰਫ ਨੰਬਰ ਅਤੇ ਹੱਥ ਮਿਲਾਉਣ ਵਾਲਾ ਇਮੋਜੀ
                 winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
-            } 
-            // ਜੇਕਰ ਨਤੀਜਾ ਨੋਰਮਲ ਹੈ - ਪਹਿਲਾ/ਦੂਜਾ ਅਤੇ 🏆 ਦਿਖਾਓ
-            else {
+            } else {
+                // ਨੋਰਮਲ ਰਿਜ਼ਲਟ ਵਿੱਚ ਪਹਿਲਾ, ਦੂਜਾ ਅਤੇ ਟਰਾਫੀ
                 let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
                 winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
             }
         });
 
-        // ਲਿਸਟ ਰੈਂਡਰ
         if(winnersNames.length > 6) {
             resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
                 <div class="res-block">${winHtml}</div>
@@ -169,106 +147,52 @@
         }
     }
 
-    // ਘੜੀ
-    setInterval(() => {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
-        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
-    }, 1000);
-
-    setInterval(() => { showDate = !showDate; }, 15000);
-
-    // ਫਾਇਰਬੇਸ ਡੇਟਾ
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
-            const pigeons = data.pigeons || [];
-            const conf = data.config || {};
-            const resData = data.resultOverlay || {};
-            currentResData = resData; 
+            currentResData = data.resultOverlay || {};
             
             const scoreDiv = document.getElementById('scoreboard-div');
             const resBox = document.getElementById('result-overlay');
             
-            if (resData.active) {
+            if (currentResData.active) {
                 scoreDiv.style.display = "none";
                 resBox.style.display = "block";
                 updateResultList();
             } else {
-                scoreDiv.style.display = conf.showScoreboard !== false ? "flex" : "none";
+                scoreDiv.style.display = "flex";
                 resBox.style.display = "none";
             }
 
-            document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
-            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
-
-            const tickerElem = document.getElementById('ticker-text');
-            const txt = conf.ticker || "";
-            tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
-
+            // ਬਾਕੀ ਲਿਸਟਾਂ ਅਪਡੇਟ ਕਰੋ (Fly, Out, Time)
+            const pigeons = data.pigeons || [];
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
                 if(htmlArr[p.status]) htmlArr[p.status].push(row);
             });
-
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
-
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0 && !resData.active && conf.showScoreboard !== false) {
+                if(htmlArr[id].length > 0 && !currentResData.active) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
-                    const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="block">${content}</div><div style="height:350px"></div><div class="block">${content}</div>`;
+                    area.innerHTML = `<div class="block">${htmlArr[id].join('')}</div><div style="height:350px"></div><div class="block">${htmlArr[id].join('')}</div>`;
                 } else { box.style.display = "none"; }
             });
-
-            if(data.cutAnimation && data.cutAnimation.time > lastCutTime) {
-                lastCutTime = data.cutAnimation.time;
-                const animBox = document.getElementById('cut-anim-box');
-                animBox.innerText = `OUT: ${data.cutAnimation.name}`;
-                animBox.style.display = "block";
-                animBox.style.animation = "sharpFlash 4s forwards";
-                setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
-            }
         });
     }
 
-    // ਐਨੀਮੇਸ਼ਨ
     function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            if (area && area.parentElement.parentElement.style.display !== "none") {
-                listPos[id] -= 1.3;
-                let block = area.querySelector('.block');
-                if(block) {
-                    let resetPoint = block.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                    area.style.transform = `translateY(${listPos[id]}px)`;
-                }
-            }
-        });
-
         const resMover = document.getElementById('res-mover');
         if (resMover && currentResData && currentResData.active) {
             const resBlock = resMover.querySelector('.res-block');
             if(resBlock) {
                 resResultPos -= 1.0;
-                let resetLimit = resBlock.offsetHeight + 100;
-                if (Math.abs(resResultPos) >= resetLimit) resResultPos = 0;
+                if (Math.abs(resResultPos) >= resBlock.offsetHeight + 100) resResultPos = 0;
                 resMover.style.transform = `translateY(${resResultPos}px)`;
             }
         }
-
-        tickerPos -= 2.2;
-        const tMove = document.getElementById('ticker-text');
-        if(tMove && Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
-        if(tMove) tMove.style.transform = `translateX(${tickerPos}px)`;
-
         requestAnimationFrame(animate);
     }
     animate();
