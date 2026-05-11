@@ -1,619 +1,132 @@
 <!DOCTYPE html>
 <html lang="pa">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { --header-h: 65px; --header-w: 40%; }
+        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
+        body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-<style>
-
-:root{
-    --header-h:65px;
-    --header-w:40%;
-}
-
-*{
-    box-sizing:border-box;
-    text-transform:uppercase;
-    margin:0;
-    padding:0;
-}
-
-body{
-    background:transparent;
-    font-family:'Segoe UI','Raavi',sans-serif;
-    overflow:hidden;
-    height:100vh;
-}
-
-/* RESULT OVERLAY */
-
-#result-overlay{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:950px;
-    background:rgba(0,0,0,0.98);
-    border:8px solid #f39c12;
-    border-radius:40px;
-    display:none;
-    z-index:5000;
-    padding:40px;
-    text-align:center;
-    box-shadow:0 0 70px rgba(243,156,18,0.7);
-    overflow:hidden;
-}
-
-.winner-title{
-    color:#f39c12;
-    font-size:70px;
-    font-weight:1000;
-    margin-bottom:25px;
-    border-bottom:4px solid #fff;
-    padding-bottom:10px;
-}
-
-#winner-list-area{
-    height:500px;
-    overflow:hidden;
-    position:relative;
-    margin-top:10px;
-}
-
-#res-mover{
-    position:relative;
-}
-
-.winner-item{
-    color:#fff;
-    font-size:52px;
-    font-weight:900;
-    margin:12px 0;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 30px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    min-height:75px;
-}
-
-.scroll-result{
-    animation:resultScroll 18s linear infinite;
-}
-
-@keyframes resultScroll{
-    0%{
-        transform:translateY(0);
-    }
-    100%{
-        transform:translateY(-50%);
-    }
-}
-
-/* SCOREBOARD */
-
-.main-container{
-    position:absolute;
-    left:15px;
-    right:15px;
-    bottom:85px;
-    height:280px;
-    display:flex;
-    gap:12px;
-    justify-content:flex-start;
-}
-
-.box{
-    display:none;
-    width:32.5%;
-    height:100%;
-    position:relative;
-    border-radius:25px;
-    overflow:hidden;
-    border:4px solid #fff;
-}
-
-#box-fly{
-    background:rgba(0,110,255,0.95);
-}
-
-#box-out{
-    background:rgba(220,0,0,0.95);
-}
-
-#box-time{
-    background:rgba(210,160,0,0.95);
-}
-
-.header-wrapper{
-    position:absolute;
-    top:0;
-    right:0;
-    width:var(--header-w);
-    z-index:10;
-    background:#000;
-    border-bottom:3px solid #fff;
-    border-left:3px solid #fff;
-    border-radius:0 20px 0 20px;
-    color:#fff;
-}
-
-.box-header,
-.sum-card{
-    height:var(--header-h);
-    display:flex;
-    align-items:center;
-}
-
-.header-title{
-    flex:1;
-    padding-left:12px;
-    font-weight:900;
-    font-size:28px;
-    border-right:2px solid #fff;
-    height:100%;
-    display:flex;
-    align-items:center;
-}
-
-.count-tag,
-.sum-val-area{
-    width:35%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:1000;
-    font-size:34px;
-}
-
-.count-tag{
-    background:#fff;
-    color:#000;
-}
-
-.sum-val-area{
-    background:#ffcc00;
-    color:#000;
-}
-
-.list-area{
-    position:absolute;
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    padding-top:calc(var(--header-h) * 2.3);
-}
-
-.item{
-    padding:6px 22px;
-    font-size:38px;
-    font-weight:1000;
-    color:#fff;
-    text-shadow:3px 3px #000;
-}
-
-/* FOOTER */
-
-.footer{
-    position:absolute;
-    bottom:12px;
-    left:12px;
-    width:calc(100% - 24px);
-    height:65px;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    border:4px solid #000;
-    border-radius:18px;
-    z-index:20;
-    overflow:hidden;
-}
-
-.live-tag{
-    background:#ff0000;
-    color:#fff;
-    padding:0 40px;
-    height:100%;
-    display:flex;
-    align-items:center;
-    font-size:32px;
-    font-weight:1000;
-    transform:skewX(-25deg);
-    margin-left:-28px;
-    border-right:6px solid #fff;
-    z-index:25;
-}
-
-.ticker-wrap{
-    flex:1;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-}
-
-.ticker-move{
-    display:flex;
-    white-space:nowrap;
-    font-size:32px;
-    font-weight:1000;
-    color:#000;
-}
-
-.dt-box-wrap{
-    height:100%;
-    min-width:360px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#ff0000;
-    color:#fff;
-    transform:skewX(-25deg);
-    margin-right:-28px;
-    border-left:7px solid #fff;
-    z-index:25;
-}
-
-#clock-box{
-    font-size:32px;
-    font-weight:1000;
-    transform:skewX(25deg);
-}
-
-</style>
+        #result-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 950px; background: rgba(0,0,0,0.98); border: 8px solid #f39c12;
+            border-radius: 40px; display: none; z-index: 5000; padding: 40px; text-align: center;
+        }
+        .winner-title { color: #f39c12; font-size: 70px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
+        .winner-item { color: #fff; font-size: 52px; font-weight: 900; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        .main-container { position: absolute; left: 15px; right: 15px; bottom: 85px; height: 280px; display: flex; gap: 12px; }
+        .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; border: 4px solid #fff; overflow: hidden; }
+        #box-fly { background: rgba(0, 110, 255, 0.95); }
+        #box-out { background: rgba(220, 0, 0, 0.95); }
+        #box-time { background: rgba(210, 160, 0, 0.95); }
+        
+        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); background: #000; border-bottom: 3px solid #fff; border-left: 3px solid #fff; border-radius: 0 20px 0 20px; color: #fff; }
+        .box-header { height: var(--header-h); display: flex; align-items: center; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; }
+        .count-tag { width: 35%; background: #fff; color: #000; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
+        
+        .list-area { padding-top: 80px; }
+        .item { padding: 6px 22px; font-size: 38px; font-weight: 1000; color: #fff; }
+    </style>
 </head>
-
 <body>
 
-<!-- RESULT OVERLAY -->
-
 <div id="result-overlay">
-
-    <div class="winner-title" id="win-title-lang">
-        FINAL RESULT
-    </div>
-
+    <div class="winner-title" id="win-title">RESULT</div>
     <div id="winner-list-area"></div>
-
 </div>
-
-<!-- SCOREBOARD -->
 
 <div class="main-container" id="scoreboard-div">
-
-    <div id="box-fly" class="box">
-
-        <div class="header-wrapper">
-
-            <div class="box-header">
-                <span class="header-title">FLYING</span>
-                <span id="count-fly" class="count-tag">0</span>
-            </div>
-
-            <div class="sum-card">
-                <span class="header-title">TOTAL</span>
-                <span id="m-total" class="sum-val-area">0</span>
-            </div>
-
-        </div>
-
-        <div style="height:100%;overflow:hidden;">
-            <div class="list-area" id="list-fly"></div>
-        </div>
-
-    </div>
-
-    <div id="box-out" class="box">
-
-        <div class="header-wrapper">
-
-            <div class="box-header">
-                <span class="header-title">OUT</span>
-                <span id="count-out" class="count-tag">0</span>
-            </div>
-
-            <div class="sum-card">
-                <span class="header-title">REM.</span>
-                <span id="m-rem" class="sum-val-area">0</span>
-            </div>
-
-        </div>
-
-        <div style="height:100%;overflow:hidden;">
-            <div class="list-area" id="list-out"></div>
-        </div>
-
-    </div>
-
-    <div id="box-time" class="box">
-
-        <div class="header-wrapper">
-
-            <div class="box-header">
-                <span class="header-title">TIME</span>
-                <span id="count-time" class="count-tag">0</span>
-            </div>
-
-            <div class="sum-card">
-                <div id="m-time-val" class="sum-val-area" style="width:100%;">
-                    --
-                </div>
-            </div>
-
-        </div>
-
-        <div style="height:100%;overflow:hidden;">
-            <div class="list-area" id="list-time"></div>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- FOOTER -->
-
-<div class="footer">
-
-    <div class="live-tag">
-        <span>LIVE</span>
-    </div>
-
-    <div class="ticker-wrap">
-        <div id="ticker-text" class="ticker-move"></div>
-    </div>
-
-    <div class="dt-box-wrap">
-        <div id="clock-box">--:--:--</div>
-    </div>
-
+    <div id="box-fly" class="box"><div class="header-wrapper"><div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div></div><div class="list-area" id="list-fly"></div></div>
+    <div id="box-out" class="box"><div class="header-wrapper"><div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div></div><div class="list-area" id="list-out"></div></div>
+    <div id="box-time" class="box"><div class="header-wrapper"><div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div></div><div class="list-area" id="list-time"></div></div>
 </div>
 
 <script>
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const userID = new URLSearchParams(window.location.search).get('id');
 
-const firebaseConfig = {
-    databaseURL:"https://manpreetpigeons-default-rtdb.firebaseio.com/"
-};
+    let currentResData = null;
+    let langFlash = false;
 
-firebase.initializeApp(firebaseConfig);
+    const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ"];
+    const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH"];
 
-const db = firebase.database();
+    function updateDisplay() {
+        if(!currentResData || !currentResData.active) return;
+        
+        const winTitleElem = document.getElementById('win-title');
+        const resArea = document.getElementById('winner-list-area');
+        const names = currentResData.names || [];
+        
+        // 1. ਟਾਈਟਲ ਚੈੱਕ ਕਰੋ (ਜੇਕਰ ਟਾਈਟਲ ਵਿੱਚ 'SHARED' ਜਾਂ 'ਸਾਂਝੀ' ਲਿਖਿਆ ਹੈ)
+        const rawTitle = (currentResData.title || "").toUpperCase();
+        const isShared = rawTitle.includes("SHARED") || rawTitle.includes("ਸਾਂਝੀ") || currentResData.isShared === true;
 
-const userID = new URLSearchParams(window.location.search).get('id');
-
-let langFlash = false;
-let currentResData = null;
-
-const positionsPB = [
-    "ਪਹਿਲਾ ਇਨਾਮ",
-    "ਦੂਜਾ ਇਨਾਮ",
-    "ਤੀਜਾ ਇਨਾਮ",
-    "ਚੌਥਾ ਇਨਾਮ",
-    "ਪੰਜਵਾਂ ਇਨਾਮ",
-    "ਛੇਵਾਂ ਇਨਾਮ"
-];
-
-const positionsEN = [
-    "1ST PRIZE",
-    "2ND PRIZE",
-    "3RD PRIZE",
-    "4TH PRIZE",
-    "5TH PRIZE",
-    "6TH PRIZE"
-];
-
-/* TITLE FLASH */
-
-setInterval(() => {
-
-    langFlash = !langFlash;
-
-    if(currentResData && currentResData.active){
-
-        const title = document.getElementById("win-title-lang");
-
-        if(currentResData.isShared){
-
-            title.innerText = langFlash
-                ? "ਬਾਜੀ ਸਾਂਝੀ"
-                : "BAJI SHARED";
-
-        }else{
-
-            title.innerText = langFlash
-                ? "ਅੰਤਿਮ ਨਤੀਜਾ"
-                : "FINAL RESULT";
+        // ਟਾਈਟਲ ਬਦਲੋ
+        if(isShared) {
+            winTitleElem.innerText = langFlash ? "BAJI SHARED" : "ਬਾਜੀ ਸਾਂਝੀ";
+        } else {
+            winTitleElem.innerText = langFlash ? "FINAL RESULT" : "ਅੰਤਿਮ ਨਤੀਜਾ";
         }
 
-        updateResultList();
-    }
-
-},3000);
-
-/* RESULT UPDATE */
-
-/* EH PURA updateResultList FUNCTION REPLACE KAR */
-
-function updateResultList(){
-
-    if(!currentResData || !currentResData.active) return;
-
-    const area = document.getElementById("winner-list-area");
-
-    const title = document.getElementById("win-title-lang");
-
-    const names = currentResData.names || [];
-
-    let html = "";
-
-    /* =========================
-       BAJI SANJHI RESULT
-    ========================== */
-
-    if(currentResData.isShared === true){
-
-        title.innerText = langFlash
-            ? "ਬਾਜੀ ਸਾਂਝੀ"
-            : "BAJI SHARED";
-
-        names.forEach((name)=>{
-
-            html += `
-            <div class="winner-item">
-                <span style="width:100%;text-align:center;">
-                    ${name}
-                </span>
-            </div>
-            `;
-
-        });
-
-    }
-
-    /* =========================
-       NORMAL WIN RESULT
-    ========================== */
-
-    else{
-
-        title.innerText = langFlash
-            ? "ਅੰਤਿਮ ਨਤੀਜਾ"
-            : "FINAL RESULT";
-
-        names.forEach((name,i)=>{
-
-            html += `
-            <div class="winner-item">
-
-                <span>
-                    ${i+1} PRIZE
-                </span>
-
-                <span>
-                    ${name}
-                </span>
-
-            </div>
-            `;
-
-        });
-
-    }
-
-    /* =========================
-       AUTO SCROLL
-    ========================== */
-
-    let scrollClass = names.length > 6
-        ? "scroll-result"
-        : "";
-
-    let finalHtml = html;
-
-    if(names.length > 6){
-        finalHtml += html;
-    }
-
-    area.innerHTML = `
-        <div id="res-mover" class="${scrollClass}">
-            ${finalHtml}
-        </div>
-    `;
-}
-
-/* FIREBASE */
-
-if(userID){
-
-    db.ref('users/' + userID).on('value', snap => {
-
-        const data = snap.val();
-
-        if(!data) return;
-
-        currentResData = data.resultOverlay || {};
-
-        const resultBox = document.getElementById("result-overlay");
-
-        const scoreboard = document.getElementById("scoreboard-div");
-
-        /* RESULT DECLARE */
-
-        if(currentResData.active){
-
-            /* SCOREBOARD HIDE */
-
-            scoreboard.style.display = "none";
-
-            /* RESULT SHOW */
-
-            resultBox.style.display = "block";
-
-            updateResultList();
-
-        }else{
-
-            /* SCOREBOARD SHOW */
-
-            scoreboard.style.display = "flex";
-
-            /* RESULT HIDE */
-
-            resultBox.style.display = "none";
-        }
-
-        /* LIVE BOXES */
-
-        const pigeons = data.pigeons || [];
-
-        let htmlArr = {
-            fly:[],
-            out:[],
-            time:[]
-        };
-
-        pigeons.forEach((p,idx)=>{
-
-            let row = `
-            <div class="item">
-                ${idx+1}. ${p.name}
-            </div>
-            `;
-
-            if(htmlArr[p.status]){
-                htmlArr[p.status].push(row);
+        // 2. ਲਿਸਟ ਬਣਾਓ
+        let html = "";
+        names.forEach((name, i) => {
+            if(isShared) {
+                // ਸਾਂਝੀ ਬਾਜੀ ਵਿੱਚ ਪੁਜੀਸ਼ਨ ਹਟਾ ਕੇ ਸਿਰਫ ਨੰਬਰ
+                html += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
+            } else {
+                // ਨੋਰਮਲ ਵਿੱਚ ਪੁਜੀਸ਼ਨ (1st, 2nd)
+                let pos = langFlash ? positionsEN[i] || (i+1) : positionsPB[i] || (i+1);
+                html += `<div class="winner-item"><span>${pos}: ${name}</span> <span>🏆</span></div>`;
             }
-
         });
+        resArea.innerHTML = html;
+    }
 
-        ['fly','time','out'].forEach(id=>{
+    // ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ ਲੈਂਗੂਏਜ ਬਦਲੋ
+    setInterval(() => {
+        langFlash = !langFlash;
+        updateDisplay();
+    }, 3000);
 
-            const area = document.getElementById(`list-${id}`);
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val();
+            if(!data) return;
+            
+            currentResData = data.resultOverlay || {};
+            const resBox = document.getElementById('result-overlay');
+            const scoreDiv = document.getElementById('scoreboard-div');
 
-            const box = document.getElementById(`box-${id}`);
-
-            if(htmlArr[id].length > 0 && !currentResData.active){
-
-                box.style.display = "block";
-
-                area.innerHTML = `
-                    <div>
-                        ${htmlArr[id].join('')}
-                    </div>
-                `;
-
-            }else{
-
-                box.style.display = "none";
+            if(currentResData.active) {
+                resBox.style.display = "block";
+                scoreDiv.style.display = "none";
+                updateDisplay();
+            } else {
+                resBox.style.display = "none";
+                scoreDiv.style.display = "flex";
+                
+                // ਸਕੋਰਬੋਰਡ ਲਿਸਟਾਂ
+                const pigeons = data.pigeons || [];
+                let lists = { fly:[], out:[], time:[] };
+                pigeons.forEach((p, i) => {
+                    if(lists[p.status]) lists[p.status].push(`<div class="item">${i+1}. ${p.name}</div>`);
+                });
+                ['fly','out','time'].forEach(id => {
+                    document.getElementById(`box-${id}`).style.display = lists[id].length ? "block" : "none";
+                    document.getElementById(`count-${id}`).innerText = lists[id].length;
+                    document.getElementById(`list-${id}`).innerHTML = lists[id].join('');
+                });
             }
-
         });
-
-    });
-
-}
+    }
 </script>
-
 </body>
 </html>
