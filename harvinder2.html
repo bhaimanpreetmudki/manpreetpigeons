@@ -115,14 +115,18 @@
     const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
     const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH", "9TH", "10TH"];
 
+    // ਟਾਈਟਲ ਅਤੇ ਲਿਸਟ ਅਪਡੇਟ (ਲੈਂਗੂਏਜ ਟੌਗਲ)
     setInterval(() => {
         langFlash = !langFlash;
+        
+        // ਸਕੋਰਬੋਰਡ ਟਾਈਟਲਸ
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
         document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
         document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
         document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
         
+        // ਰਿਜ਼ਲਟ ਟਾਈਟਲ
         const winTitle = document.getElementById('win-title-lang');
         if(currentResData && currentResData.active) {
             if(currentResData.isShared === true) {
@@ -130,7 +134,7 @@
             } else {
                 winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
             }
-            updateResultList();
+            updateResultList(); // ਨਾਮ ਦੇ ਨਾਲ ਪੁਜੀਸ਼ਨ ਵੀ ਫਲੈਸ਼ ਹੋਵੇਗੀ
         }
     }, 3000);
 
@@ -141,14 +145,18 @@
         let winHtml = "";
 
         winnersNames.forEach((name, i) => {
+            // ਜੇਕਰ ਬਾਜੀ ਸਾਂਝੀ ਹੈ - ਸਿਰਫ ਨੰਬਰ ਅਤੇ 🤝 ਦਿਖਾਓ
             if(currentResData.isShared === true) {
                 winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
-            } else {
+            } 
+            // ਜੇਕਰ ਨਤੀਜਾ ਨੋਰਮਲ ਹੈ - ਪਹਿਲਾ/ਦੂਜਾ ਅਤੇ 🏆 ਦਿਖਾਓ
+            else {
                 let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
                 winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
             }
         });
 
+        // ਲਿਸਟ ਰੈਂਡਰ
         if(winnersNames.length > 6) {
             resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
                 <div class="res-block">${winHtml}</div>
@@ -161,6 +169,7 @@
         }
     }
 
+    // ਘੜੀ
     setInterval(() => {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -170,6 +179,7 @@
 
     setInterval(() => { showDate = !showDate; }, 15000);
 
+    // ਫਾਇਰਬੇਸ ਡੇਟਾ
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
@@ -228,6 +238,7 @@
         });
     }
 
+    // ਐਨੀਮੇਸ਼ਨ
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
