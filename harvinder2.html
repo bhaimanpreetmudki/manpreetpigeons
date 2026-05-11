@@ -137,23 +137,25 @@
     }, 3000);
 
     function updateResultList() {
+     function updateResultList() {
         if(!currentResData || !currentResData.active) return;
         const resListArea = document.getElementById('winner-list-area');
         const winnersNames = currentResData.names || [];
         let winHtml = "";
 
         winnersNames.forEach((name, i) => {
+            // ਜੇਕਰ ਬਾਜੀ ਸਾਂਝੀ ਹੈ (isShared: true)
             if(currentResData.isShared === true) {
-                // ਬਾਜੀ ਸਾਂਝੀ - ਸਿਰਫ ਨੰਬਰ 1, 2, 3
                 winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
-            } else {
-                // ਰਿਜ਼ਲਟ (Winner) - ਪਹਿਲਾ, ਦੂਜਾ, ਤੀਜਾ
+            } 
+            // ਜੇਕਰ ਨਤੀਜਾ ਡਿਕਲੇਅਰ ਹੈ (ਨੋਰਮਲ ਵਿਨਰ)
+            else {
                 let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
                 winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
             }
         });
 
-        // 6 ਤੋਂ ਵੱਧ ਹੋਣ ਤੇ ਸਕ੍ਰੋਲ ਹੋਵੇਗਾ
+        // ਸਕ੍ਰੋਲਿੰਗ ਲੋਜਿਕ
         if(winnersNames.length > 6) {
             resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
                 <div class="res-block">${winHtml}</div>
