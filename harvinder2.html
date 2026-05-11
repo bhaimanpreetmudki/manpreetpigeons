@@ -137,6 +137,7 @@
     let langFlash = false, showDate = false, tickerPos = 0;
     let listPos = { fly: 0, time: 0, out: 0 };
     let lastCutTime = 0;
+    let currentResData = null; // Global storage for toggles
 
     setInterval(() => {
         langFlash = !langFlash;
@@ -145,7 +146,16 @@
         document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
         document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-        document.getElementById('win-title-lang').innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
+        
+        // Handle Result Title Toggle
+        const winTitle = document.getElementById('win-title-lang');
+        if(currentResData && currentResData.active) {
+            if(currentResData.isShared) {
+                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SANJHI";
+            } else {
+                winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
+            }
+        }
     }, 3000);
 
     setInterval(() => {
@@ -163,10 +173,11 @@
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
             const resData = data.resultOverlay || {};
+            currentResData = resData; // Update global
             
             const scoreDiv = document.getElementById('scoreboard-div');
             
-            // Result Active logic
+            // Scoreboard hide logic
             if (resData.active) {
                 scoreDiv.style.display = "none";
             } else {
@@ -176,7 +187,7 @@
             document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
 
-            // Weather
+            // Weather Logic
             const wBox = document.getElementById('weather-box');
             if(conf.showWeather && !resData.active) {
                 wBox.style.display = "block";
@@ -184,12 +195,12 @@
                 if(document.getElementById('weather-frame').src !== wUrl) document.getElementById('weather-frame').src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // Ticker
+            // Ticker Logic
             const tickerElem = document.getElementById('ticker-text');
             const txt = conf.ticker || "";
             tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
 
-            // Lists
+            // List Processing
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
@@ -220,16 +231,23 @@
                 setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
             }
 
-            // Result Box
+            // Result/Shared Box Logic
             const resBox = document.getElementById('result-overlay');
+            const resListArea = document.getElementById('winner-list-area');
             if(resData.active) {
                 resBox.style.display = "block";
-                let winHtml = "";
-                (resData.names || []).forEach((name, i) => {
-                    winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
-                });
-                document.getElementById('winner-list-area').innerHTML = winHtml;
-            } else { resBox.style.display = "none"; }
+                if(resData.isShared) {
+                    resListArea.innerHTML = `<div class="winner-item" style="justify-content: center; font-size: 80px; color: #2ecc71; width: 100%;">OK</div>`;
+                } else {
+                    let winHtml = "";
+                    (resData.names || []).forEach((name, i) => {
+                        winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
+                    });
+                    resListArea.innerHTML = winHtml;
+                }
+            } else { 
+                resBox.style.display = "none"; 
+            }
         });
     }
 
