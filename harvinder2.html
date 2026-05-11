@@ -113,24 +113,29 @@
     let lastCutTime = 0;
     let currentResData = null; 
 
-    // ਲੈਂਗੂਏਜ ਟੌਗਲ (3 ਸਕਿੰਟ ਬਾਅਦ)
-    setInterval(() => {
-        langFlash = !langFlash;
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-        
-        const winTitle = document.getElementById('win-title-lang');
-        if(currentResData && currentResData.active) {
-            if(currentResData.isShared) {
-                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
-            } else {
-                winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
-            }
+ // ਲੈਂਗੂਏਜ ਟੌਗਲ ਫੰਕਸ਼ਨ (ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ ਬਦਲੇਗਾ)
+setInterval(() => {
+    langFlash = !langFlash;
+    
+    // ਮੇਨ ਸਕੋਰਬੋਰਡ ਦੀਆਂ ਹੈਡਿੰਗਸ
+    document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
+    document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
+    document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
+    document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
+    document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+    
+    // ਰਿਜ਼ਲਟ ਓਵਰਲੇਅ ਦੀ ਹੈਡਿੰਗ (ਇੱਥੇ ਫਿਕਸ ਕੀਤਾ ਹੈ)
+    const winTitle = document.getElementById('win-title-lang');
+    if(currentResData && currentResData.active) {
+        if(currentResData.isShared === true) {
+            // ਜੇ ਬਾਜੀ ਸਾਂਝੀ ਹੈ ਤਾਂ ਇਹ ਦਿਖਾਓ
+            winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
+        } else {
+            // ਜੇ ਨਤੀਜਾ (Winner) ਹੈ ਤਾਂ ਇਹ ਦਿਖਾਓ
+            winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
         }
-    }, 3000);
+    }
+}, 3000);
 
     // ਕਲਾਕ
     setInterval(() => {
