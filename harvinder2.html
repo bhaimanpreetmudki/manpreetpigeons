@@ -433,47 +433,77 @@ setInterval(() => {
 
 /* RESULT UPDATE */
 
+/* EH PURA updateResultList FUNCTION REPLACE KAR */
+
 function updateResultList(){
 
     if(!currentResData || !currentResData.active) return;
 
     const area = document.getElementById("winner-list-area");
 
+    const title = document.getElementById("win-title-lang");
+
     const names = currentResData.names || [];
 
     let html = "";
 
-    names.forEach((name,i)=>{
+    /* =========================
+       BAJI SANJHI RESULT
+    ========================== */
 
-        /* BAJI SANJHI */
+    if(currentResData.isShared === true){
 
-        if(currentResData.isShared){
+        title.innerText = langFlash
+            ? "ਬਾਜੀ ਸਾਂਝੀ"
+            : "BAJI SHARED";
 
-            html += `
-            <div class="winner-item">
-                <span>${name}</span>
-            </div>
-            `;
-
-        }else{
-
-            /* WIN RESULT */
-
-            let posText = langFlash
-                ? (positionsPB[i] || `${i+1} ਇਨਾਮ`)
-                : (positionsEN[i] || `${i+1} PRIZE`);
+        names.forEach((name)=>{
 
             html += `
             <div class="winner-item">
-                <span>${posText}</span>
-                <span>${name}</span>
+                <span style="width:100%;text-align:center;">
+                    ${name}
+                </span>
             </div>
             `;
-        }
 
-    });
+        });
 
-    /* 6 TEAM TO JYADA = SCROLL */
+    }
+
+    /* =========================
+       NORMAL WIN RESULT
+    ========================== */
+
+    else{
+
+        title.innerText = langFlash
+            ? "ਅੰਤਿਮ ਨਤੀਜਾ"
+            : "FINAL RESULT";
+
+        names.forEach((name,i)=>{
+
+            html += `
+            <div class="winner-item">
+
+                <span>
+                    ${i+1} PRIZE
+                </span>
+
+                <span>
+                    ${name}
+                </span>
+
+            </div>
+            `;
+
+        });
+
+    }
+
+    /* =========================
+       AUTO SCROLL
+    ========================== */
 
     let scrollClass = names.length > 6
         ? "scroll-result"
