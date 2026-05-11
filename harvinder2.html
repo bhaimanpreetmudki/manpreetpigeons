@@ -9,92 +9,127 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* --- Result Box Modern --- */
-        #res-box-modern {
+        /* Weather Box */
+        #weather-box {
+            position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
+            display: none; overflow: hidden; background: transparent; z-index: 1001;
+        }
+        #weather-frame { 
+            width: 550px; height: 120px; border: none; pointer-events: none;
+            transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
+        }
+
+        /* Animations */
+        @keyframes sharpFlash {
+            0% { filter: brightness(1); transform: scale(1) skewX(-15deg); opacity: 1; }
+            50% { filter: brightness(10); transform: scale(1.2) skewX(-15deg); opacity: 1; }
+            100% { filter: brightness(1); transform: scale(1) skewX(-15deg); opacity: 0; }
+        }
+
+        @keyframes slowGhaintLight {
+            0% { left: -150%; }
+            30% { left: 150%; }
+            100% { left: 150%; } 
+        }
+
+        /* Result Overlay */
+        #result-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 700px; height: 500px; background: rgba(10, 10, 30, 0.95);
-            border: 10px solid #f39c12; border-radius: 20px; display: none; overflow: hidden; z-index: 9999;
+            width: 800px; background: rgba(0,0,0,0.9); border: 5px solid #f39c12;
+            border-radius: 30px; display: none; z-index: 5000; padding: 30px; text-align: center;
+            box-shadow: 0 0 50px rgba(243, 156, 18, 0.5);
         }
-        .res-header { background: #f39c12; color: #000; font-size: 40px; font-weight: 900; text-align: center; padding: 15px; }
-        .res-scroll-container { height: 380px; overflow: hidden; position: relative; }
-        .res-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; border-bottom: 2px solid #333; font-size: 35px; color: white; font-weight: 800; }
-        .res-rank { color: #f39c12; width: 250px; }
+        .winner-title { color: #f39c12; font-size: 60px; font-weight: 1000; margin-bottom: 20px; border-bottom: 3px solid #fff; }
+        .winner-item { color: #fff; font-size: 45px; font-weight: 800; margin: 10px 0; display: flex; justify-content: space-between; }
 
-        /* --- IPL Out Animation --- */
-        #ipl-out-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.4); z-index: 10000;
+        /* Out Animation Style */
+        #cut-anim-box {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) skewX(-15deg);
+            background: red; color: white; padding: 20px 60px; font-size: 80px; font-weight: 1000;
+            border: 8px solid white; display: none; z-index: 9999;
         }
-        .out-banner {
-            background: linear-gradient(90deg, transparent, #ff0000, #ff0000, transparent);
-            width: 100%; padding: 40px 0; text-align: center;
-            transform: scaleY(0); animation: bannerAnim 0.6s forwards ease-out;
-            border-top: 5px solid white; border-bottom: 5px solid white;
+
+        .main-container { 
+            position: absolute; left: 10px; right: 10px; bottom: 80px; 
+            height: 280px; display: flex; gap: 10px; justify-content: flex-start; 
         }
-        .out-text { color: white; font-size: 80px; font-weight: 900; text-shadow: 4px 4px #000; letter-spacing: 5px; }
-        @keyframes bannerAnim { to { transform: scaleY(1); } }
+        
+        .box { 
+            display: none; width: 32.5%; height: 100%; position: relative; 
+            border-radius: 25px; overflow: hidden; border: 4px solid #fff; 
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
 
-        /* --- Main UI --- */
-        .main-container { position: absolute; left: 10px; right: 10px; bottom: 85px; height: 300px; display: flex; gap: 10px; }
-        .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; overflow: hidden; border: 4px solid #fff; }
-        #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
-        #box-out { background: rgba(255, 0, 0, 0.85) !important; }
-        #box-time { background: rgba(255, 255, 0, 0.85) !important; }
+        #box-fly { background: rgba(0, 119, 255, 0.9) !important; }
+        #box-out { background: rgba(200, 0, 0, 0.9) !important; }
+        #box-time { background: rgba(204, 163, 0, 0.9) !important; }
 
-        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; background: #000; border-bottom: 3px solid white; border-left: 3px solid white; border-radius: 0 20px 0 20px; color: white; }
+        .header-wrapper { 
+            position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; 
+            background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
+            border-radius: 0 20px 0 20px; color: white;
+        }
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 26px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 32px; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
-        .sum-val-area { background: #ffcc00; color: #000; }
+        .sum-val-area { background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
 
-        .list-area { position: absolute; width: 100%; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
-        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; color: #000; }
-        #box-out .item { color: #fff; }
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
+        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; color: #fff; text-shadow: 2px 2px #000; }
 
-        .footer { position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); height: 65px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden; }
-        .live-tag { background: #ff0000; color: #fff; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; }
-        .ticker-wrap { flex: 1; overflow: hidden; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 34px; font-weight: 1000; color: #000; }
-        .dt-box-wrap { height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; }
+        .footer { 
+            position: absolute; bottom: 10px; left: 10px; width: calc(100% - 20px); height: 60px; 
+            background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
+        }
+        .live-tag { background: #ff0000; color: #fff; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; z-index: 25; }
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
+        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; color: #000; }
+        .dt-box-wrap { height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; z-index: 25; }
         #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
     </style>
 </head>
 <body>
 
-<div id="ipl-out-overlay">
-    <div class="out-banner"><div class="out-text">OUT: <span id="ipl-team-name">---</span></div></div>
+<!-- Cut Animation Box -->
+<div id="cut-anim-box">OUT: NAME</div>
+
+<!-- Result Overlay -->
+<div id="result-overlay">
+    <div class="winner-title" id="win-title-lang">WINNERS / ਨਤੀਜਾ</div>
+    <div id="winner-list-area"></div>
 </div>
 
-<div id="res-box-modern">
-    <div class="res-header">FINAL RESULT</div>
-    <div class="res-scroll-container"><div id="res-list-content"></div></div>
+<div id="weather-box">
+    <iframe id="weather-frame" src=""></iframe>
 </div>
 
 <div class="main-container" id="scoreboard-div">
+    <!-- FLY BOX -->
     <div id="box-fly" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
+            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+        <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-fly"></div></div>
     </div></div>
 
+    <!-- OUT BOX -->
     <div id="box-out" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
+            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+        <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-out"></div></div>
     </div></div>
 
+    <!-- TIME BOX -->
     <div id="box-time" class="box"><div class="box-inner">
         <div class="header-wrapper">
-            <div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
+            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div>
         </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+        <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-time"></div></div>
     </div></div>
 </div>
 
@@ -110,111 +145,20 @@
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
 
+    let langFlash = false, showDate = false, tickerPos = 0;
     let listPos = { fly: 0, time: 0, out: 0 };
-    let tickerPos = 0;
-    let resPos = 0;
-    let showDate = false;
+    let lastCutTime = 0;
 
-    if(userID) {
-        // 1. Result Overlay Listen
-        db.ref('users/' + userID + '/resultOverlay').on('value', snap => {
-            const res = snap.val();
-            const box = document.getElementById('res-box-modern');
-            if(res && res.active) {
-                box.style.display = "block";
-                let html = "";
-                // Reverse to show latest result on top
-                const names = [...res.names].reverse();
-                names.forEach((n, i) => {
-                    let rankText = (i+1) == 1 ? "1st / ਪਹਿਲਾ" : (i+1) == 2 ? "2nd / ਦੂਜਾ" : (i+1) == 3 ? "3rd / ਤੀਜਾ" : (i+1) + "th";
-                    html += `<div class="res-item"><div class="res-rank">${rankText}</div><div class="res-team">${n}</div></div>`;
-                });
-                document.getElementById('res-list-content').innerHTML = html;
-            } else { box.style.display = "none"; }
-        });
-
-        // 2. Cut Animation Listen
-        db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
-            const anim = snap.val();
-            if(anim && anim.name) {
-                const iplOverlay = document.getElementById('ipl-out-overlay');
-                document.getElementById('ipl-team-name').innerText = anim.name;
-                iplOverlay.style.display = "flex";
-                setTimeout(() => { iplOverlay.style.display = "none"; }, 5000);
-            }
-        });
-
-        // 3. Main Data Update
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const pigeons = data.pigeons || [];
-            const conf = data.config || {};
-
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-            document.querySelector('.footer').style.display = conf.showTicker ? "flex" : "none";
-            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
-
-            const tickerElem = document.getElementById('ticker-text');
-            const txt = conf.ticker || "";
-            tickerElem.innerHTML = `<div class="ticker-content">${txt} &nbsp;&nbsp;&nbsp;</div><div class="ticker-content">${txt} &nbsp;&nbsp;&nbsp;</div>`;
-
-            let htmlArr = { fly:[], out:[], time:[] };
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
-                if (htmlArr[p.status]) htmlArr[p.status].push(row);
-            });
-
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
-
-            ['fly','time','out'].forEach(id => {
-                const area = document.getElementById(`list-${id}`);
-                const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0 && conf.showScoreboard) {
-                    box.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
-                    const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div>`;
-                } else { box.style.display = "none"; }
-            });
-        });
-    }
-
-    // Animation Loop
-    function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                listPos[id] -= 1.0;
-                let firstBlock = area.querySelector('.content-block');
-                if(firstBlock) {
-                    let resetPoint = firstBlock.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                    area.style.transform = `translate3d(0, ${listPos[id]}px, 0)`;
-                }
-            }
-        });
-
-        // Ticker
-        const tMove = document.getElementById('ticker-text');
-        if (tMove && tMove.scrollWidth > 0) {
-            tickerPos -= 1.5;
-            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
-            tMove.style.transform = `translate3d(${tickerPos}px, 0, 0)`;
-        }
-
-        // Result Scroll
-        const resArea = document.getElementById('res-list-content');
-        if(document.getElementById('res-box-modern').style.display === "block" && resArea.offsetHeight > 380) {
-            resPos -= 0.8;
-            if(Math.abs(resPos) >= resArea.offsetHeight / 2) resPos = 0;
-            resArea.style.transform = `translate3d(0, ${resPos}px, 0)`;
-        }
-
-        requestAnimationFrame(animate);
-    }
-    animate();
+    // Language Toggles
+    setInterval(() => {
+        langFlash = !langFlash;
+        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
+        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
+        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
+        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
+        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+        document.getElementById('win-title-lang').innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
+    }, 3000);
 
     // Clock
     setInterval(() => {
@@ -223,7 +167,98 @@
         const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
         document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
     }, 1000);
-    setInterval(() => { showDate = !showDate; }, 10000);
+
+    setInterval(() => { showDate = !showDate; }, 15000);
+
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const pigeons = data.pigeons || [];
+            const conf = data.config || {};
+            
+            // UI Controls
+            document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
+            document.getElementById('scoreboard-div').style.display = conf.showScoreboard !== false ? "flex" : "none";
+            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
+
+            // Weather
+            const wBox = document.getElementById('weather-box');
+            if(conf.showWeather) {
+                wBox.style.display = "block";
+                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${conf.lat || "30.598"}&lon=${conf.lon || "74.738"}&name=${encodeURIComponent(conf.pindName || "")}`;
+                if(document.getElementById('weather-frame').src !== wUrl) document.getElementById('weather-frame').src = wUrl;
+            } else { wBox.style.display = "none"; }
+
+            // Ticker
+            const tickerElem = document.getElementById('ticker-text');
+            const txt = conf.ticker || "";
+            tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
+
+            // List Processing
+            let htmlArr = { fly:[], out:[], time:[] };
+            pigeons.forEach((p, idx) => {
+                let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
+                if(htmlArr[p.status]) htmlArr[p.status].push(row);
+            });
+
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
+
+            ['fly','time','out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                const box = document.getElementById(`box-${id}`);
+                if(htmlArr[id].length > 0 && conf.showScoreboard !== false) {
+                    box.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
+                    const content = htmlArr[id].join('');
+                    area.innerHTML = `<div class="block">${content}</div><div style="height:350px"></div><div class="block">${content}</div>`;
+                } else { box.style.display = "none"; }
+            });
+
+            // Cut Animation Logic
+            if(data.cutAnimation && data.cutAnimation.time > lastCutTime) {
+                lastCutTime = data.cutAnimation.time;
+                const animBox = document.getElementById('cut-anim-box');
+                animBox.innerText = `OUT: ${data.cutAnimation.name}`;
+                animBox.style.display = "block";
+                animBox.style.animation = "sharpFlash 4s forwards";
+                setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
+            }
+
+            // Result Overlay Logic
+            const resData = data.resultOverlay || {};
+            const resBox = document.getElementById('result-overlay');
+            if(resData.active) {
+                resBox.style.display = "block";
+                let winHtml = "";
+                (resData.names || []).forEach((name, i) => {
+                    winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
+                });
+                document.getElementById('winner-list-area').innerHTML = winHtml;
+            } else { resBox.style.display = "none"; }
+        });
+    }
+
+    function animate() {
+        ['fly', 'time', 'out'].forEach(id => {
+            const area = document.getElementById(`list-${id}`);
+            if (area && area.parentElement.parentElement.style.display !== "none") {
+                listPos[id] -= 1.2;
+                let block = area.querySelector('.block');
+                if(block) {
+                    let resetPoint = block.offsetHeight + 350;
+                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
+                    area.style.transform = `translateY(${listPos[id]}px)`;
+                }
+            }
+        });
+        tickerPos -= 2.0;
+        const tMove = document.getElementById('ticker-text');
+        if(tMove && Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
+        if(tMove) tMove.style.transform = `translateX(${tickerPos}px)`;
+        requestAnimationFrame(animate);
+    }
+    animate();
 </script>
 </body>
 </html>
