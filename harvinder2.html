@@ -383,33 +383,24 @@ const db = firebase.database();
 const userID = new URLSearchParams(window.location.search).get('id');
 
 let langFlash = false;
-
 let currentResData = null;
 
 const positionsPB = [
-    "ਪਹਿਲਾ",
-    "ਦੂਜਾ",
-    "ਤੀਜਾ",
-    "ਚੌਥਾ",
-    "ਪੰਜਵਾਂ",
-    "ਛੇਵਾਂ",
-    "ਸੱਤਵਾਂ",
-    "ਅੱਠਵਾਂ",
-    "ਨੌਵਾਂ",
-    "ਦਸਵਾਂ"
+    "ਪਹਿਲਾ ਇਨਾਮ",
+    "ਦੂਜਾ ਇਨਾਮ",
+    "ਤੀਜਾ ਇਨਾਮ",
+    "ਚੌਥਾ ਇਨਾਮ",
+    "ਪੰਜਵਾਂ ਇਨਾਮ",
+    "ਛੇਵਾਂ ਇਨਾਮ"
 ];
 
 const positionsEN = [
-    "1ST",
-    "2ND",
-    "3RD",
-    "4TH",
-    "5TH",
-    "6TH",
-    "7TH",
-    "8TH",
-    "9TH",
-    "10TH"
+    "1ST PRIZE",
+    "2ND PRIZE",
+    "3RD PRIZE",
+    "4TH PRIZE",
+    "5TH PRIZE",
+    "6TH PRIZE"
 ];
 
 /* TITLE FLASH */
@@ -418,19 +409,19 @@ setInterval(() => {
 
     langFlash = !langFlash;
 
-    const winTitle = document.getElementById('win-title-lang');
-
     if(currentResData && currentResData.active){
 
-        if(currentResData.isShared === true){
+        const title = document.getElementById("win-title-lang");
 
-            winTitle.innerText = langFlash
+        if(currentResData.isShared){
+
+            title.innerText = langFlash
                 ? "ਬਾਜੀ ਸਾਂਝੀ"
                 : "BAJI SHARED";
 
         }else{
 
-            winTitle.innerText = langFlash
+            title.innerText = langFlash
                 ? "ਅੰਤਿਮ ਨਤੀਜਾ"
                 : "FINAL RESULT";
         }
@@ -440,24 +431,25 @@ setInterval(() => {
 
 },3000);
 
-/* RESULT LIST */
+/* RESULT UPDATE */
 
 function updateResultList(){
 
     if(!currentResData || !currentResData.active) return;
 
-    const resListArea = document.getElementById('winner-list-area');
+    const area = document.getElementById("winner-list-area");
 
-    const winnersNames = currentResData.names || [];
+    const names = currentResData.names || [];
 
-    let winHtml = "";
+    let html = "";
 
-    winnersNames.forEach((name,i)=>{
+    names.forEach((name,i)=>{
 
         /* BAJI SANJHI */
-        if(currentResData.isShared === true){
 
-            winHtml += `
+        if(currentResData.isShared){
+
+            html += `
             <div class="winner-item">
                 <span>${name}</span>
             </div>
@@ -465,40 +457,42 @@ function updateResultList(){
 
         }else{
 
-            /* NORMAL RESULT */
+            /* WIN RESULT */
 
             let posText = langFlash
-                ? (positionsPB[i] || i + 1)
-                : (positionsEN[i] || i + 1);
+                ? (positionsPB[i] || `${i+1} ਇਨਾਮ`)
+                : (positionsEN[i] || `${i+1} PRIZE`);
 
-            winHtml += `
+            html += `
             <div class="winner-item">
-                <span>${posText}: ${name}</span>
-                <span>🏆</span>
+                <span>${posText}</span>
+                <span>${name}</span>
             </div>
             `;
         }
 
     });
 
-    let scrollClass = winnersNames.length > 6
+    /* 6 TEAM TO JYADA = SCROLL */
+
+    let scrollClass = names.length > 6
         ? "scroll-result"
         : "";
 
-    let finalHtml = winHtml;
+    let finalHtml = html;
 
-    if(winnersNames.length > 6){
-        finalHtml += winHtml;
+    if(names.length > 6){
+        finalHtml += html;
     }
 
-    resListArea.innerHTML = `
+    area.innerHTML = `
         <div id="res-mover" class="${scrollClass}">
             ${finalHtml}
         </div>
     `;
 }
 
-/* FIREBASE LIVE */
+/* FIREBASE */
 
 if(userID){
 
@@ -510,26 +504,36 @@ if(userID){
 
         currentResData = data.resultOverlay || {};
 
-        const resBox = document.getElementById('result-overlay');
+        const resultBox = document.getElementById("result-overlay");
 
-        const scoreDiv = document.getElementById('scoreboard-div');
+        const scoreboard = document.getElementById("scoreboard-div");
+
+        /* RESULT DECLARE */
 
         if(currentResData.active){
 
-            scoreDiv.style.display = "none";
+            /* SCOREBOARD HIDE */
 
-            resBox.style.display = "block";
+            scoreboard.style.display = "none";
+
+            /* RESULT SHOW */
+
+            resultBox.style.display = "block";
 
             updateResultList();
 
         }else{
 
-            scoreDiv.style.display = "flex";
+            /* SCOREBOARD SHOW */
 
-            resBox.style.display = "none";
+            scoreboard.style.display = "flex";
+
+            /* RESULT HIDE */
+
+            resultBox.style.display = "none";
         }
 
-        /* BOXES */
+        /* LIVE BOXES */
 
         const pigeons = data.pigeons || [];
 
@@ -543,7 +547,7 @@ if(userID){
 
             let row = `
             <div class="item">
-                ${idx + 1}. ${p.name}
+                ${idx+1}. ${p.name}
             </div>
             `;
 
@@ -579,7 +583,6 @@ if(userID){
     });
 
 }
-
 </script>
 
 </body>
