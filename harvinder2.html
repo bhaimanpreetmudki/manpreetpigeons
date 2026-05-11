@@ -26,12 +26,6 @@
             100% { filter: brightness(1); transform: scale(1) skewX(-15deg); opacity: 0; }
         }
 
-        @keyframes slowGhaintLight {
-            0% { left: -150%; }
-            30% { left: 150%; }
-            100% { left: 150%; } 
-        }
-
         /* Result Overlay */
         #result-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -91,10 +85,8 @@
 </head>
 <body>
 
-<!-- Cut Animation Box -->
 <div id="cut-anim-box">OUT: NAME</div>
 
-<!-- Result Overlay -->
 <div id="result-overlay">
     <div class="winner-title" id="win-title-lang">WINNERS / ਨਤੀਜਾ</div>
     <div id="winner-list-area"></div>
@@ -105,7 +97,6 @@
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <!-- FLY BOX -->
     <div id="box-fly" class="box"><div class="box-inner">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
@@ -114,7 +105,6 @@
         <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-fly"></div></div>
     </div></div>
 
-    <!-- OUT BOX -->
     <div id="box-out" class="box"><div class="box-inner">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
@@ -123,7 +113,6 @@
         <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-out"></div></div>
     </div></div>
 
-    <!-- TIME BOX -->
     <div id="box-time" class="box"><div class="box-inner">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
@@ -149,7 +138,6 @@
     let listPos = { fly: 0, time: 0, out: 0 };
     let lastCutTime = 0;
 
-    // Language Toggles
     setInterval(() => {
         langFlash = !langFlash;
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
@@ -160,7 +148,6 @@
         document.getElementById('win-title-lang').innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
     }, 3000);
 
-    // Clock
     setInterval(() => {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -171,18 +158,15 @@
     setInterval(() => { showDate = !showDate; }, 15000);
 
     if(userID) {
-        // ... (ਬਾਕੀ ਸਾਰਾ ਉੱਪਰ ਵਾਲਾ CSS ਅਤੇ HTML ਸੇਮ ਰਹੇਗਾ)
-
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
-            const resData = data.resultOverlay || {}; // Result data check
+            const resData = data.resultOverlay || {};
             
-            // UI Controls - Scoreboard hide logic added here
             const scoreDiv = document.getElementById('scoreboard-div');
             
-            // ਜੇਕਰ Result Active ਹੈ ਤਾਂ Scoreboard ਨੂੰ Hide ਕਰੋ, ਨਹੀਂ ਤਾਂ Show ਕਰੋ
+            // Result Active logic
             if (resData.active) {
                 scoreDiv.style.display = "none";
             } else {
@@ -192,20 +176,20 @@
             document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
 
-            // Weather Logic
+            // Weather
             const wBox = document.getElementById('weather-box');
-            if(conf.showWeather && !resData.active) { // Result ਵੇਲੇ ਮੌਸਮ ਵੀ ਲੁਕਾ ਸਕਦੇ ਹੋ
+            if(conf.showWeather && !resData.active) {
                 wBox.style.display = "block";
                 const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${conf.lat || "30.598"}&lon=${conf.lon || "74.738"}&name=${encodeURIComponent(conf.pindName || "")}`;
                 if(document.getElementById('weather-frame').src !== wUrl) document.getElementById('weather-frame').src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // Ticker Logic
+            // Ticker
             const tickerElem = document.getElementById('ticker-text');
             const txt = conf.ticker || "";
             tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
 
-            // List Processing
+            // Lists
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
@@ -218,19 +202,15 @@
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                
-                // ਸਿਰਫ ਉਦੋਂ ਦਿਖਾਓ ਜੇ ਸਕੋਰਬੋਰਡ ਚਾਲੂ ਹੈ ਅਤੇ ਰਿਜ਼ਲਟ ਐਕਟਿਵ ਨਹੀਂ ਹੈ
                 if(htmlArr[id].length > 0 && conf.showScoreboard !== false && !resData.active) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
                     area.innerHTML = `<div class="block">${content}</div><div style="height:350px"></div><div class="block">${content}</div>`;
-                } else { 
-                    box.style.display = "none"; 
-                }
+                } else { box.style.display = "none"; }
             });
 
-            // Cut Animation Logic
+            // Out Anim
             if(data.cutAnimation && data.cutAnimation.time > lastCutTime) {
                 lastCutTime = data.cutAnimation.time;
                 const animBox = document.getElementById('cut-anim-box');
@@ -240,7 +220,7 @@
                 setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
             }
 
-            // Result Overlay Display
+            // Result Box
             const resBox = document.getElementById('result-overlay');
             if(resData.active) {
                 resBox.style.display = "block";
@@ -249,12 +229,10 @@
                     winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
                 });
                 document.getElementById('winner-list-area').innerHTML = winHtml;
-            } else { 
-                resBox.style.display = "none"; 
-            }
+            } else { resBox.style.display = "none"; }
         });
+    }
 
-// ... (ਬਾਕੀ ਸਾਰਾ ਐਨੀਮੇਸ਼ਨ ਫੰਕਸ਼ਨ ਸੇਮ ਰਹੇਗਾ)
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
