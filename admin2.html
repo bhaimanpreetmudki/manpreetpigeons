@@ -120,26 +120,34 @@
     }
 
     // --- Winner Logic ---
-    function declareResult(mode) {
+  function declareResult(mode) {
         let winners = [];
         let limit = parseInt(document.getElementById('prizeLimit').value) || 3;
         let pigeons = [...(localData.pigeons || [])];
+        let sharedFlag = false; // ਨਵਾਂ ਵੇਰੀਏਬਲ
 
         if(mode === 'auto') {
-            // 1. ਜੋ ਅਜੇ ਉੱਡ ਰਿਹਾ (FLY) ਹੈ ਉਹ ਸਭ ਤੋਂ ਉੱਪਰ (1st)
+            // AUTO WINNERS ਲਈ ਲੋਜਿਕ
             let flying = pigeons.filter(p => p.status === 'fly');
-            // 2. ਜੋ OUT ਹੋਏ ਉਹਨਾਂ ਦੇ OutTime ਮੁਤਾਬਕ (Latest out first)
             let outList = pigeons.filter(p => p.status === 'out' || p.status === 'time')
                                  .sort((a,b) => (b.outTime || 0) - (a.outTime || 0));
             
             winners = [...flying, ...outList].slice(0, limit).map(p => p.name);
+            sharedFlag = false; // ਨੋਰਮਲ ਰਿਜ਼ਲਟ
         } else {
+            // BAJI SHARED ਲਈ ਲੋਜਿਕ
             winners = pigeons.filter(p => p.status === 'fly').map(p => p.name);
+            sharedFlag = true; // ਇਹ ਬਾਜੀ ਸਾਂਝੀ ਹੈ
         }
 
-        db.ref('users/' + userID + '/resultOverlay').set({ active: true, names: winners });
+        // ਡੇਟਾਬੇਸ ਵਿੱਚ isShared ਭੇਜਣਾ ਜ਼ਰੂਰੀ ਹੈ
+        db.ref('users/' + userID + '/resultOverlay').set({ 
+            active: true, 
+            names: winners, 
+            isShared: sharedFlag,
+            title: sharedFlag ? "BAJI SHARED" : "FINAL RESULT" 
+        });
     }
-
     function setStatus(id, s) {
         let pList = [...localData.pigeons];
         const idx = pList.findIndex(p => p.id === id);
