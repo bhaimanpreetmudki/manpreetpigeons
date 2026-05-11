@@ -113,24 +113,53 @@
     let lastCutTime = 0;
     let currentResData = null; 
 
-    // ਲੈਂਗੂਏਜ ਟੌਗਲ (3 ਸਕਿੰਟ ਬਾਅਦ)
-    setInterval(() => {
-        langFlash = !langFlash;
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-        
-        const winTitle = document.getElementById('win-title-lang');
-        if(currentResData && currentResData.active) {
-            if(currentResData.isShared) {
-                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
-            } else {
-                winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
-            }
+   // ਲੈਂਗੂਏਜ ਟੌਗਲ ਫੰਕਸ਼ਨ
+setInterval(() => {
+    langFlash = !langFlash;
+    
+    // ਬਾਕੀ ਹੈਡਿੰਗਸ...
+    document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
+    document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
+    document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
+    document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
+    document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+    
+    // ਰਿਜ਼ਲਟ ਟਾਈਟਲ ਲੋਜਿਕ
+    const winTitle = document.getElementById('win-title-lang');
+    if(currentResData && currentResData.active) {
+        if(currentResData.isShared === true) {
+            // ਜੇ ਬਾਜੀ ਸਾਂਝੀ ਹੈ
+            winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
+        } else {
+            // ਜੇ ਨਤੀਜਾ ਨਿਕਲਿਆ ਹੈ ਤਾਂ "ਪਹਿਲਾ ਇਨਾਮ" ਜਾਂ "1ST WINNER" ਦਿਖਾਓ
+            winTitle.innerText = langFlash ? "ਪਹਿਲਾ ਇਨਾਮ" : "1ST WINNER";
         }
-    }, 3000);
+    }
+}, 3000);
+
+// ਲਿਸਟ ਅਪਡੇਟ ਫੰਕਸ਼ਨ (ਸਿਰਫ ਨਾਮ ਦਿਖਾਉਣ ਲਈ)
+function updateResultList() {
+    if(!currentResData || !currentResData.active) return;
+    const resListArea = document.getElementById('winner-list-area');
+    const winnersNames = currentResData.names || [];
+    let winHtml = "";
+
+    winnersNames.forEach((name, i) => {
+        // ਲਿਸਟ ਵਿੱਚ ਸਿਰਫ ਨੰਬਰ ਅਤੇ ਨਾਮ ਆਉਣਗੇ
+        winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
+    });
+
+    if(winnersNames.length > 6) {
+        resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
+            <div class="res-block">${winHtml}</div>
+            <div style="height:100px"></div>
+            <div class="res-block">${winHtml}</div>
+        </div>`;
+    } else {
+        resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
+        resResultPos = 0;
+    }
+}
 
     // ਕਲਾਕ
     setInterval(() => {
