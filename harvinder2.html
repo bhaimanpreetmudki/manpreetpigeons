@@ -13,16 +13,22 @@
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 950px; background: rgba(0,0,0,0.98); border: 8px solid #f39c12;
             border-radius: 40px; display: none; z-index: 5000; padding: 40px; text-align: center;
+            box-shadow: 0 0 70px rgba(243, 156, 18, 0.7);
         }
         .winner-title { color: #f39c12; font-size: 70px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
-        .winner-item { color: #fff; font-size: 52px; font-weight: 900; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
+        /* Scrolling Area for Result */
+        #winner-list-area { max-height: 550px; overflow: hidden; position: relative; }
+        .res-mover { display: flex; flex-direction: column; transition: transform 0.1s linear; }
+        
+        .winner-item { color: #fff; font-size: 52px; font-weight: 900; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
         .main-container { position: absolute; left: 15px; right: 15px; bottom: 85px; height: 280px; display: flex; gap: 12px; }
         .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; border: 4px solid #fff; overflow: hidden; }
         #box-fly { background: rgba(0, 110, 255, 0.95); }
         #box-out { background: rgba(220, 0, 0, 0.95); }
         #box-time { background: rgba(210, 160, 0, 0.95); }
-        
+
         .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); background: #000; border-bottom: 3px solid #fff; border-left: 3px solid #fff; border-radius: 0 20px 0 20px; color: #fff; }
         .box-header { height: var(--header-h); display: flex; align-items: center; }
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; }
@@ -36,7 +42,9 @@
 
 <div id="result-overlay">
     <div class="winner-title" id="win-title">RESULT</div>
-    <div id="winner-list-area"></div>
+    <div id="winner-list-area">
+        <div id="res-scroll-content" class="res-mover"></div>
+    </div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
@@ -53,44 +61,66 @@
 
     let currentResData = null;
     let langFlash = false;
+    let resScrollPos = 0;
 
-    const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ"];
-    const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH"];
+    const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
+    const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH", "9TH", "10TH"];
 
     function updateDisplay() {
         if(!currentResData || !currentResData.active) return;
         
         const winTitleElem = document.getElementById('win-title');
-        const resArea = document.getElementById('winner-list-area');
+        const resContent = document.getElementById('res-scroll-content');
         const names = currentResData.names || [];
         
-        // 1. ਟਾਈਟਲ ਚੈੱਕ ਕਰੋ (ਜੇਕਰ ਟਾਈਟਲ ਵਿੱਚ 'SHARED' ਜਾਂ 'ਸਾਂਝੀ' ਲਿਖਿਆ ਹੈ)
+        // BAJI SHARED ਚੈੱਕ ਕਰੋ
         const rawTitle = (currentResData.title || "").toUpperCase();
         const isShared = rawTitle.includes("SHARED") || rawTitle.includes("ਸਾਂਝੀ") || currentResData.isShared === true;
 
-        // ਟਾਈਟਲ ਬਦਲੋ
         if(isShared) {
             winTitleElem.innerText = langFlash ? "BAJI SHARED" : "ਬਾਜੀ ਸਾਂਝੀ";
         } else {
             winTitleElem.innerText = langFlash ? "FINAL RESULT" : "ਅੰਤਿਮ ਨਤੀਜਾ";
         }
 
-        // 2. ਲਿਸਟ ਬਣਾਓ
         let html = "";
         names.forEach((name, i) => {
             if(isShared) {
-                // ਸਾਂਝੀ ਬਾਜੀ ਵਿੱਚ ਪੁਜੀਸ਼ਨ ਹਟਾ ਕੇ ਸਿਰਫ ਨੰਬਰ
                 html += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
             } else {
-                // ਨੋਰਮਲ ਵਿੱਚ ਪੁਜੀਸ਼ਨ (1st, 2nd)
                 let pos = langFlash ? positionsEN[i] || (i+1) : positionsPB[i] || (i+1);
                 html += `<div class="winner-item"><span>${pos}: ${name}</span> <span>🏆</span></div>`;
             }
         });
-        resArea.innerHTML = html;
+
+        // ਜੇਕਰ 6 ਤੋਂ ਵੱਧ ਟੀਮਾਂ ਹਨ ਤਾਂ ਲਿਸਟ ਡਬਲ ਕਰੋ (Scrolling ਲਈ)
+        if(names.length > 6) {
+            resContent.innerHTML = `<div class="res-block">${html}</div><div style="height:100px"></div><div class="res-block">${html}</div>`;
+        } else {
+            resContent.innerHTML = `<div class="res-block">${html}</div>`;
+            resScrollPos = 0;
+            resContent.style.transform = `translateY(0px)`;
+        }
     }
 
-    // ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ ਲੈਂਗੂਏਜ ਬਦਲੋ
+    // Scrolling ਐਨੀਮੇਸ਼ਨ
+    function animateResult() {
+        const resContent = document.getElementById('res-scroll-content');
+        const namesCount = currentResData ? (currentResData.names || []).length : 0;
+
+        if (currentResData && currentResData.active && namesCount > 6) {
+            resScrollPos -= 1.2;
+            const firstBlock = resContent.querySelector('.res-block');
+            if (firstBlock) {
+                const limit = firstBlock.offsetHeight + 100;
+                if (Math.abs(resScrollPos) >= limit) resScrollPos = 0;
+                resContent.style.transform = `translateY(${resScrollPos}px)`;
+            }
+        }
+        requestAnimationFrame(animateResult);
+    }
+    animateResult();
+
     setInterval(() => {
         langFlash = !langFlash;
         updateDisplay();
@@ -108,12 +138,12 @@
             if(currentResData.active) {
                 resBox.style.display = "block";
                 scoreDiv.style.display = "none";
+                resScrollPos = 0; // ਰੀਸੈੱਟ ਸਕ੍ਰੋਲ
                 updateDisplay();
             } else {
                 resBox.style.display = "none";
                 scoreDiv.style.display = "flex";
                 
-                // ਸਕੋਰਬੋਰਡ ਲਿਸਟਾਂ
                 const pigeons = data.pigeons || [];
                 let lists = { fly:[], out:[], time:[] };
                 pigeons.forEach((p, i) => {
