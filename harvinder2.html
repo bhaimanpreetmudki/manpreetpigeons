@@ -171,25 +171,36 @@
     setInterval(() => { showDate = !showDate; }, 15000);
 
     if(userID) {
+        // ... (ਬਾਕੀ ਸਾਰਾ ਉੱਪਰ ਵਾਲਾ CSS ਅਤੇ HTML ਸੇਮ ਰਹੇਗਾ)
+
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
+            const resData = data.resultOverlay || {}; // Result data check
             
-            // UI Controls
+            // UI Controls - Scoreboard hide logic added here
+            const scoreDiv = document.getElementById('scoreboard-div');
+            
+            // ਜੇਕਰ Result Active ਹੈ ਤਾਂ Scoreboard ਨੂੰ Hide ਕਰੋ, ਨਹੀਂ ਤਾਂ Show ਕਰੋ
+            if (resData.active) {
+                scoreDiv.style.display = "none";
+            } else {
+                scoreDiv.style.display = conf.showScoreboard !== false ? "flex" : "none";
+            }
+
             document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
-            document.getElementById('scoreboard-div').style.display = conf.showScoreboard !== false ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
 
-            // Weather
+            // Weather Logic
             const wBox = document.getElementById('weather-box');
-            if(conf.showWeather) {
+            if(conf.showWeather && !resData.active) { // Result ਵੇਲੇ ਮੌਸਮ ਵੀ ਲੁਕਾ ਸਕਦੇ ਹੋ
                 wBox.style.display = "block";
                 const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${conf.lat || "30.598"}&lon=${conf.lon || "74.738"}&name=${encodeURIComponent(conf.pindName || "")}`;
                 if(document.getElementById('weather-frame').src !== wUrl) document.getElementById('weather-frame').src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // Ticker
+            // Ticker Logic
             const tickerElem = document.getElementById('ticker-text');
             const txt = conf.ticker || "";
             tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
@@ -207,12 +218,16 @@
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0 && conf.showScoreboard !== false) {
+                
+                // ਸਿਰਫ ਉਦੋਂ ਦਿਖਾਓ ਜੇ ਸਕੋਰਬੋਰਡ ਚਾਲੂ ਹੈ ਅਤੇ ਰਿਜ਼ਲਟ ਐਕਟਿਵ ਨਹੀਂ ਹੈ
+                if(htmlArr[id].length > 0 && conf.showScoreboard !== false && !resData.active) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
                     area.innerHTML = `<div class="block">${content}</div><div style="height:350px"></div><div class="block">${content}</div>`;
-                } else { box.style.display = "none"; }
+                } else { 
+                    box.style.display = "none"; 
+                }
             });
 
             // Cut Animation Logic
@@ -225,8 +240,7 @@
                 setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
             }
 
-            // Result Overlay Logic
-            const resData = data.resultOverlay || {};
+            // Result Overlay Display
             const resBox = document.getElementById('result-overlay');
             if(resData.active) {
                 resBox.style.display = "block";
@@ -235,10 +249,12 @@
                     winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
                 });
                 document.getElementById('winner-list-area').innerHTML = winHtml;
-            } else { resBox.style.display = "none"; }
+            } else { 
+                resBox.style.display = "none"; 
+            }
         });
-    }
 
+// ... (ਬਾਕੀ ਸਾਰਾ ਐਨੀਮੇਸ਼ਨ ਫੰਕਸ਼ਨ ਸੇਮ ਰਹੇਗਾ)
     function animate() {
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
