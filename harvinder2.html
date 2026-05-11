@@ -454,16 +454,18 @@ function updateResultList(){
 
     winnersNames.forEach((name,i)=>{
 
+        /* BAJI SANJHI */
         if(currentResData.isShared === true){
 
             winHtml += `
             <div class="winner-item">
                 <span>${name}</span>
-                <span>🤝</span>
             </div>
             `;
 
         }else{
+
+            /* NORMAL RESULT */
 
             let posText = langFlash
                 ? (positionsPB[i] || i + 1)
