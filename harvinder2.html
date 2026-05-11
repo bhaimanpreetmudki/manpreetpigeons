@@ -12,12 +12,16 @@
         /* Result Overlay */
         #result-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 800px; background: rgba(0,0,0,0.95); border: 6px solid #f39c12;
-            border-radius: 35px; display: none; z-index: 5000; padding: 35px; text-align: center;
-            box-shadow: 0 0 60px rgba(243, 156, 18, 0.6);
+            width: 900px; background: rgba(0,0,0,0.95); border: 8px solid #f39c12;
+            border-radius: 40px; display: none; z-index: 5000; padding: 40px; text-align: center;
+            box-shadow: 0 0 70px rgba(243, 156, 18, 0.7);
         }
-        .winner-title { color: #f39c12; font-size: 65px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
-        .winner-item { color: #fff; font-size: 50px; font-weight: 900; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .winner-title { color: #f39c12; font-size: 70px; font-weight: 1000; margin-bottom: 25px; border-bottom: 4px solid #fff; padding-bottom: 10px; }
+        
+        /* Scroll Container for Results */
+        #winner-list-area { max-height: 480px; overflow: hidden; position: relative; margin-top: 10px; }
+        .res-scroll-container { display: flex; flex-direction: column; }
+        .winner-item { color: #fff; font-size: 55px; font-weight: 900; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
 
         /* Out Animation Style */
         #cut-anim-box {
@@ -43,7 +47,7 @@
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid #fff; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
-        .sum-val-area { background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
+        .sum-val-area { background: #ffcc00; color: #000; }
 
         .list-area { position: absolute; width: 100%; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
         .item { padding: 6px 22px; font-size: 38px; font-weight: 1000; color: #fff; text-shadow: 3px 3px #000; }
@@ -85,7 +89,7 @@
     <div id="box-time" class="box">
         <div class="header-wrapper">
             <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%;">--</div></div>
         </div>
         <div style="height:100%; overflow:hidden;"><div class="list-area" id="list-time"></div></div>
     </div>
@@ -105,32 +109,30 @@
 
     let langFlash = false, showDate = false, tickerPos = 0;
     let listPos = { fly: 0, time: 0, out: 0 };
+    let resResultPos = 0; 
     let lastCutTime = 0;
     let currentResData = null; 
 
-    // ਲੈਂਗੂਏਜ ਟੌਗਲ ਫੰਕਸ਼ਨ
+    // ਲੈਂਗੂਏਜ ਟੌਗਲ (3 ਸਕਿੰਟ ਬਾਅਦ)
     setInterval(() => {
         langFlash = !langFlash;
-        
-        // Main Scoreboard Titles
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
         document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
         document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
         document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
         document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
         
-        // Result Overlay Title (Baji Sanjhi Logic Fix)
         const winTitle = document.getElementById('win-title-lang');
         if(currentResData && currentResData.active) {
-            if(currentResData.isShared === true) {
-                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SANJHI";
+            if(currentResData.isShared) {
+                winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
             } else {
                 winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
             }
         }
     }, 3000);
 
-    // ਕਲਾਕ ਫੰਕਸ਼ਨ
+    // ਕਲਾਕ
     setInterval(() => {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -150,7 +152,7 @@
             
             const scoreDiv = document.getElementById('scoreboard-div');
             
-            // ਸਕੋਰਬੋਰਡ ਹਾਈਡ ਲੋਜਿਕ
+            // ਸਕੋਰਬੋਰਡ ਹਾਈਡ ਲੋਜਿਕ (ਜਦੋਂ ਰਿਜ਼ਲਟ ਚੱਲੇ)
             if (resData.active) {
                 scoreDiv.style.display = "none";
             } else {
@@ -160,12 +162,12 @@
             document.querySelector('.footer').style.display = conf.showTicker !== false ? "flex" : "none";
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
 
-            // ਟਿੱਕਰ ਟੈਕਸਟ
+            // ਟਿੱਕਰ
             const tickerElem = document.getElementById('ticker-text');
             const txt = conf.ticker || "";
             tickerElem.innerHTML = `<div class="ticker-content" style="padding-right:800px">${txt}</div><div class="ticker-content" style="padding-right:800px">${txt}</div>`;
 
-            // ਪਿਜਨ ਲਿਸਟ ਪ੍ਰੋਸੈਸਿੰਗ
+            // ਪਿਜਨ ਲਿਸਟ
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
                 let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
@@ -196,30 +198,37 @@
                 setTimeout(() => { animBox.style.display = "none"; animBox.style.animation = ""; }, 4000);
             }
 
-            // Result / Shared Overlay Logic
+            // Result / Shared Logic
             const resBox = document.getElementById('result-overlay');
             const resListArea = document.getElementById('winner-list-area');
             if(resData.active) {
                 resBox.style.display = "block";
                 if(resData.isShared === true) {
-                    // ਜੇ ਬਾਜੀ ਸਾਂਝੀ ਹੈ
-                    resListArea.innerHTML = `<div class="winner-item" style="justify-content: center; font-size: 100px; color: #2ecc71; width: 100%; text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);">OK</div>`;
+                    resListArea.innerHTML = `<div class="winner-item" style="justify-content: center; font-size: 110px; color: #2ecc71; width: 100%; text-shadow: 0 0 20px rgba(46, 204, 113, 0.4);">OK</div>`;
                 } else {
-                    // ਜੇ ਨਤੀਜਾ ਹੈ
                     let winHtml = "";
                     (resData.names || []).forEach((name, i) => {
                         winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🏆</span></div>`;
                     });
-                    resListArea.innerHTML = winHtml;
+
+                    if((resData.names || []).length > 6) {
+                        resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
+                            <div class="res-block">${winHtml}</div>
+                            <div style="height:100px"></div>
+                            <div class="res-block">${winHtml}</div>
+                        </div>`;
+                    } else {
+                        resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
+                        resResultPos = 0;
+                    }
                 }
-            } else { 
-                resBox.style.display = "none"; 
-            }
+            } else { resBox.style.display = "none"; }
         });
     }
 
     // ਐਨੀਮੇਸ਼ਨ ਲੂਪ
     function animate() {
+        // Scoreboard Scroll
         ['fly', 'time', 'out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
             if (area && area.parentElement.parentElement.style.display !== "none") {
@@ -232,10 +241,25 @@
                 }
             }
         });
+
+        // Result Scroll
+        const resMover = document.getElementById('res-mover');
+        if (resMover && currentResData && currentResData.active && !currentResData.isShared) {
+            const resBlock = resMover.querySelector('.res-block');
+            if(resBlock) {
+                resResultPos -= 1.0;
+                let resetLimit = resBlock.offsetHeight + 100;
+                if (Math.abs(resResultPos) >= resetLimit) resResultPos = 0;
+                resMover.style.transform = `translateY(${resResultPos}px)`;
+            }
+        }
+
+        // Ticker Scroll
         tickerPos -= 2.2;
         const tMove = document.getElementById('ticker-text');
         if(tMove && Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
         if(tMove) tMove.style.transform = `translateX(${tickerPos}px)`;
+
         requestAnimationFrame(animate);
     }
     animate();
