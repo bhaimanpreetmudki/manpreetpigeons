@@ -30,6 +30,37 @@
             border: 10px solid white; border-radius: 20px; display: none; z-index: 10000;
             animation: zoomInOut 0.5s infinite alternate;
         }
+        <!-- ਪਹਿਲਾਂ ਵਾਲੇ ਸਟਾਈਲ ਵਿੱਚ ਇਹ ਬਦਲਾਅ ਜੋੜੋ ਜਾਂ ਪੂਰਾ ਰਿਪਲੇਸ ਕਰੋ -->
+    /* IPL Out Animation Style */
+    #ipl-out-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        display: none; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.4); z-index: 10000;
+    }
+    .out-banner {
+        background: linear-gradient(90deg, transparent, #ff0000, #ff0000, transparent);
+        width: 100%; padding: 40px 0; text-align: center;
+        transform: scaleY(0); animation: bannerAnim 0.6s forwards ease-out;
+        border-top: 5px solid white; border-bottom: 5px solid white;
+    }
+    .out-text { color: white; font-size: 80px; font-weight: 900; text-shadow: 4px 4px #000; letter-spacing: 5px; }
+    @keyframes bannerAnim { to { transform: scaleY(1); } }
+
+    /* Result Box with Scroll */
+    #res-box-modern {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 700px; height: 500px; background: rgba(10, 10, 30, 0.95);
+        border: 10px solid #f39c12; border-radius: 20px; display: none; overflow: hidden;
+    }
+    .res-header { background: #f39c12; color: #000; font-size: 40px; font-weight: 900; text-align: center; padding: 15px; }
+    .res-scroll-container { height: 380px; overflow: hidden; position: relative; }
+    .res-item { 
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 15px 30px; border-bottom: 2px solid #333; font-size: 35px; color: white; font-weight: 800;
+    }
+    .res-rank { color: #f39c12; width: 150px; }
+    .flash-lang { animation: flashText 2s infinite; }
+    @keyframes flashText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes zoomInOut { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.2); } }
 
         /* Existing Styles ... */
@@ -69,10 +100,18 @@
     <ul id="res-list-items" class="res-list"></ul>
 </div>
 
-<!-- Cut Animation -->
-<div id="cut-anim">OUT: <span id="cut-name">---</span></div>
+<div id="ipl-out-overlay">
+    <div class="out-banner">
+        <div class="out-text">OUT: <span id="ipl-team-name">---</span></div>
+    </div>
+</div>
 
-<div id="weather-box"><iframe id="weather-frame" src=""></iframe></div>
+<div id="res-box-modern">
+    <div class="res-header">FINAL RESULT</div>
+    <div id="res-scroll-area" class="res-scroll-container">
+        <div id="res-list-content"></div>
+    </div>
+</div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box"><div class="box-inner">
@@ -118,30 +157,52 @@
 
     if(userID) {
         // --- 1. Listen for Result Overlay ---
-        db.ref('users/' + userID + '/resultOverlay').on('value', snap => {
-            const res = snap.val();
-            const resBox = document.getElementById('result-overlay-box');
-            if(res && res.active) {
-                document.getElementById('res-title').innerText = res.type === 'winners' ? "TODAY'S WINNERS" : "BAJI SHARED";
-                let listHtml = "";
-                res.names.forEach((n, i) => { listHtml += `<li>${i+1}. ${n}</li>`; });
-                document.getElementById('res-list-items').innerHTML = listHtml;
-                resBox.style.display = "block";
-            } else {
-                resBox.style.display = "none";
+       // Result Logic Update
+    db.ref('users/' + userID + '/resultOverlay').on('value', snap => {
+        const res = snap.val();
+        const box = document.getElementById('res-box-modern');
+        if(res && res.active) {
+            box.style.display = "block";
+            let html = "";
+            // Reverse list to show last out as 1st
+            const sortedNames = res.names.reverse(); 
+            sortedNames.forEach((n, i) => {
+                let rankText = (i+1) == 1 ? "1st / ਪਹਿਲਾ" : (i+1) == 2 ? "2nd / ਦੂਜਾ" : (i+1) == 3 ? "3rd / ਤੀਜਾ" : (i+1) + "th";
+                html += `<div class="res-item">
+                            <div class="res-rank flash-lang">${rankText}</div>
+                            <div class="res-team">${n}</div>
+                         </div>`;
+            });
+            const content = document.getElementById('res-list-content');
+            content.innerHTML = html;
+            
+            // Auto scroll if items > 6
+            if(sortedNames.length > 6) {
+                startResultScroll();
             }
-        });
+        } else { box.style.display = "none"; }
+    });
 
-        // --- 2. Listen for Cut Animation ---
-        db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
-            const anim = snap.val();
-            if(anim && anim.name) {
-                const animDiv = document.getElementById('cut-anim');
-                document.getElementById('cut-name').innerText = anim.name;
-                animDiv.style.display = "block";
-                setTimeout(() => { animDiv.style.display = "none"; }, 5000);
-            }
-        });
+    db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
+        const anim = snap.val();
+        if(anim && anim.name) {
+            const iplOverlay = document.getElementById('ipl-out-overlay');
+            document.getElementById('ipl-team-name').innerText = anim.name;
+            iplOverlay.style.display = "flex";
+            setTimeout(() => { iplOverlay.style.display = "none"; }, 5000);
+        }
+    });
+
+    let resPos = 0;
+    function startResultScroll() {
+        const area = document.getElementById('res-list-content');
+        setInterval(() => {
+            resPos -= 1;
+            if(Math.abs(resPos) >= area.offsetHeight / 2) resPos = 0;
+            area.style.transform = `translateY(${resPos}px)`;
+        }, 30);
+    }
+</script>
 
         // --- 3. Main Data Update ---
         db.ref('users/' + userID).on('value', snap => {
