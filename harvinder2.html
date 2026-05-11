@@ -117,22 +117,26 @@
 setInterval(() => {
     langFlash = !langFlash;
     
-    // ਬਾਕੀ ਹੈਡਿੰਗਸ...
+   // ਲੈਂਗੂਏਜ ਟੌਗਲ (ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ)
+setInterval(() => {
+    langFlash = !langFlash;
+    
+    // ਬਾਕੀ ਹੈਡਿੰਗਸ (Flying, Out, Time)
     document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
     document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
     document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
     document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
     document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
     
-    // ਰਿਜ਼ਲਟ ਟਾਈਟਲ ਲੋਜਿਕ
+    // ਰਿਜ਼ਲਟ ਦਾ ਟਾਈਟਲ (ਤੁਹਾਡੀ ਮੰਗ ਮੁਤਾਬਕ)
     const winTitle = document.getElementById('win-title-lang');
     if(currentResData && currentResData.active) {
         if(currentResData.isShared === true) {
-            // ਜੇ ਬਾਜੀ ਸਾਂਝੀ ਹੈ
+            // ਜਦੋਂ "Baji Sanji" ਬਟਨ ਦਬਾਇਆ ਹੋਵੇ
             winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
         } else {
-            // ਜੇ ਨਤੀਜਾ ਨਿਕਲਿਆ ਹੈ ਤਾਂ "ਪਹਿਲਾ ਇਨਾਮ" ਜਾਂ "1ST WINNER" ਦਿਖਾਓ
-            winTitle.innerText = langFlash ? "ਪਹਿਲਾ ਇਨਾਮ" : "1ST WINNER";
+            // ਜਦੋਂ "Declare Result" (Winner) ਬਟਨ ਦਬਾਇਆ ਹੋਵੇ
+            winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
         }
     }
 }, 3000);
