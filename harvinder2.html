@@ -87,9 +87,9 @@
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
 
-    let langFlash = false, showDate = false;
+    let langFlash = false;
     let listPos = { fly: 0, time: 0, out: 0 };
-    let resResultPos = 0, tickerPos = 0;
+    let resResultPos = 0;
     let currentResData = null; 
 
     const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
@@ -97,16 +97,10 @@
 
     setInterval(() => {
         langFlash = !langFlash;
-        
-        // ਸਕੋਰਬੋਰਡ ਟਾਈਟਲਸ
-        const tFly = document.getElementById('title-fly');
-        if(tFly) tFly.innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        
-        // ਰਿਜ਼ਲਟ ਟਾਈਟਲ ਲੋਜਿਕ
         const winTitle = document.getElementById('win-title-lang');
         if(currentResData && currentResData.active) {
-            // ਜੇਕਰ isShared true ਹੈ ਜਾਂ ਟਾਈਟਲ ਵਿੱਚ 'SHARED' ਲਿਖਿਆ ਹੈ
-            if(currentResData.isShared === true || (currentResData.title && currentResData.title.toUpperCase().includes('SHARED'))) {
+            // ਟਾਈਟਲ ਚੈੱਕ: ਜੇਕਰ Shared ਹੈ
+            if(currentResData.isShared === true) {
                 winTitle.innerText = langFlash ? "ਬਾਜੀ ਸਾਂਝੀ" : "BAJI SHARED";
             } else {
                 winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
@@ -121,30 +115,19 @@
         const winnersNames = currentResData.names || [];
         let winHtml = "";
 
-        // ਚੈੱਕ ਕਰੋ ਕਿ ਬਾਜੀ ਸਾਂਝੀ ਹੈ ਜਾਂ ਨਹੀਂ
-        const isActuallyShared = currentResData.isShared === true || (currentResData.title && currentResData.title.toUpperCase().includes('SHARED'));
-
         winnersNames.forEach((name, i) => {
-            if(isActuallyShared) {
-                // ਸਾਂਝੀ ਬਾਜੀ ਵਿੱਚ ਸਿਰਫ ਨੰਬਰ ਅਤੇ ਹੱਥ ਮਿਲਾਉਣ ਵਾਲਾ ਇਮੋਜੀ
+            // ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ ਬਦਲਾਅ ਇੱਥੇ ਹੈ
+            if(currentResData.isShared === true) {
+                // ਸਿਰਫ ਨਾਮ ਦਿਖਾਏਗਾ, "1st 2nd" ਨਹੀਂ
                 winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
             } else {
-                // ਨੋਰਮਲ ਰਿਜ਼ਲਟ ਵਿੱਚ ਪਹਿਲਾ, ਦੂਜਾ ਅਤੇ ਟਰਾਫੀ
+                // ਨੋਰਮਲ ਵਿੱਚ ਪੁਜੀਸ਼ਨ ਦਿਖਾਏਗਾ
                 let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
                 winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
             }
         });
 
-        if(winnersNames.length > 6) {
-            resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
-                <div class="res-block">${winHtml}</div>
-                <div style="height:100px"></div>
-                <div class="res-block">${winHtml}</div>
-            </div>`;
-        } else {
-            resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
-            resResultPos = 0;
-        }
+        resListArea.innerHTML = `<div id="res-mover">${winHtml}</div>`;
     }
 
     if(userID) {
@@ -152,9 +135,9 @@
             const data = snap.val(); if(!data) return;
             currentResData = data.resultOverlay || {};
             
-            const scoreDiv = document.getElementById('scoreboard-div');
             const resBox = document.getElementById('result-overlay');
-            
+            const scoreDiv = document.getElementById('scoreboard-div');
+
             if (currentResData.active) {
                 scoreDiv.style.display = "none";
                 resBox.style.display = "block";
@@ -164,7 +147,7 @@
                 resBox.style.display = "none";
             }
 
-            // ਬਾਕੀ ਲਿਸਟਾਂ ਅਪਡੇਟ ਕਰੋ (Fly, Out, Time)
+            // ਬਾਕੀ ਬਕਸੇ ਅਪਡੇਟ
             const pigeons = data.pigeons || [];
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
@@ -176,26 +159,11 @@
                 const box = document.getElementById(`box-${id}`);
                 if(htmlArr[id].length > 0 && !currentResData.active) {
                     box.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
-                    area.innerHTML = `<div class="block">${htmlArr[id].join('')}</div><div style="height:350px"></div><div class="block">${htmlArr[id].join('')}</div>`;
+                    area.innerHTML = `<div>${htmlArr[id].join('')}</div>`;
                 } else { box.style.display = "none"; }
             });
         });
     }
-
-    function animate() {
-        const resMover = document.getElementById('res-mover');
-        if (resMover && currentResData && currentResData.active) {
-            const resBlock = resMover.querySelector('.res-block');
-            if(resBlock) {
-                resResultPos -= 1.0;
-                if (Math.abs(resResultPos) >= resBlock.offsetHeight + 100) resResultPos = 0;
-                resMover.style.transform = `translateY(${resResultPos}px)`;
-            }
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
 </script>
 </body>
 </html>
