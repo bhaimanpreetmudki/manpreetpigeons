@@ -115,10 +115,8 @@
     const positionsPB = ["ਪਹਿਲਾ", "ਦੂਜਾ", "ਤੀਜਾ", "ਚੌਥਾ", "ਪੰਜਵਾਂ", "ਛੇਵਾਂ", "ਸੱਤਵਾਂ", "ਅੱਠਵਾਂ", "ਨੌਵਾਂ", "ਦਸਵਾਂ"];
     const positionsEN = ["1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH", "9TH", "10TH"];
 
-    // ਲੈਂਗੂਏਜ ਟੌਗਲ (ਹਰ 3 ਸਕਿੰਟ ਬਾਅਦ)
     setInterval(() => {
         langFlash = !langFlash;
-        
         document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
         document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
         document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
@@ -132,30 +130,25 @@
             } else {
                 winTitle.innerText = langFlash ? "ਅੰਤਿਮ ਨਤੀਜਾ" : "FINAL RESULT";
             }
-            updateResultList(); // ਲੈਂਗੂਏਜ ਬਦਲਣ ਤੇ ਲਿਸਟ ਵੀ ਅਪਡੇਟ ਕਰੋ
+            updateResultList();
         }
     }, 3000);
 
     function updateResultList() {
-     function updateResultList() {
         if(!currentResData || !currentResData.active) return;
         const resListArea = document.getElementById('winner-list-area');
         const winnersNames = currentResData.names || [];
         let winHtml = "";
 
         winnersNames.forEach((name, i) => {
-            // ਜੇਕਰ ਬਾਜੀ ਸਾਂਝੀ ਹੈ (isShared: true)
             if(currentResData.isShared === true) {
                 winHtml += `<div class="winner-item"><span>${i+1}. ${name}</span> <span>🤝</span></div>`;
-            } 
-            // ਜੇਕਰ ਨਤੀਜਾ ਡਿਕਲੇਅਰ ਹੈ (ਨੋਰਮਲ ਵਿਨਰ)
-            else {
+            } else {
                 let posText = langFlash ? (positionsPB[i] || i + 1) : (positionsEN[i] || i + 1);
                 winHtml += `<div class="winner-item"><span>${posText}: ${name}</span> <span>🏆</span></div>`;
             }
         });
 
-        // ਸਕ੍ਰੋਲਿੰਗ ਲੋਜਿਕ
         if(winnersNames.length > 6) {
             resListArea.innerHTML = `<div id="res-mover" class="res-scroll-container">
                 <div class="res-block">${winHtml}</div>
@@ -168,7 +161,6 @@
         }
     }
 
-    // ਕਲਾਕ
     setInterval(() => {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -250,7 +242,6 @@
             }
         });
 
-        // Result Scroll
         const resMover = document.getElementById('res-mover');
         if (resMover && currentResData && currentResData.active) {
             const resBlock = resMover.querySelector('.res-block');
