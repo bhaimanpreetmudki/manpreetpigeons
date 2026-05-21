@@ -99,7 +99,7 @@
             text-align: center;
         }
 
-        /* --- 📢 CUT FLASH ANIMATION STYLES (OPACITY FIX) --- */
+        /* --- 📢 CUT FLASH ANIMATION STYLES --- */
         #cut-flash-alert {
             position: absolute;
             top: 40%;
@@ -110,8 +110,8 @@
             width: 100%;
             padding: 25px 0;
             text-align: center;
-            z-index: 9999; /* ਸਭ ਤੋਂ ਉੱਪਰ ਦਿਖਾਉਣ ਲਈ ਜ਼ੈੱਡ-ਇੰਡੈਕਸ ਵਧਾਇਆ */
-            display: none; /* Initial display none */
+            z-index: 9999; 
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -292,6 +292,8 @@
     let isResultActive = false;
     
     let previousAnimationTime = null;
+    let cutTimeout1 = null;
+    let cutTimeout2 = null;
 
     setInterval(() => {
         langFlash = !langFlash;
@@ -373,11 +375,11 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // --- 📢 REAL-TIME CUT ANIMATION FIXED LOGIC ---
+            // --- 📢 REAL-TIME CUT ANIMATION CHECK ---
             if(data.cutAnimation && data.cutAnimation.time) {
                 let currentAnimTime = String(data.cutAnimation.time);
                 if(currentAnimTime !== previousAnimationTime) {
-                    previousAnimationTime = currentAnimTime; // ਸੇਵ ਸਟੇਟ
+                    previousAnimationTime = currentAnimTime; 
                     triggerCutFlash(data.cutAnimation.name);
                 }
             }
@@ -418,27 +420,32 @@
         });
     }
 
-    // --- ਫਲੈਸ਼ ਫੰਕਸ਼ਨ ਵਿੱਚ ਬਦਲਾਅ (Force-Reset-Class) ---
+    // --- ⚡ INSTANT RESET & FLASH LOGIC (FIXED FOR MULTIPLE CUTES) ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
         
+        // 1. ਜੇਕਰ ਪੁਰਾਣੇ ਟਾਈਮਰ ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੇ ਹਨ, ਤਾਂ ਉਹਨਾਂ ਨੂੰ ਤੁਰੰਤ ਖਤਮ ਕਰੋ
+        if (cutTimeout1) clearTimeout(cutTimeout1);
+        if (cutTimeout2) clearTimeout(cutTimeout2);
+
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੀ ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ ਨੂੰ ਬਿਲਕੁਲ ਹਟਾਓ
+        // 2. ਐਨੀਮੇਸ਼ਨ ਸਟੇਟ ਨੂੰ ਤੁਰੰਤ ਰੀਸੈੱਟ ਕਰੋ (Force Reset CSS)
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
-        
-        // ਟਰਿੱਗਰ ਰੀਸੈੱਟ ਕਰਨ ਲਈ ਟਾਈਮਆਊਟ
-        setTimeout(() => {
+        void alertBox.offsetWidth; // ਬ੍ਰਾਊਜ਼ਰ ਰੈਂਡਰਿੰਗ ਰੀਫ੍ਰੈਸ਼
+
+        // 3. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਤੁਰੰਤ ਸਟਾਰਟ ਕਰੋ
+        cutTimeout1 = setTimeout(() => {
             alertBox.classList.add('active');
             
-            // 4 ਸੈਕੰਡ (ਐਨੀਮੇਸ਼ਨ ਟਾਈਮ) ਖਤਮ ਹੋਣ 'ਤੇ ਕਲਾਸ ਸਾਫ਼ ਕਰੋ
-            setTimeout(() => {
+            // 4. 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ ਤੇ ਹੀ ਬੰਦ ਕਰੋ, ਪਰ ਜੇਕਰ ਕੋਈ ਹੋਰ ਕੱਟਿਆ ਗਿਆ ਤਾਂ ਇਹ ਟਾਈਮਰ ਉੱਪਰ ਕਲੀਅਰ ਹੋ ਜਾਵੇਗਾ
+            cutTimeout2 = setTimeout(() => {
                 alertBox.classList.remove('active');
                 alertBox.style.display = "none";
             }, 4000);
-        }, 50);
+        }, 30); // 30 ਮਿਲੀਸੈਕੰਡ ਦਾ ਗੈਪ ਰੀਸੈੱਟ ਹੋਣ ਲਈ ਕਾਫੀ ਹੈ
     }
 
     // --- ANIMATION FRAME LOOP ---
