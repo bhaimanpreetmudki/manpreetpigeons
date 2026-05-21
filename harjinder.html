@@ -126,6 +126,7 @@
             pointer-events: none;
         }
 
+        /* ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ */
         #cut-flash-alert.active { 
             display: flex !important;
             animation: alertPopup 4s ease-in-out forwards; 
@@ -382,7 +383,7 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // 📢 ਏਥੇ ਚੈੱਕ ਹੁੰਦਾ ਹੈ ਜਦੋਂ ਕੋਈ ਨਵਾਂ ਕਬੂਤਰ ਕੱਟਿਆ ਜਾਂਦਾ ਹੈ
+            // 📢 ਚੈੱਕ ਕਰੋ ਜੇ ਨਵਾਂ ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ ਹੈ
             if(data.cutAnimation && data.cutAnimation.time) {
                 let currentAnimTime = String(data.cutAnimation.time);
                 if(currentAnimTime !== previousAnimationTime) {
@@ -427,30 +428,30 @@
         });
     }
 
-    // ⚡ ਨਵਾਂ ਅਤੇ ਸੁਧਾਰਿਆ ਹੋਇਆ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ - ਹੁਣ ਹਰ ਕਬੂਤਰ ਕੱਟਣ 'ਤੇ ਚੱਲੇਗਾ!
+    // ⚡ ਸੁਧਾਰਿਆ ਹੋਇਆ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ - ਹੁਣ ਹਰ ਕਬੂਤਰ 'ਤੇ ਐਨੀਮੇਸ਼ਨ ਰੀਸੈੱਟ ਹੋ ਕੇ ਚੱਲੇਗੀ
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
         
-        // 1. ਪੁਰਾਣੇ ਚੱਲ ਰਹੇ ਟਾਈਮਰ ਬੰਦ ਕਰੋ
+        // 1. ਪੁਰਾਣੇ ਟਾਈਮਰ ਕਲੀਅਰ ਕਰੋ
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
         
-        // 2. ਨਵਾਂ ਨਾਮ ਸੈੱਟ ਕਰੋ
+        // 2. ਨਵਾਂ ਨਾਮ ਪਾਓ
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // 3. ਐਨੀਮੇਸ਼ਨ ਰੀਸੈੱਟ ਕਰੋ (ਕਲਾਸ ਹਟਾਓ ਅਤੇ ਲੁਕਾਓ)
+        // 3. ਐਨੀਮੇਸ਼ਨ ਪੂਰੀ ਤਰ੍ਹਾਂ ਰੀਸੈੱਟ ਕਰੋ (ਕਲਾਸ ਹਟਾਓ ਅਤੇ ਲੁਕਾਓ)
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
         
-        // ਬ੍ਰਾਊਜ਼ਰ ਰੀਫ੍ਰੈਸ਼ ਫੋਰਸ (Reflow)
+        // ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਰੀਫ੍ਰੈਸ਼ ਫੋਰਸ ਕਰਵਾਓ (Reflow)
         void alertBox.offsetWidth; 
         
-        // 4. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਲਾਗੂ ਕਰੋ
+        // 4. ਹੁਣ ਦੁਬਾਰਾ ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਲਾਓ
         alertBox.style.display = "flex";
         alertBox.classList.add('active');
         
-        // 5. 4 ਸੈਕਿੰਡ ਬਾਅਦ ਆਪਣੇ ਆਪ ਬੰਦ ਕਰੋ
+        // 5. 4 ਸੈਕਿੰਡ ਬਾਅਦ ਹਟਾਓ
         cutTimeout2 = setTimeout(() => {
             alertBox.classList.remove('active');
             alertBox.style.display = "none";
