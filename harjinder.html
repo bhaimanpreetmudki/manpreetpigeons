@@ -22,8 +22,7 @@
             transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
         }
 
-        /* --- ⚡ 🕒 ਘੜੀ ਲਈ ਤੇਜ਼ ਝਮਾਕਾ --- */
-        @keyframes clockSharpFlash {
+        @keyframes sharpFlash {
             0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
             50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
             100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
@@ -49,7 +48,7 @@
             box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9);
             z-index: 3000;
             overflow: hidden;
-            display: none;
+            display: none; 
             flex-direction: column;
         }
 
@@ -88,27 +87,31 @@
             will-change: transform;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
-        .res-text-content {
-            font-size: 32px;
-            font-weight: 900;
+        .res-item {
+            font-size: 36px;
+            font-weight: 1000;
             color: #ffffff;
             letter-spacing: 1.5px;
-            line-height: 1.6;
-            white-space: pre-wrap;
+            padding: 8px 10px;
             text-align: center;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* --- 💎 🔴 ਗੋਲ ਸ਼ੋਅ ਵਾਲਾ ਤੇਜ਼ ਝਮਾਕਾ ਸੈੱਟਅੱਪ (CIRCLE FLASH SETUP) --- */
+        /* --- 💎 🔴 ਗੋਲ ਸ਼ੋਅ ਵਾਲਾ ਤੇਜ਼ ਝਮਾਕਾ ਸੈੱਟਅੱਪ (CIRCLE FLASH ALERT) --- */
         #cut-flash-alert {
             position: absolute;
             top: 45%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(170,0,0,0.98) 0%, rgba(20,0,0,1) 100%);
+            width: 440px;
+            height: 440px;
+            background: radial-gradient(circle, rgba(160,0,0,0.98) 0%, rgba(15,15,15,1) 100%);
             border-radius: 50%;
             z-index: 9999; 
             display: none; 
@@ -118,8 +121,8 @@
             padding: 20px;
             text-align: center;
             pointer-events: none;
-            box-shadow: 0 0 60px rgba(255, 0, 0, 0.7), inset 0 0 30px rgba(0,0,0,0.8);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.8), inset 0 0 30px rgba(0,0,0,0.9);
+            opacity: 0;
         }
 
         /* ਹੀਰੇ ਵਾਂਗ ਚਮਕਦਾਰ ਘੁੰਮਣ ਵਾਲਾ ਬਾਰਡਰ ਇਫੈਕਟ */
@@ -130,24 +133,33 @@
             border-radius: 50%;
             background: conic-gradient(from 0deg, #ff0000, #ffffff, #ffcc00, #ff0000, #ffffff, #ff0000);
             z-index: -1;
-            animation: diamondRotate 1s linear infinite;
+            animation: diamondRotate 1.2s linear infinite;
         }
 
-        /* ਅੰਦਰਲਾ ਕਵਰ ਤਾਂ ਜੋ ਬਾਰਡਰ ਪਤਲਾ ਦਿਖੇ */
+        /* ਅੰਦਰਲਾ ਕਵਰ */
         #cut-flash-alert::after {
             content: "";
             position: absolute;
             top: 4px; left: 4px; right: 4px; bottom: 4px;
-            background: radial-gradient(circle, rgba(180,0,0,1) 0%, rgba(10,0,0,1) 100%);
+            background: radial-gradient(circle, rgba(160,0,0,1) 0%, rgba(10,10,10,1) 100%);
             border-radius: 50%;
             z-index: 0;
         }
 
-        /* ਜਦੋਂ ਐਕਟਿਵ ਹੋਵੇਗਾ */
+        /* ਜਦੋਂ ਐਕਟਿਵ ਹੋਵੇਗਾ ਤਾਂ ਇਹ ਐਨੀਮੇਸ਼ਨ ਚੱਲੇਗੀ */
         #cut-flash-alert.active { 
             display: flex !important;
-            transform: translate(-50%, -50%) scale(1);
-            animation: sharpCircleBrightness 0.5s ease-out;
+            animation: alertCirclePopup 4s ease-in-out forwards; 
+        }
+
+        .alert-main-title { 
+            font-size: 36px; font-weight: 1000; letter-spacing: 2px; color: #fff; 
+            text-shadow: 0 0 15px #000; z-index: 2; 
+            animation: textPulse 0.6s infinite alternate; 
+        }
+        .alert-pigeon-name { 
+            font-size: 50px; font-weight: 1000; color: #ffcc00; margin-top: 15px; 
+            text-shadow: 0 0 20px #000, 0 0 10px #fff; z-index: 2; 
         }
 
         /* ਹੀਰੇ ਵਾਂਗ ਲਾਈਟ ਘੁਮਾਉਣ ਲਈ */
@@ -155,27 +167,19 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ਆਉਂਦੇ ਸਾਰ ਵੱਜਣ ਵਾਲਾ ਤੇਜ਼ ਝਮਾਕਾ */
-        @keyframes sharpCircleBrightness {
-            0% { filter: brightness(1); }
-            20% { filter: brightness(15); }
-            40% { filter: brightness(15); }
-            100% { filter: brightness(1); }
-        }
-        
-        .alert-main-title { 
-            font-size: 38px; font-weight: 1000; letter-spacing: 2px; color: #fff; 
-            text-shadow: 0 0 15px #000; z-index: 2; 
-            animation: textPulse 0.6s infinite alternate; 
-        }
-        .alert-pigeon-name { 
-            font-size: 52px; font-weight: 1000; color: #ffcc00; margin-top: 15px; 
-            text-shadow: 0 0 20px #000, 0 0 10px #fff; z-index: 2; 
+        /* ਗੋਲ ਬਾਕਸ ਦੇ ਅੰਦਰ ਆਉਣ, ਝਮਾਕਾ ਮਾਰਨ ਅਤੇ ਬਾਹਰ ਜਾਣ ਦੀ ਐਨੀਮੇਸ਼ਨ */
+        @keyframes alertCirclePopup {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: brightness(1); }
+            8% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; filter: brightness(12); }
+            14% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+            88% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
+            94% { filter: brightness(2); transform: translate(-50%, -50%) scale(1.02); }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
         }
 
         @keyframes textPulse {
-            0% { transform: scale(0.96); filter: drop-shadow(0 0 2px #fff); }
-            100% { transform: scale(1.04); filter: drop-shadow(0 0 15px #ffcc00); }
+            0% { transform: scale(0.95); filter: drop-shadow(0 0 2px #fff); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
         }
 
         /* --- SCOREBOARD STRUCTURE --- */
@@ -214,12 +218,7 @@
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
-        
-        .sum-val-area { 
-            background: #ffcc00; 
-            color: #000; 
-            border-bottom-right-radius: 15px; 
-        }
+        .sum-val-area { background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
@@ -231,13 +230,6 @@
             position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; 
             background: #fff; display: flex; align-items: center; 
             border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
-        }
-
-        .footer::before {
-            content: ""; position: absolute; top: 0; width: 500px; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7) 50%, transparent);
-            animation: slowGhaintLight 20s infinite ease-in-out;
-            z-index: 35; pointer-events: none;
         }
 
         .live-tag { 
@@ -258,7 +250,7 @@
         }
         
         #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
-        .jhmaka-effect { animation: clockSharpFlash 0.5s ease-out; }
+        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -363,28 +355,47 @@
             const conf = data.config || {};
             const resOver = data.resultOverlay || {};
             
-            // Ticker Show/Hide
             const footerElem = document.querySelector('.footer');
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // --- RESULT SCREEN ---
+            // --- 🏆 WIN RESULT SCREEN HANDLING ---
             const resScreen = document.getElementById('result-screen');
             const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
 
             if(resOver.active === true) {
                 isResultActive = true;
-                resScreen.style.display = "flex";
-                scoreboardElem.style.display = "none";
+                resScreen.style.display = "flex";       
+                scoreboardElem.style.display = "none";  
                 document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
-                const detailsText = resOver.details || "NO DETAILS PROVIDED";
+                
+                let detailsText = resOver.details || "";
+                let linesArr = [];
+                
+                if(detailsText.trim() === "") {
+                    pigeons.forEach((p, idx) => {
+                        if(p.name && p.status === 'fly') { 
+                            let originalNumber = idx + 1;
+                            linesArr.push(`<div class="res-item">${originalNumber}. ${p.name.toUpperCase()}</div>`);
+                        }
+                    });
+                } else {
+                    let rawLines = detailsText.split(/[\n,]+/);
+                    rawLines.forEach(line => {
+                        if(line.trim() !== "") {
+                            linesArr.push(`<div class="res-item">${line.trim().toUpperCase()}</div>`);
+                        }
+                    });
+                }
+                
+                const finalHtmlContent = linesArr.join('');
                 
                 resArea.innerHTML = `
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>`;
+                    <div class="res-block">${finalHtmlContent}</div>
+                    <div style="height:150px"></div>
+                    <div class="res-block">${finalHtmlContent}</div>
+                    <div style="height:150px"></div>`;
             } else {
                 isResultActive = false;
                 resScreen.style.display = "none";
@@ -412,7 +423,7 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // --- 📢 REAL-TIME CUT ANIMATION CHECK ---
+            // ⚡ ਰੀਅਲ-ਟਾਈਮ ਅਨਲਿਮਟਿਡ ਝਮਾਕਾ ਚੈੱਕ ਸਿਸਟਮ ⚡
             if(data.cutAnimation && data.cutAnimation.time) {
                 let currentAnimTime = String(data.cutAnimation.time);
                 if(currentAnimTime !== previousAnimationTime) {
@@ -457,7 +468,7 @@
         });
     }
 
-    // --- ⚡ ਗੋਲ ਫਲੈਸ਼ ਟ੍ਰਿਗਰ ਫੰਕਸ਼ਨ ---
+    // ⚡ ਬਿਨਾਂ ਰਿਫ੍ਰੈਸ਼ ਰੀਅਲ-ਟਾਈਮ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ ⚡
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
@@ -465,32 +476,25 @@
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
 
-        // ਰੀਸੈੱਟ
+        // ਪੁਰਾਣੀ ਕਲਾਸ ਅਤੇ ਡਿਸਪਲੇਅ ਨੂੰ ਰੀਸੈੱਟ ਕਰੋ ਤਾਂ ਜੋ ਹਰ ਵਾਰ ਨਵਾਂ ਝਮਾਕਾ ਅਨਲਿਮਟਿਡ ਵੱਜੇ
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
-        void alertBox.offsetWidth; // Force Reflow
+        void alertBox.offsetWidth; // Force CSS Reflow
 
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
         cutTimeout1 = setTimeout(() => {
             alertBox.style.display = "flex";
-            // ਥੋੜਾ ਜਿਹਾ ਟਾਈਮਆਊਟ ਤਾਂ ਜੋ ਸਕੇਲ (Scale 0 to 1) ਵਾਲਾ ਇਫੈਕਟ ਸਮੂਥ ਚੱਲੇ
-            setTimeout(() => {
-                alertBox.classList.add('active');
-            }, 20);
+            alertBox.classList.add('active');
             
-            // 4 ਸੈਕੰਡ ਬਾਅਦ ਬੰਦ
+            // 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ 'ਤੇ ਪੂਰੀ ਤਰ੍ਹਾਂ ਹਟਾਓ
             cutTimeout2 = setTimeout(() => {
                 alertBox.classList.remove('active');
-                // ਛੁਪਾਉਣ ਤੋਂ ਪਹਿਲਾਂ ਸਕੇਲ ਡਾਊਨ ਐਨੀਮੇਸ਼ਨ ਲਈ ਟਾਈਮ
-                setTimeout(() => {
-                    alertBox.style.display = "none";
-                }, 400);
+                alertBox.style.display = "none";
             }, 4000);
-        }, 30);
+        }, 50); 
     }
 
-    // --- ANIMATION FRAME LOOP ---
     function animate() {
         if (!isResultActive) {
             ['fly', 'time', 'out'].forEach(id => {
@@ -511,10 +515,10 @@
         const resScreen = document.getElementById('result-screen');
         const resArea = document.getElementById('res-list-render');
         if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
-            resListPos -= 1.0;
+            resListPos -= 1.0; 
             let firstResBlock = resArea.querySelector('.res-block');
             if(firstResBlock) {
-                let resResetPoint = firstResBlock.offsetHeight + 300;
+                let resResetPoint = firstResBlock.offsetHeight + 150; 
                 if (Math.abs(resListPos) >= resResetPoint) resListPos = 0;
                 resArea.style.transform = `translateY(${resListPos}px)`;
             }
