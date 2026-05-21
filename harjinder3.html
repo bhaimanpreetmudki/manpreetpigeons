@@ -48,7 +48,7 @@
             box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9);
             z-index: 3000;
             overflow: hidden;
-            display: none;
+            display: none; 
             flex-direction: column;
         }
 
@@ -331,30 +331,32 @@
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // --- RESULT SCREEN HANDLING ---
+            // --- 🏆 WIN RESULT SCREEN LIVE TRIGGER HANDLING ---
             const resScreen = document.getElementById('result-screen');
             const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
 
+            // ⚡ ਜਦੋਂ ਐਡਮਿਨ ਪੈਨਲ ਤੋਂ active: true ਭੇਜਿਆ ਜਾਵੇਗਾ, ਸਿਰਫ਼ ਉਦੋਂ ਹੀ ਬਾਕਸ ਸ਼ੋਅ ਹੋਵੇਗਾ
             if(resOver.active === true) {
                 isResultActive = true;
-                resScreen.style.display = "flex";
-                scoreboardElem.style.display = "none";
+                resScreen.style.display = "flex";       
+                scoreboardElem.style.display = "none";  
                 document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
                 
                 let detailsText = resOver.details || "";
                 
-                // ⚡ ਸਾਂਝੀ ਬਾਜ਼ੀ ਦਾ ਆਟੋ ਲੋਜਿਕ: ਜੇਕਰ ਟੈਕਸਟ ਖਾਲੀ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ (fly) ਸਾਰੇ ਕਬੂਤਰ ਉਹਨਾਂ ਦੇ ਪੱਕੇ ਓਰਿਜਨਲ ਨੰਬਰ ਨਾਲ ਸ਼ੋਅ ਹੋਣਗੇ
+                // ⚡ ਜੇਕਰ ਟੈਕਸਟ ਬਾਕਸ ਬਿਲਕੁਲ ਖਾਲੀ ਹੈ, ਤਾਂ ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (status === 'fly') ਕਬੂਤਰਾਂ ਨੂੰ ਪੱਕੇ ਨੰਬਰਾਂ ਸਮੇਤ ਲੜੀਵਾਰ ਸ਼ੋਅ ਕਰੋ
                 if(detailsText.trim() === "") {
                     let sanjiRows = [];
                     pigeons.forEach((p, idx) => {
-                        if(p.name && p.status === 'fly') {
-                            let originalNumber = idx + 1; // ਜੋ ਐਡ/ਐਡਿਟ ਵੇਲੇ ਓਰਿਜਨਲ ਸੀਰੀਅਲ ਨੰਬਰ ਮਿਲਿਆ ਸੀ
+                        if(p.name && p.status === 'fly') { // ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰ ਹੀ ਸ਼ਾਮਿਲ ਹੋਣਗੇ
+                            let originalNumber = idx + 1; 
                             sanjiRows.push(`${originalNumber}. ${p.name.toUpperCase()}`);
                         }
                     });
                     detailsText = sanjiRows.join('\n');
                 } else {
+                    // ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਕੁਝ ਲਿਖਿਆ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ ਕਬੂਤਰਾਂ ਦੀ ਥਾਂ ਸਿਰਫ਼ ਬਾਕਸ ਵਾਲਾ ਟੈਕਸਟ ਹੀ ਸ਼ੋਅ ਹੋਵੇਗਾ
                     detailsText = detailsText.toUpperCase();
                 }
                 
