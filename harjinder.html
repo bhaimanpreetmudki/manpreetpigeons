@@ -1,492 +1,492 @@
 <!DOCTYPE html>
 <html lang="pa">
 <head>
-    <meta charset="UTF-8">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <style>
-        :root { 
-            --header-h: 65px; 
-            --header-w: 40%; 
-        }
-        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
-        body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; position: relative; }
+    <meta charset="UTF-8">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { 
+            --header-h: 65px; 
+            --header-w: 40%; 
+        }
+        * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
+        body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; position: relative; }
 
-        #weather-box {
-            position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
-            display: none; overflow: hidden; background: transparent; border: none; z-index: 1001;
-        }
+        #weather-box {
+            position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
+            display: none; overflow: hidden; background: transparent; border: none; z-index: 1001;
+        }
 
-        #weather-frame { 
-            width: 550px; height: 120px; border: none; pointer-events: none;
-            transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
-        }
+        #weather-frame { 
+            width: 550px; height: 120px; border: none; pointer-events: none;
+            transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
+        }
 
-        @keyframes sharpFlash {
-            0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
-            50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
-            100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
-        }
+        @keyframes sharpFlash {
+            0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
+            50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
+            100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
+        }
 
-        @keyframes slowGhaintLight {
-            0% { left: -150%; }
-            30% { left: 150%; }
-            100% { left: 150%; } 
-        }
+        @keyframes slowGhaintLight {
+            0% { left: -150%; }
+            30% { left: 150%; }
+            100% { left: 150%; } 
+        }
 
-        /* --- 🏆 WINNER RESULT BOX STYLES --- */
-        #result-screen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -55%);
-            width: 680px;
-            height: 480px;
-            background: rgba(15, 17, 19, 0.98);
-            border: 5px solid #f39c12;
-            border-radius: 30px;
-            box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9);
-            z-index: 3000;
-            overflow: hidden;
-            display: none;
-            flex-direction: column;
-        }
+        /* --- 🏆 WINNER RESULT BOX STYLES --- */
+        #result-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -55%);
+            width: 680px;
+            height: 480px;
+            background: rgba(15, 17, 19, 0.98);
+            border: 5px solid #f39c12;
+            border-radius: 30px;
+            box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9);
+            z-index: 3000;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+        }
 
-        #result-screen::before {
-            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 243, 156, 0.1) 50%, transparent);
-            animation: slowGhaintLight 10s infinite ease-in-out;
-            pointer-events: none; z-index: 3010;
-        }
+        #result-screen::before {
+            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 243, 156, 0.1) 50%, transparent);
+            animation: slowGhaintLight 10s infinite ease-in-out;
+            pointer-events: none; z-index: 3010;
+        }
 
-        .res-header {
-            background: #f39c12;
-            color: #000;
-            text-align: center;
-            padding: 15px 10px;
-            font-size: 38px;
-            font-weight: 1000;
-            letter-spacing: 2px;
-            border-bottom: 4px solid #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-            z-index: 3005;
-        }
+        .res-header {
+            background: #f39c12;
+            color: #000;
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 38px;
+            font-weight: 1000;
+            letter-spacing: 2px;
+            border-bottom: 4px solid #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 3005;
+        }
 
-        .res-scroll-window {
-            flex: 1;
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            background: #050505;
-            padding: 20px 25px;
-        }
+        .res-scroll-window {
+            flex: 1;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background: #050505;
+            padding: 20px 25px;
+        }
 
-        .res-list-area {
-            position: absolute;
-            width: calc(100% - 50px);
-            will-change: transform;
-            display: flex;
-            flex-direction: column;
-        }
+        .res-list-area {
+            position: absolute;
+            width: calc(100% - 50px);
+            will-change: transform;
+            display: flex;
+            flex-direction: column;
+        }
 
-        .res-text-content {
-            font-size: 32px;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: 1.5px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            text-align: center;
-        }
+        .res-text-content {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            text-align: center;
+        }
 
-        /* --- 📢 CUT FLASH ANIMATION STYLES --- */
-        #cut-flash-alert {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
-            color: #fff;
-            width: 100%;
-            padding: 25px 0;
-            text-align: center;
-            z-index: 9999; 
-            display: none; 
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-top: 5px solid #fff;
-            border-bottom: 5px solid #fff;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
-            opacity: 0;
-            pointer-events: none;
-        }
+        /* --- 📢 CUT FLASH ANIMATION STYLES --- */
+        #cut-flash-alert {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
+            color: #fff;
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            z-index: 9999; 
+            display: none; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-top: 5px solid #fff;
+            border-bottom: 5px solid #fff;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+            opacity: 0;
+            pointer-events: none;
+        }
 
-        #cut-flash-alert.active { 
-            display: flex !important;
-            animation: alertPopup 4s ease-in-out forwards; 
-        }
-        .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; animation: textPulse 0.8s infinite alternate; }
-        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
+        #cut-flash-alert.active { 
+            display: flex !important;
+            animation: alertPopup 4s ease-in-out forwards; 
+        }
+        .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; animation: textPulse 0.8s infinite alternate; }
+        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
 
-        @keyframes alertPopup {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
-            95% { filter: brightness(2); }
-            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
-        }
-        @keyframes textPulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
-            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
-        }
+        @keyframes alertPopup {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
+            95% { filter: brightness(2); }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
+        }
+        @keyframes textPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
+        }
 
-        /* --- SCOREBOARD STRUCTURE --- */
-        .main-container { 
-            position: absolute; left: 10px; right: 10px; bottom: 56px; 
-            height: 280px; display: flex; gap: 10px; justify-content: flex-start; 
-        }
-        
-        .box { 
-            display: none; width: 32.5%; height: 100%; position: relative; 
-            border-radius: 25px; overflow: hidden; border: 4px solid #fff; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        /* --- SCOREBOARD STRUCTURE --- */
+        .main-container { 
+            position: absolute; left: 10px; right: 10px; bottom: 56px; 
+            height: 280px; display: flex; gap: 10px; justify-content: flex-start; 
+        }
+        
+        .box { 
+            display: none; width: 32.5%; height: 100%; position: relative; 
+            border-radius: 25px; overflow: hidden; border: 4px solid #fff; 
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
 
-        .box::after {
-            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3) 50%, transparent);
-            animation: slowGhaintLight 15s infinite ease-in-out;
-            z-index: 5; pointer-events: none;
-        }
+        .box::after {
+            content: ""; position: absolute; top: 0; width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3) 50%, transparent);
+            animation: slowGhaintLight 15s infinite ease-in-out;
+            z-index: 5; pointer-events: none;
+        }
 
-        #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
-        #box-out { background: rgba(255, 0, 0, 0.85) !important; }
-        #box-time { background: rgba(255, 255, 0, 0.85) !important; }
+        #box-fly { background: rgba(0, 191, 255, 0.85) !important; }
+        #box-out { background: rgba(255, 0, 0, 0.85) !important; }
+        #box-time { background: rgba(255, 255, 0, 0.85) !important; }
 
-        .box-inner { width: 100%; height: 100%; border-radius: 20px; position: relative; overflow: hidden; z-index: 1; }
+        .box-inner { width: 100%; height: 100%; border-radius: 20px; position: relative; overflow: hidden; z-index: 1; }
 
-        .header-wrapper { 
-            position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; 
-            background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
-            border-radius: 0 20px 0 20px; color: white;
-        }
-        .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .box-header { border-bottom: 2px solid white; }
-        
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
-        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
-        .count-tag { background: #fff; color: #000; }
-        
-        .sum-val-area { 
-            background: #ffcc00; 
-            color: #000; 
-            border-bottom-right-radius: 15px; 
-        }
+        .header-wrapper { 
+            position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; 
+            background: #000; border-bottom: 3px solid white; border-left: 3px solid white; 
+            border-radius: 0 20px 0 20px; color: white;
+        }
+        .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
+        .box-header { border-bottom: 2px solid white; }
+        
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
+        .count-tag { background: #fff; color: #000; }
+        
+        .sum-val-area { 
+            background: #ffcc00; 
+            color: #000; 
+            border-bottom-right-radius: 15px; 
+        }
 
-        .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
-        
-        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
-        #box-out .item { color: #fff; }
+        .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
+        
+        .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; line-height: 1.1; color: #000; z-index: 3; position: relative; }
+        #box-out .item { color: #fff; }
 
-        .footer { 
-            position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; 
-            background: #fff; display: flex; align-items: center; 
-            border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
-        }
+        .footer { 
+            position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; 
+            background: #fff; display: flex; align-items: center; 
+            border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
+        }
 
-        .footer::before {
-            content: ""; position: absolute; top: 0; width: 500px; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7) 50%, transparent);
-            animation: slowGhaintLight 20s infinite ease-in-out;
-            z-index: 35; pointer-events: none;
-        }
+        .footer::before {
+            content: ""; position: absolute; top: 0; width: 500px; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7) 50%, transparent);
+            animation: slowGhaintLight 20s infinite ease-in-out;
+            z-index: 35; pointer-events: none;
+        }
 
-        .live-tag { 
-            background: #ff0000; color: #fff; padding: 0 35px; height: 100%; 
-            display: flex; align-items: center; font-size: 30px; font-weight: 1000; 
-            transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; z-index: 25;
-        }
-        .live-tag span { transform: skewX(25deg); } 
+        .live-tag { 
+            background: #ff0000; color: #fff; padding: 0 35px; height: 100%; 
+            display: flex; align-items: center; font-size: 30px; font-weight: 1000; 
+            transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; z-index: 25;
+        }
+        .live-tag span { transform: skewX(25deg); } 
 
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; color: #000; }
-        .ticker-content { display: inline-block; padding-right: 800px; } 
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
+        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; color: #000; }
+        .ticker-content { display: inline-block; padding-right: 800px; } 
 
-        .dt-box-wrap { 
-            height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; 
-            background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px;
-            border-left: 6px solid #fff; z-index: 25;
-        }
-        
-        #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
-        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
-    </style>
+        .dt-box-wrap { 
+            height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; 
+            background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px;
+            border-left: 6px solid #fff; z-index: 25;
+        }
+        
+        #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
+        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
+    </style>
 </head>
 <body>
 
 <!-- 🏆 WINNER RESULT DISPLAY BOX -->
 <div id="result-screen">
-    <div class="res-header" id="res-title-text">FINAL RESULT</div>
-    <div class="res-scroll-window">
-        <div class="res-list-area" id="res-list-render"></div>
-    </div>
+    <div class="res-header" id="res-title-text">FINAL RESULT</div>
+    <div class="res-scroll-window">
+        <div class="res-list-area" id="res-list-render"></div>
+    </div>
 </div>
 
 <!-- 📢 CUT FLASH ALERT BANNER -->
 <div id="cut-flash-alert">
-    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
-    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
+    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
+    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
 </div>
 
 <div id="weather-box">
-    <iframe id="weather-frame" src=""></iframe>
+    <iframe id="weather-frame" src=""></iframe>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
-    </div></div>
+    <div id="box-fly" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-fly"></div></div>
+    </div></div>
 
-    <div id="box-out" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
-            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
-    </div></div>
+    <div id="box-out" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div>
+            <div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-out"></div></div>
+    </div></div>
 
-    <div id="box-time" class="box"><div class="box-inner">
-        <div class="header-wrapper">
-            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
-            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div>
-        </div>
-        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
-    </div></div>
+    <div id="box-time" class="box"><div class="box-inner">
+        <div class="header-wrapper">
+            <div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div>
+            <div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div>
+        </div>
+        <div class="scroll-window"><div class="list-area" id="list-time"></div></div>
+    </div></div>
 </div>
 
 <div class="footer">
-    <div class="live-tag"><span>LIVE</span></div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box-wrap">
-        <div id="clock-box">--:--:--</div>
-    </div>
+    <div class="live-tag"><span>LIVE</span></div>
+    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
+    <div class="dt-box-wrap">
+        <div id="clock-box">--:--:--</div>
+    </div>
 </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const userID = new URLSearchParams(window.location.search).get('id');
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const userID = new URLSearchParams(window.location.search).get('id');
 
-    let langFlash = false;
-    let showDate = false;
-    let listPos = { fly: 0, time: 0, out: 0 };
-    let resListPos = 0;
-    let tickerPos = 0;
-    let isResultActive = false;
-    
-    let previousAnimationTime = null;
-    let cutTimeout1 = null;
-    let cutTimeout2 = null;
+    let langFlash = false;
+    let showDate = false;
+    let listPos = { fly: 0, time: 0, out: 0 };
+    let resListPos = 0;
+    let tickerPos = 0;
+    let isResultActive = false;
+    
+    let previousAnimationTime = null;
+    let cutTimeout1 = null;
+    let cutTimeout2 = null;
 
-    setInterval(() => {
-        langFlash = !langFlash;
-        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
-        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
-        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
-        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
-        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
-        document.getElementById('alert-title-lang').innerText = langFlash ? "ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ" : "PIGEON OUT";
-    }, 3000);
+    setInterval(() => {
+        langFlash = !langFlash;
+        document.getElementById('title-fly').innerText = langFlash ? "ਉੱਡ ਰਹੇ" : "FLYING";
+        document.getElementById('total-fly').innerText = langFlash ? "ਕੁੱਲ" : "TOTAL";
+        document.getElementById('title-out').innerText = langFlash ? "ਕੱਟੇ ਗਏ" : "OUT";
+        document.getElementById('rem-out').innerText = langFlash ? "ਬਾਕੀ" : "REM.";
+        document.getElementById('title-time').innerText = langFlash ? "ਸਮੇਂ ਚ" : "TIME";
+        document.getElementById('alert-title-lang').innerText = langFlash ? "ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ" : "PIGEON OUT";
+    }, 3000);
 
-    setInterval(() => {
-        const clockElem = document.getElementById('clock-box');
-        clockElem.classList.add('jhmaka-effect');
-        setTimeout(() => { showDate = !showDate; }, 250);
-        setTimeout(() => { clockElem.classList.remove('jhmaka-effect'); }, 600);
-    }, 15000);
+    setInterval(() => {
+        const clockElem = document.getElementById('clock-box');
+        clockElem.classList.add('jhmaka-effect');
+        setTimeout(() => { showDate = !showDate; }, 250);
+        setTimeout(() => { clockElem.classList.remove('jhmaka-effect'); }, 600);
+    }, 15000);
 
-    setInterval(() => {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
-        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
-    }, 1000);
+    setInterval(() => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
+    }, 1000);
 
-    if(userID) {
-        db.ref('users/' + userID).on('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const pigeons = data.pigeons || [];
-            const conf = data.config || {};
-            const resOver = data.resultOverlay || {};
-            
-            // Ticker Show/Hide
-            const footerElem = document.querySelector('.footer');
-            if (conf.showTicker === false) { footerElem.style.display = "none"; } 
-            else { footerElem.style.display = "flex"; }
+    if(userID) {
+        db.ref('users/' + userID).on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const pigeons = data.pigeons || [];
+            const conf = data.config || {};
+            const resOver = data.resultOverlay || {};
+            
+            // Ticker Show/Hide
+            const footerElem = document.querySelector('.footer');
+            if (conf.showTicker === false) { footerElem.style.display = "none"; } 
+            else { footerElem.style.display = "flex"; }
 
-            // --- RESULT SCREEN ---
-            const resScreen = document.getElementById('result-screen');
-            const resArea = document.getElementById('res-list-render');
-            const scoreboardElem = document.getElementById('scoreboard-div');
+            // --- RESULT SCREEN ---
+            const resScreen = document.getElementById('result-screen');
+            const resArea = document.getElementById('res-list-render');
+            const scoreboardElem = document.getElementById('scoreboard-div');
 
-            if(resOver.active === true) {
-                isResultActive = true;
-                resScreen.style.display = "flex";
-                scoreboardElem.style.display = "none";
-                document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
-                const detailsText = resOver.details || "NO DETAILS PROVIDED";
-                
-                resArea.innerHTML = `
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>`;
-            } else {
-                isResultActive = false;
-                resScreen.style.display = "none";
-                resArea.innerHTML = "";
-                resListPos = 0;
-                if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
-                else { scoreboardElem.style.display = "flex"; }
-            }
+            if(resOver.active === true) {
+                isResultActive = true;
+                resScreen.style.display = "flex";
+                scoreboardElem.style.display = "none";
+                document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
+                const detailsText = resOver.details || "NO DETAILS PROVIDED";
+                
+                resArea.innerHTML = `
+                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
+                    <div style="height:300px"></div>
+                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
+                    <div style="height:300px"></div>`;
+            } else {
+                isResultActive = false;
+                resScreen.style.display = "none";
+                resArea.innerHTML = "";
+                resListPos = 0;
+                if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
+                else { scoreboardElem.style.display = "flex"; }
+            }
 
-            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
-            const tickerElem = document.getElementById('ticker-text');
-            if(tickerElem) {
-                const txt = conf.ticker || "";
-                tickerElem.innerHTML = `<div class="ticker-content">${txt}</div><div class="ticker-content">${txt}</div>`;
-            }
+            document.getElementById('m-time-val').innerText = conf.boxTime || "--";
+            const tickerElem = document.getElementById('ticker-text');
+            if(tickerElem) {
+                const txt = conf.ticker || "";
+                tickerElem.innerHTML = `<div class="ticker-content">${txt}</div><div class="ticker-content">${txt}</div>`;
+            }
 
-            const wBox = document.getElementById('weather-box');
-            const wFrame = document.getElementById('weather-frame');
-            if(conf.showWeather === true) {
-                wBox.style.display = "block";
-                let lat = conf.lat || "30.5980";
-                let lon = conf.lon || "74.7380";
-                let p_name = conf.pindName || "";
-                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
-                if(wFrame.src !== wUrl) wFrame.src = wUrl;
-            } else { wBox.style.display = "none"; }
+            const wBox = document.getElementById('weather-box');
+            const wFrame = document.getElementById('weather-frame');
+            if(conf.showWeather === true) {
+                wBox.style.display = "block";
+                let lat = conf.lat || "30.5980";
+                let lon = conf.lon || "74.7380";
+                let p_name = conf.pindName || "";
+                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
+                if(wFrame.src !== wUrl) wFrame.src = wUrl;
+            } else { wBox.style.display = "none"; }
 
-            // --- 📢 REAL-TIME CUT ANIMATION CHECK ---
-            if(data.cutAnimation && data.cutAnimation.time) {
-                let currentAnimTime = String(data.cutAnimation.time);
-                if(currentAnimTime !== previousAnimationTime) {
-                    previousAnimationTime = currentAnimTime; 
-                    triggerCutFlash(data.cutAnimation.name);
-                }
-            }
+            // --- 📢 REAL-TIME CUT ANIMATION CHECK ---
+            if(data.cutAnimation && data.cutAnimation.time) {
+                let currentAnimTime = String(data.cutAnimation.time);
+                if(currentAnimTime !== previousAnimationTime) {
+                    previousAnimationTime = currentAnimTime; 
+                    triggerCutFlash(data.cutAnimation.name);
+                }
+            }
 
-            // --- SCOREBOARD PROCESS ---
-            let htmlArr = { fly:[], out:[], time:[] };
-            let counters = { fly: 1, out: 1, time: 1 };
+            // --- SCOREBOARD PROCESS ---
+            let htmlArr = { fly:[], out:[], time:[] };
+            let counters = { fly: 1, out: 1, time: 1 };
 
-            pigeons.forEach((p) => {
-                if (!p.name) return;
-                let cleanName = p.name.toUpperCase();
-                
-                if (p.status === 'fly') {
-                    htmlArr.fly.push(`<div class="item">${counters.fly}. ${cleanName}</div>`);
-                    counters.fly++;
-                } else if (p.status === 'time') {
-                    htmlArr.time.push(`<div class="item">${counters.time}. ${cleanName}</div>`);
-                    counters.time++;
-                } else if (p.status === 'out') {
-                    htmlArr.out.push(`<div class="item">${counters.out}. ${cleanName}</div>`);
-                    counters.out++;
-                }
-            });
+            pigeons.forEach((p) => {
+                if (!p.name) return;
+                let cleanName = p.name.toUpperCase();
+                
+                if (p.status === 'fly') {
+                    htmlArr.fly.push(`<div class="item">${counters.fly}. ${cleanName}</div>`);
+                    counters.fly++;
+                } else if (p.status === 'time') {
+                    htmlArr.time.push(`<div class="item">${counters.time}. ${cleanName}</div>`);
+                    counters.time++;
+                } else if (p.status === 'out') {
+                    htmlArr.out.push(`<div class="item">${counters.out}. ${cleanName}</div>`);
+                    counters.out++;
+                }
+            });
 
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
 
-            ['fly','time','out'].forEach(id => {
-                const area = document.getElementById(`list-${id}`);
-                const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0 && conf.showScoreboard !== false && !isResultActive) {
-                    box.style.display = "block";
-                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
-                    const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:100px"></div><div class="content-block">${content}</div><div style="height:100px"></div>`;
-                } else { box.style.display = "none"; }
-            });
-        });
-    }
+            ['fly','time','out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                const box = document.getElementById(`box-${id}`);
+                if(htmlArr[id].length > 0 && conf.showScoreboard !== false && !isResultActive) {
+                    box.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
+                    const content = htmlArr[id].join('');
+                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:100px"></div><div class="content-block">${content}</div><div style="height:100px"></div>`;
+                } else { box.style.display = "none"; }
+            });
+        });
+    }
 
-    // --- ⚡ INSTANT RESET & FLASH LOGIC (FIXED FOR MULTIPLE CUTES) ---
-    function triggerCutFlash(name) {
-        const alertBox = document.getElementById('cut-flash-alert');
-        const nameBox = document.getElementById('alert-pigeon-name');
-        
-        // 1. ਜੇਕਰ ਪੁਰਾਣੇ ਟਾਈਮਰ ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੇ ਹਨ, ਤਾਂ ਉਹਨਾਂ ਨੂੰ ਤੁਰੰਤ ਖਤਮ ਕਰੋ
-        if (cutTimeout1) clearTimeout(cutTimeout1);
-        if (cutTimeout2) clearTimeout(cutTimeout2);
+    // --- ⚡ INSTANT RESET & FLASH LOGIC (FIXED FOR MULTIPLE CUTES) ---
+    function triggerCutFlash(name) {
+        const alertBox = document.getElementById('cut-flash-alert');
+        const nameBox = document.getElementById('alert-pigeon-name');
+        
+        // 1. ਜੇਕਰ ਪੁਰਾਣੇ ਟਾਈਮਰ ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੇ ਹਨ, ਤਾਂ ਉਹਨਾਂ ਨੂੰ ਤੁਰੰਤ ਖਤਮ ਕਰੋ
+        if (cutTimeout1) clearTimeout(cutTimeout1);
+        if (cutTimeout2) clearTimeout(cutTimeout2);
 
-        nameBox.innerText = name ? name.toUpperCase() : "--";
-        
-        // 2. ਐਨੀਮੇਸ਼ਨ ਸਟੇਟ ਨੂੰ ਤੁਰੰਤ ਰੀਸੈੱਟ ਕਰੋ (Force Reset CSS)
-        alertBox.classList.remove('active');
-        alertBox.style.display = "none";
-        void alertBox.offsetWidth; // ਬ੍ਰਾਊਜ਼ਰ ਰੈਂਡਰਿੰਗ ਰੀਫ੍ਰੈਸ਼
+        nameBox.innerText = name ? name.toUpperCase() : "--";
+        
+        // 2. ਐਨੀਮੇਸ਼ਨ ਸਟੇਟ ਨੂੰ ਤੁਰੰਤ ਰੀਸੈੱਟ ਕਰੋ (Force Reset CSS)
+        alertBox.classList.remove('active');
+        alertBox.style.display = "none";
+        void alertBox.offsetWidth; // ਬ੍ਰਾਊਜ਼ਰ ਰੈਂਡਰਿੰਗ ਰੀਫ੍ਰੈਸ਼
 
-        // 3. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਤੁਰੰਤ ਸਟਾਰਟ ਕਰੋ
-        cutTimeout1 = setTimeout(() => {
-            alertBox.classList.add('active');
-            
-            // 4. 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ ਤੇ ਹੀ ਬੰਦ ਕਰੋ, ਪਰ ਜੇਕਰ ਕੋਈ ਹੋਰ ਕੱਟਿਆ ਗਿਆ ਤਾਂ ਇਹ ਟਾਈਮਰ ਉੱਪਰ ਕਲੀਅਰ ਹੋ ਜਾਵੇਗਾ
-            cutTimeout2 = setTimeout(() => {
-                alertBox.classList.remove('active');
-                alertBox.style.display = "none";
-            }, 4000);
-        }, 30); // 30 ਮਿਲੀਸੈਕੰਡ ਦਾ ਗੈਪ ਰੀਸੈੱਟ ਹੋਣ ਲਈ ਕਾਫੀ ਹੈ
-    }
+        // 3. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਤੁਰੰਤ ਸਟਾਰਟ ਕਰੋ
+        cutTimeout1 = setTimeout(() => {
+            alertBox.classList.add('active');
+            
+            // 4. 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ ਤੇ ਹੀ ਬੰਦ ਕਰੋ, ਪਰ ਜੇਕਰ ਕੋਈ ਹੋਰ ਕੱਟਿਆ ਗਿਆ ਤਾਂ ਇਹ ਟਾਈਮਰ ਉੱਪਰ ਕਲੀਅਰ ਹੋ ਜਾਵੇਗਾ
+            cutTimeout2 = setTimeout(() => {
+                alertBox.classList.remove('active');
+                alertBox.style.display = "none";
+            }, 4000);
+        }, 30); // 30 ਮਿਲੀਸੈਕੰਡ ਦਾ ਗੈਪ ਰੀਸੈੱਟ ਹੋਣ ਲਈ ਕਾਫੀ ਹੈ
+    }
 
-    // --- ANIMATION FRAME LOOP ---
-    function animate() {
-        if (!isResultActive) {
-            ['fly', 'time', 'out'].forEach(id => {
-                const area = document.getElementById(`list-${id}`);
-                const box = document.getElementById(`box-${id}`);
-                if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                    listPos[id] -= 1.0;
-                    let firstBlock = area.querySelector('.content-block');
-                    if(firstBlock) {
-                        let resetPoint = firstBlock.offsetHeight + 100;
-                        if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                        area.style.transform = `translateY(${listPos[id]}px)`;
-                    }
-                }
-            });
-        }
+    // --- ANIMATION FRAME LOOP ---
+    function animate() {
+        if (!isResultActive) {
+            ['fly', 'time', 'out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                const box = document.getElementById(`box-${id}`);
+                if (area && box && box.style.display !== "none" && area.children.length > 0) {
+                    listPos[id] -= 1.0;
+                    let firstBlock = area.querySelector('.content-block');
+                    if(firstBlock) {
+                        let resetPoint = firstBlock.offsetHeight + 100;
+                        if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
+                        area.style.transform = `translateY(${listPos[id]}px)`;
+                    }
+                }
+            });
+        }
 
-        const resScreen = document.getElementById('result-screen');
-        const resArea = document.getElementById('res-list-render');
-        if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
-            resListPos -= 1.0;
-            let firstResBlock = resArea.querySelector('.res-block');
-            if(firstResBlock) {
-                let resResetPoint = firstResBlock.offsetHeight + 300;
-                if (Math.abs(resListPos) >= resResetPoint) resListPos = 0;
-                resArea.style.transform = `translateY(${resListPos}px)`;
-            }
-        }
+        const resScreen = document.getElementById('result-screen');
+        const resArea = document.getElementById('res-list-render');
+        if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
+            resListPos -= 1.0;
+            let firstResBlock = resArea.querySelector('.res-block');
+            if(firstResBlock) {
+                let resResetPoint = firstResBlock.offsetHeight + 300;
+                if (Math.abs(resListPos) >= resResetPoint) resListPos = 0;
+                resArea.style.transform = `translateY(${resListPos}px)`;
+            }
+        }
 
-        const tMove = document.getElementById('ticker-text');
-        if (tMove && tMove.scrollWidth > 0) {
-            tickerPos -= 2.0;
-            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
-            tMove.style.transform = `translateX(${tickerPos}px)`;
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
+        const tMove = document.getElementById('ticker-text');
+        if (tMove && tMove.scrollWidth > 0) {
+            tickerPos -= 2.0;
+            if (Math.abs(tickerPos) >= tMove.scrollWidth / 2) tickerPos = 0;
+            tMove.style.transform = `translateX(${tickerPos}px)`;
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
 </script>
 </body>
-</html> 
+</html>
