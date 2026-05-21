@@ -8,60 +8,47 @@
         :root { --header-h: 65px; --header-w: 40%; }
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; position: relative; }
-
-        /* --- EXISTING STYLES --- */
-        #weather-box { position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; display: none; overflow: hidden; background: transparent; border: none; z-index: 1001; }
-        #weather-frame { width: 550px; height: 120px; border: none; pointer-events: none; transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px; }
         
-        @keyframes sharpFlash { 0% { filter: brightness(1); transform: scale(1) skewX(25deg); } 50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); } 100% { filter: brightness(1); transform: scale(1) skewX(25deg); } }
-        @keyframes slowGhaintLight { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+        /* 🏆 Result Screen */
+        #result-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); width: 680px; height: 480px; background: rgba(15, 17, 19, 0.98); border: 5px solid #f39c12; border-radius: 30px; z-index: 3000; display: none; flex-direction: column; overflow: hidden; }
+        .res-header { background: #f39c12; color: #000; text-align: center; padding: 15px; font-size: 38px; font-weight: 1000; border-bottom: 4px solid #fff; }
+        .res-scroll-window { flex: 1; overflow: hidden; position: relative; background: #050505; padding: 20px; }
+        .res-list-area { position: absolute; width: 90%; will-change: transform; display: flex; flex-direction: column; align-items: center; }
+        .res-item { font-size: 36px; font-weight: 1000; color: #fff; padding: 8px; width: 100%; text-align: center; }
 
-        /* --- RESULT SCREEN --- */
-        #result-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); width: 680px; height: 480px; background: rgba(15, 17, 19, 0.98); border: 5px solid #f39c12; border-radius: 30px; box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9); z-index: 3000; overflow: hidden; display: none; flex-direction: column; }
-        .res-header { background: #f39c12; color: #000; text-align: center; padding: 15px 10px; font-size: 38px; font-weight: 1000; border-bottom: 4px solid #fff; z-index: 3005; }
-        .res-scroll-window { flex: 1; width: 100%; overflow: hidden; position: relative; background: #050505; padding: 20px 25px; }
-        .res-list-area { position: absolute; width: calc(100% - 50px); will-change: transform; display: flex; flex-direction: column; align-items: center; }
-        .res-item { font-size: 36px; font-weight: 1000; color: #ffffff; padding: 8px 10px; text-align: center; width: 100%; white-space: nowrap; }
+        /* 📢 Cut Flash */
+        #cut-flash-alert { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 50%, rgba(255,0,0,0) 100%); color: #fff; width: 100%; padding: 30px; text-align: center; z-index: 9999; display: none; border-top: 5px solid #fff; border-bottom: 5px solid #fff; opacity: 0; pointer-events: none; }
+        #cut-flash-alert.active { display: flex !important; flex-direction: column; animation: alertPopup 4s ease-in-out forwards; }
+        .alert-main-title { font-size: 55px; font-weight: 1000; }
+        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; }
+        @keyframes alertPopup { 0% { transform: translate(-50%, -50%) scale(0); } 10% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 90% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } }
 
-        /* --- CUT FLASH --- */
-        #cut-flash-alert { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%); color: #fff; width: 100%; padding: 25px 0; text-align: center; z-index: 9999; display: none; flex-direction: column; border-top: 5px solid #fff; border-bottom: 5px solid #fff; box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); opacity: 0; pointer-events: none; }
-        #cut-flash-alert.active { display: flex !important; animation: alertPopup 4s ease-in-out forwards; }
-        .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; }
-        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; }
-        @keyframes alertPopup { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 10% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } }
-
-        /* --- SCOREBOARD --- */
+        /* Scoreboard */
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 56px; height: 280px; display: flex; gap: 10px; }
         .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; overflow: hidden; border: 4px solid #fff; }
-        #box-fly { background: rgba(0, 191, 255, 0.85); }
-        #box-out { background: rgba(255, 0, 0, 0.85); }
-        #box-time { background: rgba(255, 255, 0, 0.85); }
-        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; background: #000; border-bottom: 3px solid white; border-left: 3px solid white; border-radius: 0 20px 0 20px; color: white; }
+        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); background: #000; color: white; border-bottom: 3px solid #fff; border-left: 3px solid #fff; border-radius: 0 20px 0 20px; z-index: 10; }
         .box-header, .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
         .sum-val-area { background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: 150px; }
+        .list-area { position: absolute; width: 100%; will-change: transform; padding-top: 150px; }
         .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; color: #000; }
         #box-out .item { color: #fff; }
 
-        /* --- FOOTER --- */
-        .footer { position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; }
+        /* Footer */
+        .footer { position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; }
-        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; color: #000; }
-        .ticker-content { display: inline-block; padding-right: 500px; }
+        .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; font-size: 30px; font-weight: 1000; }
         .dt-box-wrap { height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; }
-        #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
+        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
     </style>
 </head>
 <body>
 
 <div id="result-screen"><div class="res-header" id="res-title-text">FINAL RESULT</div><div class="res-scroll-window"><div class="res-list-area" id="res-list-render"></div></div></div>
 <div id="cut-flash-alert"><div class="alert-main-title" id="alert-title-lang">PIGEON OUT</div><div class="alert-pigeon-name" id="alert-pigeon-name">--</div></div>
-<div id="weather-box"><iframe id="weather-frame" src=""></iframe></div>
 
 <div class="main-container" id="scoreboard-div">
     <div id="box-fly" class="box"><div class="header-wrapper"><div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div><div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
@@ -69,7 +56,7 @@
     <div id="box-time" class="box"><div class="header-wrapper"><div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div><div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width:100%">--</div></div></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
 </div>
 
-<div class="footer"><div class="live-tag"><span>LIVE</span></div><div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div><div class="dt-box-wrap"><div id="clock-box">--:--:--</div></div></div>
+<div class="footer"><div class="live-tag"><span>LIVE</span></div><div class="ticker-wrap" id="ticker-text"></div><div class="dt-box-wrap"><div id="clock-box">--:--:--</div></div></div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
@@ -77,55 +64,65 @@
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
 
-    let previousOutPigeons = [];
-    let listPos = { fly: 0, time: 0, out: 0 };
-    let resListPos = 0, tickerPos = 0, isResultActive = false;
+    let lang = false, showDate = false, prevAnimTime = null;
+    let listPos = { fly: 0, time: 0, out: 0 }, resListPos = 0;
+
+    // Language Toggle
+    setInterval(() => {
+        lang = !lang;
+        document.getElementById('title-fly').innerText = lang ? "ਉੱਡ ਰਹੇ" : "FLYING";
+        document.getElementById('title-out').innerText = lang ? "ਕੱਟੇ ਗਏ" : "OUT";
+        document.getElementById('title-time').innerText = lang ? "ਸਮੇਂ ਚ" : "TIME";
+    }, 3000);
+
+    // Clock Logic
+    setInterval(() => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = now.toLocaleDateString('en-GB');
+        document.getElementById('clock-box').innerText = showDate ? dateStr : timeStr;
+    }, 1000);
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             
-            // --- AUTO FLASH LOGIC ---
-            let currentOutPigeons = pigeons.filter(p => p.status === 'out').map(p => p.name);
-            if (previousOutPigeons.length > 0) {
-                currentOutPigeons.forEach(name => { if (!previousOutPigeons.includes(name)) triggerCutFlash(name); });
+            // Cut Animation Trigger
+            if(data.cutAnimation && data.cutAnimation.time != prevAnimTime) {
+                prevAnimTime = data.cutAnimation.time;
+                triggerCutFlash(data.cutAnimation.name);
             }
-            previousOutPigeons = [...currentOutPigeons];
 
-            // UI Updates
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - currentOutPigeons.length;
-            
+            // Render Lists
             ['fly','time','out'].forEach(id => {
-                const list = document.getElementById(`list-${id}`);
-                const box = document.getElementById(`box-${id}`);
                 const items = pigeons.filter(p => p.status === id);
-                if(items.length > 0 && !isResultActive) {
+                const box = document.getElementById(`box-${id}`);
+                if(items.length > 0) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = items.length;
                     const html = items.map((p,i) => `<div class="item">${i+1}. ${p.name.toUpperCase()}</div>`).join('');
-                    list.innerHTML = `<div class="content-block">${html}</div><div style="height:100px"></div><div class="content-block">${html}</div>`;
-                } else { box.style.display = "none"; }
+                    document.getElementById(`list-${id}`).innerHTML = `<div>${html}</div><div>${html}</div>`;
+                } else box.style.display = "none";
             });
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - pigeons.filter(p => p.status === 'out').length;
         });
     }
 
     function triggerCutFlash(name) {
-        const alertBox = document.getElementById('cut-flash-alert');
+        const alert = document.getElementById('cut-flash-alert');
         document.getElementById('alert-pigeon-name').innerText = name.toUpperCase();
-        alertBox.classList.remove('active');
-        void alertBox.offsetWidth;
-        alertBox.classList.add('active');
+        alert.classList.add('active');
+        setTimeout(() => alert.classList.remove('active'), 4000);
     }
 
     function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
+        ['fly','time','out'].forEach(id => {
             const area = document.getElementById(`list-${id}`);
             if(area && area.children.length > 0) {
                 listPos[id] -= 1.0;
-                let reset = area.querySelector('.content-block') ? area.querySelector('.content-block').offsetHeight : 500;
-                if(Math.abs(listPos[id]) >= reset) listPos[id] = 0;
+                if(Math.abs(listPos[id]) >= (area.scrollHeight/2)) listPos[id] = 0;
                 area.style.transform = `translateY(${listPos[id]}px)`;
             }
         });
