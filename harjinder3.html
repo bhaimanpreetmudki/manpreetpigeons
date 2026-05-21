@@ -95,11 +95,11 @@
             color: #ffffff;
             letter-spacing: 1.5px;
             line-height: 1.6;
-            white-space: pre-wrap; /* ਨਵੀਂ ਲਾਈਨ ਸਪੋਰਟ ਲਈ */
+            white-space: pre-wrap;
             text-align: center;
         }
 
-        /* --- CUT FLASH ANIMATION STYLES --- */
+        /* --- 📢 CUT FLASH ANIMATION STYLES (OPACITY FIX) --- */
         #cut-flash-alert {
             position: absolute;
             top: 40%;
@@ -110,8 +110,8 @@
             width: 100%;
             padding: 25px 0;
             text-align: center;
-            z-index: 2000;
-            display: flex;
+            z-index: 9999; /* ਸਭ ਤੋਂ ਉੱਪਰ ਦਿਖਾਉਣ ਲਈ ਜ਼ੈੱਡ-ਇੰਡੈਕਸ ਵਧਾਇਆ */
+            display: none; /* Initial display none */
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -120,10 +120,12 @@
             box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
             opacity: 0;
             pointer-events: none;
-            transition: all 0.4s ease-in-out;
         }
 
-        #cut-flash-alert.active { animation: alertPopup 4s ease-in-out forwards; }
+        #cut-flash-alert.active { 
+            display: flex !important;
+            animation: alertPopup 4s ease-in-out forwards; 
+        }
         .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; animation: textPulse 0.8s infinite alternate; }
         .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
 
@@ -132,7 +134,7 @@
             10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
             95% { filter: brightness(2); }
-            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
         }
         @keyframes textPulse {
             0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
@@ -287,7 +289,7 @@
     let listPos = { fly: 0, time: 0, out: 0 };
     let resListPos = 0;
     let tickerPos = 0;
-    let isResultActive = false; // ਰਿਜ਼ਲਟ ਸਟੇਟ ਟਰੈਕਿੰਗ
+    let isResultActive = false;
     
     let previousAnimationTime = null;
 
@@ -322,12 +324,12 @@
             const conf = data.config || {};
             const resOver = data.resultOverlay || {};
             
-            // 1. Ticker (Show/Hide) Control
+            // Ticker Show/Hide
             const footerElem = document.querySelector('.footer');
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // --- 🏆 🤝 RESULT SCREEN HANDLING & SCORE LIST HIDE CONTROL ---
+            // --- RESULT SCREEN ---
             const resScreen = document.getElementById('result-screen');
             const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
@@ -335,12 +337,10 @@
             if(resOver.active === true) {
                 isResultActive = true;
                 resScreen.style.display = "flex";
-                scoreboardElem.style.display = "none"; // 💥 ਰਿਜ਼ਲਟ ਆਉਣ ਤੇ ਬਾਕੀ ਸਭ ਹਾਈਡ (Hide) ਹੋ ਜਾਵੇਗਾ
-                
+                scoreboardElem.style.display = "none";
                 document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
                 const detailsText = resOver.details || "NO DETAILS PROVIDED";
                 
-                // ਟੈਕਸਟ ਨੂੰ ਦੋ ਬਲਾਕਾਂ 'ਚ ਰੈਂਡਰ ਕਰਨਾ ਤਾਂ ਜੋ ਸਮੂਥ ਸਕ੍ਰੋਲ ਲੂਪ ਬਣ ਸਕੇ
                 resArea.innerHTML = `
                     <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
                     <div style="height:300px"></div>
@@ -351,8 +351,6 @@
                 resScreen.style.display = "none";
                 resArea.innerHTML = "";
                 resListPos = 0;
-                
-                // ਜੇ ਰਿਜ਼ਲਟ ਬੰਦ ਹੈ ਤਾਂ ਕੌਨਫਿਗ ਮੁਤਾਬਕ ਮੇਨ ਸਕੋਰਬੋਰਡ ਦਿਖਾਓ
                 if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
                 else { scoreboardElem.style.display = "flex"; }
             }
@@ -375,19 +373,33 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // --- Real-time Cut Animation Trigger ---
-            if(data.cutAnimation && data.cutAnimation.time !== previousAnimationTime) {
-                previousAnimationTime = data.cutAnimation.time;
-                triggerCutFlash(data.cutAnimation.name);
+            // --- 📢 REAL-TIME CUT ANIMATION FIXED LOGIC ---
+            if(data.cutAnimation && data.cutAnimation.time) {
+                let currentAnimTime = String(data.cutAnimation.time);
+                if(currentAnimTime !== previousAnimationTime) {
+                    previousAnimationTime = currentAnimTime; // ਸੇਵ ਸਟੇਟ
+                    triggerCutFlash(data.cutAnimation.name);
+                }
             }
 
-            // --- SCOREBOARD DATA PROCESS ---
+            // --- SCOREBOARD PROCESS ---
             let htmlArr = { fly:[], out:[], time:[] };
-            pigeons.forEach((p, idx) => {
-                let row = `<div class="item">${idx + 1}. ${p.name}</div>`;
-                if (p.status === 'fly') htmlArr.fly.push(row);
-                else if (p.status === 'time') htmlArr.time.push(row);
-                else if (p.status === 'out') htmlArr.out.push(row);
+            let counters = { fly: 1, out: 1, time: 1 };
+
+            pigeons.forEach((p) => {
+                if (!p.name) return;
+                let cleanName = p.name.toUpperCase();
+                
+                if (p.status === 'fly') {
+                    htmlArr.fly.push(`<div class="item">${counters.fly}. ${cleanName}</div>`);
+                    counters.fly++;
+                } else if (p.status === 'time') {
+                    htmlArr.time.push(`<div class="item">${counters.time}. ${cleanName}</div>`);
+                    counters.time++;
+                } else if (p.status === 'out') {
+                    htmlArr.out.push(`<div class="item">${counters.out}. ${cleanName}</div>`);
+                    counters.out++;
+                }
             });
 
             document.getElementById('m-total').innerText = pigeons.length;
@@ -400,34 +412,46 @@
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
-                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:350px"></div><div class="content-block">${content}</div><div style="height:350px"></div>`;
+                    area.innerHTML = `<div class="content-block">${content}</div><div style="height:100px"></div><div class="content-block">${content}</div><div style="height:100px"></div>`;
                 } else { box.style.display = "none"; }
             });
         });
     }
 
+    // --- ਫਲੈਸ਼ ਫੰਕਸ਼ਨ ਵਿੱਚ ਬਦਲਾਅ (Force-Reset-Class) ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
-        nameBox.innerText = name;
+        
+        nameBox.innerText = name ? name.toUpperCase() : "--";
+        
+        // ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੀ ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ ਨੂੰ ਬਿਲਕੁਲ ਹਟਾਓ
         alertBox.classList.remove('active');
-        void alertBox.offsetWidth; 
-        alertBox.classList.add('active');
-        setTimeout(() => { alertBox.classList.remove('active'); }, 4000);
+        alertBox.style.display = "none";
+        
+        // ਟਰਿੱਗਰ ਰੀਸੈੱਟ ਕਰਨ ਲਈ ਟਾਈਮਆਊਟ
+        setTimeout(() => {
+            alertBox.classList.add('active');
+            
+            // 4 ਸੈਕੰਡ (ਐਨੀਮੇਸ਼ਨ ਟਾਈਮ) ਖਤਮ ਹੋਣ 'ਤੇ ਕਲਾਸ ਸਾਫ਼ ਕਰੋ
+            setTimeout(() => {
+                alertBox.classList.remove('active');
+                alertBox.style.display = "none";
+            }, 4000);
+        }, 50);
     }
 
     // --- ANIMATION FRAME LOOP ---
     function animate() {
-        // 1. ਮੇਨ ਲਿਸਟ ਬਾਕਸਾਂ ਦੀ ਸਕ੍ਰੋਲਿੰਗ
         if (!isResultActive) {
             ['fly', 'time', 'out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
                 if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                    listPos[id] -= 1.2; 
+                    listPos[id] -= 1.0;
                     let firstBlock = area.querySelector('.content-block');
                     if(firstBlock) {
-                        let resetPoint = firstBlock.offsetHeight + 350;
+                        let resetPoint = firstBlock.offsetHeight + 100;
                         if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
                         area.style.transform = `translateY(${listPos[id]}px)`;
                     }
@@ -435,11 +459,10 @@
             });
         }
 
-        // 2. 🏆 ਰਿਜ਼ਲਟ ਬਾਕਸ ਟੈਕਸਟ ਸਕ੍ਰੋਲਿੰਗ (Vertical Smooth Loop)
         const resScreen = document.getElementById('result-screen');
         const resArea = document.getElementById('res-list-render');
         if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
-            resListPos -= 1.0; // ਸਕ੍ਰੋਲਿੰਗ ਸਪੀਡ
+            resListPos -= 1.0;
             let firstResBlock = resArea.querySelector('.res-block');
             if(firstResBlock) {
                 let resResetPoint = firstResBlock.offsetHeight + 300;
@@ -448,7 +471,6 @@
             }
         }
 
-        // 3. ਫੁੱਟਰ ਟਿੱਕਰ ਮੈਸੇਜ ਸਕ੍ਰੋਲਿੰਗ
         const tMove = document.getElementById('ticker-text');
         if (tMove && tMove.scrollWidth > 0) {
             tickerPos -= 2.0;
