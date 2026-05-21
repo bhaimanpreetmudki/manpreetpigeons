@@ -331,7 +331,7 @@
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // --- RESULT SCREEN ---
+            // --- RESULT SCREEN HANDLING ---
             const resScreen = document.getElementById('result-screen');
             const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
@@ -341,7 +341,22 @@
                 resScreen.style.display = "flex";
                 scoreboardElem.style.display = "none";
                 document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
-                const detailsText = resOver.details || "NO DETAILS PROVIDED";
+                
+                let detailsText = resOver.details || "";
+                
+                // ⚡ ਸਾਂਝੀ ਬਾਜ਼ੀ ਦਾ ਆਟੋ ਲੋਜਿਕ: ਜੇਕਰ ਟੈਕਸਟ ਖਾਲੀ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ (fly) ਸਾਰੇ ਕਬੂਤਰ ਉਹਨਾਂ ਦੇ ਪੱਕੇ ਓਰਿਜਨਲ ਨੰਬਰ ਨਾਲ ਸ਼ੋਅ ਹੋਣਗੇ
+                if(detailsText.trim() === "") {
+                    let sanjiRows = [];
+                    pigeons.forEach((p, idx) => {
+                        if(p.name && p.status === 'fly') {
+                            let originalNumber = idx + 1; // ਜੋ ਐਡ/ਐਡਿਟ ਵੇਲੇ ਓਰਿਜਨਲ ਸੀਰੀਅਲ ਨੰਬਰ ਮਿਲਿਆ ਸੀ
+                            sanjiRows.push(`${originalNumber}. ${p.name.toUpperCase()}`);
+                        }
+                    });
+                    detailsText = sanjiRows.join('\n');
+                } else {
+                    detailsText = detailsText.toUpperCase();
+                }
                 
                 resArea.innerHTML = `
                     <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
@@ -420,32 +435,27 @@
         });
     }
 
-    // --- ⚡ INSTANT RESET & FLASH LOGIC (FIXED FOR MULTIPLE CUTES) ---
+    // --- ⚡ INSTANT RESET & FLASH LOGIC ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
         
-        // 1. ਜੇਕਰ ਪੁਰਾਣੇ ਟਾਈਮਰ ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੇ ਹਨ, ਤਾਂ ਉਹਨਾਂ ਨੂੰ ਤੁਰੰਤ ਖਤਮ ਕਰੋ
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
 
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // 2. ਐਨੀਮੇਸ਼ਨ ਸਟੇਟ ਨੂੰ ਤੁਰੰਤ ਰੀਸੈੱਟ ਕਰੋ (Force Reset CSS)
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
-        void alertBox.offsetWidth; // ਬ੍ਰਾਊਜ਼ਰ ਰੈਂਡਰਿੰਗ ਰੀਫ੍ਰੈਸ਼
+        void alertBox.offsetWidth; 
 
-        // 3. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਤੁਰੰਤ ਸਟਾਰਟ ਕਰੋ
         cutTimeout1 = setTimeout(() => {
             alertBox.classList.add('active');
-            
-            // 4. 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ ਤੇ ਹੀ ਬੰਦ ਕਰੋ, ਪਰ ਜੇਕਰ ਕੋਈ ਹੋਰ ਕੱਟਿਆ ਗਿਆ ਤਾਂ ਇਹ ਟਾਈਮਰ ਉੱਪਰ ਕਲੀਅਰ ਹੋ ਜਾਵੇਗਾ
             cutTimeout2 = setTimeout(() => {
                 alertBox.classList.remove('active');
                 alertBox.style.display = "none";
             }, 4000);
-        }, 30); // 30 ਮਿਲੀਸੈਕੰਡ ਦਾ ਗੈਪ ਰੀਸੈੱਟ ਹੋਣ ਲਈ ਕਾਫੀ ਹੈ
+        }, 30); 
     }
 
     // --- ANIMATION FRAME LOOP ---
