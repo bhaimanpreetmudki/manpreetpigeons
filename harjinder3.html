@@ -315,7 +315,6 @@
             const conf = data.config || {};
             const resOver = data.resultOverlay || {};
             
-            // Ticker Show/Hide
             const footerElem = document.querySelector('.footer');
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
@@ -333,17 +332,18 @@
                 
                 let detailsText = resOver.details || "";
                 
-                // ⚡ ਜੇਕਰ ਬਾਕਸ ਬਿਲਕੁਲ ਖਾਲੀ ਹੈ, ਤਾਂ ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰਾਂ ਦੇ ਨਾਮ ਬਿਨਾਂ ਕਿਸੇ ਨੰਬਰ ਦੇ ਸ਼ੋਅ ਕਰੋ
+                // ⚡ ਜੇਕਰ ਬਾਕਸ ਖਾਲੀ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰਾਂ ਦੇ ਅਸਲੀ ਲਿਸਟ ਵਾਲੇ ਨੰਬਰਾਂ ਸਮੇਤ ਸ਼ੋਅ ਕਰੋ
                 if(detailsText.trim() === "") {
                     let sanjiRows = [];
-                    pigeons.forEach((p) => {
+                    pigeons.forEach((p, idx) => {
                         if(p.name && p.status === 'fly') { 
-                            sanjiRows.push(p.name.toUpperCase()); // ਕੋਈ ਨੰਬਰ (1, 2) ਨਹੀਂ ਲੱਗੇਗਾ
+                            let originalNumber = idx + 1; // ਲਿਸਟ ਵਿੱਚ ਜੋ ਅਸਲੀ ਪੱਕਾ ਨੰਬਰ ਹੈ
+                            sanjiRows.push(`${originalNumber}. ${p.name.toUpperCase()}`);
                         }
                     });
                     detailsText = sanjiRows.join('\n');
                 } else {
-                    // ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਕੁਝ ਲਿਖਿਆ ਹੈ (ਜਿਵੇਂ ਟੀਮਾਂ), ਤਾਂ ਬਿਨਾਂ ਨੰਬਰਾਂ ਦੇ ਸਿਰਫ਼ ਉਹੀ ਟੈਕਸਟ ਦਿਖੇਗਾ
+                    // ⚡ ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਤੁਸੀਂ ਆਪ ਲਿਖਿਆ ਹੈ, ਤਾਂ ਉਹੀ ਮੈਨੂਅਲ ਡਾਟਾ (CAPITAL ਹੋ ਕੇ) ਦਿਖੇਗਾ
                     detailsText = detailsText.toUpperCase();
                 }
                 
