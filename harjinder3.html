@@ -79,9 +79,6 @@
             position: relative;
             background: #050505;
             padding: 20px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .res-list-area {
@@ -90,18 +87,20 @@
             will-change: transform;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
         }
 
-        .res-text-content {
-            font-size: 34px;
+        .res-item {
+            font-size: 36px;
             font-weight: 1000;
             color: #ffffff;
             letter-spacing: 1.5px;
-            line-height: 1.8;
-            white-space: pre-wrap;
+            padding: 8px 10px;
             text-align: center;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* --- 📢 CUT FLASH ANIMATION STYLES --- */
@@ -331,27 +330,33 @@
                 document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
                 
                 let detailsText = resOver.details || "";
+                let linesArr = [];
                 
-                // ⚡ ਜੇਕਰ ਬਾਕਸ ਖਾਲੀ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰਾਂ ਦੇ ਅਸਲੀ ਲਿਸਟ ਵਾਲੇ ਨੰਬਰਾਂ ਸਮੇਤ ਸ਼ੋਅ ਕਰੋ
+                // ⚡ ਜੇਕਰ ਬਾਕਸ ਖਾਲੀ ਹੈ (ਸਾਂਝੀ ਬਾਜ਼ੀ)
                 if(detailsText.trim() === "") {
-                    let sanjiRows = [];
                     pigeons.forEach((p, idx) => {
                         if(p.name && p.status === 'fly') { 
-                            let originalNumber = idx + 1; // ਲਿਸਟ ਵਿੱਚ ਜੋ ਅਸਲੀ ਪੱਕਾ ਨੰਬਰ ਹੈ
-                            sanjiRows.push(`${originalNumber}. ${p.name.toUpperCase()}`);
+                            let originalNumber = idx + 1;
+                            linesArr.push(`<div class="res-item">${originalNumber}. ${p.name.toUpperCase()}</div>`);
                         }
                     });
-                    detailsText = sanjiRows.join('\n');
                 } else {
-                    // ⚡ ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਤੁਸੀਂ ਆਪ ਲਿਖਿਆ ਹੈ, ਤਾਂ ਉਹੀ ਮੈਨੂਅਲ ਡਾਟਾ (CAPITAL ਹੋ ਕੇ) ਦਿਖੇਗਾ
-                    detailsText = detailsText.toUpperCase();
+                    // ⚡ ਏਥੇ ਨਵਾਂ ਜਾਦੂ: ਕੌਮੇ (,) ਅਤੇ ਐਂਟਰ (\n) ਦੋਵਾਂ ਦੇ ਅਧਾਰ ਤੇ ਟੁਕੜੇ ਕਰੋ
+                    let rawLines = detailsText.split(/[\n,]+/);
+                    rawLines.forEach(line => {
+                        if(line.trim() !== "") {
+                            linesArr.push(`<div class="res-item">${line.trim().toUpperCase()}</div>`);
+                        }
+                    });
                 }
                 
+                const finalHtmlContent = linesArr.join('');
+                
                 resArea.innerHTML = `
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>
-                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
-                    <div style="height:300px"></div>`;
+                    <div class="res-block">${finalHtmlContent}</div>
+                    <div style="height:150px"></div>
+                    <div class="res-block">${finalHtmlContent}</div>
+                    <div style="height:150px"></div>`;
             } else {
                 isResultActive = false;
                 resScreen.style.display = "none";
@@ -461,10 +466,10 @@
         const resScreen = document.getElementById('result-screen');
         const resArea = document.getElementById('res-list-render');
         if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
-            resListPos -= 1.0;
+            resListPos -= 1.0; 
             let firstResBlock = resArea.querySelector('.res-block');
             if(firstResBlock) {
-                let resResetPoint = firstResBlock.offsetHeight + 300;
+                let resResetPoint = firstResBlock.offsetHeight + 150; 
                 if (Math.abs(resListPos) >= resResetPoint) resListPos = 0;
                 resArea.style.transform = `translateY(${resListPos}px)`;
             }
