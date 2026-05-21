@@ -22,15 +22,7 @@
             transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
         }
 
-        /* --- ⚡ 📢 ਕਬੂਤਰ ਕੱਟਣ ਲਈ ਧਮਾਕੇਦਾਰ ਤੇਜ਼ ਝਮਾਕਾ --- */
-        @keyframes alertSharpFlash {
-            0% { filter: brightness(1); background: rgba(255, 0, 0, 0.95); }
-            15% { filter: brightness(16); background: #fff; }
-            35% { filter: brightness(16); background: #fff; }
-            100% { filter: brightness(1); background: rgba(180, 0, 0, 0.95); }
-        }
-
-        /* --- ⚡ 🕒 ਘੜੀ ਲਈ ਟੇਢਾ ਤੇਜ਼ ਝਮਾਕਾ --- */
+        /* --- ⚡ 🕒 ਘੜੀ ਲਈ ਤੇਜ਼ ਝਮਾਕਾ --- */
         @keyframes clockSharpFlash {
             0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
             50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
@@ -108,40 +100,82 @@
             text-align: center;
         }
 
-        /* --- 📢 CUT FLASH BANNER (ਬਿਲਕੁਲ ਸੈੱਟ ਕੀਤਾ ਹੋਇਆ) --- */
+        /* --- 💎 🔴 ਗੋਲ ਸ਼ੋਅ ਵਾਲਾ ਤੇਜ਼ ਝਮਾਕਾ ਸੈੱਟਅੱਪ (CIRCLE FLASH SETUP) --- */
         #cut-flash-alert {
             position: absolute;
-            top: 40%;
+            top: 45%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
-            color: #fff;
-            width: 100%;
-            padding: 25px 0;
-            text-align: center;
+            transform: translate(-50%, -50%) scale(0);
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(170,0,0,0.98) 0%, rgba(20,0,0,1) 100%);
+            border-radius: 50%;
             z-index: 9999; 
-            display: none; /* ਡਿਫਾਲਟ ਬੰਦ */
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-top: 5px solid #fff;
-            border-bottom: 5px solid #fff;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.85);
+            padding: 20px;
+            text-align: center;
             pointer-events: none;
+            box-shadow: 0 0 60px rgba(255, 0, 0, 0.7), inset 0 0 30px rgba(0,0,0,0.8);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* ਜਦੋਂ ਐਕਟਿਵ ਹੋਵੇਗਾ ਤਾਂ ਸਿੱਧਾ ਦਿਖੇਗਾ ਅਤੇ 0.6 ਸੈਕੰਡ ਲਈ ਝਮਾਕਾ ਲੂਪ ਤੋਂ ਬਿਨਾਂ ਵੱਜੇਗਾ */
+        /* ਹੀਰੇ ਵਾਂਗ ਚਮਕਦਾਰ ਘੁੰਮਣ ਵਾਲਾ ਬਾਰਡਰ ਇਫੈਕਟ */
+        #cut-flash-alert::before {
+            content: "";
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ff0000, #ffffff, #ffcc00, #ff0000, #ffffff, #ff0000);
+            z-index: -1;
+            animation: diamondRotate 1s linear infinite;
+        }
+
+        /* ਅੰਦਰਲਾ ਕਵਰ ਤਾਂ ਜੋ ਬਾਰਡਰ ਪਤਲਾ ਦਿਖੇ */
+        #cut-flash-alert::after {
+            content: "";
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            background: radial-gradient(circle, rgba(180,0,0,1) 0%, rgba(10,0,0,1) 100%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        /* ਜਦੋਂ ਐਕਟਿਵ ਹੋਵੇਗਾ */
         #cut-flash-alert.active { 
             display: flex !important;
-            animation: alertSharpFlash 0.6s ease-out; 
+            transform: translate(-50%, -50%) scale(1);
+            animation: sharpCircleBrightness 0.5s ease-out;
+        }
+
+        /* ਹੀਰੇ ਵਾਂਗ ਲਾਈਟ ਘੁਮਾਉਣ ਲਈ */
+        @keyframes diamondRotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ਆਉਂਦੇ ਸਾਰ ਵੱਜਣ ਵਾਲਾ ਤੇਜ਼ ਝਮਾਕਾ */
+        @keyframes sharpCircleBrightness {
+            0% { filter: brightness(1); }
+            20% { filter: brightness(15); }
+            40% { filter: brightness(15); }
+            100% { filter: brightness(1); }
         }
         
-        .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; animation: textPulse 0.8s infinite alternate; }
-        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
+        .alert-main-title { 
+            font-size: 38px; font-weight: 1000; letter-spacing: 2px; color: #fff; 
+            text-shadow: 0 0 15px #000; z-index: 2; 
+            animation: textPulse 0.6s infinite alternate; 
+        }
+        .alert-pigeon-name { 
+            font-size: 52px; font-weight: 1000; color: #ffcc00; margin-top: 15px; 
+            text-shadow: 0 0 20px #000, 0 0 10px #fff; z-index: 2; 
+        }
 
         @keyframes textPulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
-            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
+            0% { transform: scale(0.96); filter: drop-shadow(0 0 2px #fff); }
+            100% { transform: scale(1.04); filter: drop-shadow(0 0 15px #ffcc00); }
         }
 
         /* --- SCOREBOARD STRUCTURE --- */
@@ -237,9 +271,9 @@
     </div>
 </div>
 
-<!-- 📢 CUT FLASH ALERT BANNER -->
+<!-- 📢 💎 ਗੋਲ ਫਲੈਸ਼ ਅਲਰਟ ਬਾਕਸ (CIRCLE ALERT) -->
 <div id="cut-flash-alert">
-    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
+    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ</div>
     <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
 </div>
 
@@ -423,7 +457,7 @@
         });
     }
 
-    // --- ⚡ ਅਨਲਿਮਟਿਡ ਝਮਾਕਾ ਟ੍ਰਿਗਰ ਫੰਕਸ਼ਨ ---
+    // --- ⚡ ਗੋਲ ਫਲੈਸ਼ ਟ੍ਰਿਗਰ ਫੰਕਸ਼ਨ ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
@@ -431,20 +465,27 @@
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
 
-        // ਪਹਿਲਾਂ ਵਾਲੀ ਸਾਰੀ ਸਟੇਜ ਸਾਫ਼ ਕਰੋ ਤਾਂ ਜੋ ਨਵਾਂ ਝਮਾਕਾ ਅਨਲਿਮਟਿਡ ਵੱਜ ਸਕੇ
+        // ਰੀਸੈੱਟ
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
-        void alertBox.offsetWidth; // CSS Force Reflow (ਰੀਸੈੱਟ ਲਈ ਜ਼ਰੂਰੀ)
+        void alertBox.offsetWidth; // Force Reflow
 
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
         cutTimeout1 = setTimeout(() => {
-            alertBox.classList.add('active'); // ਝਮਾਕਾ ਸ਼ੁਰੂ
+            alertBox.style.display = "flex";
+            // ਥੋੜਾ ਜਿਹਾ ਟਾਈਮਆਊਟ ਤਾਂ ਜੋ ਸਕੇਲ (Scale 0 to 1) ਵਾਲਾ ਇਫੈਕਟ ਸਮੂਥ ਚੱਲੇ
+            setTimeout(() => {
+                alertBox.classList.add('active');
+            }, 20);
             
-            // 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ 'ਤੇ ਬੈਨਰ ਪੂਰੀ ਤਰ੍ਹਾਂ ਹਟਾਓ
+            // 4 ਸੈਕੰਡ ਬਾਅਦ ਬੰਦ
             cutTimeout2 = setTimeout(() => {
                 alertBox.classList.remove('active');
-                alertBox.style.display = "none";
+                // ਛੁਪਾਉਣ ਤੋਂ ਪਹਿਲਾਂ ਸਕੇਲ ਡਾਊਨ ਐਨੀਮੇਸ਼ਨ ਲਈ ਟਾਈਮ
+                setTimeout(() => {
+                    alertBox.style.display = "none";
+                }, 400);
             }, 4000);
         }, 30);
     }
