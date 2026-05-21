@@ -23,21 +23,24 @@
         .sum-item { text-align: center; font-size: 10px; text-transform: uppercase; color: #aaa; }
         .sum-item b { font-size: 20px; color: #f39c12; display: block; }
         
-        /* Section Heading Styling */
-        .section-title { font-size: 14px; font-weight: 900; margin: 15px 0 8px 0; padding-left: 5px; border-left: 4px solid #f39c12; color: #fff; }
+        /* 🏆 RESULT MANAGER BOX STYLES */
+        .result-manager-box { background: #1c2128; border: 2px solid #f39c12; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .result-title { font-size: 13px; font-weight: 900; color: #f39c12; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .res-type-btn { flex: 1; padding: 12px; border: 2px solid #444; border-radius: 8px; font-weight: 900; background: #0d1117; color: #fff; cursor: pointer; text-transform: uppercase; font-size: 13px; transition: all 0.2s; }
+        .res-type-btn.active-sanjhi { background: #3498db; border-color: #fff; color: white; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+        .res-type-btn.active-win { background: #e67e22; border-color: #fff; color: white; box-shadow: 0 0 10px rgba(230, 126, 34, 0.5); }
+        .btn-show-result { background: #238636; color: white; font-size: 14px; }
+        .btn-hide-result { background: #dc3545; color: white; font-size: 14px; }
         
-        /* Pigeon Rows Setup */
+        .section-title { font-size: 14px; font-weight: 900; margin: 15px 0 8px 0; padding-left: 5px; border-left: 4px solid #f39c12; color: #fff; }
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
         .name-part { flex-grow: 1; display: flex; align-items: center; }
         .edit-name-box { background: transparent; border: 1px solid #444; color: #f39c12; padding: 5px; border-radius: 6px; font-size: 13px; font-weight: bold; width: 85%; margin-left: 5px; outline: none; text-transform: uppercase; }
         .btn-part { display: flex; gap: 5px; align-items: center; }
         .st-btn { border: none; padding: 8px 10px; border-radius: 5px; font-weight: 900; color: white; opacity: 0.35; font-size: 11px; cursor: pointer; min-width: 55px; text-transform: uppercase; }
         .st-btn.active { opacity: 1; border: 1px solid white; box-shadow: 0 0 8px rgba(255,255,255,0.2); }
-        
-        /* CUT (OUT) Separated Section Styling */
         .cut-section { background: rgba(231, 76, 60, 0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(231, 76, 60, 0.3); margin-top: 15px; }
         .cut-row { background: #2a1f21; border: 1px solid #4a282b; }
-        
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
         #locStatus { font-size: 10px; margin-bottom: 10px; }
         .pos-input { width: 35px; background: #0d1117; border: 1px solid #444; color: #f39c12; font-size: 11px; text-align: center; border-radius: 4px; padding: 4px; outline: none; }
@@ -55,6 +58,23 @@
     <div class="top-mini-bar">
         <span><i class="fas fa-phone-alt"></i> HELP: <b>+91 8699640061</b></span>
         <span><i class="fas fa-calendar-alt"></i> EXPIRY: <b id="expDisp">--</b></span>
+    </div>
+
+    <!-- 🏆 🤝 RESULT SETUP MANAGER BOX -->
+    <div class="result-manager-box">
+        <div class="result-title"><i class="fas fa-trophy"></i> TOURNAMENT RESULT LIVE OVERLAY PANEL</div>
+        
+        <div class="btn-row">
+            <button id="btnResSanjhi" class="res-type-btn" onclick="setResultType('BAJI SANJHI')">🤝 BAJI SANJHI</button>
+            <button id="btnResWin" class="res-type-btn" onclick="setResultType('WIN DECLARE')">👑 WIN DECLARE</button>
+        </div>
+
+        <textarea id="txtResultDetails" rows="4" placeholder="ਇੱਥੇ ਲਿਖੋ (ਜਿਵੇਂ: ਬਾਜ਼ੀ 3 ਘਰਾਂ ਵਿੱਚ ਸਾਂਝੀ ਹੈ... ਯਾ 1ST: ਮੱਖਣ ਖਾਨ, 2ND: ਕਾਲਾ ਮੁੱਦਕੀ...)" style="margin-top:5px;"></textarea>
+        
+        <div class="btn-row" style="margin-top: 5px;">
+            <button id="btnToggleResultShow" class="toggle-btn btn-show-result" onclick="toggleResultOverlay(true)">👁️ SHOW RESULT ON OVERLAY</button>
+            <button id="btnToggleResultHide" class="toggle-btn btn-hide-result" onclick="toggleResultOverlay(false)">🙈 HIDE RESULT</button>
+        </div>
     </div>
 
     <div class="controls-container">
@@ -89,11 +109,9 @@
         <div class="sum-item">OUT<b id="sum-out" style="color:#e74c3c;">0</b></div>
     </div>
 
-    <!-- Main List Container (Flying and Time Only) -->
     <div class="section-title">🕊️ ACTIVE TOURNAMENT LIST (FLY / TIME)</div>
     <div id="listArea"></div>
 
-    <!-- Separated CUT (OUT) Section with FLY and TIME buttons -->
     <div class="cut-section">
         <div class="section-title" style="color: #e74c3c; border-left-color: #e74c3c; margin-top: 0;">❌ CUT PIGEONS LIST (OUT)</div>
         <div id="cutListArea"></div>
@@ -106,7 +124,7 @@
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
     const userID = urlParams.get('id');
-    let localData = { pigeons: [], config: {} };
+    let localData = { pigeons: [], config: {}, resultOverlay: {} };
     let firstLoad = true;
 
     function checkLogin() {
@@ -147,6 +165,7 @@
 
     function render() {
         const conf = localData.config || {};
+        const resOver = localData.resultOverlay || {};
         
         document.getElementById('scoreBtn').innerText = conf.showScoreboard ? "HIDE SCORE" : "SHOW SCORE";
         document.getElementById('scoreBtn').style.backgroundColor = conf.showScoreboard ? "#dc3545" : "#238636";
@@ -161,7 +180,26 @@
             document.getElementById('inpPind').value = conf.pindName || "";
             document.getElementById('inpLat').value = conf.lat || "";
             document.getElementById('inpLon').value = conf.lon || "";
+            document.getElementById('txtResultDetails').value = resOver.details || "";
             firstLoad = false;
+        }
+
+        document.getElementById('btnResSanjhi').classList.remove('active-sanjhi');
+        document.getElementById('btnResWin').classList.remove('active-win');
+        if(resOver.title === 'BAJI SANJHI') {
+            document.getElementById('btnResSanjhi').classList.add('active-sanjhi');
+        } else if(resOver.title === 'WIN DECLARE') {
+            document.getElementById('btnResWin').classList.add('active-win');
+        }
+
+        if(resOver.active === true) {
+            document.getElementById('btnToggleResultShow').style.border = "2px solid white";
+            document.getElementById('btnToggleResultShow').style.opacity = "1";
+            document.getElementById('btnToggleResultHide').style.opacity = "0.4";
+        } else {
+            document.getElementById('btnToggleResultHide').style.border = "2px solid white";
+            document.getElementById('btnToggleResultHide').style.opacity = "1";
+            document.getElementById('btnToggleResultShow').style.opacity = "0.4";
         }
 
         const mainList = document.getElementById('listArea');
@@ -174,12 +212,10 @@
         const pList = localData.pigeons || [];
 
         pList.forEach((p, idx) => {
-            // Counter Calculation
             if(p.status === 'fly') c.fly++; 
             else if(p.status === 'time') c.time++; 
             else c.out++;
 
-            // Row Structure with Continuous Numbering (idx+1)
             let rowHTML = `
                 <div class="pigeon-row ${p.status === 'out' ? 'cut-row' : ''}">
                     <div class="name-part"> 
@@ -197,18 +233,26 @@
                     </div>
                 </div>`;
 
-            // Separate layouts contextually
-            if (p.status === 'out') {
-                cutList.innerHTML += rowHTML;
-            } else {
-                mainList.innerHTML += rowHTML;
-            }
+            if (p.status === 'out') { cutList.innerHTML += rowHTML; } 
+            else { mainList.innerHTML += rowHTML; }
         });
 
         document.getElementById('sum-total').innerText = pList.length;
         document.getElementById('sum-fly').innerText = c.fly;
         document.getElementById('sum-time').innerText = c.time;
         document.getElementById('sum-out').innerText = c.out;
+    }
+
+    function setResultType(type) {
+        db.ref('users/' + userID + '/resultOverlay/title').set(type);
+    }
+
+    function toggleResultOverlay(show) {
+        const detailsText = document.getElementById('txtResultDetails').value.toUpperCase();
+        db.ref('users/' + userID + '/resultOverlay').update({
+            active: show,
+            details: detailsText
+        });
     }
 
     function movePosition(id, newPos) {
@@ -259,9 +303,23 @@
         syncPigeons();
     }
 
+    // ⚡ ਸਟੇਟਸ ਬਦਲਣ ਵਾਲਾ ਫੰਕਸ਼ਨ - ਝਮਾਕੇ ਵਾਲੇ SMS (ਟਾਈਮਸਟੈਂਪ) ਸਿਸਟਮ ਦੇ ਨਾਲ ਅਪਡੇਟਿਡ ⚡
     function setStatus(id, s) {
+        // ਕਬੂਤਰ ਦਾ ਨਾਮ ਪਤਾ ਕਰੋ ਜਿਸਨੂੰ ਆਊਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ
+        let targetPigeon = localData.pigeons.find(p => p.id == id);
+        
         localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, status: s} : p);
-        syncPigeons();
+        
+        // ਪਹਿਲਾਂ ਪਿਜਨ ਦਾ ਸਟੇਟਸ ਫਾਇਰਬੇਸ ਵਿੱਚ ਅਪਡੇਟ ਕਰੋ
+        db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []).then(() => {
+            // ⚡ ਜੇਕਰ ਬਟਨ 'out' ਦੱਬਿਆ ਗਿਆ ਹੈ, ਤਾਂ ਤੁਰੰਤ ਓਵਰਲੇਅ ਲਈ ਝਮਾਕੇ ਦਾ ਮੈਸੇਜ ਭੇਜੋ
+            if (s === 'out' && targetPigeon) {
+                db.ref('users/' + userID + '/cutAnimation').set({
+                    name: targetPigeon.name.toUpperCase(),
+                    time: Date.now() // ਹਰ ਵਾਰ ਬਿਲਕੁਲ ਨਵਾਂ ਯੂਨੀਕ ਨੰਬਰ (ਟਾਈਮ)
+                });
+            }
+        });
     }
 
     function toggleDisplay(field) {
