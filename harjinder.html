@@ -22,7 +22,16 @@
             transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px;
         }
 
-        @keyframes sharpFlash {
+        /* --- ⚡ 📢 ਕਬੂਤਰ ਕੱਟਣ ਲਈ ਪਹਿਲਾਂ ਵਾਲਾ ਸਿੱਧਾ ਤੇਜ਼ ਝਮਾਕਾ (15x Brightness) --- */
+        @keyframes alertSharpFlash {
+            0% { filter: brightness(1); background: rgba(255, 0, 0, 0.95); }
+            20% { filter: brightness(15); background: #fff; }
+            40% { filter: brightness(15); background: #fff; }
+            100% { filter: brightness(1); background: rgba(150, 0, 0, 0.95); }
+        }
+
+        /* --- ⚡ 🕒 ਘੜੀ ਲਈ ਟੇਢਾ ਤੇਜ਼ ਝਮਾਕਾ --- */
+        @keyframes clockSharpFlash {
             0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
             50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
             100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
@@ -99,12 +108,12 @@
             text-align: center;
         }
 
-        /* --- 📢 CUT FLASH ANIMATION STYLES --- */
+        /* --- 📢 CUT FLASH BANNER (ਬਿਲਕੁਲ ਪਹਿਲਾਂ ਵਾਂਗ ਸਿੱਧਾ ਆਉਣ ਵਾਲਾ) --- */
         #cut-flash-alert {
             position: absolute;
             top: 40%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            transform: translate(-50%, -50%);
             background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
             color: #fff;
             width: 100%;
@@ -117,25 +126,19 @@
             align-items: center;
             border-top: 5px solid #fff;
             border-bottom: 5px solid #fff;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
-            opacity: 0;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.8);
             pointer-events: none;
         }
 
+        /* ਜਦੋਂ ਐਕਟਿਵ ਹੋਵੇਗਾ ਤਾਂ ਸਿੱਧਾ ਸ਼ਾਰਪ ਫਲੈਸ਼ ਵੱਜੇਗਾ */
         #cut-flash-alert.active { 
             display: flex !important;
-            animation: alertPopup 4s ease-in-out forwards; 
+            animation: alertSharpFlash 0.6s ease-out forwards; 
         }
+        
         .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; animation: textPulse 0.8s infinite alternate; }
         .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
 
-        @keyframes alertPopup {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
-            95% { filter: brightness(2); }
-            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
-        }
         @keyframes textPulse {
             0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
             100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
@@ -221,7 +224,7 @@
         }
         
         #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
-        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
+        .jhmaka-effect { animation: clockSharpFlash 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -278,7 +281,7 @@
     </div>
 </div>
 
-<script>
+<script {nonce}>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -420,32 +423,30 @@
         });
     }
 
-    // --- ⚡ INSTANT RESET & FLASH LOGIC (FIXED FOR MULTIPLE CUTES) ---
+    // --- ⚡ 4 ਸੈਕੰਡ ਲਈ ਸ਼ੋਅ ਹੋਵੇਗਾ, ਆਉਂਦੇ ਸਾਰ ਪਹਿਲਾਂ ਵਾਂਗ ਧਮਾਕੇਦਾਰ ਝਮਾਕਾ ਵੱਜੇਗਾ ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
         
-        // 1. ਜੇਕਰ ਪੁਰਾਣੇ ਟਾਈਮਰ ਪਹਿਲਾਂ ਤੋਂ ਚੱਲ ਰਹੇ ਹਨ, ਤਾਂ ਉਹਨਾਂ ਨੂੰ ਤੁਰੰਤ ਖਤਮ ਕਰੋ
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
 
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // 2. ਐਨੀਮੇਸ਼ਨ ਸਟੇਟ ਨੂੰ ਤੁਰੰਤ ਰੀਸੈੱਟ ਕਰੋ (Force Reset CSS)
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
-        void alertBox.offsetWidth; // ਬ੍ਰਾਊਜ਼ਰ ਰੈਂਡਰਿੰਗ ਰੀਫ੍ਰੈਸ਼
+        void alertBox.offsetWidth; // Force Reflow / CSS Reset
 
-        // 3. ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਤੁਰੰਤ ਸਟਾਰਟ ਕਰੋ
         cutTimeout1 = setTimeout(() => {
+            alertBox.style.display = "flex";
             alertBox.classList.add('active');
             
-            // 4. 4 ਸੈਕੰਡ ਪੂਰੇ ਹੋਣ ਤੇ ਹੀ ਬੰਦ ਕਰੋ, ਪਰ ਜੇਕਰ ਕੋਈ ਹੋਰ ਕੱਟਿਆ ਗਿਆ ਤਾਂ ਇਹ ਟਾਈਮਰ ਉੱਪਰ ਕਲੀਅਰ ਹੋ ਜਾਵੇਗਾ
+            // 4 ਸੈਕੰਡ ਬਾਅਦ ਬੈਨਰ ਹਟ ਜਾਵੇਗਾ
             cutTimeout2 = setTimeout(() => {
                 alertBox.classList.remove('active');
                 alertBox.style.display = "none";
             }, 4000);
-        }, 30); // 30 ਮਿਲੀਸੈਕੰਡ ਦਾ ਗੈਪ ਰੀਸੈੱਟ ਹੋਣ ਲਈ ਕਾਫੀ ਹੈ
+        }, 30);
     }
 
     // --- ANIMATION FRAME LOOP ---
