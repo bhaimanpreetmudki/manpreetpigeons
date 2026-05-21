@@ -12,122 +12,169 @@
         #weather-box { position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; display: none; overflow: hidden; background: transparent; border: none; z-index: 1001; }
         #weather-frame { width: 550px; height: 120px; border: none; pointer-events: none; transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px; }
 
-        @keyframes sharpFlash { 0% { filter: brightness(1); transform: scale(1) skewX(25deg); } 50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); } 100% { filter: brightness(1); transform: scale(1) skewX(25deg); } }
-        @keyframes slowGhaintLight { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+        @keyframes sharpFlash {
+            0% { filter: brightness(1); transform: scale(1) skewX(25deg); }
+            50% { filter: brightness(12); transform: scale(1.05) skewX(25deg); }
+            100% { filter: brightness(1); transform: scale(1) skewX(25deg); }
+        }
 
-        #result-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); width: 680px; height: 480px; background: rgba(15, 17, 19, 0.98); border: 5px solid #f39c12; border-radius: 30px; box-shadow: 0 0 40px rgba(243, 156, 18, 0.5); z-index: 3000; display: none; flex-direction: column; }
+        @keyframes slowGhaintLight {
+            0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } 
+        }
+
+        #result-screen {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); width: 680px; height: 480px;
+            background: rgba(15, 17, 19, 0.98); border: 5px solid #f39c12; border-radius: 30px;
+            box-shadow: 0 0 40px rgba(243, 156, 18, 0.5); z-index: 3000; overflow: hidden; display: none; flex-direction: column;
+        }
+
         .res-header { background: #f39c12; color: #000; text-align: center; padding: 15px 10px; font-size: 38px; font-weight: 1000; border-bottom: 4px solid #fff; }
         .res-scroll-window { flex: 1; overflow: hidden; position: relative; background: #050505; padding: 20px 25px; }
         .res-list-area { position: absolute; width: calc(100% - 50px); display: flex; flex-direction: column; align-items: center; }
-        .res-item { font-size: 36px; font-weight: 1000; color: #ffffff; padding: 8px 10px; width: 100%; white-space: nowrap; }
+        .res-item { font-size: 36px; font-weight: 1000; color: #ffffff; padding: 8px 10px; text-align: center; width: 100%; }
 
-        #cut-flash-alert { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%); color: #fff; width: 100%; padding: 25px 0; text-align: center; z-index: 9999; display: none; flex-direction: column; border-top: 5px solid #fff; border-bottom: 5px solid #fff; box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); pointer-events: none; }
-        #cut-flash-alert.active { display: flex !important; animation: alertPopup 4s ease-in-out forwards; }
-        @keyframes alertPopup { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 10% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 90% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } }
-        .alert-main-title { font-size: 55px; font-weight: 1000; color: #fff; text-shadow: 0 0 20px #000; }
-        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; }
+        #cut-flash-alert {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: rgba(220, 0, 0, 0.95); color: #fff; width: 100%; padding: 40px 0; text-align: center;
+            z-index: 9999; display: none; border-top: 5px solid #fff; border-bottom: 5px solid #fff;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.9); opacity: 0;
+        }
+        #cut-flash-alert.active { display: flex !important; flex-direction: column; animation: alertPopup 4s ease-in-out forwards; }
+        @keyframes alertPopup {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            20% { transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+        .alert-main-title { font-size: 60px; font-weight: 1000; letter-spacing: 5px; }
+        .alert-pigeon-name { font-size: 50px; font-weight: 900; color: #ffcc00; margin-top: 10px; }
 
         .main-container { position: absolute; left: 10px; right: 10px; bottom: 56px; height: 280px; display: flex; gap: 10px; }
-        .box { display: none; width: 32.5%; height: 100%; position: relative; border-radius: 25px; overflow: hidden; border: 4px solid #fff; }
-        #box-fly { background: rgba(0, 191, 255, 0.85); }
-        #box-out { background: rgba(255, 0, 0, 0.85); }
-        #box-time { background: rgba(255, 255, 0, 0.85); }
-        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); z-index: 10; background: #000; border-bottom: 3px solid white; border-left: 3px solid white; border-radius: 0 20px 0 20px; color: white; }
+        .box { display: none; width: 32.5%; height: 100%; border-radius: 25px; border: 4px solid #fff; overflow: hidden; }
+        .box-inner { width: 100%; height: 100%; position: relative; }
+        .header-wrapper { position: absolute; top: 0; right: 0; width: var(--header-w); background: #000; border-bottom: 3px solid white; border-left: 3px solid white; border-radius: 0 20px 0 20px; color: white; }
         .box-header { height: var(--header-h); display: flex; align-items: center; border-bottom: 2px solid white; }
-        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; }
-        .count-tag { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; background: #fff; color: #000; }
+        .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; }
+        .count-tag { background: #fff; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .sum-card { height: var(--header-h); display: flex; align-items: center; }
-        .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
+        .sum-val-area { background: #ffcc00; color: #000; width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; border-bottom-right-radius: 15px; }
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        .list-area { position: absolute; width: 100%; padding-top: calc(var(--header-h) * 2.3); }
+        .list-area { position: absolute; width: 100%; display: flex; flex-direction: column; padding-top: 150px; }
         .item { padding: 5px 20px; font-size: 36px; font-weight: 1000; color: #000; }
         #box-out .item { color: #fff; }
+
         .footer { position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; background: #fff; display: flex; align-items: center; border: 4px solid #000; border-radius: 15px; z-index: 20; }
         .live-tag { background: #ff0000; color: #fff; padding: 0 35px; height: 100%; display: flex; align-items: center; font-size: 30px; font-weight: 1000; transform: skewX(-25deg); margin-left: -25px; border-right: 5px solid #fff; }
+        .live-tag span { transform: skewX(25deg); }
         .ticker-wrap { flex: 1; overflow: hidden; display: flex; align-items: center; }
-        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; color: #000; }
+        .ticker-move { display: flex; white-space: nowrap; font-size: 31px; font-weight: 1000; }
         .ticker-content { display: inline-block; padding-right: 800px; }
         .dt-box-wrap { height: 100%; min-width: 350px; display: flex; align-items: center; justify-content: center; background: #ff0000; color: #fff; transform: skewX(-25deg); margin-right: -25px; border-left: 6px solid #fff; }
         #clock-box { font-size: 30px; font-weight: 1000; transform: skewX(25deg); }
+        .jhmaka-effect { animation: sharpFlash 0.5s ease-out; }
     </style>
 </head>
 <body>
 
-<div id="result-screen">
-    <div class="res-header" id="res-title-text">FINAL RESULT</div>
-    <div class="res-scroll-window"><div class="res-list-area" id="res-list-render"></div></div>
-</div>
+<div id="result-screen"><div class="res-header" id="res-title-text">FINAL RESULT</div><div class="res-scroll-window"><div class="res-list-area" id="res-list-render"></div></div></div>
 
-<div id="cut-flash-alert"><div class="alert-main-title" id="alert-title-lang">PIGEON OUT</div><div class="alert-pigeon-name" id="alert-pigeon-name">--</div></div>
+<div id="cut-flash-alert">
+    <div class="alert-main-title" id="alert-title-lang">PIGEON OUT</div>
+    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
+</div>
 
 <div id="weather-box"><iframe id="weather-frame" src=""></iframe></div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="scroll-window"><div class="list-area" id="list-fly"></div></div><div class="header-wrapper"><div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div><div class="sum-card"><span class="header-title">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div></div></div>
-    <div id="box-out" class="box"><div class="scroll-window"><div class="list-area" id="list-out"></div></div><div class="header-wrapper"><div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div><div class="sum-card"><span class="header-title">REM.</span><span id="m-rem" class="sum-val-area">0</span></div></div></div>
-    <div id="box-time" class="box"><div class="scroll-window"><div class="list-area" id="list-time"></div></div><div class="header-wrapper"><div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div><div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width:100%">--</div></div></div></div>
+    <div id="box-fly" class="box"><div class="box-inner"><div class="header-wrapper"><div class="box-header"><span class="header-title" id="title-fly">FLYING</span><span id="count-fly" class="count-tag">0</span></div><div class="sum-card"><span class="header-title" id="total-fly">TOTAL</span><span id="m-total" class="sum-val-area">0</span></div></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div></div>
+    <div id="box-out" class="box"><div class="box-inner"><div class="header-wrapper"><div class="box-header"><span class="header-title" id="title-out">OUT</span><span id="count-out" class="count-tag">0</span></div><div class="sum-card"><span class="header-title" id="rem-out">REM.</span><span id="m-rem" class="sum-val-area">0</span></div></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div></div>
+    <div id="box-time" class="box"><div class="box-inner"><div class="header-wrapper"><div class="box-header"><span class="header-title" id="title-time">TIME</span><span id="count-time" class="count-tag">0</span></div><div class="sum-card"><div id="m-time-val" class="sum-val-area" style="width: 100%; border-bottom-left-radius: 20px;">--</div></div></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div></div>
 </div>
 
-<div class="footer">
-    <div class="live-tag"><span>LIVE</span></div>
-    <div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div>
-    <div class="dt-box-wrap"><div id="clock-box">--:--:--</div></div>
-</div>
+<div class="footer"><div class="live-tag"><span>LIVE</span></div><div class="ticker-wrap"><div id="ticker-text" class="ticker-move"></div></div><div class="dt-box-wrap"><div id="clock-box">--:--:--</div></div></div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
-    
-    let previousOutPigeons = [];
+
+    let previousAnimationTime = null;
+    let isResultActive = false;
     let listPos = { fly: 0, time: 0, out: 0 };
+    let resListPos = 0;
+    let tickerPos = 0;
 
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
+            const conf = data.config || {};
+            const resOver = data.resultOverlay || {};
 
-            // --- AUTO CUT FLASH LOGIC ---
-            let currentOutPigeons = pigeons.filter(p => p.status === 'out').map(p => p.name);
-            if (previousOutPigeons.length > 0) {
-                currentOutPigeons.forEach(name => {
-                    if (!previousOutPigeons.includes(name)) triggerCutFlash(name);
-                });
+            // Result Screen logic
+            if(resOver.active === true) {
+                isResultActive = true;
+                document.getElementById('result-screen').style.display = "flex";
+                document.getElementById('scoreboard-div').style.display = "none";
+                document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
+                let details = resOver.details || "";
+                let lines = details.split(/[\n,]+/).filter(l => l.trim() !== "").map(l => `<div class="res-item">${l.toUpperCase()}</div>`).join('');
+                document.getElementById('res-list-render').innerHTML = `<div class="res-block">${lines}</div><div style="height:100px"></div><div class="res-block">${lines}</div>`;
+            } else {
+                isResultActive = false;
+                document.getElementById('result-screen').style.display = "none";
+                document.getElementById('scoreboard-div').style.display = "flex";
             }
-            previousOutPigeons = [...currentOutPigeons];
 
-            // UI Update
-            document.getElementById('m-total').innerText = pigeons.length;
-            document.getElementById('m-rem').innerText = pigeons.length - currentOutPigeons.length;
-            
-            ['fly', 'time', 'out'].forEach(id => {
-                const list = document.getElementById(`list-${id}`);
-                const items = pigeons.filter(p => p.status === id);
-                document.getElementById(`count-${id}`).innerText = items.length;
-                list.innerHTML = `<div class="content-block">${items.map((p,i) => `<div class="item">${i+1}. ${p.name.toUpperCase()}</div>`).join('')}</div>`;
-                document.getElementById(`box-${id}`).style.display = items.length > 0 ? "block" : "none";
+            // Cut Animation Logic
+            if(data.cutAnimation && data.cutAnimation.time && data.cutAnimation.time !== previousAnimationTime) {
+                previousAnimationTime = data.cutAnimation.time;
+                triggerCutFlash(data.cutAnimation.name);
+            }
+
+            // Scoreboard Logic
+            let htmlArr = { fly:[], out:[], time:[] };
+            let counters = { fly: 1, out: 1, time: 1 };
+            pigeons.forEach(p => {
+                if(!p.name) return;
+                htmlArr[p.status].push(`<div class="item">${counters[p.status]++}. ${p.name.toUpperCase()}</div>`);
             });
+
+            ['fly','time','out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                const box = document.getElementById(`box-${id}`);
+                if(htmlArr[id].length > 0 && !isResultActive) {
+                    box.style.display = "block";
+                    document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
+                    area.innerHTML = `<div class="content-block">${htmlArr[id].join('')}</div><div style="height:100px"></div><div class="content-block">${htmlArr[id].join('')}</div>`;
+                } else { box.style.display = "none"; }
+            });
+            document.getElementById('m-total').innerText = pigeons.length;
+            document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
         });
     }
 
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
-        document.getElementById('alert-pigeon-name').innerText = name.toUpperCase();
+        document.getElementById('alert-pigeon-name').innerText = name || "PIGEON";
         alertBox.classList.remove('active');
-        void alertBox.offsetWidth; 
+        void alertBox.offsetWidth; // Trigger reflow
         alertBox.classList.add('active');
     }
 
     function animate() {
-        ['fly', 'time', 'out'].forEach(id => {
-            const list = document.getElementById(`list-${id}`);
-            if(list && list.children.length > 0) {
-                listPos[id] -= 1.0;
-                if(Math.abs(listPos[id]) > 200) listPos[id] = 0;
-                list.style.transform = `translateY(${listPos[id]}px)`;
-            }
-        });
+        if (!isResultActive) {
+            ['fly', 'time', 'out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                if (area && area.parentElement.parentElement.style.display !== "none") {
+                    listPos[id] -= 1;
+                    if (Math.abs(listPos[id]) >= area.querySelector('.content-block').offsetHeight) listPos[id] = 0;
+                    area.style.transform = `translateY(${listPos[id]}px)`;
+                }
+            });
+        }
         requestAnimationFrame(animate);
     }
     animate();
