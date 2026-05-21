@@ -79,6 +79,9 @@
             position: relative;
             background: #050505;
             padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .res-list-area {
@@ -87,14 +90,16 @@
             will-change: transform;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .res-text-content {
-            font-size: 32px;
-            font-weight: 900;
+            font-size: 34px;
+            font-weight: 1000;
             color: #ffffff;
             letter-spacing: 1.5px;
-            line-height: 1.6;
+            line-height: 1.8;
             white-space: pre-wrap;
             text-align: center;
         }
@@ -136,10 +141,6 @@
             95% { filter: brightness(2); }
             100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
         }
-        @keyframes textPulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
-            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
-        }
 
         /* --- SCOREBOARD STRUCTURE --- */
         .main-container { 
@@ -177,12 +178,7 @@
         .header-title { flex: 1; padding-left: 12px; font-weight: 900; font-size: 28px; border-right: 2px solid white; height: 100%; display: flex; align-items: center; }
         .count-tag, .sum-val-area { width: 35%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 1000; font-size: 34px; }
         .count-tag { background: #fff; color: #000; }
-        
-        .sum-val-area { 
-            background: #ffcc00; 
-            color: #000; 
-            border-bottom-right-radius: 15px; 
-        }
+        .sum-val-area { background: #ffcc00; color: #000; border-bottom-right-radius: 15px; }
 
         .scroll-window { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; will-change: transform; display: flex; flex-direction: column; padding-top: calc(var(--header-h) * 2.3); }
@@ -194,13 +190,6 @@
             position: absolute; bottom: 2px; left: 10px; width: calc(100% - 20px); height: 55px; 
             background: #fff; display: flex; align-items: center; 
             border: 4px solid #000; border-radius: 15px; z-index: 20; overflow: hidden;
-        }
-
-        .footer::before {
-            content: ""; position: absolute; top: 0; width: 500px; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7) 50%, transparent);
-            animation: slowGhaintLight 20s infinite ease-in-out;
-            z-index: 35; pointer-events: none;
         }
 
         .live-tag { 
@@ -331,12 +320,11 @@
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // --- 🏆 WIN RESULT SCREEN LIVE TRIGGER HANDLING ---
+            // --- 🏆 WIN RESULT SCREEN HANDLING ---
             const resScreen = document.getElementById('result-screen');
             const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
 
-            // ⚡ ਜਦੋਂ ਐਡਮਿਨ ਪੈਨਲ ਤੋਂ active: true ਭੇਜਿਆ ਜਾਵੇਗਾ, ਸਿਰਫ਼ ਉਦੋਂ ਹੀ ਬਾਕਸ ਸ਼ੋਅ ਹੋਵੇਗਾ
             if(resOver.active === true) {
                 isResultActive = true;
                 resScreen.style.display = "flex";       
@@ -345,18 +333,17 @@
                 
                 let detailsText = resOver.details || "";
                 
-                // ⚡ ਜੇਕਰ ਟੈਕਸਟ ਬਾਕਸ ਬਿਲਕੁਲ ਖਾਲੀ ਹੈ, ਤਾਂ ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (status === 'fly') ਕਬੂਤਰਾਂ ਨੂੰ ਪੱਕੇ ਨੰਬਰਾਂ ਸਮੇਤ ਲੜੀਵਾਰ ਸ਼ੋਅ ਕਰੋ
+                // ⚡ ਜੇਕਰ ਬਾਕਸ ਬਿਲਕੁਲ ਖਾਲੀ ਹੈ, ਤਾਂ ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰਾਂ ਦੇ ਨਾਮ ਬਿਨਾਂ ਕਿਸੇ ਨੰਬਰ ਦੇ ਸ਼ੋਅ ਕਰੋ
                 if(detailsText.trim() === "") {
                     let sanjiRows = [];
-                    pigeons.forEach((p, idx) => {
-                        if(p.name && p.status === 'fly') { // ਸਿਰਫ਼ ਉੱਡ ਰਹੇ (fly) ਕਬੂਤਰ ਹੀ ਸ਼ਾਮਿਲ ਹੋਣਗੇ
-                            let originalNumber = idx + 1; 
-                            sanjiRows.push(`${originalNumber}. ${p.name.toUpperCase()}`);
+                    pigeons.forEach((p) => {
+                        if(p.name && p.status === 'fly') { 
+                            sanjiRows.push(p.name.toUpperCase()); // ਕੋਈ ਨੰਬਰ (1, 2) ਨਹੀਂ ਲੱਗੇਗਾ
                         }
                     });
                     detailsText = sanjiRows.join('\n');
                 } else {
-                    // ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਕੁਝ ਲਿਖਿਆ ਹੈ, ਤਾਂ ਉੱਡ ਰਹੇ ਕਬੂਤਰਾਂ ਦੀ ਥਾਂ ਸਿਰਫ਼ ਬਾਕਸ ਵਾਲਾ ਟੈਕਸਟ ਹੀ ਸ਼ੋਅ ਹੋਵੇਗਾ
+                    // ਜੇਕਰ ਬਾਕਸ ਵਿੱਚ ਕੁਝ ਲਿਖਿਆ ਹੈ (ਜਿਵੇਂ ਟੀਮਾਂ), ਤਾਂ ਬਿਨਾਂ ਨੰਬਰਾਂ ਦੇ ਸਿਰਫ਼ ਉਹੀ ਟੈਕਸਟ ਦਿਖੇਗਾ
                     detailsText = detailsText.toUpperCase();
                 }
                 
@@ -392,7 +379,6 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // --- 📢 REAL-TIME CUT ANIMATION CHECK ---
             if(data.cutAnimation && data.cutAnimation.time) {
                 let currentAnimTime = String(data.cutAnimation.time);
                 if(currentAnimTime !== previousAnimationTime) {
@@ -437,20 +423,15 @@
         });
     }
 
-    // --- ⚡ INSTANT RESET & FLASH LOGIC ---
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
-        
         if (cutTimeout1) clearTimeout(cutTimeout1);
         if (cutTimeout2) clearTimeout(cutTimeout2);
-
         nameBox.innerText = name ? name.toUpperCase() : "--";
-        
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
         void alertBox.offsetWidth; 
-
         cutTimeout1 = setTimeout(() => {
             alertBox.classList.add('active');
             cutTimeout2 = setTimeout(() => {
@@ -460,7 +441,6 @@
         }, 30); 
     }
 
-    // --- ANIMATION FRAME LOOP ---
     function animate() {
         if (!isResultActive) {
             ['fly', 'time', 'out'].forEach(id => {
