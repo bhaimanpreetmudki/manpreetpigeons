@@ -121,7 +121,7 @@
             align-items: center;
             border-top: 5px solid #fff;
             border-bottom: 5px solid #fff;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
             opacity: 0;
             pointer-events: none;
         }
@@ -139,7 +139,7 @@
             10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
             95% { filter: brightness(2); }
-            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; display: none; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; display: none; }
         }
 
         /* --- SCOREBOARD STRUCTURE --- */
@@ -281,8 +281,7 @@
     let isResultActive = false;
     
     let previousAnimationTime = null;
-    let cutTimeout1 = null;
-    let cutTimeout2 = null;
+    let cutTimeout = null;
 
     setInterval(() => {
         langFlash = !langFlash;
@@ -311,6 +310,16 @@
     if(userID) {
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
+            
+            // 📢 1. ਐਨੀਮੇਸ਼ਨ ਨੂੰ ਬਾਕੀ ਕੋਡ ਨਾਲੋਂ ਪਹਿਲਾਂ ਅਲੱਗ ਚਲਾਓ ਤਾਂ ਜੋ ਰੀ-ਰੈਂਡਰ (Reload) ਨਾ ਰੋਕੇ
+            if(data.cutAnimation && data.cutAnimation.time) {
+                let currentAnimTime = String(data.cutAnimation.time);
+                if(currentAnimTime !== previousAnimationTime) {
+                    previousAnimationTime = currentAnimTime; 
+                    triggerCutFlash(data.cutAnimation.name);
+                }
+            }
+
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
             const resOver = data.resultOverlay || {};
@@ -383,15 +392,6 @@
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else { wBox.style.display = "none"; }
 
-            // 📢 ਚੈੱਕ ਕਰੋ ਜੇ ਨਵਾਂ ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ ਹੈ
-            if(data.cutAnimation && data.cutAnimation.time) {
-                let currentAnimTime = String(data.cutAnimation.time);
-                if(currentAnimTime !== previousAnimationTime) {
-                    previousAnimationTime = currentAnimTime; 
-                    triggerCutFlash(data.cutAnimation.name);
-                }
-            }
-
             // --- SCOREBOARD PROCESS ---
             let htmlArr = { fly:[], out:[], time:[] };
             let counters = { fly: 1, out: 1, time: 1 };
@@ -428,31 +428,28 @@
         });
     }
 
-    // ⚡ ਸੁਧਾਰਿਆ ਹੋਇਆ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ - ਹੁਣ ਹਰ ਕਬੂਤਰ 'ਤੇ ਐਨੀਮੇਸ਼ਨ ਰੀਸੈੱਟ ਹੋ ਕੇ ਚੱਲੇਗੀ
+    // ⚡ ਪੱਕਾ ਚੱਲਣ ਵਾਲਾ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
         
-        // 1. ਪੁਰਾਣੇ ਟਾਈਮਰ ਕਲੀਅਰ ਕਰੋ
-        if (cutTimeout1) clearTimeout(cutTimeout1);
-        if (cutTimeout2) clearTimeout(cutTimeout2);
+        if (cutTimeout) clearTimeout(cutTimeout);
         
-        // 2. ਨਵਾਂ ਨਾਮ ਪਾਓ
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // 3. ਐਨੀਮੇਸ਼ਨ ਪੂਰੀ ਤਰ੍ਹਾਂ ਰੀਸੈੱਟ ਕਰੋ (ਕਲਾਸ ਹਟਾਓ ਅਤੇ ਲੁਕਾਓ)
+        // ਪੁਰਾਣੀ ਐਨੀਮੇਸ਼ਨ ਰੀਸੈੱਟ ਕਰੋ
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
         
-        // ਬ੍ਰਾਊਜ਼ਰ ਤੋਂ ਰੀਫ੍ਰੈਸ਼ ਫੋਰਸ ਕਰਵਾਓ (Reflow)
+        // Force Reflow ਤਾਕਿ ਬ੍ਰਾਊਜ਼ਰ ਨੂੰ ਪਤਾ ਲੱਗੇ ਕਿ ਨਵੀਂ ਚੀਜ਼ ਆਈ ਹੈ
         void alertBox.offsetWidth; 
         
-        // 4. ਹੁਣ ਦੁਬਾਰਾ ਨਵੀਂ ਐਨੀਮੇਸ਼ਨ ਲਾਓ
+        // ਐਨੀਮੇਸ਼ਨ ਲਾਗੂ ਕਰੋ
         alertBox.style.display = "flex";
         alertBox.classList.add('active');
         
-        // 5. 4 ਸੈਕਿੰਡ ਬਾਅਦ ਹਟਾਓ
-        cutTimeout2 = setTimeout(() => {
+        // ਪੂਰੇ 4 ਸੈਕਿੰਡ ਸਕ੍ਰੀਨ 'ਤੇ ਰੱਖੋ
+        cutTimeout = setTimeout(() => {
             alertBox.classList.remove('active');
             alertBox.style.display = "none";
         }, 4000);
