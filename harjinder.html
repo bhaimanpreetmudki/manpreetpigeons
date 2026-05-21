@@ -103,43 +103,43 @@
             text-overflow: ellipsis;
         }
 
-        /* --- 📢 CUT FLASH ANIMATION STYLES --- */
+        /* --- 📢 CUT FLASH ANIMATION STYLES (ਲੇਅਰ ਸਭ ਤੋਂ ਉੱਪਰ ਕੀਤੀ) --- */
         #cut-flash-alert {
             position: absolute;
-            top: 40%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
+            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.98) 15%, rgba(140,0,0,0.98) 50%, rgba(220,0,0,0.98) 85%, rgba(255,0,0,0) 100%);
             color: #fff;
             width: 100%;
-            padding: 25px 0;
+            padding: 30px 0;
             text-align: center;
-            z-index: 9999; 
+            z-index: 99999; /* ਰਿਜ਼ਲਟ ਬਾਕਸ ਦੇ ਵੀ ਉੱਪਰ ਰੱਖਣ ਲਈ */
             display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-top: 5px solid #fff;
             border-bottom: 5px solid #fff;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.9);
             opacity: 0;
             pointer-events: none;
         }
 
-        /* ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ */
+        /* ਜਦੋਂ ਐਨੀਮੇਸ਼ਨ ਐਕਟਿਵ ਹੋਵੇ */
         #cut-flash-alert.active { 
             display: flex !important;
             animation: alertPopup 4s ease-in-out forwards; 
         }
         .alert-main-title { font-size: 55px; font-weight: 1000; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px #000, 0 0 10px #ff0000; }
-        .alert-pigeon-name { font-size: 45px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
+        .alert-pigeon-name { font-size: 48px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 15px #000; }
 
         @keyframes alertPopup {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
             10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
-            95% { filter: brightness(2); }
-            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; display: none; }
+            95% { filter: brightness(1.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; display: none; }
         }
 
         /* --- SCOREBOARD STRUCTURE --- */
@@ -215,18 +215,18 @@
 </head>
 <body>
 
+<!-- 📢 CUT FLASH ALERT BANNER (ਸਭ ਤੋਂ ਉੱਪਰ ਰੱਖਿਆ ਬਾਡੀ ਦੇ ਵਿੱਚ) -->
+<div id="cut-flash-alert">
+    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
+    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
+</div>
+
 <!-- 🏆 WINNER RESULT DISPLAY BOX -->
 <div id="result-screen">
     <div class="res-header" id="res-title-text">FINAL RESULT</div>
     <div class="res-scroll-window">
         <div class="res-list-area" id="res-list-render"></div>
     </div>
-</div>
-
-<!-- 📢 CUT FLASH ALERT BANNER -->
-<div id="cut-flash-alert">
-    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
-    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
 </div>
 
 <div id="weather-box">
@@ -311,7 +311,7 @@
         db.ref('users/' + userID).on('value', snap => {
             const data = snap.val(); if(!data) return;
             
-            // 📢 1. ਐਨੀਮੇਸ਼ਨ ਨੂੰ ਬਾਕੀ ਕੋਡ ਨਾਲੋਂ ਪਹਿਲਾਂ ਅਲੱਗ ਚਲਾਓ ਤਾਂ ਜੋ ਰੀ-ਰੈਂਡਰ (Reload) ਨਾ ਰੋਕੇ
+            // 📢 1. ਐਨੀਮੇਸ਼ਨ ਵਾਲਾ ਚੈੱਕ ਸਭ ਤੋਂ ਪਹਿਲਾਂ, ਬਿਨਾਂ ਕਿਸੇ ਰੁਕਾਵਟ ਦੇ
             if(data.cutAnimation && data.cutAnimation.time) {
                 let currentAnimTime = String(data.cutAnimation.time);
                 if(currentAnimTime !== previousAnimationTime) {
@@ -428,7 +428,7 @@
         });
     }
 
-    // ⚡ ਪੱਕਾ ਚੱਲਣ ਵਾਲਾ ਫਲੈਸ਼ ਫੰਕਸ਼ਨ
+    // ⚡ ਪੱਕਾ ਫਲੈਸ਼ ਚਲਾਉਣ ਵਾਲਾ ਫੰਕਸ਼ਨ
     function triggerCutFlash(name) {
         const alertBox = document.getElementById('cut-flash-alert');
         const nameBox = document.getElementById('alert-pigeon-name');
@@ -437,18 +437,18 @@
         
         nameBox.innerText = name ? name.toUpperCase() : "--";
         
-        // ਪੁਰਾਣੀ ਐਨੀਮੇਸ਼ਨ ਰੀਸੈੱਟ ਕਰੋ
+        // 1. ਐਨੀਮੇਸ਼ਨ ਪੂਰੀ ਤਰ੍ਹਾਂ ਹਟਾ ਕੇ ਲੁਕਾਓ
         alertBox.classList.remove('active');
         alertBox.style.display = "none";
         
-        // Force Reflow ਤਾਕਿ ਬ੍ਰਾਊਜ਼ਰ ਨੂੰ ਪਤਾ ਲੱਗੇ ਕਿ ਨਵੀਂ ਚੀਜ਼ ਆਈ ਹੈ
+        // 2. Force Reflow (ਬ੍ਰਾਊਜ਼ਰ ਦਾ ਰੀਸੈੱਟ ਬਟਨ)
         void alertBox.offsetWidth; 
         
-        // ਐਨੀਮੇਸ਼ਨ ਲਾਗੂ ਕਰੋ
+        // 3. ਦੁਬਾਰਾ ਨਵੀਂ ਕਲਾਸ ਲਾ ਕੇ ਦਿਖਾਓ
         alertBox.style.display = "flex";
         alertBox.classList.add('active');
         
-        // ਪੂਰੇ 4 ਸੈਕਿੰਡ ਸਕ੍ਰੀਨ 'ਤੇ ਰੱਖੋ
+        // 4. ਪੂਰੇ 4 ਸੈਕਿੰਡ ਸਕ੍ਰੀਨ 'ਤੇ ਰੱਖੋ
         cutTimeout = setTimeout(() => {
             alertBox.classList.remove('active');
             alertBox.style.display = "none";
