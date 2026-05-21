@@ -40,12 +40,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -55%);
-            width: 650px;
+            width: 680px;
             height: 480px;
-            background: rgba(15, 17, 19, 0.95);
+            background: rgba(15, 17, 19, 0.98);
             border: 5px solid #f39c12;
             border-radius: 30px;
-            box-shadow: 0 0 40px rgba(243, 156, 18, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
+            box-shadow: 0 0 40px rgba(243, 156, 18, 0.5), inset 0 0 20px rgba(0,0,0,0.9);
             z-index: 3000;
             overflow: hidden;
             display: none;
@@ -77,50 +77,26 @@
             width: 100%;
             overflow: hidden;
             position: relative;
-            background: #000;
-            padding: 20px 0;
+            background: #050505;
+            padding: 20px 25px;
         }
 
         .res-list-area {
             position: absolute;
-            width: 100%;
+            width: calc(100% - 50px);
             will-change: transform;
             display: flex;
             flex-direction: column;
-            gap: 12px;
         }
 
-        .res-item {
-            display: flex;
-            align-items: center;
-            background: linear-gradient(90deg, #1a1d21 0%, #24292e 50%, #1a1d21 100%);
-            margin: 0 25px;
-            padding: 12px 20px;
-            border-radius: 15px;
-            border: 2px solid #333;
-        }
-
-        .res-rank {
-            background: #f39c12;
-            color: #000;
-            font-size: 28px;
-            font-weight: 1000;
-            padding: 4px 15px;
-            border-radius: 8px;
-            margin-right: 20px;
-            min-width: 60px;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
-        }
-
-        .res-name {
+        .res-text-content {
             font-size: 32px;
             font-weight: 900;
-            color: #fff;
-            letter-spacing: 1px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            line-height: 1.6;
+            white-space: pre-wrap; /* ਨਵੀਂ ਲਾਈਨ ਸਪੋਰਟ ਲਈ */
+            text-align: center;
         }
 
         /* --- CUT FLASH ANIMATION STYLES --- */
@@ -309,8 +285,9 @@
     let langFlash = false;
     let showDate = false;
     let listPos = { fly: 0, time: 0, out: 0 };
-    let resListPos = 0; // ਰਿਜ਼ਲਟ ਸਕ੍ਰੋਲ ਪੁਜੀਸ਼ਨ
+    let resListPos = 0;
     let tickerPos = 0;
+    let isResultActive = false; // ਰਿਜ਼ਲਟ ਸਟੇਟ ਟਰੈਕਿੰਗ
     
     let previousAnimationTime = null;
 
@@ -343,16 +320,42 @@
             const data = snap.val(); if(!data) return;
             const pigeons = data.pigeons || [];
             const conf = data.config || {};
+            const resOver = data.resultOverlay || {};
             
             // 1. Ticker (Show/Hide) Control
             const footerElem = document.querySelector('.footer');
             if (conf.showTicker === false) { footerElem.style.display = "none"; } 
             else { footerElem.style.display = "flex"; }
 
-            // 2. Scoreboard (Show/Hide) Control
+            // --- 🏆 🤝 RESULT SCREEN HANDLING & SCORE LIST HIDE CONTROL ---
+            const resScreen = document.getElementById('result-screen');
+            const resArea = document.getElementById('res-list-render');
             const scoreboardElem = document.getElementById('scoreboard-div');
-            if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
-            else { scoreboardElem.style.display = "flex"; }
+
+            if(resOver.active === true) {
+                isResultActive = true;
+                resScreen.style.display = "flex";
+                scoreboardElem.style.display = "none"; // 💥 ਰਿਜ਼ਲਟ ਆਉਣ ਤੇ ਬਾਕੀ ਸਭ ਹਾਈਡ (Hide) ਹੋ ਜਾਵੇਗਾ
+                
+                document.getElementById('res-title-text').innerText = resOver.title || "FINAL RESULT";
+                const detailsText = resOver.details || "NO DETAILS PROVIDED";
+                
+                // ਟੈਕਸਟ ਨੂੰ ਦੋ ਬਲਾਕਾਂ 'ਚ ਰੈਂਡਰ ਕਰਨਾ ਤਾਂ ਜੋ ਸਮੂਥ ਸਕ੍ਰੋਲ ਲੂਪ ਬਣ ਸਕੇ
+                resArea.innerHTML = `
+                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
+                    <div style="height:300px"></div>
+                    <div class="res-block"><div class="res-text-content">${detailsText}</div></div>
+                    <div style="height:300px"></div>`;
+            } else {
+                isResultActive = false;
+                resScreen.style.display = "none";
+                resArea.innerHTML = "";
+                resListPos = 0;
+                
+                // ਜੇ ਰਿਜ਼ਲਟ ਬੰਦ ਹੈ ਤਾਂ ਕੌਨਫਿਗ ਮੁਤਾਬਕ ਮੇਨ ਸਕੋਰਬੋਰਡ ਦਿਖਾਓ
+                if (conf.showScoreboard === false) { scoreboardElem.style.display = "none"; } 
+                else { scoreboardElem.style.display = "flex"; }
+            }
 
             document.getElementById('m-time-val').innerText = conf.boxTime || "--";
             const tickerElem = document.getElementById('ticker-text');
@@ -378,37 +381,6 @@
                 triggerCutFlash(data.cutAnimation.name);
             }
 
-            // --- 🏆 WINNER RESULT PROCESS & RENDER ---
-            const resScreen = document.getElementById('result-screen');
-            const resArea = document.getElementById('res-list-render');
-            
-            if(data.resultOverlay && data.resultOverlay.active === true) {
-                resScreen.style.display = "flex";
-                document.getElementById('res-title-text').innerText = data.resultOverlay.title || "FINAL RESULT";
-                
-                let winNames = data.resultOverlay.names || [];
-                let resHtml = "";
-                
-                winNames.forEach((name, i) => {
-                    resHtml += `
-                        <div class="res-item">
-                            <div class="res-rank">${i + 1}</div>
-                            <div class="res-name">${name}</div>
-                        </div>`;
-                });
-                
-                // ਨਿਰੰਤਰ ਸਕ੍ਰੋਲ ਲੂਪ ਬਣਾਉਣ ਲਈ ਡਬਲ ਬਲਾਕ ਤਿਆਰ ਕਰਨਾ
-                if(winNames.length > 0) {
-                    resArea.innerHTML = `<div class="res-block">${resHtml}</div><div style="height:250px"></div><div class="res-block">${resHtml}</div><div style="height:250px"></div>`;
-                } else {
-                    resArea.innerHTML = `<div style="text-align:center; font-size:24px; color:#aaa; margin-top:5px;">NO WINNERS DECLARED</div>`;
-                }
-            } else {
-                resScreen.style.display = "none";
-                resArea.innerHTML = "";
-                resListPos = 0;
-            }
-
             // --- SCOREBOARD DATA PROCESS ---
             let htmlArr = { fly:[], out:[], time:[] };
             pigeons.forEach((p, idx) => {
@@ -424,7 +396,7 @@
             ['fly','time','out'].forEach(id => {
                 const area = document.getElementById(`list-${id}`);
                 const box = document.getElementById(`box-${id}`);
-                if(htmlArr[id].length > 0 && conf.showScoreboard !== false) {
+                if(htmlArr[id].length > 0 && conf.showScoreboard !== false && !isResultActive) {
                     box.style.display = "block";
                     document.getElementById(`count-${id}`).innerText = htmlArr[id].length;
                     const content = htmlArr[id].join('');
@@ -444,31 +416,33 @@
         setTimeout(() => { alertBox.classList.remove('active'); }, 4000);
     }
 
-    // --- ANIMATION FRAME L00P ---
+    // --- ANIMATION FRAME LOOP ---
     function animate() {
-        // 1. ਸਾਈਡ ਬਾਕਸਾਂ ਦੀ ਸਕ੍ਰੋਲਿੰਗ
-        ['fly', 'time', 'out'].forEach(id => {
-            const area = document.getElementById(`list-${id}`);
-            const box = document.getElementById(`box-${id}`);
-            if (area && box && box.style.display !== "none" && area.children.length > 0) {
-                listPos[id] -= 1.2; 
-                let firstBlock = area.querySelector('.content-block');
-                if(firstBlock) {
-                    let resetPoint = firstBlock.offsetHeight + 350;
-                    if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
-                    area.style.transform = `translateY(${listPos[id]}px)`;
+        // 1. ਮੇਨ ਲਿਸਟ ਬਾਕਸਾਂ ਦੀ ਸਕ੍ਰੋਲਿੰਗ
+        if (!isResultActive) {
+            ['fly', 'time', 'out'].forEach(id => {
+                const area = document.getElementById(`list-${id}`);
+                const box = document.getElementById(`box-${id}`);
+                if (area && box && box.style.display !== "none" && area.children.length > 0) {
+                    listPos[id] -= 1.2; 
+                    let firstBlock = area.querySelector('.content-block');
+                    if(firstBlock) {
+                        let resetPoint = firstBlock.offsetHeight + 350;
+                        if (Math.abs(listPos[id]) >= resetPoint) listPos[id] = 0;
+                        area.style.transform = `translateY(${listPos[id]}px)`;
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        // 2. 🏆 ਰਿਜ਼ਲਟ ਬਾਕਸ ਦੀ ਉੱਪਰ ਵੱਲ ਸਕ੍ਰੋਲਿੰਗ (Vertical Scrolling)
+        // 2. 🏆 ਰਿਜ਼ਲਟ ਬਾਕਸ ਟੈਕਸਟ ਸਕ੍ਰੋਲਿੰਗ (Vertical Smooth Loop)
         const resScreen = document.getElementById('result-screen');
         const resArea = document.getElementById('res-list-render');
-        if (resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
-            resListPos -= 1.2; // ਸਕ੍ਰੋਲ ਸਪੀਡ
+        if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
+            resListPos -= 1.0; // ਸਕ੍ਰੋਲਿੰਗ ਸਪੀਡ
             let firstResBlock = resArea.querySelector('.res-block');
             if(firstResBlock) {
-                let resResetPoint = firstResBlock.offsetHeight + 250;
+                let resResetPoint = firstResBlock.offsetHeight + 300;
                 if (Math.abs(resListPos) >= resResetPoint) resListPos = 0;
                 resArea.style.transform = `translateY(${resListPos}px)`;
             }
