@@ -455,7 +455,8 @@ pigeons.forEach((p, idx) => {
         alertBox.style.display = "none";
     }, 4000);
 }
-    if(data.cutAnimation && data.cutAnimation.time) {
+
+if(data.cutAnimation && data.cutAnimation.time) {
     let currentAnimTime = String(data.cutAnimation.time);
 
     if(currentAnimTime !== previousAnimationTime) {
@@ -463,6 +464,7 @@ pigeons.forEach((p, idx) => {
         triggerCutFlash(data.cutAnimation.name || "PIGEON OUT");
     }
 }
+
         const resScreen = document.getElementById('result-screen');
         const resArea = document.getElementById('res-list-render');
         if (isResultActive && resScreen && resScreen.style.display !== "none" && resArea && resArea.children.length > 0) {
