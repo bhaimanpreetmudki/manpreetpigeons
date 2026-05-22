@@ -2,7 +2,6 @@
 <html lang="pa">
 <head>
     <meta charset="UTF-8">
-    <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
@@ -13,17 +12,17 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
+            background: rgba(220, 0, 0, 0.9);
             color: #fff;
             width: 100%;
-            padding: 40px 0;
+            padding: 20px 0; /* height ਘਟਾਈ */
             text-align: center;
             z-index: 9999;
             display: none;
             flex-direction: column;
-            border-top: 8px solid #fff;
-            border-bottom: 8px solid #fff;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.8);
+            border-top: 5px solid #fff;
+            border-bottom: 5px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
             opacity: 0;
         }
 
@@ -32,26 +31,25 @@
             animation: alertPopup 4s ease-in-out forwards;
         }
 
-        .alert-main-title { font-size: 80px; font-weight: 1000; letter-spacing: 10px; text-shadow: 0 0 20px #000; }
-        .alert-pigeon-name { font-size: 70px; font-weight: 900; color: #ffcc00; margin-top: 10px; text-shadow: 0 0 20px #000; }
+        .alert-main-title { font-size: 40px; font-weight: 1000; letter-spacing: 3px; }
+        .alert-pigeon-name { font-size: 50px; font-weight: 900; color: #ffcc00; margin-top: 5px; text-shadow: 0 0 10px #000; }
 
         @keyframes alertPopup {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
             10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            85% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            90% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
     <div id="cut-flash-alert">
-        <div class="alert-main-title">PIGEON OUT</div>
+        <div class="alert-main-title">PIGEON OUT / ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ</div>
         <div class="alert-pigeon-name" id="alert-pigeon-name">---</div>
     </div>
 
     <script>
-        // Firebase Config
         const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -60,11 +58,26 @@
         let prevAnimTime = null;
 
         if(userID) {
-            db.ref('users/' + userID + '/cutAnimation').on('value', snap => {
+            db.ref('users/' + userID).on('value', snap => {
                 const data = snap.val();
-                if(data && data.time && data.time !== prevAnimTime) {
-                    prevAnimTime = data.time;
-                    triggerCutFlash(data.name || "OUT");
+                if(!data || !data.cutAnimation) return;
+                
+                // ਨਵਾਂ ਚੈੱਕ: time ਅਤੇ name
+                if(data.cutAnimation.time !== prevAnimTime) {
+                    prevAnimTime = data.cutAnimation.time;
+                    
+                    // ਨਾਮ ਲੱਭਣਾ (pigeons ਲਿਸਟ ਵਿੱਚੋਂ ਨੰਬਰ ਦੇ ਨਾਲ)
+                    let pName = data.cutAnimation.name || "UNKNOWN";
+                    let pNumber = "";
+                    
+                    if(data.pigeons) {
+                        let found = data.pigeons.find(p => p.name === pName);
+                        if(found) {
+                            pNumber = (data.pigeons.indexOf(found) + 1) + ". ";
+                        }
+                    }
+                    
+                    triggerCutFlash(pNumber + pName);
                 }
             });
         }
