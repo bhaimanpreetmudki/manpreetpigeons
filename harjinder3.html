@@ -393,24 +393,25 @@
             }
 
             // --- SCOREBOARD PROCESS ---
-            let htmlArr = { fly:[], out:[], time:[] };
-            let counters = { fly: 1, out: 1, time: 1 };
 
-            pigeons.forEach((p) => {
-                if (!p.name) return;
-                let cleanName = p.name.toUpperCase();
-                
-                if (p.status === 'fly') {
-                    htmlArr.fly.push(`<div class="item">${counters.fly}. ${cleanName}</div>`);
-                    counters.fly++;
-                } else if (p.status === 'time') {
-                    htmlArr.time.push(`<div class="item">${counters.time}. ${cleanName}</div>`);
-                    counters.time++;
-                } else if (p.status === 'out') {
-                    htmlArr.out.push(`<div class="item">${counters.out}. ${cleanName}</div>`);
-                    counters.out++;
-                }
-            });
+let htmlArr = { fly:[], out:[], time:[] };
+
+pigeons.forEach((p, idx) => {
+    if (!p.name) return;
+
+    let cleanName = p.name.toUpperCase();
+    let originalNumber = idx + 1;   // fixed original number
+
+    if (p.status === 'fly') {
+        htmlArr.fly.push(`<div class="item">${originalNumber}. ${cleanName}</div>`);
+    } 
+    else if (p.status === 'time') {
+        htmlArr.time.push(`<div class="item">${originalNumber}. ${cleanName}</div>`);
+    } 
+    else if (p.status === 'out') {
+        htmlArr.out.push(`<div class="item">${originalNumber}. ${cleanName}</div>`);
+    }
+});
 
             document.getElementById('m-total').innerText = pigeons.length;
             document.getElementById('m-rem').innerText = pigeons.length - htmlArr.out.length;
