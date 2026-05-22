@@ -4,49 +4,54 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; }
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
         #flash-box {
             display: none;
             position: absolute;
-            top: 50%; left: 50%;
+            top: 20%; left: 50%;
             transform: translate(-50%, -50%);
-            padding: 40px;
-            background: rgba(255, 0, 0, 0.9);
+            background: linear-gradient(to bottom, #d32f2f, #9a0007);
             color: white;
-            font-size: 80px;
-            font-weight: bold;
-            border: 10px solid white;
-            text-transform: uppercase;
+            padding: 30px 60px;
+            border-radius: 15px;
+            border: 5px solid #ffeb3b;
             text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 0 50px red;
-            animation: blink 0.5s infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideDown 0.8s ease-out;
         }
-        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes slideDown {
+            0% { top: -200px; }
+            100% { top: 20%; }
+        }
+        .main-text { font-size: 50px; font-weight: bold; text-transform: uppercase; }
+        .sub-text { font-size: 30px; margin-top: 10px; color: #ffeb3b; }
+        .pigeon-info { font-size: 60px; font-weight: 900; margin: 10px 0; border-top: 2px solid white; border-bottom: 2px solid white; }
     </style>
 </head>
 <body>
 
-<div id="flash-box">CUT - <span id="pName"></span></div>
+<div id="flash-box">
+    <div class="main-text">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ</div>
+    <div class="sub-text">PIGEON CUT</div>
+    <div class="pigeon-info" id="pData">#1 - ਬੱਬਰ</div>
+</div>
 
 <script>
     const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
-    
-    // URL ਤੋਂ ID ਚੱਕੋ (ਜਿਵੇਂ: overlay.html?id=harvinder)
     const userID = new URLSearchParams(window.location.search).get('id');
     const box = document.getElementById('flash-box');
 
-    // Firebase ਤੇ ਨਜ਼ਰ ਰੱਖੋ
     firebase.database().ref('users/' + userID + '/cutAnimation').on('value', (snap) => {
         const data = snap.val();
         if (data) {
-            // ਨਵਾਂ ਕੱਟਿਆ ਕਬੂਤਰ ਦਿਖਾਓ
-            document.getElementById('pName').innerText = data.name;
+            // ਨੰਬਰ ਅਤੇ ਨਾਮ ਸੈੱਟ ਕਰੋ (ਜੇ ਨੰਬਰ ਨਹੀਂ ਹੈ ਤਾਂ ਸਿਰਫ ਨਾਮ)
+            document.getElementById('pData').innerText = data.name;
+            
             box.style.display = "block";
             
-            // 5 ਸਕਿੰਟ ਬਾਅਦ ਬੰਦ ਕਰ ਦਿਓ
-            setTimeout(() => { box.style.display = "none"; }, 5000);
+            // 6 ਸਕਿੰਟ ਬਾਅਦ ਗਾਇਬ ਹੋ ਜਾਵੇਗਾ
+            setTimeout(() => { box.style.display = "none"; }, 6000);
         }
     });
 </script>
