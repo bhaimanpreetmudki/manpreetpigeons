@@ -8,60 +8,36 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* RESULT OVERLAY - ਨਵਾਂ ਜੋੜਿਆ ਹੈ */
+        /* RESULT OVERLAY */
         #result-overlay {
-            display: none; position: fixed; top: 20%; left: 10%; width: 80%;
+            display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
             background: rgba(0, 0, 0, 0.95); border: 8px solid #FFD700;
-            color: white; padding: 50px; z-index: 9999; border-radius: 30px;
-            text-align: center; box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            color: white; padding: 40px; z-index: 9999; border-radius: 20px; text-align: center;
         }
-        #res-title { font-size: 80px; color: #FFD700; font-weight: 950; margin-bottom: 30px; }
-        #res-details { font-size: 50px; font-weight: bold; white-space: pre-wrap; line-height: 1.4; }
+        #res-title { font-size: 70px; color: #FFD700; font-weight: 950; margin-bottom: 30px; }
+        #res-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; font-size: 40px; font-weight: bold; }
 
-        /* Weather Box */
+        /* Weather, Expiry, Summary, Containers, Footer (ਪੂਰਾ ਡਿਜ਼ਾਈਨ) */
         #weather-box { position: absolute; bottom: 70px; left: 835px; width: 550px; height: 120px; display: none; overflow: hidden; background: transparent; border: none; z-index: 1001; }
         #weather-frame { width: 550px; height: 120px; border: none; pointer-events: none; transform: scale(1.5); transform-origin: top left; margin-top: -10px; margin-left: 5px; }
-
-        /* Expiry Lock */
         #expiry-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .lock-msg { background: #FFD700; color: #000; padding: 20px 40px; border-radius: 15px; border: 4px solid white; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-        .lock-msg h1 { font-size: 45px; font-weight: 950; margin-bottom: 10px; }
-        .lock-msg h2 { font-size: 30px; font-weight: 800; }
-        .lock-msg p { font-size: 22px; margin-top: 15px; font-weight: bold; border-top: 2px solid rgba(0,0,0,0.2); padding-top: 10px; }
-
-        /* Summary & Containers */
+        .lock-msg { background: #FFD700; color: #000; padding: 20px 40px; border-radius: 15px; border: 4px solid white; }
         .summary-wrapper { position: absolute; bottom: 95px; left: 15px; display: flex; gap: 15px; z-index: 1000; }
-        .sum-card { display: flex; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 10px 25px rgba(0,0,0,0.8); min-width: 260px; height: 75px; }
-        .sum-label-area { background: rgba(0, 0, 0, 0.95); width: 65%; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .sum-card { display: flex; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255,255,255,0.4); min-width: 260px; height: 75px; }
+        .sum-label-area { background: rgba(0, 0, 0, 0.95); width: 65%; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
         .sum-val-area { background: #fff; color: #000; width: 35%; font-size: 40px; font-weight: 950; display: flex; align-items: center; justify-content: center; }
-        .flash-text::after { content: attr(data-pa); animation: langFlash 8s infinite; }
-        @keyframes langFlash { 0%, 45% { content: attr(data-pa); } 50%, 95% { content: attr(data-en); } }
-
         .main-container { position: absolute; top: 10px; right: 20px; bottom: 85px; width: 400px; display: flex; flex-direction: column; gap: 10px; }
-        .box { display: none; flex: 1; overflow: hidden; position: relative; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); backdrop-filter: blur(5px); border-radius: 5px; }
+        .box { display: none; flex: 1; overflow: hidden; position: relative; border: 1px solid rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px); border-radius: 5px; }
         .box-header { height: 50px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(255,255,255,0.2); }
-        #box-fly .box-header { background: #0000FF; } #box-fly { background: rgba(0, 0, 100, 0.8); }
-        #box-time .box-header { background: #FFD700; color: black; } #box-time { background: rgba(180, 150, 0, 0.8); color: black !important; }
-        #box-out .box-header { background: #000000; } #box-out { background: rgba(0, 0, 0, 0.8); }
-        .header-title { font-size: 30px; font-weight: 950; }
-        .count-tag { background: white; color: black; padding: 0 12px; border-radius: 4px; font-size: 30px; font-weight: 950; height: 32px; display: flex; align-items: center; }
-
         .scroll-window { position: absolute; top: 50px; bottom: 0; width: 100%; overflow: hidden; }
         .list-area { position: absolute; width: 100%; animation: constantScroll linear infinite; will-change: transform; }
         @keyframes constantScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-        .item { padding: 8px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); text-shadow: 2px 2px 4px rgba(0,0,0,1); }
+        .item { padding: 8px 25px; display: flex; align-items: center; gap: 15px; font-size: 40px; font-weight: 950; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .item-num { color: #FFD700; min-width: 50px; }
-        #box-time-val { font-size: 35px !important; font-weight: 950; margin-left: 10px; }
-        #box-time .item, #box-time .item-num { color: black; text-shadow: none; }
-
-        /* Footer */
         .footer { position: absolute; bottom: 0; width: 100%; height: 80px; background: #000; display: flex; align-items: center; border-top: 6px solid #FFD700; }
-        .live-tag { background: #FFD700; color: #000; padding: 0 40px; height: 100%; display: flex; align-items: center; font-size: 55px; font-weight: 950; font-style: italic; z-index: 2; }
-        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; }
-        .ticker-move { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 65s linear infinite; will-change: transform; }
+        .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-size: 35px; }
+        .ticker-move { display: inline-block; padding-left: 100%; animation: ticker 65s linear infinite; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        .dt-box { background: #FFD700; height: 100%; padding: 0 35px; display: flex; justify-content: center; align-items: center; border-left: 4px solid rgba(0,0,0,0.2); width: 300px; min-width: 300px; z-index: 2; }
-        #dt-flash { font-size: 35px; font-weight: 950; color: #000; font-style: italic; text-align: center; width: 100%; }
     </style>
 </head>
 <body>
@@ -72,24 +48,22 @@
 </div>
 
 <div id="weather-box"><iframe id="weather-frame" src=""></iframe></div>
-<div id="expiry-lock"><div class="lock-msg"><h1>PLAN EXPIRED</h1><h2>ਤੁਹਾਡਾ ਪਲਾਨ ਖ਼ਤਮ ਹੋ ਗਿਆ ਹੈ</h2><p>RECHARGE ਲਈ ਸੰਪਰਕ ਕਰੋ:<br>MANPREET SINGH MUDKI<br>📞 86996-40061</p></div></div>
+<div id="expiry-lock"><div class="lock-msg"><h1>PLAN EXPIRED</h1><p>RECHARGE: 86996-40061</p></div></div>
 
 <div class="summary-wrapper" id="summary-div">
-    <div class="sum-card"><div class="sum-label-area flash-text" data-pa="ਕੁੱਲ ਕਬੂਤਰ" data-en="TOTAL PIGEONS"></div><div id="m-total" class="sum-val-area">0</div></div>
-    <div class="sum-card"><div class="sum-label-area flash-text" style="border-left: 6px solid #0000FF;" data-pa="ਬਾਕੀ ਕਬੂਤਰ" data-en="REMAINING"></div><div id="m-rem" class="sum-val-area">0</div></div>
-    <div class="sum-card"><div class="sum-label-area flash-text" style="border-left: 6px solid #FFD700;" data-pa="ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="TIME PIGEONS"></div><div id="m-time" class="sum-val-area">0</div></div>
+    <div class="sum-card"><div class="sum-label-area">TOTAL</div><div id="m-total" class="sum-val-area">0</div></div>
+    <div class="sum-card"><div class="sum-label-area">REM</div><div id="m-rem" class="sum-val-area">0</div></div>
+    <div class="sum-card"><div class="sum-label-area">TIME</div><div id="m-time" class="sum-val-area">0</div></div>
 </div>
 
 <div class="main-container" id="scoreboard-div">
-    <div id="box-fly" class="box"><div class="box-header"><span class="header-title flash-text" data-pa="🕊️ ਉੱਡ ਰਹੇ ਕਬੂਤਰ" data-en="🕊️ FLYING PIGEONS"></span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
-    <div id="box-time" class="box"><div class="box-header"><span class="header-title flash-text" data-pa="⏰ ਸਮੇਂ ਚ ਕਬੂਤਰ" data-en="⏰ TIME PIGEONS"></span><span id="box-time-val"></span><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
-    <div id="box-out" class="box"><div class="box-header"><span class="header-title flash-text" data-pa="❌ ਕੱਟੇ ਗਏ ਕਬੂਤਰ" data-en="❌ OUT PIGEONS"></span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
+    <div id="box-fly" class="box"><div class="box-header"><span class="header-title">FLYING</span><span id="count-fly" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-fly"></div></div></div>
+    <div id="box-time" class="box"><div class="box-header"><span class="header-title">TIME</span><span id="count-time" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-time"></div></div></div>
+    <div id="box-out" class="box"><div class="box-header"><span class="header-title">OUT</span><span id="count-out" class="count-tag">0</span></div><div class="scroll-window"><div class="list-area" id="list-out"></div></div></div>
 </div>
 
 <div class="footer" id="ticker-div">
-    <div class="live-tag">LIVE</div>
     <div class="ticker-wrap"><div id="ticker-text" class="ticker-move">WELCOME</div></div>
-    <div class="dt-box"><div id="dt-flash">00:00:00 AM</div></div>
 </div>
 
 <script>
@@ -102,29 +76,33 @@
         const data = snap.val(); if(!data) return;
         const conf = data.config || {};
         const pigeons = data.pigeons || [];
-        
+        const res = data.resultOverlay || {};
+
         // Result Logic
-        const resDiv = document.getElementById('result-overlay');
-        if(data.resultOverlay && data.resultOverlay.active) {
-            resDiv.style.display = "block";
-            document.getElementById('res-title').innerText = data.resultOverlay.title || "RESULT";
-            document.getElementById('res-details').innerText = data.resultOverlay.details || "";
-            document.getElementById('scoreboard-div').style.opacity = "0.1";
+        if(res.active) {
+            document.getElementById('scoreboard-div').style.display = "none";
+            document.getElementById('summary-div').style.display = "none";
+            document.getElementById('result-overlay').style.display = "block";
+            document.getElementById('res-title').innerText = res.title || "RESULT";
+            
+            let detailsHtml = "";
+            if(res.details && res.details.trim() !== "") {
+                let teams = res.details.split(/[,\n]+/);
+                teams.forEach(t => detailsHtml += `<div style="border:1px solid #444; padding:10px;">${t.trim()}</div>`);
+            } else {
+                pigeons.forEach(p => { if(p.status === 'fly') detailsHtml += `<div style="padding:10px;">${p.name}</div>`; });
+            }
+            document.getElementById('res-details').innerHTML = detailsHtml;
         } else {
-            resDiv.style.display = "none";
-            document.getElementById('scoreboard-div').style.opacity = "1";
+            document.getElementById('scoreboard-div').style.display = "flex";
+            document.getElementById('summary-div').style.display = "flex";
+            document.getElementById('result-overlay').style.display = "none";
         }
 
-        // Expiry & UI (ਬਾਕੀ ਸਾਰਾ ਪੁਰਾਣਾ logic)
-        const expiryTime = new Date(data.expiry).getTime();
-        if (new Date().getTime() > expiryTime) { document.getElementById('expiry-lock').style.display = 'flex'; return; }
+        // Expiry
+        if (new Date().getTime() > new Date(data.expiry).getTime()) { document.getElementById('expiry-lock').style.display = 'flex'; return; }
         
-        document.getElementById('scoreboard-div').style.display = conf.showScoreboard ? "flex" : "none";
-        document.getElementById('summary-div').style.display = conf.showScoreboard ? "flex" : "none";
-        document.getElementById('ticker-div').style.display = conf.showTicker ? "flex" : "none";
-        document.getElementById('ticker-text').innerText = conf.ticker || "";
-        document.getElementById('box-time-val').innerText = conf.boxTime || "";
-
+        // Stats
         let counts = { fly:0, out:0, time:0 }; 
         let htmls = { fly:'', out:'', time:'' };
         pigeons.forEach((p, idx) => {
@@ -143,10 +121,8 @@
             if(counts[id] > 0) {
                 el.style.display = "block";
                 document.getElementById(`count-${id}`).innerText = counts[id];
-                let gap = '<div style="height:300px;"></div>';
-                listArea.innerHTML = htmls[id] + gap + htmls[id] + gap;
-                let totalHeight = listArea.scrollHeight / 2;
-                listArea.style.animationDuration = (totalHeight / 45) + "s";
+                listArea.innerHTML = htmls[id] + '<div style="height:300px;"></div>' + htmls[id];
+                listArea.style.animationDuration = (listArea.scrollHeight / 90) + "s";
             } else { el.style.display = "none"; }
         });
     });
