@@ -686,11 +686,30 @@ if(userID) {
 
             resArea.innerHTML = "";
 
-            if(conf.showScoreboard === false) {
-                scoreboardElem.style.display = "none";
-            } else {
-                scoreboardElem.style.display = "flex";
-            }
+            const summaryElem = document.getElementById('summary-div');
+
+if(resOver.active === true) {
+
+    isResultActive = true;
+
+    resScreen.style.display = "flex";
+
+    scoreboardElem.style.display = "none";
+
+    summaryElem.style.display = "none"; // 👈 ਏਹ add ਕਰੋ
+
+}
+else {
+
+    isResultActive = false;
+
+    resScreen.style.display = "none";
+
+    scoreboardElem.style.display = "flex";
+
+    summaryElem.style.display = "flex"; // 👈 ਵਾਪਸ show ਕਰਨ ਲਈ
+
+}
         }
 
         document.getElementById('box-time-val').innerText =
