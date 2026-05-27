@@ -1,74 +1,183 @@
-<!-- 🔥 FIREBASE CUT FLASH OVERLAY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div id="cutFlashOverlay"></div>
+<title>Kabootar Cut Flash Overlay</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
 
-#cutFlashOverlay{
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:transparent;
+    font-family:Arial,sans-serif;
+}
+
+/* FULL SCREEN OVERLAY */
+
+#cutFlash{
+
     position:fixed;
     inset:0;
-    z-index:999999;
-    pointer-events:none;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
     opacity:0;
+
+    pointer-events:none;
+
+    z-index:999999;
 }
 
-/* 🔥 ACTIVE FLASH */
+/* ACTIVE */
 
-#cutFlashOverlay.active{
-    animation:kabootarCutFlash .8s ease;
+#cutFlash.active{
+    animation:flashAnim 1s ease;
 }
 
-@keyframes kabootarCutFlash{
+/* FLASH BG */
+
+@keyframes flashAnim{
 
     0%{
         opacity:0;
-        background:black;
+        background:rgba(0,0,0,0);
         transform:scale(1);
     }
 
     10%{
         opacity:1;
-        background:white;
-        transform:scale(1.03);
+        background:rgba(255,255,255,0.9);
+        transform:scale(1.02);
     }
 
     25%{
         opacity:1;
-        background:red;
+        background:rgba(255,0,0,0.9);
     }
 
     40%{
         opacity:1;
-        background:white;
+        background:rgba(255,255,255,0.85);
     }
 
     60%{
-        opacity:.9;
-        background:red;
+        opacity:1;
+        background:rgba(255,0,0,0.85);
     }
 
     100%{
         opacity:0;
-        background:black;
+        background:rgba(0,0,0,0);
         transform:scale(1);
     }
 }
 
+/* TEXT */
+
+.flashText{
+
+    font-size:90px;
+    font-weight:900;
+
+    color:white;
+
+    text-transform:uppercase;
+
+    text-shadow:
+    0 0 10px red,
+    0 0 20px red,
+    0 0 40px red,
+    0 0 80px red;
+
+    letter-spacing:4px;
+
+    opacity:0;
+}
+
+/* TEXT ANIMATION */
+
+#cutFlash.active .flashText{
+    animation:textAnim 1s ease;
+}
+
+@keyframes textAnim{
+
+    0%{
+        transform:scale(.3);
+        opacity:0;
+    }
+
+    20%{
+        transform:scale(1.25);
+        opacity:1;
+    }
+
+    45%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(.8);
+        opacity:0;
+    }
+}
+
 </style>
+</head>
+
+<body>
+
+<div id="cutFlash">
+
+    <div class="flashText">
+        KABOOTAR CUT GIYA
+    </div>
+
+</div>
 
 <script>
 
+/* 🔥 FIREBASE CONFIG */
+
+const firebaseConfig = {
+
+    databaseURL:"https://manpreetpigeons-default-rtdb.firebaseio.com/"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+
+/* 🔥 USER ID */
+
+const urlParams = new URLSearchParams(window.location.search);
+
+const userID = urlParams.get('id');
+
 /* 🔥 FLASH FUNCTION */
 
-function triggerCutFlash(){
+function runFlash(){
 
-    const overlay = document.getElementById('cutFlashOverlay');
+    const flash = document.getElementById('cutFlash');
 
-    overlay.classList.remove('active');
+    flash.classList.remove('active');
 
-    void overlay.offsetWidth;
+    void flash.offsetWidth;
 
-    overlay.classList.add('active');
+    flash.classList.add('active');
 
     // 🔊 SOUND
     const audio = new Audio(
@@ -81,33 +190,6 @@ function triggerCutFlash(){
 
 }
 
-/* 🔥 STATUS FUNCTION */
-
-function setStatus(id,s){
-
-    const oldPigeon = localData.pigeons.find(p => p.id == id);
-
-    // update local
-    localData.pigeons = localData.pigeons.map(p =>
-        p.id == id ? {...p,status:s} : p
-    );
-
-    syncPigeons();
-
-    // 🔥 ONLY WHEN CUT
-    if(oldPigeon && oldPigeon.status !== 'out' && s === 'out'){
-
-        // firebase trigger
-        db.ref('users/' + userID + '/cutFlash').set({
-
-            time:Date.now(),
-            pigeon:oldPigeon.name
-
-        });
-
-    }
-}
-
 /* 🔥 FIREBASE LISTENER */
 
 db.ref('users/' + userID + '/cutFlash').on('value', snap => {
@@ -116,8 +198,11 @@ db.ref('users/' + userID + '/cutFlash').on('value', snap => {
 
     if(!data) return;
 
-    triggerCutFlash();
+    runFlash();
 
 });
 
 </script>
+
+</body>
+</html>
