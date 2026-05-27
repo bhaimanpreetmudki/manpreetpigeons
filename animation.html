@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kabootar Cut Flash Overlay</title>
+<title>OBS CUT FLASH OVERLAY</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
 
-html,body{
+html,
+body{
     margin:0;
     padding:0;
     width:100%;
@@ -21,7 +22,7 @@ html,body{
     font-family:Arial,sans-serif;
 }
 
-/* FULL SCREEN OVERLAY */
+/* FULL SCREEN FLASH */
 
 #cutFlash{
 
@@ -42,10 +43,11 @@ html,body{
 /* ACTIVE */
 
 #cutFlash.active{
-    animation:flashAnim 1s ease;
+
+    animation:flashAnim .8s ease;
 }
 
-/* FLASH BG */
+/* FLASH ANIMATION */
 
 @keyframes flashAnim{
 
@@ -57,23 +59,23 @@ html,body{
 
     10%{
         opacity:1;
-        background:rgba(255,255,255,0.9);
+        background:rgba(255,255,255,.95);
         transform:scale(1.02);
     }
 
     25%{
         opacity:1;
-        background:rgba(255,0,0,0.9);
+        background:rgba(255,0,0,.95);
     }
 
     40%{
         opacity:1;
-        background:rgba(255,255,255,0.85);
+        background:rgba(255,255,255,.9);
     }
 
     60%{
         opacity:1;
-        background:rgba(255,0,0,0.85);
+        background:rgba(255,0,0,.9);
     }
 
     100%{
@@ -88,11 +90,14 @@ html,body{
 .flashText{
 
     font-size:90px;
+
     font-weight:900;
 
     color:white;
 
     text-transform:uppercase;
+
+    letter-spacing:4px;
 
     text-shadow:
     0 0 10px red,
@@ -100,15 +105,14 @@ html,body{
     0 0 40px red,
     0 0 80px red;
 
-    letter-spacing:4px;
-
     opacity:0;
 }
 
-/* TEXT ANIMATION */
+/* TEXT ENTRY */
 
 #cutFlash.active .flashText{
-    animation:textAnim 1s ease;
+
+    animation:textAnim .8s ease;
 }
 
 @keyframes textAnim{
@@ -173,6 +177,7 @@ function runFlash(){
 
     const flash = document.getElementById('cutFlash');
 
+    // restart animation
     flash.classList.remove('active');
 
     void flash.offsetWidth;
@@ -192,13 +197,15 @@ function runFlash(){
 
 /* 🔥 FIREBASE LISTENER */
 
-db.ref('users/' + userID + '/cutFlash').on('value', snap => {
+db.ref('users/' + userID + '/cutFlash').on('value', function(snapshot){
 
-    const data = snap.val();
+    const data = snapshot.val();
 
-    if(!data) return;
+    if(data){
 
-    runFlash();
+        runFlash();
+
+    }
 
 });
 
