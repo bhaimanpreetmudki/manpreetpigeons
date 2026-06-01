@@ -684,6 +684,24 @@ if(userID) {
         const scoreboardElem = document.getElementById('scoreboard-div');
         const summaryElem = document.getElementById('summary-div');
 
+
+    // WATERMARK MOVE
+    const wmEl = document.getElementById("single-wm");
+
+    function moveWM(){
+
+        const maxX = window.innerWidth - wmEl.offsetWidth - 50;
+        const maxY = window.innerHeight - wmEl.offsetHeight - 50;
+
+        wmEl.style.left = Math.random() * maxX + "px";
+        wmEl.style.top = Math.random() * maxY + "px";
+    }
+
+    moveWM();
+    setInterval(moveWM, 6000);
+
+}
+
         /* RESULT OVERLAY */
 
         if(resOver.active === true) {
@@ -909,20 +927,6 @@ if(userID) {
 
                 el.style.display = "none";
                 
-                const wmEl = document.getElementById("single-wm");
-
-function moveWM(){
-
-    wmEl.style.left =
-        (Math.random() * 1400 + 100) + "px";
-
-    wmEl.style.top =
-        (Math.random() * 700 + 80) + "px";
-}
-
-moveWM();
-
-setInterval(moveWM, 6000);
             }
         });
     });
