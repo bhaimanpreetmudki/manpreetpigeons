@@ -20,6 +20,30 @@
             height: 100vh;
             color: white;
         }
+                #logo-container{
+    position:absolute;
+    top:20px;
+    right:20px;
+    z-index:9999;
+}
+
+#main-logo{
+    height:130px;
+    max-width:530px;
+    object-fit:contain;
+}
+
+#single-wm{
+    position:absolute;
+    color:#ffffff;
+    opacity:1.0;
+    font-size:30px;
+    font-weight:900;
+    text-shadow:2px 2px 5px #000;
+    white-space:nowrap;
+    z-index:1;
+    pointer-events:none;
+}
 
         /* Weather Box Styling */
         #weather-box {
@@ -442,6 +466,13 @@
 </head>
 
 <body>
+ <!-- CLIENT LOGO -->
+<div id="logo-container">
+    <img id="main-logo" src="" alt="Logo">
+</div>
+
+<!-- WATERMARK -->
+<div id="single-wm"></div> 
 
 <div id="result-screen">
     <div class="res-header" id="res-title-text">FINAL RESULT</div>
@@ -554,6 +585,24 @@ const db = firebase.database();
 const urlParams = new URLSearchParams(window.location.search);
 
 const userID = urlParams.get('id');
+        const clientSettings = {
+
+    "mudki1": {
+        logo: "https://raw.githubusercontent.com/4kjunctionofficial-code/liveteam/main/image-Photoroom%20(4).png",
+        watermark: "M LIVE"
+    },
+
+    "ravijhandeana": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/Ravi%20Live%20Logo.png",
+        watermark: "RAVI LIVE TV"
+    },
+
+    "kabutar2": {
+        logo: "https://your-logo-link-2.png",
+        watermark: "PIGEON TV"
+    }
+
+};
 
 let showTime = true;
 let previousAnimationTime = "";
@@ -850,6 +899,20 @@ if(userID) {
             } else {
 
                 el.style.display = "none";
+                const wmEl = document.getElementById("single-wm");
+
+function moveWM(){
+
+    wmEl.style.left =
+        (Math.random() * 1400 + 100) + "px";
+
+    wmEl.style.top =
+        (Math.random() * 700 + 80) + "px";
+}
+
+moveWM();
+
+setInterval(moveWM, 6000);
             }
         });
     });
