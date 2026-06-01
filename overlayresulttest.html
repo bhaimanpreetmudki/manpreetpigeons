@@ -585,7 +585,8 @@ const db = firebase.database();
 const urlParams = new URLSearchParams(window.location.search);
 
 const userID = urlParams.get('id');
-        const clientSettings = {
+    
+    const clientSettings = {
 
     "mudki1": {
         logo: "https://raw.githubusercontent.com/4kjunctionofficial-code/liveteam/main/image-Photoroom%20(4).png",
@@ -648,6 +649,14 @@ updateClock();
 
 function triggerCutFlash(name) {
     console.log("CUT:", name);
+}
+    if(clientSettings[userID]){
+
+    document.getElementById("main-logo").src =
+        clientSettings[userID].logo;
+
+    document.getElementById("single-wm").innerText =
+        clientSettings[userID].watermark;
 }
 
 if(userID) {
@@ -899,6 +908,7 @@ if(userID) {
             } else {
 
                 el.style.display = "none";
+                
                 const wmEl = document.getElementById("single-wm");
 
 function moveWM(){
