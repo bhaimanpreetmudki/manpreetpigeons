@@ -8,6 +8,18 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
+        /* Client Logo/Watermark */
+        #client-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: 250px;
+            max-height: 100px;
+            z-index: 2000;
+            pointer-events: none;
+            display: none;
+        }
+
         /* Weather Box Styling */
         #weather-box {
             position: absolute;
@@ -18,7 +30,7 @@
             display: none; 
             overflow: hidden;
             background: transparent; 
-            border: none;             
+            border: none;            
             z-index: 1001;
         }
 
@@ -86,7 +98,6 @@
             100% { transform: translateY(-50%); } 
         }
 
-        /* Ticker - Updated for Smooth Movement */
         .footer { 
             position: absolute; bottom: 0; width: 100%; height: 80px; 
             background: #000; display: flex; align-items: center; 
@@ -99,13 +110,12 @@
         }
         .ticker-wrap { flex: 1; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 950; font-size: 35px; display: flex; align-items: center; position: relative; }
         
-        /* Reduced speed and added smoother transform */
         .ticker-move { 
             display: inline-block; 
             white-space: nowrap; 
             padding-left: 100%; 
             animation: ticker 65s linear infinite; 
-            will-change: transform; /* Removes jitter/shaking */
+            will-change: transform;
         }
 
         @keyframes ticker { 
@@ -122,6 +132,8 @@
     </style>
 </head>
 <body>
+
+<img id="client-logo" src="" alt="Logo">
 
 <div id="weather-box">
     <iframe id="weather-frame" src=""></iframe>
@@ -212,6 +224,15 @@
 
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
+
+            // Logo Setting
+            const logoEl = document.getElementById('client-logo');
+            if(conf.logoUrl) {
+                logoEl.src = conf.logoUrl;
+                logoEl.style.display = "block";
+            } else {
+                logoEl.style.display = "none";
+            }
 
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
