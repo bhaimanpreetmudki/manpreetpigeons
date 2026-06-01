@@ -659,6 +659,23 @@ function triggerCutFlash(name) {
         clientSettings[userID].watermark;
 }
 
+// WATERMARK MOVE
+const wmEl = document.getElementById("single-wm");
+
+function moveWM() {
+
+    if (!wmEl.innerText) return;
+
+    const maxX = window.innerWidth - wmEl.offsetWidth - 20;
+    const maxY = window.innerHeight - wmEl.offsetHeight - 20;
+
+    wmEl.style.left = Math.floor(Math.random() * maxX) + "px";
+    wmEl.style.top = Math.floor(Math.random() * maxY) + "px";
+}
+
+moveWM();
+setInterval(moveWM, 6000);
+
 if(userID) {
 
     db.ref('users/' + userID).on('value', snap => {
@@ -684,23 +701,6 @@ if(userID) {
         const scoreboardElem = document.getElementById('scoreboard-div');
         const summaryElem = document.getElementById('summary-div');
 
-
-    // WATERMARK MOVE
-    const wmEl = document.getElementById("single-wm");
-
-    function moveWM(){
-
-        const maxX = window.innerWidth - wmEl.offsetWidth - 50;
-        const maxY = window.innerHeight - wmEl.offsetHeight - 50;
-
-        wmEl.style.left = Math.random() * maxX + "px";
-        wmEl.style.top = Math.random() * maxY + "px";
-    }
-
-    moveWM();
-    setInterval(moveWM, 6000);
-
-}
 
         /* RESULT OVERLAY */
 
@@ -925,8 +925,7 @@ if(userID) {
 
             } else {
 
-                el.style.display = "none";
-                
+                el.style.display = "none";    
             }
         });
     });
