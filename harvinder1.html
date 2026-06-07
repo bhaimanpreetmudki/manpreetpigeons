@@ -199,49 +199,73 @@
     const clientSettings = {
 
     "nk sports": {
-        logo: "https://your-logo-link.png",
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/nk%20sports%20live%20logo.png",
+        watermark: "NK SPORTS LIVE"
+    },
+
+         "nk2": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/nk%20sports%20live%20logo.png",
         watermark: "NK SPORTS LIVE"
     },
 
     "ravijhandeana": {
-        logo: "https://your-logo-link2.png",
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/Ravi%20Live%20Logo.png",
         watermark: "RAVI LIVE TV"
     },
-
-    "kabutar2": {
-        logo: "https://your-logo-link3.png",
-        watermark: "PIGEON TV"
-    }
-};
-
-if(clientSettings[userID]){
-
-    document.getElementById("main-logo").src =
-        clientSettings[userID].logo;
-
-    document.getElementById("single-wm").innerText =
-        clientSettings[userID].watermark;
-}
-
-    const clientSettings = {
 
     "harvinder3": {
-        logo: "https://your-logo-link.png",
+        logo: "https://your-logo-link-2.png",
         watermark: "PB 29 LIVE"
-    },
-
-    "ravijhandeana": {
-        logo: "https://your-logo-link2.png",
-        watermark: "RAVI LIVE TV"
-    },
-
-    "kabutar2": {
-        logo: "https://your-logo-link3.png",
-        watermark: "PIGEON TV"
     }
+
 };
 
-if(clientSettings[userID]){
+let showTime = true;
+let previousAnimationTime = "";
+let isResultActive = false;
+
+function updateClock() {
+
+    const now = new Date();
+
+    const el = document.getElementById('dt-flash');
+
+    if(!el) return;
+
+    if(showTime) {
+
+        el.innerText = now.toLocaleTimeString('en-US', {
+            hour:'2-digit',
+            minute:'2-digit',
+            second:'2-digit',
+            hour12:true
+        }).toUpperCase();
+
+    } else {
+
+        el.innerText = now.toLocaleDateString('en-GB', {
+            day:'2-digit',
+            month:'short',
+            year:'numeric'
+        }).toUpperCase();
+    }
+}
+
+setInterval(() => {
+    if(showTime) updateClock();
+}, 1000);
+
+setInterval(() => {
+    showTime = !showTime;
+    updateClock();
+}, 10000);
+
+updateClock();
+
+function triggerCutFlash(name) {
+    console.log("CUT:", name);
+}
+    if(clientSettings[userID]){
 
     document.getElementById("main-logo").src =
         clientSettings[userID].logo;
@@ -249,6 +273,23 @@ if(clientSettings[userID]){
     document.getElementById("single-wm").innerText =
         clientSettings[userID].watermark;
 }
+
+// WATERMARK MOVE
+const wmEl = document.getElementById("single-wm");
+
+function moveWM() {
+
+    if (!wmEl.innerText) return;
+
+    const maxX = window.innerWidth - wmEl.offsetWidth - 20;
+    const maxY = window.innerHeight - wmEl.offsetHeight - 20;
+
+    wmEl.style.left = Math.floor(Math.random() * maxX) + "px";
+    wmEl.style.top = Math.floor(Math.random() * maxY) + "px";
+}
+
+moveWM();
+setInterval(moveWM, 6000);
 
     let langFlash = false;
     let showDate = false;
