@@ -12,6 +12,32 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; position: relative; }
 
+          #logo-container{
+    position:absolute;
+    top:20px;
+    right:20px;
+    z-index:9999;
+}
+
+#main-logo{
+    height:130px;
+    max-width:530px;
+    object-fit:contain;
+}
+
+#single-wm{
+    position:absolute;
+    color:#ffffff;
+    opacity:1;
+    font-size:30px;
+    font-weight:900;
+    text-shadow:2px 2px 5px #000;
+    white-space:nowrap;
+    z-index:500;
+    pointer-events:none;
+    transition:all 1s linear;
+}
+
         #weather-box {
             position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
             display: none; overflow: hidden; background: transparent; border: none; z-index: 1001;
@@ -213,7 +239,14 @@
     </style>
 </head>
 <body>
+    <!-- CLIENT LOGO -->
+<div id="logo-container">
+    <img id="main-logo" src="" alt="Logo">
+</div>
 
+<!-- WATERMARK -->
+<div id="single-wm"></div>
+    
 <!-- 🏆 WINNER RESULT DISPLAY BOX -->
 <div id="result-screen">
     <div class="res-header" id="res-title-text">FINAL RESULT</div>
@@ -271,6 +304,101 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
+
+    const clientSettings = {
+
+    "nk sports": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/nk%20sports%20live%20logo.png",
+        watermark: "NK SPORTS LIVE"
+    },
+
+         "nk2": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/nk%20sports%20live%20logo.png",
+        watermark: "NK SPORTS LIVE"
+    },
+
+    "ravijhandeana": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/Ravi%20Live%20Logo.png",
+        watermark: "RAVI LIVE TV"
+    },
+
+    "harvinder3": {
+        logo: "https://raw.githubusercontent.com/bhaimanpreetmudki/manpreetpigeons/arshpreet/pb29logo%20(1).png",
+        watermark: "PB 29 LIVE"
+    }
+
+};
+
+let showTime = true;
+let previousAnimationTime = "";
+let isResultActive = false;
+
+function updateClock() {
+
+    const now = new Date();
+
+    const el = document.getElementById('dt-flash');
+
+    if(!el) return;
+
+    if(showTime) {
+
+        el.innerText = now.toLocaleTimeString('en-US', {
+            hour:'2-digit',
+            minute:'2-digit',
+            second:'2-digit',
+            hour12:true
+        }).toUpperCase();
+
+    } else {
+
+        el.innerText = now.toLocaleDateString('en-GB', {
+            day:'2-digit',
+            month:'short',
+            year:'numeric'
+        }).toUpperCase();
+    }
+}
+
+setInterval(() => {
+    if(showTime) updateClock();
+}, 1000);
+
+setInterval(() => {
+    showTime = !showTime;
+    updateClock();
+}, 10000);
+
+updateClock();
+
+function triggerCutFlash(name) {
+    console.log("CUT:", name);
+}
+    if(clientSettings[userID]){
+
+    document.getElementById("main-logo").src =
+        clientSettings[userID].logo;
+
+    document.getElementById("single-wm").innerText =
+        clientSettings[userID].watermark;
+}
+
+// WATERMARK MOVE
+const wmEl = document.getElementById("single-wm");
+
+function moveWM() {
+
+    if (!wmEl.innerText) return;
+
+    const maxX = window.innerWidth - wmEl.offsetWidth - 20;
+    const maxY = window.innerHeight - wmEl.offsetHeight - 20;
+
+    wmEl.style.left = Math.floor(Math.random() * maxX) + "px";
+    wmEl.style.top = Math.floor(Math.random() * maxY) + "px";
+}
+
+moveWM();
+setInterval(moveWM, 6000);
 
     let langFlash = false;
     let showDate = false;
