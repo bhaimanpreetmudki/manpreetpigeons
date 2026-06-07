@@ -12,6 +12,32 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', 'Raavi', sans-serif; overflow: hidden; height: 100vh; }
 
+        #logo-container{
+    position:absolute;
+    top:20px;
+    left:20px;
+    z-index:9999;
+}
+
+#main-logo{
+    height:130px;
+    max-width:530px;
+    object-fit:contain;
+}
+
+#single-wm{
+    position:absolute;
+    color:#ffffff;
+    opacity:0.25;
+    font-size:30px;
+    font-weight:900;
+    text-shadow:2px 2px 5px #000;
+    white-space:nowrap;
+    z-index:500;
+    pointer-events:none;
+    transition:all 1s linear;
+}
+
         #weather-box {
             position: absolute; top: 20px; left: 10px; width: 550px; height: 120px; 
             display: none; overflow: hidden; background: transparent; border: none; z-index: 1001;
@@ -118,6 +144,14 @@
 </head>
 <body>
 
+    <!-- CLIENT LOGO -->
+<div id="logo-container">
+    <img id="main-logo" src="" alt="Logo">
+</div>
+
+<!-- WATERMARK -->
+<div id="single-wm"></div>
+
 <div id="weather-box">
     <iframe id="weather-frame" src=""></iframe>
 </div>
@@ -161,6 +195,60 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const userID = new URLSearchParams(window.location.search).get('id');
+
+    const clientSettings = {
+
+    "nk sports": {
+        logo: "https://your-logo-link.png",
+        watermark: "NK SPORTS LIVE"
+    },
+
+    "ravijhandeana": {
+        logo: "https://your-logo-link2.png",
+        watermark: "RAVI LIVE TV"
+    },
+
+    "kabutar2": {
+        logo: "https://your-logo-link3.png",
+        watermark: "PIGEON TV"
+    }
+};
+
+if(clientSettings[userID]){
+
+    document.getElementById("main-logo").src =
+        clientSettings[userID].logo;
+
+    document.getElementById("single-wm").innerText =
+        clientSettings[userID].watermark;
+}
+
+    const clientSettings = {
+
+    "nk sports": {
+        logo: "https://your-logo-link.png",
+        watermark: "NK SPORTS LIVE"
+    },
+
+    "ravijhandeana": {
+        logo: "https://your-logo-link2.png",
+        watermark: "RAVI LIVE TV"
+    },
+
+    "kabutar2": {
+        logo: "https://your-logo-link3.png",
+        watermark: "PIGEON TV"
+    }
+};
+
+if(clientSettings[userID]){
+
+    document.getElementById("main-logo").src =
+        clientSettings[userID].logo;
+
+    document.getElementById("single-wm").innerText =
+        clientSettings[userID].watermark;
+}
 
     let langFlash = false;
     let showDate = false;
