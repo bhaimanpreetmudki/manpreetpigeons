@@ -254,8 +254,12 @@
         <div class="res-list-area" id="res-list-render"></div>
     </div>
 </div>
-
-
+ 
+<!-- 📢 CUT FLASH ALERT BANNER -->
+<div id="cut-flash-alert">
+    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
+    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
+</div>
 
 <div id="weather-box">
     <iframe id="weather-frame" src=""></iframe>
@@ -550,23 +554,7 @@ pigeons.forEach((p, idx) => {
         });
     }
 
-    function triggerCutFlash(name) {
-        const alertBox = document.getElementById('cut-flash-alert');
-        const nameBox = document.getElementById('alert-pigeon-name');
-        if (cutTimeout1) clearTimeout(cutTimeout1);
-        if (cutTimeout2) clearTimeout(cutTimeout2);
-        nameBox.innerText = name ? name.toUpperCase() : "--";
-        alertBox.classList.remove('active');
-        alertBox.style.display = "none";
-        void alertBox.offsetWidth; 
-        cutTimeout1 = setTimeout(() => {
-            alertBox.classList.add('active');
-            cutTimeout2 = setTimeout(() => {
-                alertBox.classList.remove('active');
-                alertBox.style.display = "none";
-            }, 4000);
-        }, 30); 
-    }
+    
 
     function animate() {
         if (!isResultActive) {
