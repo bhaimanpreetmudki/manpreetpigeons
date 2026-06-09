@@ -200,7 +200,60 @@
                 let lat = conf.lat || "30.5980";
                 let lon = conf.lon || "74.7380";
                 let p_name = conf.pindName || "";
-                const wUrl = `https://maxpunjab.com/weather/overlay.php?lat=${lat}&lon=${lon}&name=${encodeURIComponent(p_name)}`;
+                     async function loadWeather() { 
+
+
+
+    const city = conf.pindName || "Karimpur";
+
+
+
+    const apiKey = "0846a14771b347f998b32948260906";
+
+
+
+    const res = await fetch(
+
+        `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`
+
+    );
+
+
+
+    const data = await res.json();
+
+
+
+    document.getElementById("weather-box").innerHTML = `
+
+        <div style="
+
+            background:#000;
+
+            color:#fff;
+
+            padding:10px;
+
+            border-radius:10px;
+
+            font-size:28px;
+
+            font-weight:bold;
+
+        ">
+
+            ${data.location.name}
+
+            🌡️ ${data.current.temp_c}°C
+
+            ☁️ ${data.current.condition.text}
+
+        </div>
+
+    `;
+
+}
+                
                 if(wFrame.src !== wUrl) wFrame.src = wUrl;
             } else {
                 wBox.style.display = "none";
