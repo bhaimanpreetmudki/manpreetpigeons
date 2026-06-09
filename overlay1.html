@@ -193,75 +193,54 @@
 
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
-            if(conf.showWeather === true) {
+            async function loadWeather(city) {
+
+    try {
+
+        const apiKey = "YOUR_API_KEY";
+
+        const res = await fetch(
+            `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`
+        );
+
+        const weather = await res.json();
+
+        document.getElementById("weather-box").innerHTML = `
+            <div style="
+                background:#000;
+                color:#fff;
+                padding:10px;
+                border-radius:10px;
+                font-size:28px;
+                font-weight:bold;
+            ">
+                ${weather.location.name}
+                🌡️ ${weather.current.temp_c}°C
+                ☁️ ${weather.current.condition.text}
+            </div>
+        `;
+
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+            const wBox = document.getElementById('weather-box');
+
+if(conf.showWeather === true){
 
     wBox.style.display = "block";
 
-    loadWeather();
+    loadWeather(conf.pindName || "Karimpur");
 
-} else {
+}else{
 
     wBox.style.display = "none";
 
 }
 
-
-
-    const city = conf.pindName || "Karimpur";
-
-
-
-    const apiKey = "0846a14771b347f998b32948260906";
-
-
-
-    const res = await fetch(
-
-        `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`
-
-    );
-
-
-
-    const data = await res.json();
-
-
-
-    document.getElementById("weather-box").innerHTML = `
-
-        <div style="
-
-            background:#000;
-
-            color:#fff;
-
-            padding:10px;
-
-            border-radius:10px;
-
-            font-size:28px;
-
-            font-weight:bold;
-
-        ">
-
-            ${data.location.name}
-
-            🌡️ ${data.current.temp_c}°C
-
-            ☁️ ${data.current.condition.text}
-
-        </div>
-
-    `;
-
-}
-                
-                if(wFrame.src !== wUrl) wFrame.src = wUrl;
-            } else {
-                wBox.style.display = "none";
-            } 
             
+                
             const expiryTime = new Date(data.expiry).getTime();
             const currentTime = new Date().getTime();
             if (currentTime > expiryTime) {
