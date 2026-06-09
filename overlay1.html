@@ -197,37 +197,31 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
 
-            // WEATHER
+           // WEATHER
 const wBox = document.getElementById('weather-box');
 const wInfo = document.getElementById('weather-info');
 
 if (conf.showWeather === true) {
     wBox.style.display = "block";
     
-    const apiKey = "3e365e8ce1b98fe0e667e021343f3ab0"; 
+    // API KEY ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ
     const lat = conf.lat || "30.5980";
     const lon = conf.lon || "74.7380";
     
-    // ਇੱਥੇ ਸਹੀ ਤਰੀਕੇ ਨਾਲ URL ਬਣਾਇਆ ਗਿਆ ਹੈ
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+    // Wttr.in ਵਰਤ ਰਹੇ ਹਾਂ ਜੋ ਬਿਨਾਂ ਕੀ (key) ਤੋਂ ਚੱਲਦਾ ਹੈ
+    const apiUrl = `https://wttr.in/${lat},${lon}?format=%t+%C`;
 
     fetch(apiUrl)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
-            if (data.main) {
-                const temp = Math.round(data.main.temp);
-                const desc = data.weather[0].main;
-                wInfo.innerHTML = `<strong>${conf.pindName || 'LOCATION'}</strong><br>${temp}°C - ${desc}`;
-            }
+            wInfo.innerHTML = `<strong>${conf.pindName || 'WEATHER'}</strong><br>${data}`;
         })
         .catch(err => {
             wInfo.innerText = "Weather Unavailable";
-            console.error("Weather error:", err);
         });
 } else {
     wBox.style.display = "none";
-}
-            
+} 
                 
             const expiryTime = new Date(data.expiry).getTime();
             const currentTime = new Date().getTime();
