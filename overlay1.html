@@ -204,27 +204,29 @@ const wInfo = document.getElementById('weather-info');
 if (conf.showWeather === true) {
     wBox.style.display = "block";
     
-    // ਆਪਣੀ API KEY ਇੱਥੇ ਪਾਓ (OpenWeatherMap ਤੋਂ ਮੁਫ਼ਤ ਮਿਲ ਜਾਵੇਗੀ)
     const apiKey = "3e365e8ce1b98fe0e667e021343f3ab0"; 
     const lat = conf.lat || "30.5980";
     const lon = conf.lon || "74.7380";
     
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${3e365e8ce1b98fe0e667e021343f3ab0}`;
+    // ਇੱਥੇ ਸਹੀ ਤਰੀਕੇ ਨਾਲ URL ਬਣਾਇਆ ਗਿਆ ਹੈ
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            const temp = Math.round(data.main.temp);
-            const desc = data.weather[0].main;
-            wInfo.innerHTML = `<strong>${conf.pindName || 'LOCATION'}</strong><br>${temp}°C - ${desc}`;
+            if (data.main) {
+                const temp = Math.round(data.main.temp);
+                const desc = data.weather[0].main;
+                wInfo.innerHTML = `<strong>${conf.pindName || 'LOCATION'}</strong><br>${temp}°C - ${desc}`;
+            }
         })
         .catch(err => {
             wInfo.innerText = "Weather Unavailable";
+            console.error("Weather error:", err);
         });
 } else {
     wBox.style.display = "none";
 }
-
             
                 
             const expiryTime = new Date(data.expiry).getTime();
