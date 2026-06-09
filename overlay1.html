@@ -8,34 +8,33 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-        /* Weather Box Styling */
-        #weather-box {
+       #weather-box {
     position: absolute;
-    bottom: 70px; 
-    left: 835px;
-    width: 250px; 
-    height: 100px; 
+    bottom: 80px; 
+    left: 830px;
     display: none; 
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid white;
+    background: #34495e; /* ਗੂੜਾ ਨੀਲਾ/ਸਲੇਟੀ ਰੰਗ */
     color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
     z-index: 1001;
-    text-align: center;
-    padding: 10px;
-    font-size: 24px;
-    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
 }
 
-        #weather-frame { 
-            width: 250px; 
-            height: 100px; 
-            border: none; 
-            pointer-events: none;
-            transform: scale(1.5); 
-            transform-origin: top left; 
-            margin-top: -10px; 
-            margin-left: 5px;
-        } 
+#weather-icon {
+    font-size: 40px;
+}
+
+#weather-info {
+    text-align: left;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: bold;
+}
         
         /* Expiry Lock Screen */
         #expiry-lock {
@@ -108,7 +107,11 @@
 <body>
 
 <div id="weather-box">
-    <div id="weather-info">Loading Weather...</div>
+    <div id="weather-icon">☀️</div>
+    <div id="weather-info">
+        <div id="w-name" style="font-size: 22px;">LOADING...</div>
+        <div id="w-temp" style="font-size: 28px;">--°C</div>
+    </div>
 </div>
     
 <div id="expiry-lock">
@@ -199,30 +202,25 @@
 
           // WEATHER
 const wBox = document.getElementById('weather-box');
-const wInfo = document.getElementById('weather-info');
+const wName = document.getElementById('w-name');
+const wTemp = document.getElementById('w-temp');
 
 if (conf.showWeather === true) {
-    wBox.style.display = "block";
+    wBox.style.display = "flex";
     
-    const apiKey = "3e365e8ce1b98fe0e667e021343f3ab0"; 
+    // ਅਸੀਂ ਹੁਣ ਸਿੱਧਾ ਡੇਟਾ ਲੈ ਰਹੇ ਹਾਂ
     const lat = conf.lat || "30.5980";
     const lon = conf.lon || "74.7380";
-    
-    // ਇੱਥੇ ਸਹੀ ਤਰੀਕੇ ਨਾਲ URL ਬਣਾਇਆ ਗਿਆ ਹੈ
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=3e365e8ce1b98fe0e667e021343f3ab0`;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            if (data.main) {
-                const temp = Math.round(data.main.temp);
-                const desc = data.weather[0].main;
-                wInfo.innerHTML = `<strong>${conf.pindName || 'LOCATION'}</strong><br>${temp}°C - ${desc}`;
-            }
+            wName.innerText = conf.pindName || "LOCATION";
+            wTemp.innerText = Math.round(data.main.temp) + "°C - " + data.weather[0].main.toUpperCase();
         })
-        .catch(err => {
-            wInfo.innerText = "Weather Unavailable";
-            console.error("Weather error:", err);
+        .catch(() => {
+            wName.innerText = "ERROR";
         });
 } else {
     wBox.style.display = "none";
