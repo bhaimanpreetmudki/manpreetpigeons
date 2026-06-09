@@ -103,9 +103,7 @@
 </head>
 <body>
 
-<div id="weather-box">
-    <iframe id="weather-frame" src=""></iframe>
-</div>
+<div id="weather-box"></div>
     
 <div id="expiry-lock">
     <div class="lock-msg">
@@ -196,11 +194,16 @@
             const wBox = document.getElementById('weather-box');
             const wFrame = document.getElementById('weather-frame');
             if(conf.showWeather === true) {
-                wBox.style.display = "block";
-                let lat = conf.lat || "30.5980";
-                let lon = conf.lon || "74.7380";
-                let p_name = conf.pindName || "";
-                     async function loadWeather() { 
+
+    wBox.style.display = "block";
+
+    loadWeather();
+
+} else {
+
+    wBox.style.display = "none";
+
+}
 
 
 
