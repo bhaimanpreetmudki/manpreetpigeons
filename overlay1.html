@@ -8,32 +8,36 @@
         * { box-sizing: border-box; text-transform: uppercase; margin: 0; padding: 0; }
         body { background: transparent; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; height: 100vh; color: white; }
 
-       #weather-box {
+      #weather-box {
     position: absolute;
-    bottom: 80px; 
-    left: 830px;
-    display: none; 
-    background: #34495e; /* ਗੂੜਾ ਨੀਲਾ/ਸਲੇਟੀ ਰੰਗ */
+    bottom: 90px; 
+    left: 835px;
+    width: 280px; /* ਇੱਥੇ width ਘਟਾ ਦਿੱਤੀ ਹੈ */
+    background: #34495e;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 15px;
     border-radius: 15px;
     z-index: 1001;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     border: 2px solid rgba(255,255,255,0.2);
 }
 
-#weather-icon {
-    font-size: 40px;
-}
+#weather-icon { font-size: 35px; }
 
 #weather-info {
     text-align: left;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.2;
     font-weight: bold;
+}
+
+/* ਪਿੰਡ ਦਾ ਨਾਮ ਪੀਲੇ ਰੰਗ ਲਈ */
+.village-name-yellow {
+    color: #FFD700; 
+    font-size: 20px;
 }
         
         /* Expiry Lock Screen */
@@ -200,15 +204,13 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
 
-          // WEATHER
+        // WEATHER
 const wBox = document.getElementById('weather-box');
-const wName = document.getElementById('w-name');
-const wTemp = document.getElementById('w-temp');
+const wInfo = document.getElementById('weather-info');
 
 if (conf.showWeather === true) {
     wBox.style.display = "flex";
     
-    // ਅਸੀਂ ਹੁਣ ਸਿੱਧਾ ਡੇਟਾ ਲੈ ਰਹੇ ਹਾਂ
     const lat = conf.lat || "30.5980";
     const lon = conf.lon || "74.7380";
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=3e365e8ce1b98fe0e667e021343f3ab0`;
@@ -216,15 +218,19 @@ if (conf.showWeather === true) {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            wName.innerText = conf.pindName || "LOCATION";
-            wTemp.innerText = Math.round(data.main.temp) + "°C - " + data.weather[0].main.toUpperCase();
+            // ਇੱਥੇ ਪਿੰਡ ਦਾ ਨਾਮ ਪੀਲੇ ਰੰਗ (class) ਵਿੱਚ ਪਾਇਆ ਗਿਆ ਹੈ
+            wInfo.innerHTML = `
+                <div class="village-name-yellow">${conf.pindName || 'LOCATION'}</div>
+                <div style="font-size: 22px;">${Math.round(data.main.temp)}°C - ${data.weather[0].main.toUpperCase()}</div>
+            `;
         })
         .catch(() => {
-            wName.innerText = "ERROR";
+            wInfo.innerText = "Weather Unavailable";
         });
 } else {
     wBox.style.display = "none";
 }
+            
                 
             const expiryTime = new Date(data.expiry).getTime();
             const currentTime = new Date().getTime();
