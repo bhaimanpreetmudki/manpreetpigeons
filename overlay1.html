@@ -10,17 +10,21 @@
 
         /* Weather Box Styling */
         #weather-box {
-            position: absolute;
-            top: 20px; 
-            left: 10px;
-            width: 550px; 
-            height: 120px; 
-            display: none; 
-            overflow: hidden;
-            background: transparent; 
-            border: none;             
-            z-index: 1001;
-        }
+    position: absolute;
+    bottom: 70px; 
+    left: 835px;
+    width: 350px; 
+    height: 100px; 
+    display: none; 
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid white;
+    color: white;
+    z-index: 1001;
+    text-align: center;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 10px;
+}
 
         #weather-frame { 
             width: 550px; 
@@ -103,7 +107,9 @@
 </head>
 <body>
 
-<div id="weather-box"></div>
+<div id="weather-box">
+    <div id="weather-info">Loading Weather...</div>
+</div>
     
 <div id="expiry-lock">
     <div class="lock-msg">
@@ -191,50 +197,32 @@
             const conf = data.config || {}; 
             const pigeons = data.pigeons || [];
 
-            const wBox = document.getElementById('weather-box');
-            const wFrame = document.getElementById('weather-frame');
-            async function loadWeather(city) {
+            // WEATHER
+const wBox = document.getElementById('weather-box');
+const wInfo = document.getElementById('weather-info');
 
-    try {
-
-        const apiKey = "0846a14771b347f998b32948260906";
-
-        const res = await fetch(
-            `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`
-        );
-
-        const weather = await res.json();
-
-        document.getElementById("weather-box").innerHTML = `
-            <div style="
-                background:#000;
-                color:#fff;
-                padding:10px;
-                border-radius:10px;
-                font-size:28px;
-                font-weight:bold;
-            ">
-                ${weather.location.name}
-                🌡️ ${weather.current.temp_c}°C
-                ☁️ ${weather.current.condition.text}
-            </div>
-        `;
-
-    } catch(err) {
-        console.log(err);
-    }
-}
-
-if(conf.showWeather === true){
-
+if (conf.showWeather === true) {
     wBox.style.display = "block";
+    
+    // ਆਪਣੀ API KEY ਇੱਥੇ ਪਾਓ (OpenWeatherMap ਤੋਂ ਮੁਫ਼ਤ ਮਿਲ ਜਾਵੇਗੀ)
+    const apiKey = "3e365e8ce1b98fe0e667e021343f3ab0"; 
+    const lat = conf.lat || "30.5980";
+    const lon = conf.lon || "74.7380";
+    
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${3e365e8ce1b98fe0e667e021343f3ab0}`;
 
-    loadWeather(conf.pindName || "Karimpur");
-
-}else{
-
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const temp = Math.round(data.main.temp);
+            const desc = data.weather[0].main;
+            wInfo.innerHTML = `<strong>${conf.pindName || 'LOCATION'}</strong><br>${temp}°C - ${desc}`;
+        })
+        .catch(err => {
+            wInfo.innerText = "Weather Unavailable";
+        });
+} else {
     wBox.style.display = "none";
-
 }
 
             
