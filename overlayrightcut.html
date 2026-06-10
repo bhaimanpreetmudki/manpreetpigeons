@@ -71,7 +71,8 @@
         }
 
         #cut-flash-alert.active {
-    display:flex !important;
+    #cut-flash-alert {
+    display:none;
     animation: alertPopup 4s ease-in-out forwards;
 }
 
@@ -734,15 +735,7 @@ updateClock();
         clientSettings[userID].watermark;
 }
 
-            // --- CUT FLASH TRIGGER LOGIC ---
-            if (previousOutIds !== null) {
-                // ਚੈੱਕ ਕਰੋ ਕਿ ਕਿਹੜਾ ਕਬੂਤਰ ਨਵਾਂ ਆਊਟ ਹੋਇਆ ਹੈ
-                let newlyCut = currentOutIds.filter(id => !previousOutIds.includes(id));
-                if (newlyCut.length > 0) {
-                    let pigeonName = newlyCut[0].split('_')[1]; // ਕਬੂਤਰ ਦਾ ਨਾਮ ਕੱਢੋ
-                    triggerCutFlash(pigeonName);
-                }
-            }
+        
 
 // WATERMARK MOVE
 const wmEl = document.getElementById("single-wm");
@@ -1046,10 +1039,6 @@ function triggerCutFlash(name) {
     });
 }
 
-}
-        requestAnimationFrame(animate);
-    }
-    animate();
 </script>
 
 </body>
