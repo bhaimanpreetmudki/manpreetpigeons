@@ -70,10 +70,17 @@
             transition: all 0.4s ease-in-out;
         }
 
-        #cut-flash-alert.active {
-    #cut-flash-alert {
+        #cut-flash-alert{
+    position:absolute;
+    top:40%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(0);
     display:none;
-    animation: alertPopup 4s ease-in-out forwards;
+}
+
+#cut-flash-alert.active{
+    display:flex !important;
+    animation:alertPopup 4s ease-in-out forwards;
 }
 
         .alert-main-title {
@@ -754,6 +761,38 @@ function moveWM() {
 moveWM();
 setInterval(moveWM, 6000);
 
+    // ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ ਚਲਾਉਣ ਵਾਲਾ ਫੰਕਸ਼ਨ
+    let cutTimeout1 = null;
+let cutTimeout2 = null;
+
+function triggerCutFlash(name) {
+
+    const alertBox = document.getElementById('cut-flash-alert');
+    const nameBox = document.getElementById('alert-pigeon-name');
+
+    if (cutTimeout1) clearTimeout(cutTimeout1);
+    if (cutTimeout2) clearTimeout(cutTimeout2);
+
+    nameBox.innerText = name ? name.toUpperCase() : "--";
+
+    alertBox.classList.remove('active');
+    alertBox.style.display = "none";
+
+    void alertBox.offsetWidth;
+
+    cutTimeout1 = setTimeout(() => {
+
+        alertBox.classList.add('active');
+
+        cutTimeout2 = setTimeout(() => {
+            alertBox.classList.remove('active');
+            alertBox.style.display = "none";
+        }, 4000);
+
+    }, 30);
+}
+
+
 if(userID) {
 
     db.ref('users/' + userID).on('value', snap => {
@@ -881,36 +920,7 @@ if(userID) {
             wBox.style.display = "none";
         }
 
-// ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ ਚਲਾਉਣ ਵਾਲਾ ਫੰਕਸ਼ਨ
-    let cutTimeout1 = null;
-let cutTimeout2 = null;
-
-function triggerCutFlash(name) {
-
-    const alertBox = document.getElementById('cut-flash-alert');
-    const nameBox = document.getElementById('alert-pigeon-name');
-
-    if (cutTimeout1) clearTimeout(cutTimeout1);
-    if (cutTimeout2) clearTimeout(cutTimeout2);
-
-    nameBox.innerText = name ? name.toUpperCase() : "--";
-
-    alertBox.classList.remove('active');
-    alertBox.style.display = "none";
-
-    void alertBox.offsetWidth;
-
-    cutTimeout1 = setTimeout(() => {
-
-        alertBox.classList.add('active');
-
-        cutTimeout2 = setTimeout(() => {
-            alertBox.classList.remove('active');
-            alertBox.style.display = "none";
-        }, 4000);
-
-    }, 30);
-}
+        
         /* CUT FLASH */
 
         if(data.cutAnimation && data.cutAnimation.time) {
