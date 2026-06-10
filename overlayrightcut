@@ -46,6 +46,65 @@
     transition:all 1s linear;
 }
 
+/* --- CUT FLASH ANIMATION STYLES (CENTER BANNER) --- */
+        #cut-flash-alert {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(220,0,0,0.95) 15%, rgba(150,0,0,0.95) 50%, rgba(220,0,0,0.95) 85%, rgba(255,0,0,0) 100%);
+            color: #fff;
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-top: 5px solid #fff;
+            border-bottom: 5px solid #fff;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease-in-out;
+        }
+
+        #cut-flash-alert.active {
+            animation: alertPopup 4s ease-in-out forwards;
+        }
+
+        .alert-main-title {
+            font-size: 55px;
+            font-weight: 1000;
+            letter-spacing: 5px;
+            color: #fff;
+            text-shadow: 0 0 20px #000, 0 0 10px #ff0000;
+            animation: textPulse 0.8s infinite alternate;
+        }
+
+        .alert-pigeon-name {
+            font-size: 45px;
+            font-weight: 900;
+            color: #ffcc00;
+            margin-top: 5px;
+            text-shadow: 0 0 15px #000;
+        }
+
+        @keyframes alertPopup {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            90% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1); }
+            95% { filter: brightness(2); }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        }
+
+        @keyframes textPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px #fff); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 15px #ffcc00); }
+        }
+        /* -------------------------------------------------- */
+
         /* Weather Box Styling */
         #weather-box {
             position: absolute;
@@ -500,6 +559,12 @@
     </div>
 </div>
 
+<!-- CUT FLASH BANNER HTML -->
+<div id="cut-flash-alert">
+    <div class="alert-main-title" id="alert-title-lang">ਕਬੂਤਰ ਕੱਟਿਆ ਗਿਆ / PIGEON OUT</div>
+    <div class="alert-pigeon-name" id="alert-pigeon-name">--</div>
+</div>
+
 <div class="summary-wrapper" id="summary-div">
 
     <div class="sum-card">
@@ -671,6 +736,16 @@ function triggerCutFlash(name) {
         clientSettings[userID].watermark;
 }
 
+            // --- CUT FLASH TRIGGER LOGIC ---
+            if (previousOutIds !== null) {
+                // ਚੈੱਕ ਕਰੋ ਕਿ ਕਿਹੜਾ ਕਬੂਤਰ ਨਵਾਂ ਆਊਟ ਹੋਇਆ ਹੈ
+                let newlyCut = currentOutIds.filter(id => !previousOutIds.includes(id));
+                if (newlyCut.length > 0) {
+                    let pigeonName = newlyCut[0].split('_')[1]; // ਕਬੂਤਰ ਦਾ ਨਾਮ ਕੱਢੋ
+                    triggerCutFlash(pigeonName);
+                }
+            }
+
 // WATERMARK MOVE
 const wmEl = document.getElementById("single-wm");
 
@@ -815,6 +890,26 @@ if(userID) {
             wBox.style.display = "none";
         }
 
+// ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ ਚਲਾਉਣ ਵਾਲਾ ਫੰਕਸ਼ਨ
+    function triggerCutFlash(name) {
+        const alertBox = document.getElementById('cut-flash-alert');
+        const nameBox = document.getElementById('alert-pigeon-name');
+        
+        nameBox.innerText = name;
+        
+        // ਜੇਕਰ ਪਹਿਲਾਂ ਤੋਂ ਐਨੀਮੇਸ਼ਨ ਚੱਲ ਰਹੀ ਹੈ ਤਾਂ ਰੀਸੈੱਟ ਕਰੋ
+        alertBox.classList.remove('active');
+        void alertBox.offsetWidth; // DOM ਰੀਫ੍ਰੈਸ਼ ਕਰਨ ਲਈ ਟ੍ਰਿਕ
+        
+        // ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ ਐਡ ਕਰੋ
+        alertBox.classList.add('active');
+        
+        // 4 ਸੈਕਿੰਡ ਬਾਅਦ ਕਲਾਸ ਹਟਾ ਦਿਓ (ਐਨੀਮੇਸ਼ਨ ਖਤਮ ਹੋਣ 'ਤੇ)
+        setTimeout(() => {
+            alertBox.classList.remove('active');
+        }, 4000);
+    }
+
         /* CUT FLASH */
 
         if(data.cutAnimation && data.cutAnimation.time) {
@@ -943,6 +1038,10 @@ if(userID) {
     });
 }
 
+}
+        requestAnimationFrame(animate);
+    }
+    animate();
 </script>
 
 </body>
