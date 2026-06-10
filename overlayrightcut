@@ -71,8 +71,9 @@
         }
 
         #cut-flash-alert.active {
-            animation: alertPopup 4s ease-in-out forwards;
-        }
+    display:flex !important;
+    animation: alertPopup 4s ease-in-out forwards;
+}
 
         .alert-main-title {
             font-size: 55px;
@@ -724,9 +725,6 @@ setInterval(() => {
 
 updateClock();
 
-function triggerCutFlash(name) {
-    console.log("CUT:", name);
-}
     if(clientSettings[userID]){
 
     document.getElementById("main-logo").src =
@@ -891,25 +889,35 @@ if(userID) {
         }
 
 // ਫਲੈਸ਼ ਐਨੀਮੇਸ਼ਨ ਚਲਾਉਣ ਵਾਲਾ ਫੰਕਸ਼ਨ
-    function triggerCutFlash(name) {
-        const alertBox = document.getElementById('cut-flash-alert');
-        const nameBox = document.getElementById('alert-pigeon-name');
-        
-        nameBox.innerText = name;
-        
-        // ਜੇਕਰ ਪਹਿਲਾਂ ਤੋਂ ਐਨੀਮੇਸ਼ਨ ਚੱਲ ਰਹੀ ਹੈ ਤਾਂ ਰੀਸੈੱਟ ਕਰੋ
-        alertBox.classList.remove('active');
-        void alertBox.offsetWidth; // DOM ਰੀਫ੍ਰੈਸ਼ ਕਰਨ ਲਈ ਟ੍ਰਿਕ
-        
-        // ਐਨੀਮੇਸ਼ਨ ਕਲਾਸ ਐਡ ਕਰੋ
-        alertBox.classList.add('active');
-        
-        // 4 ਸੈਕਿੰਡ ਬਾਅਦ ਕਲਾਸ ਹਟਾ ਦਿਓ (ਐਨੀਮੇਸ਼ਨ ਖਤਮ ਹੋਣ 'ਤੇ)
-        setTimeout(() => {
-            alertBox.classList.remove('active');
-        }, 4000);
-    }
+    let cutTimeout1 = null;
+let cutTimeout2 = null;
 
+function triggerCutFlash(name) {
+
+    const alertBox = document.getElementById('cut-flash-alert');
+    const nameBox = document.getElementById('alert-pigeon-name');
+
+    if (cutTimeout1) clearTimeout(cutTimeout1);
+    if (cutTimeout2) clearTimeout(cutTimeout2);
+
+    nameBox.innerText = name ? name.toUpperCase() : "--";
+
+    alertBox.classList.remove('active');
+    alertBox.style.display = "none";
+
+    void alertBox.offsetWidth;
+
+    cutTimeout1 = setTimeout(() => {
+
+        alertBox.classList.add('active');
+
+        cutTimeout2 = setTimeout(() => {
+            alertBox.classList.remove('active');
+            alertBox.style.display = "none";
+        }, 4000);
+
+    }, 30);
+}
         /* CUT FLASH */
 
         if(data.cutAnimation && data.cutAnimation.time) {
