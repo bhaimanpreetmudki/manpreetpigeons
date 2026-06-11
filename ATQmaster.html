@@ -68,15 +68,18 @@
         if(!id || !pass || !expiry) return alert("ਸਾਰੀ ਜਾਣਕਾਰੀ ਭਰੋ!");
 
         db.ref('users/' + id).set({
-            password: pass,
-            expiry: expiry,
-            config: { ticker: "WELCOME TO THE TOURNAMENT", showScoreboard: true, showTicker: true, boxTime: "10:00 AM", showFly: true, showTime: true },
-            pigeons: []
-        }).then(() => {
-            alert("ਕਲਾਇੰਟ ਬਣ ਗਿਆ!");
-            document.getElementById('cID').value = "";
-            document.getElementById('cPass').value = "";
-        });
+    password: pass,
+    expiry: expiry,
+    config: {},
+    pigeons: []
+})
+.then(() => {
+    alert("Client Created!");
+})
+.catch((err) => {
+    console.error(err);
+    alert(err.message);
+});
     }
 
     // 2. ਲਿਸਟ ਲੋਡ ਕਰੋ ਅਤੇ ਦਿਖਾਓ
