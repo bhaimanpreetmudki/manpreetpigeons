@@ -169,9 +169,9 @@
         document.getElementById('weatherBtn').style.backgroundColor = conf.showWeather ? "#dc3545" : "#238636";
 
         if (firstLoad) {
-               document.getElementById('row1').value = data.tickerRows?.row1 || "";
-        document.getElementById('row2').value = data.tickerRows?.row2 || "";
-        document.getElementById('row3').value = data.tickerRows?.row3 || "";
+            document.getElementById("row1").value = localData.tickerRows?.row1 || "";
+document.getElementById("row2").value = localData.tickerRows?.row2 || "";
+document.getElementById("row3").value = localData.tickerRows?.row3 || "";
             document.getElementById('inpBoxTime').value = conf.boxTime || "";
             document.getElementById('inpPind').value = conf.pindName || "";
             document.getElementById('inpLat').value = conf.lat || "";
@@ -275,18 +275,23 @@
     function syncPigeons() {
         db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []);
     }
-    
 
-    function manualUpdate() {
-        db.ref('users/' + userID + '/config').update({
-            ticker: document.getElementById('inpTicker').value,
-            boxTime: document.getElementById('inpBoxTime').value,
-            pindName: document.getElementById('inpPind').value,
-            lat: document.getElementById('inpLat').value,
-            lon: document.getElementById('inpLon').value
-        });
-    }
+   function manualUpdate() {
 
+    db.ref('users/' + userID + '/config').update({
+        boxTime: document.getElementById('inpBoxTime').value,
+        pindName: document.getElementById('inpPind').value,
+        lat: document.getElementById('inpLat').value,
+        lon: document.getElementById('inpLon').value
+    });
+
+    db.ref('users/' + userID + '/tickerRows').set({
+        row1: document.getElementById('row1').value.toUpperCase(),
+        row2: document.getElementById('row2').value.toUpperCase(),
+        row3: document.getElementById('row3').value.toUpperCase()
+    });
+
+}
     function updateName(id, newName) {
         localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, name: newName.toUpperCase()} : p);
         syncPigeons();
