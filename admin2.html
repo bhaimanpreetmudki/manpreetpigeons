@@ -81,7 +81,25 @@
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+       <!-- 📊 TICKER & ROW CONTROLS -->
+<div class="controls-container" style="border: 2px solid #3498db;">
+    <div class="section-title" style="color:#3498db;">📊 TICKER & ROW MANAGEMENT</div>
+    
+    <!-- 3 Box Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+        <input type="text" id="row1" placeholder="Row 1" style="margin-bottom:0;">
+        <input type="text" id="row2" placeholder="Row 2" style="margin-bottom:0;">
+        <input type="text" id="row3" placeholder="Row 3" style="margin-bottom:0;">
+    </div>
+    <button class="btn-update" onclick="updateTickerRows()" style="background:#3498db;">SAVE TICKER ROWS</button>
+</div>
+
+<!-- 📋 ROUND COPY BOX -->
+<div class="controls-container" style="text-align: center; border-radius: 50px; border: 2px dashed #f39c12; padding: 10px;">
+    <button class="btn-add" onclick="copyServiceData()" style="margin:0; border-radius: 50px; background:#f39c12;">
+        <i class="fas fa-copy"></i> COPY SEWA DETAILS
+    </button>
+</div>
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
             <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
             <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
@@ -119,7 +137,7 @@
 </div>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/" };
+    const firebaseConfig = { databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com//" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const urlParams = new URLSearchParams(window.location.search);
@@ -184,7 +202,6 @@
             firstLoad = false;
         }
 
-        // ਰਿਜ਼ਲਟ ਪੈਨਲ ਬਟਨਾਂ ਦੀਆਂ ਸਟੇਟਸ ਹਾਈਲਾਈਟ ਕਰਨਾ
         document.getElementById('btnResSanjhi').classList.remove('active-sanjhi');
         document.getElementById('btnResWin').classList.remove('active-win');
         if(resOver.title === 'BAJI SANJHI') {
@@ -304,9 +321,23 @@
         syncPigeons();
     }
 
+    // ⚡ ਸਟੇਟਸ ਬਦਲਣ ਵਾਲਾ ਫੰਕਸ਼ਨ - ਝਮਾਕੇ ਵਾਲੇ SMS (ਟਾਈਮਸਟੈਂਪ) ਸਿਸਟਮ ਦੇ ਨਾਲ ਅਪਡੇਟਿਡ ⚡
     function setStatus(id, s) {
+        // ਕਬੂਤਰ ਦਾ ਨਾਮ ਪਤਾ ਕਰੋ ਜਿਸਨੂੰ ਆਊਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ
+        let targetPigeon = localData.pigeons.find(p => p.id == id);
+        
         localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, status: s} : p);
-        syncPigeons();
+        
+        // ਪਹਿਲਾਂ ਪਿਜਨ ਦਾ ਸਟੇਟਸ ਫਾਇਰਬੇਸ ਵਿੱਚ ਅਪਡੇਟ ਕਰੋ
+        db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []).then(() => {
+            // ⚡ ਜੇਕਰ ਬਟਨ 'out' ਦੱਬਿਆ ਗਿਆ ਹੈ, ਤਾਂ ਤੁਰੰਤ ਓਵਰਲੇਅ ਲਈ ਝਮਾਕੇ ਦਾ ਮੈਸੇਜ ਭੇਜੋ
+            if (s === 'out' && targetPigeon) {
+                db.ref('users/' + userID + '/cutAnimation').set({
+                    name: targetPigeon.name.toUpperCase(),
+                    time: Date.now() // ਹਰ ਵਾਰ ਬਿਲਕੁਲ ਨਵਾਂ ਯੂਨੀਕ ਨੰਬਰ (ਟਾਈਮ)
+                });
+            }
+        });
     }
 
     function toggleDisplay(field) {
@@ -316,6 +347,27 @@
 
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); syncPigeons(); } }
     function resetData() { if(confirm("Reset Everything?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
+    // Ticker Rows Update
+function updateTickerRows() {
+    const r1 = document.getElementById('row1').value;
+    const r2 = document.getElementById('row2').value;
+    const r3 = document.getElementById('row3').value;
+    
+    db.ref('users/' + userID + '/tickerRows').set({
+        row1: r1,
+        row2: r2,
+        row3: r3
+    }).then(() => alert("Rows Saved!"));
+}
+
+// Copy Service Data
+function copyServiceData() {
+    const dataToCopy = `ਸੇਵਾ: ${document.getElementById('inpPind').value}\nਟਾਈਮ: ${document.getElementById('inpBoxTime').value}\nTicker: ${document.getElementById('inpTicker').value}`;
+    
+    navigator.clipboard.writeText(dataToCopy).then(() => {
+        alert("ਸੇਵਾ ਡੇਟਾ ਕਾਪੀ ਹੋ ਗਿਆ!");
+    });
+}
 </script>
 </body>
 </html>
