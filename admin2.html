@@ -44,16 +44,23 @@
         .login-box { max-width:350px; margin:80px auto; text-align:center; background:#1a1d21; padding:25px; border-radius:15px; border:1px solid #333; }
         #locStatus { font-size: 10px; margin-bottom: 10px; }
         .pos-input { width: 35px; background: #0d1117; border: 1px solid #444; color: #f39c12; font-size: 11px; text-align: center; border-radius: 4px; padding: 4px; outline: none; }
-    </style>
+     </style>
 </head>
 <body>
 
 <div id="login-box" class="login-box">
-    <h2 style="color:#f39c12;">ADMIN LOGIN</h2>
+    <h2 style="color:#f39c12; font-size: 20px;">ADMIN LOGIN</h2>
     <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
     <button onclick="checkLogin()" class="btn-add">ENTER CONTROL</button>
 </div>
- <!-- 🏆 🤝 RESULT SETUP MANAGER BOX -->
+
+<div id="main-content" style="display:none;">
+    <div class="top-mini-bar">
+        <span><i class="fas fa-phone-alt"></i> HELP: <b>+91 8699640061</b></span>
+        <span><i class="fas fa-calendar-alt"></i> EXPIRY: <b id="expDisp">--</b></span>
+    </div>
+
+    <!-- 🏆 🤝 RESULT SETUP MANAGER BOX -->
     <div class="result-manager-box">
         <div class="result-title"><i class="fas fa-trophy"></i> TOURNAMENT RESULT LIVE OVERLAY PANEL</div>
         
@@ -70,24 +77,104 @@
         </div>
     </div>
 
-<div id="main-content" style="display:none;">
     <div class="controls-container">
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-        <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ">
+        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
+            <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div id="locStatus"></div>
+        <input type="hidden" id="inpLat"><input type="hidden" id="inpLon">
         <button class="btn-update" onclick="manualUpdate()">UPDATE ALL DATA</button>
     </div>
 
-    <div class="controls-container">
-        <div class="section-title">TICKER SETUP</div>
-        <input type="text" id="row1" placeholder="ROW 1 (TOP)">
-        <input type="text" id="row2" placeholder="ROW 2 (MIDDLE)">
-        <input type="text" id="row3" placeholder="ROW 3 (BOTTOM)">
-        <button class="btn-update" onclick="updateTickerRows()">SAVE TICKER ROWS</button>
+    <div class="display-controls-box">
+        <div class="btn-row">
+            <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SHOW SCORE</button>
+            <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">SHOW TICKER</button>
+            <button id="weatherBtn" onclick="toggleDisplay('showWeather')" class="toggle-btn">SHOW WEATHER</button>
+        </div>
+        <button class="btn-reset" onclick="resetData()">🔄 RESET FULL TOURNAMENT</button>
     </div>
 
-     <div class="display-controls-box">
+    <div class="admin-sum-grid">
+        <div class="sum-item">TOTAL<b id="sum-total">0</b></div>
+        <div class="sum-item">FLY<b id="sum-fly" style="color:#3498db;">0</b></div>
+        <div class="sum-item">TIME<b id="sum-time" style="color:#f1c40f;">0</b></div>
+        <div class="sum-item">OUT<b id="sum-out" style="color:#e74c3c;">0</b></div>
+    </div>
+
+    <div class="section-title">🕊️ ACTIVE TOURNAMENT LIST (FLY / TIME)</div>
+    <div id="listArea"></div>
+
+    <div class="cut-section">
+        <div class="section-title" style="color: #e74c3c; border-left-color: #e74c3c; margin-top: 0;">❌ CUT PIGEONS LIST (OUT)</div>
+        <div id="cutListArea"></div>
+    </div>
+</div>
+
+<script> </style>
+</head>
+<body>
+
+<div id="login-box" class="login-box">
+    <h2 style="color:#f39c12; font-size: 20px;">ADMIN LOGIN</h2>
+    <input type="password" id="adminPass" placeholder="ਪਾਸਵਰਡ ਭਰੋ...">
+    <button onclick="checkLogin()" class="btn-add">ENTER CONTROL</button>
+</div>
+
+<div id="main-content" style="display:none;">
+    <div class="top-mini-bar">
+        <span><i class="fas fa-phone-alt"></i> HELP: <b>+91 8699640061</b></span>
+        <span><i class="fas fa-calendar-alt"></i> EXPIRY: <b id="expDisp">--</b></span>
+    </div>
+
+    <!-- 🏆 🤝 RESULT SETUP MANAGER BOX -->
+    <div class="result-manager-box">
+        <div class="result-title"><i class="fas fa-trophy"></i> TOURNAMENT RESULT LIVE OVERLAY PANEL</div>
+        
+        <div class="btn-row">
+            <button id="btnResSanjhi" class="res-type-btn" onclick="setResultType('BAJI SANJHI')">🤝 BAJI SANJHI</button>
+            <button id="btnResWin" class="res-type-btn" onclick="setResultType('WIN DECLARE')">👑 WIN DECLARE</button>
+        </div>
+
+        <textarea id="txtResultDetails" rows="4" placeholder="ਇੱਥੇ ਲਿਖੋ (ਜਿਵੇਂ: ਬਾਜ਼ੀ 3 ਘਰਾਂ ਵਿੱਚ ਸਾਂਝੀ ਹੈ... ਯਾ 1ST: ਮੱਖਣ ਖਾਨ, 2ND: ਕਾਲਾ ਮੁੱਦਕੀ...)" style="margin-top:5px;"></textarea>
+        
+        <div class="btn-row" style="margin-top: 5px;">
+            <button id="btnToggleResultShow" class="toggle-btn btn-show-result" onclick="toggleResultOverlay(true)">👁️ SHOW RESULT ON OVERLAY</button>
+            <button id="btnToggleResultHide" class="toggle-btn btn-hide-result" onclick="toggleResultOverlay(false)">🙈 HIDE RESULT</button>
+        </div>
+    </div>
+
+    <div class="controls-container">
+        <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
+        <button class="btn-add" onclick="addP()">ADD LIST</button>
+        <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
+
+<div class="section-title">📢 3 ROW TICKER</div>
+
+<input type="text" id="row1" placeholder="ROW 1 (TOP TICKER)">
+
+<input type="text" id="row2" placeholder="ROW 2 (MIDDLE TICKER)">
+
+<input type="text" id="row3" placeholder="ROW 3 (BOTTOM TICKER)">
+        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
+            <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div id="locStatus"></div>
+        <input type="hidden" id="inpLat"><input type="hidden" id="inpLon">
+        <button class="btn-update" onclick="manualUpdate()">UPDATE ALL DATA</button>
+    </div>
+
+    <div class="display-controls-box">
         <div class="btn-row">
             <button id="scoreBtn" onclick="toggleDisplay('showScoreboard')" class="toggle-btn">SHOW SCORE</button>
             <button id="tickerBtn" onclick="toggleDisplay('showTicker')" class="toggle-btn">SHOW TICKER</button>
