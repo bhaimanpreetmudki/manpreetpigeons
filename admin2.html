@@ -310,6 +310,30 @@
         alert("ALL DATA UPDATED!");
     });
 }
+
+    // ਟਿੱਕਰ ਦੀਆਂ 3 rows ਸੇਵ ਕਰਨ ਲਈ
+function updateTickerRows() {
+    db.ref('users/' + userID + '/tickerRows').update({
+        row1: document.getElementById('row1').value,
+        row2: document.getElementById('row2').value,
+        row3: document.getElementById('row3').value
+    }).then(() => alert("TICKER SAVED!"));
+}
+
+// ਪੂਰਾ ਪੈਨਲ ਠੀਕ ਕਰਨ ਲਈ (ਇੱਥੇ inpTicker ਹਟਾ ਦਿੱਤਾ ਹੈ)
+function manualUpdate() {
+    db.ref('users/' + userID + '/config').update({
+        boxTime: document.getElementById('inpBoxTime').value,
+        pindName: document.getElementById('inpPind').value,
+        lat: document.getElementById('inpLat').value || "",
+        lon: document.getElementById('inpLon').value || ""
+    }).then(() => {
+        alert("DATA UPDATED SUCCESSFULLY!");
+    }).catch((err) => {
+        alert("ERROR: " + err.message);
+    });
+}
+    
 function saveSewaName() {
     const name = document.getElementById('inpSewaName').value;
     db.ref('users/' + userID + '/config').update({
