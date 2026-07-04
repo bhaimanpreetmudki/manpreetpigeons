@@ -82,15 +82,18 @@
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
        <!-- Ticker Inputs Section -->
-<div id="ticker-manager" class="controls-container">
-    <div class="section-title">TICKER SETUP</div>
-    <input type="text" id="inpTicker" placeholder="MAIN TICKER TEXT (ALL)">
-    <input type="text" id="row1" placeholder="ROW 1 TEXT">
-    <input type="text" id="row2" placeholder="ROW 2 TEXT">
-    <input type="text" id="row3" placeholder="ROW 3 TEXT">
+<div class="controls-container">
+    <!-- ਸਿਰਫ ਇੱਥੇ ਤਿੰਨ Rows ਰੱਖੀਆਂ ਹਨ -->
+    <div class="section-title">TICKER SETUP (3 ROWS)</div>
+    <input type="text" id="row1" placeholder="ROW 1 (TOP)">
+    <input type="text" id="row2" placeholder="ROW 2 (MIDDLE)">
+    <input type="text" id="row3" placeholder="ROW 3 (BOTTOM)">
     <button class="btn-update" onclick="updateTickerRows()">SAVE TICKER ROWS</button>
-</div>
-        <div class="sewa-copy-box">
+    
+    <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+    
+    <button class="btn-update" onclick="manualUpdate()">UPDATE ALL DATA</button>
+</div>        <div class="sewa-copy-box">
     <div class="result-title">SCORE WRITER DETAILS</div>
     <input type="text" id="inpSewaName" placeholder="ਸਕੋਰ ਲਿਖਣ ਵਾਲੇ ਦਾ ਨਾਮ...">
     <button class="btn-copy" onclick="saveSewaName()">SAVE NAME</button>
