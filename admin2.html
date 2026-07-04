@@ -31,6 +31,31 @@
         .res-type-btn.active-win { background: #e67e22; border-color: #fff; color: white; box-shadow: 0 0 10px rgba(230, 126, 34, 0.5); }
         .btn-show-result { background: #238636; color: white; font-size: 14px; }
         .btn-hide-result { background: #dc3545; color: white; font-size: 14px; }
+        .sewa-copy-box {
+    background: #1a1d21;
+    border: 1px solid #444;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.btn-copy {
+    background: #5c5c5c;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 900;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-copy:hover {
+    background: #888;
+}
         
         .section-title { font-size: 14px; font-weight: 900; margin: 15px 0 8px 0; padding-left: 5px; border-left: 4px solid #f39c12; color: #fff; }
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
@@ -89,9 +114,14 @@
     <button onclick="updateTickerRows()">SAVE TICKER</button>
 </div>
 
-<!-- Copy Box -->
-<div id="copy-manager">
-    <button onclick="copyServiceData()">COPY SEWA DETAILS</button>
+<div class="sewa-copy-box">
+    <div class="result-title" style="margin-bottom: 10px;">
+        <i class="fas fa-user-edit"></i> SCORE WRITER DETAILS
+    </div>
+    <input type="text" id="inpSewaName" placeholder="ਸਕੋਰ ਲਿਖਣ ਵਾਲੇ ਦਾ ਨਾਮ..." style="margin-bottom: 8px;">
+    <button class="btn-copy" onclick="copyServiceData()">
+        <i class="fas fa-clipboard"></i> COPY SEWA DETAILS
+    </button>
 </div>
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
             <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
@@ -353,19 +383,21 @@ function updateTickerRows() {
     }).then(() => alert("Ticker Saved!"));
 }
 
-// 2. ਡਾਟਾ ਕਾਪੀ ਕਰਨ ਲਈ
 function copyServiceData() {
-    // ਇੱਥੇ ਉਹ IDs ਲਿਖੋ ਜਿੱਥੋਂ ਡਾਟਾ ਚੁੱਕਣਾ ਹੈ
-    const pind = document.getElementById('inpPind') ? document.getElementById('inpPind').value : "N/A";
-    const time = document.getElementById('inpBoxTime') ? document.getElementById('inpBoxTime').value : "N/A";
+    const writerName = document.getElementById('inpSewaName').value || "---";
+    const pind = document.getElementById('inpPind').value || "---";
+    const time = document.getElementById('inpBoxTime').value || "---";
     
-    const textToCopy = "ਸੇਵਾ: " + pind + "\nਟਾਈਮ: " + time;
+    // ਇਹ ਫਾਰਮੈਟ ਕਾਪੀ ਹੋਵੇਗਾ
+    const textToCopy = `ਸੇਵਾ (ਸਕੋਰ): ${writerName}\nਪਿੰਡ: ${pind}\nਟਾਈਮ: ${time}`;
     
     navigator.clipboard.writeText(textToCopy).then(() => {
-        alert("Details Copied!");
+        const btn = document.querySelector('.btn-copy');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ COPIED!";
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
     });
 }
-
 // 3. ਓਵਰਲੇਅ ਵਿੱਚ ਟਿੱਕਰ ਦਿਖਾਉਣ ਲਈ (ਤੁਹਾਡੇ ਓਵਰਲੇਅ ਵਾਲੇ ਕੋਡ ਵਿੱਚ ਇਹ ਜੋੜੋ)
 db.ref('users/' + userID + '/tickerRows').on('value', (snapshot) => {
     const data = snapshot.val();
