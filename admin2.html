@@ -81,7 +81,20 @@
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
+       <!-- Ticker Inputs Section -->
+<div id="ticker-manager" class="controls-container">
+    <div class="section-title">TICKER SETUP</div>
+    <input type="text" id="inpTicker" placeholder="MAIN TICKER TEXT (ALL)">
+    <input type="text" id="row1" placeholder="ROW 1 TEXT">
+    <input type="text" id="row2" placeholder="ROW 2 TEXT">
+    <input type="text" id="row3" placeholder="ROW 3 TEXT">
+    <button class="btn-update" onclick="updateTickerRows()">SAVE TICKER ROWS</button>
+</div>
+        <div class="sewa-copy-box">
+    <div class="result-title">SCORE WRITER DETAILS</div>
+    <input type="text" id="inpSewaName" placeholder="ਸਕੋਰ ਲਿਖਣ ਵਾਲੇ ਦਾ ਨਾਮ...">
+    <button class="btn-copy" onclick="saveSewaName()">SAVE NAME</button>
+</div>
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
             <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
             <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
@@ -280,16 +293,26 @@
         db.ref('users/' + userID + '/pigeons').set(localData.pigeons || []);
     }
 
-    function manualUpdate() {
-        db.ref('users/' + userID + '/config').update({
-            ticker: document.getElementById('inpTicker').value,
-            boxTime: document.getElementById('inpBoxTime').value,
-            pindName: document.getElementById('inpPind').value,
-            lat: document.getElementById('inpLat').value,
-            lon: document.getElementById('inpLon').value
-        });
-    }
 
+    function manualUpdate() {
+    const tickerVal = document.getElementById('inpTicker') ? document.getElementById('inpTicker').value : "";
+    
+    db.ref('users/' + userID + '/config').update({
+        ticker: tickerVal,
+        boxTime: document.getElementById('inpBoxTime').value,
+        pindName: document.getElementById('inpPind').value,
+        lat: document.getElementById('inpLat').value,
+        lon: document.getElementById('inpLon').value
+    }).then(() => {
+        alert("ALL DATA UPDATED!");
+    });
+}
+function saveSewaName() {
+    const name = document.getElementById('inpSewaName').value;
+    db.ref('users/' + userID + '/config').update({
+        sewaName: name
+    }).then(() => alert("ਨਾਮ ਸੇਵ ਹੋ ਗਿਆ!"));
+}
     function updateName(id, newName) {
         localData.pigeons = localData.pigeons.map(p => p.id == id ? {...p, name: newName.toUpperCase()} : p);
         syncPigeons();
