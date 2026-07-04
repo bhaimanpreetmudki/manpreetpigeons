@@ -81,24 +81,17 @@
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-       <!-- 📊 TICKER & ROW CONTROLS -->
-<div class="controls-container" style="border: 2px solid #3498db;">
-    <div class="section-title" style="color:#3498db;">📊 TICKER & ROW MANAGEMENT</div>
-    
-    <!-- 3 Box Grid -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-        <input type="text" id="row1" placeholder="Row 1" style="margin-bottom:0;">
-        <input type="text" id="row2" placeholder="Row 2" style="margin-bottom:0;">
-        <input type="text" id="row3" placeholder="Row 3" style="margin-bottom:0;">
-    </div>
-    <button class="btn-update" onclick="updateTickerRows()" style="background:#3498db;">SAVE TICKER ROWS</button>
+    <!-- Ticker Inputs -->
+<div id="ticker-manager">
+    <input type="text" id="row1" placeholder="ROW 1 TEXT">
+    <input type="text" id="row2" placeholder="ROW 2 TEXT">
+    <input type="text" id="row3" placeholder="ROW 3 TEXT">
+    <button onclick="updateTickerRows()">SAVE TICKER</button>
 </div>
 
-<!-- 📋 ROUND COPY BOX -->
-<div class="controls-container" style="text-align: center; border-radius: 50px; border: 2px dashed #f39c12; padding: 10px;">
-    <button class="btn-add" onclick="copyServiceData()" style="margin:0; border-radius: 50px; background:#f39c12;">
-        <i class="fas fa-copy"></i> COPY SEWA DETAILS
-    </button>
+<!-- Copy Box -->
+<div id="copy-manager">
+    <button onclick="copyServiceData()">COPY SEWA DETAILS</button>
 </div>
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
             <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
@@ -347,7 +340,7 @@
 
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); syncPigeons(); } }
     function resetData() { if(confirm("Reset Everything?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
-    // Ticker Rows Update
+ // 1. ਟਿੱਕਰ ਸੇਵ ਕਰਨ ਲਈ
 function updateTickerRows() {
     const r1 = document.getElementById('row1').value;
     const r2 = document.getElementById('row2').value;
@@ -357,17 +350,31 @@ function updateTickerRows() {
         row1: r1,
         row2: r2,
         row3: r3
-    }).then(() => alert("Rows Saved!"));
+    }).then(() => alert("Ticker Saved!"));
 }
 
-// Copy Service Data
+// 2. ਡਾਟਾ ਕਾਪੀ ਕਰਨ ਲਈ
 function copyServiceData() {
-    const dataToCopy = `ਸੇਵਾ: ${document.getElementById('inpPind').value}\nਟਾਈਮ: ${document.getElementById('inpBoxTime').value}\nTicker: ${document.getElementById('inpTicker').value}`;
+    // ਇੱਥੇ ਉਹ IDs ਲਿਖੋ ਜਿੱਥੋਂ ਡਾਟਾ ਚੁੱਕਣਾ ਹੈ
+    const pind = document.getElementById('inpPind') ? document.getElementById('inpPind').value : "N/A";
+    const time = document.getElementById('inpBoxTime') ? document.getElementById('inpBoxTime').value : "N/A";
     
-    navigator.clipboard.writeText(dataToCopy).then(() => {
-        alert("ਸੇਵਾ ਡੇਟਾ ਕਾਪੀ ਹੋ ਗਿਆ!");
+    const textToCopy = "ਸੇਵਾ: " + pind + "\nਟਾਈਮ: " + time;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        alert("Details Copied!");
     });
 }
+
+// 3. ਓਵਰਲੇਅ ਵਿੱਚ ਟਿੱਕਰ ਦਿਖਾਉਣ ਲਈ (ਤੁਹਾਡੇ ਓਵਰਲੇਅ ਵਾਲੇ ਕੋਡ ਵਿੱਚ ਇਹ ਜੋੜੋ)
+db.ref('users/' + userID + '/tickerRows').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        if(document.getElementById('c1')) document.getElementById('c1').innerText = data.row1;
+        if(document.getElementById('c2')) document.getElementById('c2').innerText = data.row2;
+        if(document.getElementById('c3')) document.getElementById('c3').innerText = data.row3;
+    }
+});
 </script>
 </body>
 </html>
