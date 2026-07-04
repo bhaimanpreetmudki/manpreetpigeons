@@ -31,31 +31,6 @@
         .res-type-btn.active-win { background: #e67e22; border-color: #fff; color: white; box-shadow: 0 0 10px rgba(230, 126, 34, 0.5); }
         .btn-show-result { background: #238636; color: white; font-size: 14px; }
         .btn-hide-result { background: #dc3545; color: white; font-size: 14px; }
-        .sewa-copy-box {
-    background: #1a1d21;
-    border: 1px solid #444;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.btn-copy {
-    background: #5c5c5c;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 900;
-    cursor: pointer;
-    width: 100%;
-    text-transform: uppercase;
-    transition: 0.3s;
-}
-
-.btn-copy:hover {
-    background: #888;
-}
         
         .section-title { font-size: 14px; font-weight: 900; margin: 15px 0 8px 0; padding-left: 5px; border-left: 4px solid #f39c12; color: #fff; }
         .pigeon-row { background: #21262d; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; border: 1px solid #30363d; }
@@ -106,23 +81,7 @@
         <textarea id="pName" placeholder="ਟੀਮਾਂ ਦੇ ਨਾਮ ਕੌਮਾ (,) ਪਾ ਕੇ ਲਿਖੋ..."></textarea>
         <button class="btn-add" onclick="addP()">ADD LIST</button>
         <input type="text" id="inpBoxTime" placeholder="ਟਾਈਮ ਬਾਕਸ">
-    <!-- Ticker Inputs -->
-<div id="ticker-manager">
-    <input type="text" id="row1" placeholder="ROW 1 TEXT">
-    <input type="text" id="row2" placeholder="ROW 2 TEXT">
-    <input type="text" id="row3" placeholder="ROW 3 TEXT">
-    <button onclick="updateTickerRows()">SAVE TICKER</button>
-</div>
-
-<div class="sewa-copy-box">
-    <div class="result-title" style="margin-bottom: 10px;">
-        <i class="fas fa-user-edit"></i> SCORE WRITER DETAILS
-    </div>
-    <input type="text" id="inpSewaName" placeholder="ਸਕੋਰ ਲਿਖਣ ਵਾਲੇ ਦਾ ਨਾਮ..." style="margin-bottom: 8px;">
-    <button class="btn-copy" onclick="copyServiceData()">
-        <i class="fas fa-clipboard"></i> COPY SEWA DETAILS
-    </button>
-</div>
+        <input type="text" id="inpTicker" placeholder="ਟਿੱਕਰ ਮੈਸੇਜ...">
         <div style="display: flex; gap: 5px; margin-bottom: 5px;">
             <input type="text" id="inpPind" placeholder="ਪਿੰਡ ਦਾ ਨਾਮ" style="margin-bottom:0;">
             <button onclick="findLocation()" style="width: 50px; background: #3498db; border: none; border-radius: 8px; color: white; cursor: pointer;">
@@ -370,43 +329,6 @@
 
     function delP(id) { if(confirm("Delete?")) { localData.pigeons = localData.pigeons.filter(p => p.id != id); syncPigeons(); } }
     function resetData() { if(confirm("Reset Everything?")) { db.ref('users/' + userID + '/pigeons').set([]); } }
- // 1. ਟਿੱਕਰ ਸੇਵ ਕਰਨ ਲਈ
-function updateTickerRows() {
-    const r1 = document.getElementById('row1').value;
-    const r2 = document.getElementById('row2').value;
-    const r3 = document.getElementById('row3').value;
-    
-    db.ref('users/' + userID + '/tickerRows').set({
-        row1: r1,
-        row2: r2,
-        row3: r3
-    }).then(() => alert("Ticker Saved!"));
-}
-
-function copyServiceData() {
-    const writerName = document.getElementById('inpSewaName').value || "---";
-    const pind = document.getElementById('inpPind').value || "---";
-    const time = document.getElementById('inpBoxTime').value || "---";
-    
-    // ਇਹ ਫਾਰਮੈਟ ਕਾਪੀ ਹੋਵੇਗਾ
-    const textToCopy = `ਸੇਵਾ (ਸਕੋਰ): ${writerName}\nਪਿੰਡ: ${pind}\nਟਾਈਮ: ${time}`;
-    
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const btn = document.querySelector('.btn-copy');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = "✅ COPIED!";
-        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-    });
-}
-// 3. ਓਵਰਲੇਅ ਵਿੱਚ ਟਿੱਕਰ ਦਿਖਾਉਣ ਲਈ (ਤੁਹਾਡੇ ਓਵਰਲੇਅ ਵਾਲੇ ਕੋਡ ਵਿੱਚ ਇਹ ਜੋੜੋ)
-db.ref('users/' + userID + '/tickerRows').on('value', (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        if(document.getElementById('c1')) document.getElementById('c1').innerText = data.row1;
-        if(document.getElementById('c2')) document.getElementById('c2').innerText = data.row2;
-        if(document.getElementById('c3')) document.getElementById('c3').innerText = data.row3;
-    }
-});
 </script>
 </body>
 </html>
