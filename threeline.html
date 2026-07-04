@@ -896,21 +896,20 @@ if(userID) {
             document.getElementById('expiry-lock').style.display = 'none';
         }
 
-        /* TICKER */
+       /* ===== 3 ROW TICKER ===== */
 
-       // ਫਾਇਰਬੇਸ ਤੋਂ ਟਿੱਕਰ ਅਪਡੇਟ ਕਰਨ ਲਈ
-function updateTickerContent(id, txt) {
-    const el = document.getElementById(id);
-    if (el) {
-        el.innerText = `${txt}  •  ${txt}  •  ${txt}`;
-    }
-}
+const ticker = data.tickerRows || {};
 
-// ਡਾਟਾ ਪ੍ਰਾਪਤ ਹੋਣ 'ਤੇ ਇਸਨੂੰ ਕਾਲ ਕਰੋ:
-// updateTickerContent('c1', data.row1Txt);
-// updateTickerContent('c2', data.row2Txt);
-// updateTickerContent('c3', data.row3Txt);
-      
+document.getElementById('ticker-div').style.display =
+    conf.showTicker ? "flex" : "none";
+
+document.getElementById("c1").innerText = ticker.row1 || "";
+document.getElementById("c2").innerText = ticker.row2 || "";
+document.getElementById("c3").innerText = ticker.row3 || "";
+
+document.getElementById("box-time-val").innerText =
+    conf.boxTime || "";
+
         /* COUNTS */
 
         let counts = {
@@ -998,6 +997,5 @@ function updateTickerContent(id, txt) {
 }
 
 </script>
-
 </body>
 </html>
