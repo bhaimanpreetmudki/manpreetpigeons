@@ -476,7 +476,7 @@
 
 .scroller { display: inline-block; white-space: nowrap; animation: scrollSlow 20s linear infinite; }
 @keyframes scrollSlow { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-</style>
+ </style>
 </head>
 
 <body>
@@ -488,16 +488,13 @@
 <!-- WATERMARK -->
 <div id="single-wm"></div> 
 
-// ਇਸ ਹਿੱਸੇ ਨੂੰ ਇਸ ਤਰ੍ਹਾਂ ਰੱਖੋ:
-const finalHtmlContent = linesArr.join('');
+<div id="result-screen">
+    <div class="res-header" id="res-title-text">FINAL RESULT</div>
 
-resArea.innerHTML = `
-    <div class="res-list-area" style="animation: resultScroll 20s linear infinite;">
-        ${finalHtmlContent}
-        <div style="height:300px;"></div>
-        ${finalHtmlContent}
+    <div class="res-scroll-window">
+        <div class="res-list-area" id="res-list-render"></div>
     </div>
-`;
+</div>
 
 <div id="weather-box">
     <iframe id="weather-frame" src=""></iframe>
@@ -580,19 +577,34 @@ resArea.innerHTML = `
 </div>
 
 <div class="footer" id="ticker-div">
-    <div class="box-live">Live</div>
-    <div class="center-wrap">
-        <div class="row-text row-1"><div class="scroller" id="c1">WELCOME TO KABUTAR BAZI LIVE</div></div>
-        <div class="row-text row-2"><div class="scroller" id="c2">SUBSCRIBE OUR CHANNEL</div></div>
-        <div class="row-text row-3"><div class="scroller" id="c3">LIKE & SHARE</div></div>
+
+    <div class="live-tag">LIVE</div>
+
+    <div class="ticker-wrap">
+
+        <div class="ticker-row">
+            <div id="c1" class="ticker-move"></div>
+        </div>
+
+        <div class="ticker-row">
+            <div id="c2" class="ticker-move"></div>
+        </div>
+
+        <div class="ticker-row">
+            <div id="c3" class="ticker-move"></div>
+        </div>
+
     </div>
-    <div class="dt-box" id="dt-flash">00:00:00 AM</div>
+
+    <div class="dt-box">
+        <div id="dt-flash">00:00:00 AM</div>
+    </div>
+
 </div>
-    
+
 <!-- RESULT + SCOREBOARD CONTROL -->
 
 <script>
-
 const firebaseConfig = {
     databaseURL: "https://manpreetpigeons-default-rtdb.firebaseio.com/"
 };
